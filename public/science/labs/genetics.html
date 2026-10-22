@@ -59,6 +59,7 @@ html.embed .wrap{padding-top:6px}
 <div class="tabs" role="tablist">
  <button role="tab" data-m="cross">🧪 مختبر الصفات</button>
  <button role="tab" data-m="detective">🕵️ تحدّي المحقّقة</button>
+ <button role="tab" data-m="solve">📝 مسائل محلولة</button>
  <button role="tab" data-m="me">🙋 صفاتي أنا</button>
 </div>
 <div id="app"></div>
@@ -98,6 +99,13 @@ html.embed .wrap{padding-top:6px}
 .kids svg{width:46px;height:46px}
 .mytab td,.mytab th{padding:8px}
 .mytab svg{width:56px;height:56px}
+.card .row>svg{width:74px;height:74px;flex:0 0 auto}
+.step{display:flex;gap:8px;align-items:flex-start;margin:6px 0;line-height:1.8}
+.step .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--wine);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+.solp{margin:8px 0}.punt{border-collapse:collapse;margin-top:4px;width:auto!important;min-width:220px}.punt td,.punt th{border:1.5px solid var(--line);padding:6px 16px;text-align:center;font:800 18px ui-monospace,monospace}
+.punt .pf{color:#2563c9}.punt .pm{color:#c2297a}.sol{margin-top:6px}
+.tag{display:inline-block;background:var(--soft);border-radius:999px;padding:2px 12px;font-weight:700;font-size:14px}
+.row{display:flex;flex-wrap:wrap}
 </style>
 <script>
 (()=>{
@@ -115,7 +123,17 @@ const D={
  scolor:dom=>`<svg viewBox="0 0 120 120" class="pic"><defs><radialGradient id="sc${dom?1:0}" cx="40%" cy="35%"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="${dom?"#ffe066":"#8bc34a"}"/><stop offset="1" stop-color="${dom?"#c9a200":"#3d7a1c"}"/></radialGradient></defs><circle cx="44" cy="62" r="24" fill="url(#sc${dom?1:0})"/><circle cx="80" cy="70" r="20" fill="url(#sc${dom?1:0})"/><circle cx="66" cy="34" r="16" fill="url(#sc${dom?1:0})"/></svg>`,
  sshape:dom=>{let p="";if(dom)p=`<circle cx="60" cy="60" r="38" fill="url(#ss)"/>`;else{let d="";for(let i=0;i<=24;i++){const a=i/24*Math.PI*2,r=38+(i%2?-6:4);d+=(i?"L":"M")+(60+r*Math.cos(a)).toFixed(1)+" "+(60+r*Math.sin(a)).toFixed(1);}p=`<path d="${d}Z" fill="url(#ss)" stroke="#a88a00" stroke-width="2" stroke-linejoin="round"/><path d="M36 50 Q50 58 44 74 M70 36 Q64 54 80 62 M58 84 Q66 74 82 80" stroke="#a88a00" stroke-width="2.5" fill="none"/>`;}
    return `<svg viewBox="0 0 120 120" class="pic"><defs><radialGradient id="ss" cx="40%" cy="35%"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#ffe066"/><stop offset="1" stop-color="#c9a200"/></radialGradient></defs>${p}</svg>`;},
- flower:dom=>{const c=dom?"#8e44ad":"#f5f5f5",s=dom?"#5e2a75":"#bbb";let pet="";for(let i=0;i<5;i++){const a=i*72;pet+=`<ellipse cx="60" cy="34" rx="15" ry="24" fill="${c}" stroke="${s}" stroke-width="2" transform="rotate(${a} 60 58)"/>`;}return `<svg viewBox="0 0 120 120" class="pic"><path d="M60 70 L60 116" stroke="#2e7d32" stroke-width="5"/>${pet}<circle cx="60" cy="58" r="10" fill="#f1c40f"/></svg>`;}
+ flower:dom=>{const c=dom?"#8e44ad":"#f5f5f5",s=dom?"#5e2a75":"#bbb";let pet="";for(let i=0;i<5;i++){const a=i*72;pet+=`<ellipse cx="60" cy="34" rx="15" ry="24" fill="${c}" stroke="${s}" stroke-width="2" transform="rotate(${a} 60 58)"/>`;}return `<svg viewBox="0 0 120 120" class="pic"><path d="M60 70 L60 116" stroke="#2e7d32" stroke-width="5"/>${pet}<circle cx="60" cy="58" r="10" fill="#f1c40f"/></svg>`;},
+ freckle:dom=>FACE(`<circle cx="44" cy="54" r="5" fill="#2b1a12"/><circle cx="76" cy="54" r="5" fill="#2b1a12"/><path d="M46 80 Q60 90 74 80" stroke="#7a1f2e" stroke-width="4" fill="none" stroke-linecap="round"/>${dom?[[34,66],[40,70],[30,72],[38,76],[80,66],[86,70],[90,72],[82,76],[56,64],[64,64]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.2" fill="#a0522d"/>`).join(""):""}`),
+ hairline:dom=>`<svg viewBox="0 0 120 120" class="pic"><circle cx="60" cy="66" r="44" fill="#f2c9a5"/><path d="M14 60 Q16 14 60 12 Q104 14 106 60 Q98 34 ${dom?"74 34 L60 50 L46 34":"60 34"} Q22 34 14 60Z" fill="#3a2a22"/><circle cx="44" cy="70" r="5" fill="#2b1a12"/><circle cx="76" cy="70" r="5" fill="#2b1a12"/><path d="M48 90 Q60 98 72 90" stroke="#7a1f2e" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
+ thumb:dom=>`<svg viewBox="0 0 120 120" class="pic"><rect x="38" y="62" width="44" height="52" rx="14" fill="#f2c9a5" stroke="#b07a55" stroke-width="3"/>${dom?'<path d="M44 66 L44 22 Q44 12 54 12 Q64 12 64 22 L64 66" fill="#f2c9a5" stroke="#b07a55" stroke-width="3"/><path d="M48 24 Q54 20 60 24" stroke="#d9a07a" stroke-width="3" fill="none"/>':'<path d="M44 66 L46 38 Q48 26 40 18 Q34 10 26 16 Q20 22 28 30 Q36 40 34 66" fill="#f2c9a5" stroke="#b07a55" stroke-width="3"/><path d="M28 22 Q32 18 36 22" stroke="#d9a07a" stroke-width="3" fill="none"/>'}</svg>`,
+ pcolor:dom=>`<svg viewBox="0 0 120 120" class="pic"><path d="M14 64 Q60 18 106 56 Q60 100 14 64Z" fill="${dom?"#5fae3c":"#e8cf3a"}" stroke="${dom?"#2e6b18":"#a88a00"}" stroke-width="3"/>${[36,56,76].map(x=>`<circle cx="${x}" cy="${62-(x-56)*.1}" r="8" fill="${dom?"#8bd36b":"#f5e27a"}"/>`).join("")}<path d="M106 56 L116 46" stroke="#2e6b18" stroke-width="4"/></svg>`,
+ pshape:dom=>`<svg viewBox="0 0 120 120" class="pic">${dom?'<path d="M14 62 Q60 22 106 58 Q60 98 14 62Z" fill="#5fae3c" stroke="#2e6b18" stroke-width="3"/>':'<path d="M14 62 Q26 48 36 56 Q46 44 58 56 Q70 44 80 56 Q92 46 106 58 Q92 70 80 64 Q70 76 58 66 Q46 78 36 66 Q26 76 14 62Z" fill="#5fae3c" stroke="#2e6b18" stroke-width="3"/>'}<path d="M106 58 L116 48" stroke="#2e6b18" stroke-width="4"/></svg>`,
+ fpos:dom=>{let f="";const fl=(x,y)=>`<g transform="translate(${x} ${y})">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-7" rx="4" ry="7" fill="#8e44ad" transform="rotate(${a})"/>`).join("")}<circle r="3" fill="#f1c40f"/></g>`;
+   if(dom)[[50,30],[70,50],[50,70],[70,90]].forEach(([x,y])=>f+=fl(x,y));else [[52,14],[68,14],[60,6]].forEach(([x,y])=>f+=fl(x,y));
+   return `<svg viewBox="0 0 120 120" class="pic"><rect x="40" y="108" width="40" height="10" rx="3" fill="#8d5a3b"/><path d="M60 108 L60 18" stroke="#2e7d32" stroke-width="5"/>${[38,58,78,98].map((y,i)=>`<ellipse cx="${i%2?72:48}" cy="${y}" rx="10" ry="5" fill="#4caf50"/>`).join("")}${f}</svg>`;},
+ rabbit:dom=>{const c=dom?"#2b2b2b":"#f7f7f7",e=dom?"#555":"#f4b6c2";return `<svg viewBox="0 0 120 120" class="pic"><ellipse cx="46" cy="22" rx="9" ry="22" fill="${c}" stroke="#999" stroke-width="2"/><ellipse cx="74" cy="22" rx="9" ry="22" fill="${c}" stroke="#999" stroke-width="2"/><ellipse cx="46" cy="24" rx="4" ry="15" fill="${e}"/><ellipse cx="74" cy="24" rx="4" ry="15" fill="${e}"/><ellipse cx="60" cy="88" rx="38" ry="26" fill="${c}" stroke="#999" stroke-width="2"/><circle cx="60" cy="58" r="24" fill="${c}" stroke="#999" stroke-width="2"/><circle cx="51" cy="54" r="4" fill="${dom?"#e74c3c":"#c0392b"}"/><circle cx="69" cy="54" r="4" fill="${dom?"#e74c3c":"#c0392b"}"/><circle cx="60" cy="64" r="3" fill="#f78fa7"/></svg>`;},
+ horn:dom=>`<svg viewBox="0 0 120 120" class="pic">${dom?"":'<path d="M34 34 Q14 26 12 8 Q28 20 42 28Z" fill="#e8dcc4" stroke="#a89060" stroke-width="2"/><path d="M86 34 Q106 26 108 8 Q92 20 78 28Z" fill="#e8dcc4" stroke="#a89060" stroke-width="2"/>'}<ellipse cx="22" cy="44" rx="14" ry="7" fill="#8d5a3b"/><ellipse cx="98" cy="44" rx="14" ry="7" fill="#8d5a3b"/><path d="M30 30 Q60 18 90 30 L86 86 Q60 112 34 86Z" fill="#a0673e"/><path d="M50 30 Q60 26 70 30 L66 60 Q60 66 54 60Z" fill="#fff"/><ellipse cx="60" cy="90" rx="22" ry="14" fill="#e9b9a0"/><circle cx="52" cy="92" r="3" fill="#5a3a2a"/><circle cx="68" cy="92" r="3" fill="#5a3a2a"/><circle cx="44" cy="52" r="4" fill="#111"/><circle cx="76" cy="52" r="4" fill="#111"/></svg>`,
 };
 const TR=[
  {k:"ear",g:"h",name:"شحمة الأذن",L:"E",dom:"حرّة (منفصلة)",rec:"ملتصقة"},
@@ -125,7 +143,16 @@ const TR=[
  {k:"height",g:"p",name:"طول الساق",L:"T",dom:"طويل",rec:"قصير"},
  {k:"scolor",g:"p",name:"لون البذرة",L:"Y",dom:"أصفر",rec:"أخضر"},
  {k:"sshape",g:"p",name:"شكل البذرة",L:"R",dom:"أملس (مستدير)",rec:"مجعّد"},
- {k:"flower",g:"p",name:"لون الزهرة",L:"P",dom:"بنفسجي",rec:"أبيض"}];
+ {k:"flower",g:"p",name:"لون الزهرة",L:"P",dom:"بنفسجي",rec:"أبيض"},
+ {k:"freckle",g:"h",name:"النمش",L:"F",dom:"وجود نمش",rec:"بلا نمش"},
+ {k:"hairline",g:"h",name:"منبت الشعر",L:"W",dom:"مدبّب (على شكل V)",rec:"مستقيم"},
+ {k:"thumb",g:"h",name:"شكل الإبهام",L:"H",dom:"مستقيم",rec:"منحنٍ للخلف"},
+ {k:"pcolor",g:"p",name:"لون القرن",L:"G",dom:"أخضر",rec:"أصفر"},
+ {k:"pshape",g:"p",name:"شكل القرن",L:"I",dom:"منتفخ",rec:"مختنق"},
+ {k:"fpos",g:"p",name:"موقع الزهرة",L:"A",dom:"محوري (على طول الساق)",rec:"طرفي (في القمّة)"},
+ {k:"rabbit",g:"a",name:"لون فرو الأرنب",L:"B",dom:"أسود",rec:"أبيض"},
+ {k:"horn",g:"a",name:"القرون في الأبقار",L:"P",dom:"بلا قرون",rec:"ذات قرون"}];
+const LB=t=>t.g==="h"?{f:"الأب",m:"الأم",fi:"👨",mi:"👩",pair:"أب وأم",kids:"من الأبناء (في عائلات كثيرة متشابهة)",one:"الابن"}:t.g==="p"?{f:"النبات الأول",m:"النبات الثاني",fi:"🌱",mi:"🌱",pair:"نباتان",kids:"نباتًا",one:"النبات الناتج"}:{f:"الذكر",m:"الأنثى",fi:"♂️",mi:"♀️",pair:"ذكر وأنثى",kids:"من الأبناء",one:"الابن"};
 const GT=t=>[[t.L+t.L,"نقي سائد"],[t.L+t.L.toLowerCase(),"هجين"],[t.L.toLowerCase()+t.L.toLowerCase(),"نقي متنحٍّ"]];
 const isDom=g=>g!==g.toLowerCase();
 const phen=(t,g)=>isDom(g)?t.dom:t.rec;
@@ -133,14 +160,14 @@ const norm=(a,b)=>a===a.toUpperCase()?a+b:(b===b.toUpperCase()?b+a:a+b);
 let st={t:0,f:1,m:1,pred:null,shown:false},score=(()=>{try{return JSON.parse(localStorage.getItem("gen.score"))||{ok:0,n:0}}catch(e){return {ok:0,n:0}}})();
 const saveS=()=>{try{localStorage.setItem("gen.score",JSON.stringify(score));}catch(e){}};
 function traitBar(on){const w=h("div",{class:"card"});const mk=(g,lab)=>{const r=h("div",{class:"traits"},h("b",{},lab));TR.forEach((t,i)=>{if(t.g===g)r.append(h("button",{class:"tr","aria-pressed":String(i===st.t),onclick:()=>{st.t=i;st.pred=null;st.shown=false;on();}},t.name));});return r;};
- w.append(mk("h","👩 صفات في الإنسان:"),h("div",{style:"height:6px"}),mk("p","🌱 نبات البازيلاء (تجارب مندل):"));return w;}
+ w.append(mk("h","👩 صفات في الإنسان:"),h("div",{style:"height:6px"}),mk("p","🌱 نبات البازيلاء (تجارب مندل):"),h("div",{style:"height:6px"}),mk("a","🐇 صفات في الحيوان:"));return w;}
 function cross(f,m){const o=[];for(const a of f)for(const b of m)o.push(norm(a,b));return o;}
 /* ---------- مختبر الصفات ---------- */
 function vCross(){app.innerHTML="";const t=TR[st.t],G=GT(t);const human=t.g==="h";
  app.append(traitBar(vCross));
  const parent=(key,title)=>{const g=G[st[key]][0];return h("div",{class:"card par"},h("h3",{},title),svg(D[t.k](isDom(g))),h("div",{class:"ph"},phen(t,g)),
    h("div",{class:"gts"},...G.map(([x,lab],i)=>h("button",{class:"gt","aria-pressed":String(i===st[key]),onclick:()=>{st[key]=i;st.pred=null;st.shown=false;vCross();}},x,h("small",{},lab)))));};
- app.append(h("div",{class:"parents"},parent("f",human?"👨 الأب":"🌱 النبات الأول"),h("div",{class:"x"},"✖"),parent("m",human?"👩 الأم":"🌱 النبات الثاني")));
+ app.append(h("div",{class:"parents"},parent("f",LB(t).fi+" "+LB(t).f),h("div",{class:"x"},"✖"),parent("m",LB(t).mi+" "+LB(t).m)));
  const f=G[st.f][0],m=G[st.m][0],kids=cross(f,m),pd=Math.round(kids.filter(isDom).length/4*100);
  const pc=h("div",{class:"card",style:"margin-top:12px;text-align:center"},h("b",{},"🤔 توقّعي أولًا: ما نسبة الأبناء الذين يحملون الصفة السائدة («"+t.dom+"»)؟"));
  const pr=h("div",{class:"pred",style:"margin-top:8px"});[0,25,50,75,100].forEach(v=>pr.append(h("button",{class:"gt","aria-pressed":String(st.pred===v),onclick:()=>{st.pred=v;vCross();}},v+"%")));pc.append(pr);
@@ -148,9 +175,9 @@ function vCross(){app.innerHTML="";const t=TR[st.t],G=GT(t);const human=t.g==="h
  if(!st.shown)return;
  const ok=st.pred===pd;app.append(h("div",{class:"msg "+(ok?"ok":"no"),style:"margin-top:10px;text-align:center"},ok?"🎉 توقّع صحيح! أحسنتِ.":"توقّعتِ "+st.pred+"% والصحيح "+pd+"%. لاحظي مربّع بانيت 👇"));
  // مربّع بانيت
- const P=h("div",{class:"pun"});P.append(h("div"),...[...f].map(a=>h("div",{class:"gam f",title:"جاميت من "+(human?"الأب":"النبات الأول")},a)));
- const cells=[];[...m].forEach((b,i)=>{P.append(h("div",{class:"gam m",title:"جاميت من "+(human?"الأم":"النبات الثاني")},b));[...f].forEach((a,j)=>{const g=norm(a,b);const c=h("div",{class:"cell"},svg(D[t.k](isDom(g))),h("b",{},g),h("small",{},phen(t,g)));cells.push(c);P.append(c);});});
- app.append(h("div",{class:"card",style:"margin-top:12px"},h("h3",{style:"text-align:center;margin:0"},"مربّع بانيت"),h("p",{class:"tip",style:"text-align:center;margin:4px 0"},"الدوائر الزرقاء جاميتات "+(human?"الأب":"النبات الأول")+"، والوردية جاميتات "+(human?"الأم":"النبات الثاني")+". كل خانة احتمالها 25%."),P));
+ const P=h("div",{class:"pun"});P.append(h("div"),...[...f].map(a=>h("div",{class:"gam f",title:"جاميت من "+(LB(t).f)},a)));
+ const cells=[];[...m].forEach((b,i)=>{P.append(h("div",{class:"gam m",title:"جاميت من "+(LB(t).m)},b));[...f].forEach((a,j)=>{const g=norm(a,b);const c=h("div",{class:"cell"},svg(D[t.k](isDom(g))),h("b",{},g),h("small",{},phen(t,g)));cells.push(c);P.append(c);});});
+ app.append(h("div",{class:"card",style:"margin-top:12px"},h("h3",{style:"text-align:center;margin:0"},"مربّع بانيت"),h("p",{class:"tip",style:"text-align:center;margin:4px 0"},"الدوائر الزرقاء جاميتات "+(LB(t).f)+"، والوردية جاميتات "+(LB(t).m)+". كل خانة احتمالها 25%."),P));
  cells.forEach((c,i)=>setTimeout(()=>c.classList.add("on"),250+i*350));
  // النسب
  const cnt={};kids.forEach(g=>cnt[g]=(cnt[g]||0)+1);const gts=[t.L+t.L,t.L+t.L.toLowerCase(),t.L.toLowerCase()+t.L.toLowerCase()].filter(g=>cnt[g]);
@@ -171,10 +198,10 @@ let D2=null;function newCase(){const ti=Math.floor(Math.random()*TR.length),f=Ma
  // نضبط العيّنة لتقارب النسبة النظرية
  const dN=Math.round(N*kids.filter(isDom).length/4);const out=[];for(let i=0;i<N;i++)out.push(i<dN);D2={ti,f,m,out:out.sort(()=>Math.random()-.5),gf:null,gm:null,done:false};}
 function vDet(){app.innerHTML="";if(!D2)newCase();const t=TR[D2.ti],G=GT(t),human=t.g==="h";const dN=D2.out.filter(Boolean).length,N=D2.out.length;
- app.append(h("div",{class:"card"},h("h3",{style:"margin:0"},"🕵️ القضية: صفة «"+t.name+"»"),h("p",{style:"margin:6px 0"},"تزاوج "+(human?"أب وأم":"نباتان")+" وأنجبا "+N+" "+(human?"من الأبناء (في عائلات كثيرة متشابهة)":"نباتًا")+": "+dN+" «"+t.dom+"» و"+(N-dN)+" «"+t.rec+"». ما الطراز الجيني لكلٍّ من الأبوين؟"),
+ app.append(h("div",{class:"card"},h("h3",{style:"margin:0"},"🕵️ القضية: صفة «"+t.name+"»"),h("p",{style:"margin:6px 0"},"تزاوج "+(LB(t).pair)+" وأنجبا "+N+" "+(LB(t).kids)+": "+dN+" «"+t.dom+"» و"+(N-dN)+" «"+t.rec+"». ما الطراز الجيني لكلٍّ من الأبوين؟"),
   h("div",{class:"kids"},...D2.out.map(d=>svg(D[t.k](d))))));
  const pick=(key,title)=>h("div",{class:"card par"},h("h3",{},title),h("div",{class:"gts"},...G.map(([x,lab],i)=>h("button",{class:"gt","aria-pressed":String(D2[key]===i),onclick:()=>{D2[key]=i;vDet();}},x,h("small",{},lab)))));
- app.append(h("div",{class:"parents"},pick("gf",human?"👨 الأب":"🌱 الأول"),h("div",{class:"x"},"✖"),pick("gm",human?"👩 الأم":"🌱 الثاني")));
+ app.append(h("div",{class:"parents"},pick("gf",LB(t).fi+" "+LB(t).f),h("div",{class:"x"},"✖"),pick("gm",LB(t).mi+" "+LB(t).m)));
  const fb=h("div",{style:"margin-top:8px"});
  app.append(h("div",{style:"text-align:center;margin-top:12px"},h("button",{class:"btn",onclick:()=>{if(D2.gf==null||D2.gm==null){fb.innerHTML='<div class="msg no">اختاري طراز الأبوين.</div>';return;}
    const want=cross(G[D2.f][0],G[D2.m][0]).filter(isDom).length,got=cross(G[D2.gf][0],G[D2.gm][0]).filter(isDom).length;score.n++;
@@ -189,7 +216,56 @@ function vMe(){app.innerHTML="";const tb=h("table",{class:"mytab",style:"width:1
  const sv=()=>{try{localStorage.setItem("gen.me",JSON.stringify(ME));}catch(e){}vMe();};
  app.append(h("div",{class:"card"},h("h3",{style:"margin-top:0"},"🙋 ما صفاتي الوراثية؟"),h("p",{class:"tip"},"اختاري صفتكِ الظاهرة (الطراز الشكلي) لتعرفي طرازكِ الجيني المحتمل. لماذا يوجد احتمالان عندما تكون صفتكِ سائدة؟"),h("div",{style:"overflow-x:auto"},tb),
   h("div",{class:"calc",style:"margin-top:10px"},"💡 إذا ظهرت عليكِ الصفة المتنحّية فطرازكِ الجيني مؤكّد (نقي متنحٍّ). أمّا الصفة السائدة فقد تكونين نقيّة أو هجينة، ويمكن معرفة ذلك من صفات والديكِ أو أبنائكِ.")));}
-const V={cross:vCross,detective:vDet,me:vMe};let mode=(location.hash||"#cross").slice(1);if(!V[mode])mode="cross";
+/* ---------- مسائل محلولة وتدريبات ---------- */
+const NAMEG=g=>g===g.toUpperCase()?"نقي سائد":g===g.toLowerCase()?"نقي متنحٍّ":"هجين";
+function pun(f,m){const t=h("table",{class:"punt"});t.append(h("tr",{},h("th",{},""),...[...f].map(a=>h("th",{class:"pf"},a))));[...m].forEach(b=>t.append(h("tr",{},h("th",{class:"pm"},b),...[...f].map(a=>h("td",{},norm(a,b))))));return t;}
+function ratioTxt(t,kids){const c={};kids.forEach(g=>c[g]=(c[g]||0)+1);const order=[t.L+t.L,t.L+t.L.toLowerCase(),t.L.toLowerCase()+t.L.toLowerCase()].filter(g=>c[g]);
+ return {g:"\u2066"+order.map(g=>c[g]+" "+g).join(" : ")+"\u2069",d:kids.filter(isDom).length,r:kids.filter(x=>!isDom(x)).length};}
+const RND=a=>a[Math.floor(Math.random()*a.length)];
+function makeProb(type){const t=RND(TR),G=GT(t).map(x=>x[0]),l=LB(t),D=t.L,r=D.toLowerCase();let q,opts,ans,steps=[],f,m,extra="";
+ const sym=`نرمز للأليل السائد «${t.dom}» بالرمز ${D}، وللأليل المتنحّي «${t.rec}» بالرمز ${r}.`;
+ if(type===0){f=RND(G);m=RND(G);const k=cross(f,m),R=ratioTxt(t,k);q=`في صفة «${t.name}»، تزاوج ${l.f} طرازه الجيني ${f} مع ${l.m} ${t.g==="p"?"طرازه":"طرازها"} الجيني ${m}. ما نسبة الأبناء الذين تظهر عليهم الصفة «${t.rec}»؟`;
+   opts=["0%","25%","50%","75%","100%"];ans=opts[R.r];steps=[sym,`${l.f}: ${f} (${NAMEG(f)}) ← جاميتاته: ${[...new Set(f)].join(" ، ")}`,`${l.m}: ${m} (${NAMEG(m)}) ← جاميتاتها: ${[...new Set(m)].join(" ، ")}`,"PUN",`الطرز الجينية: ${R.g}`,`الصفة «${t.rec}» تظهر في الطراز ${r}${r} فقط ← ${R.r} من 4 = ${R.r*25}%`];}
+ else if(type===1){f=RND(G);m=RND(G);const k=cross(f,m),R=ratioTxt(t,k);q=`تزاوج فردان طرازاهما ${f} × ${m} في صفة «${t.name}». ما نسبة الطرز الشكلية للأبناء (${t.dom} : ${t.rec})؟`;
+   opts=["4 : 0","3 : 1","1 : 1","0 : 4"];ans=["0 : 4","1 : 3","1 : 1","3 : 1","4 : 0"].map(x=>x.split(" : ").reverse().join(" : "))[R.d];if(ans==="1 : 3")ans="1 : 3";opts=["4 : 0","3 : 1","1 : 1","1 : 3","0 : 4"].map(x=>"\u2066"+x+"\u2069");ans=opts[4-R.d];
+   steps=[sym,`الجاميتات: ${[...new Set(f)].join("، ")} × ${[...new Set(m)].join("، ")}`,"PUN",`عدد الأبناء «${t.dom}» = ${R.d}، و«${t.rec}» = ${R.r}`,`النسبة = \u2066${R.d} : ${R.r}\u2069`];}
+ else if(type===2){f=D+r;m=D+r;q=`${l.f} و${l.m} يحملان كلاهما الصفة «${t.dom}»، وظهر عند أحد أبنائهما الصفة «${t.rec}». ما الطراز الجيني للأبوين؟`;
+   opts=[`${D}${D} × ${D}${D}`,`${D}${r} × ${D}${r}`,`${D}${D} × ${D}${r}`,`${r}${r} × ${r}${r}`];ans=opts[1];
+   steps=[sym,`الابن بالصفة المتنحّية طرازه ${r}${r} حتمًا، أي أخذ أليلًا ${r} من كل أب.`,`والأبوان تظهر عليهما الصفة السائدة، فكلٌّ منهما يحمل ${D} أيضًا.`,`إذن طراز كلٍّ منهما ${D}${r} (هجين).`,"PUN",`للتحقّق: احتمال ظهور ${r}${r} = 25%.`];}
+ else if(type===3){const hyb=Math.random()<.5;f=hyb?D+r:D+D;m=r+r;const k=cross(f,m),R=ratioTxt(t,k);
+   q=`للتحقّق من الطراز الجيني لفرد يحمل الصفة «${t.dom}» (في صفة «${t.name}»)، زُوّج بفرد يحمل الصفة «${t.rec}» (تهجين اختباري)، فكان ${hyb?"نصف الأبناء تقريبًا «"+t.rec+"»":"جميع الأبناء «"+t.dom+"»"}. ما الطراز الجيني للفرد المجهول؟`;
+   opts=[`${D}${D} (نقي سائد)`,`${D}${r} (هجين)`,`${r}${r} (نقي متنحٍّ)`];ans=opts[hyb?1:0];
+   steps=[sym,`الفرد ذو الصفة المتنحّية طرازه ${r}${r} مؤكّد، وجاميتاته كلها ${r}.`,hyb?`ظهور أبناء بالصفة المتنحّية (${r}${r}) يعني أن الفرد المجهول أعطى الأليل ${r}، فهو هجين ${D}${r}.`:`لو كان هجينًا لظهر 50% «${t.rec}». ظهور الصفة السائدة في جميع الأبناء يدلّ على أنه نقي ${D}${D}.`,"PUN"];extra="تهجين اختباري";}
+ else if(type===4){const rec=Math.random()<.5;const g=rec?r+r:RND([D+D,D+r]);q=rec?`ظهرت على ${l.one} الصفة «${t.rec}» في صفة «${t.name}». ما طرازه الجيني؟`:`ظهرت على فرد الصفة «${t.dom}». ما الطراز الجيني الممكن له؟`;
+   opts=rec?[`${D}${D}`,`${D}${r}`,`${r}${r}`,`${D}${D} أو ${D}${r}`]:[`${D}${D} فقط`,`${D}${r} فقط`,`${r}${r}`,`${D}${D} أو ${D}${r}`];ans=rec?opts[2]:opts[3];
+   steps=[sym,rec?`الصفة المتنحّية لا تظهر إلا إذا اجتمع أليلان متنحّيان، إذن الطراز ${r}${r} مؤكّد.`:`الصفة السائدة تظهر بوجود أليل سائد واحد على الأقل، فقد يكون الفرد نقيًّا ${D}${D} أو هجينًا ${D}${r}.`,!rec?`لمعرفة طرازه بالتحديد نجري تهجينًا اختباريًّا مع فرد ${r}${r}.`:null].filter(Boolean);f=null;}
+ else{f=D+r;m=RND([D+r,r+r]);const k=cross(f,m),R=ratioTxt(t,k);const n=RND([8,12,16,20,40]);q=(t.g==="p"?`نتج عن تلقيح نباتين طرازاهما ${f} × ${m} ${n} نباتًا.`:`أنجب ${l.pair} طرازاهما ${f} × ${m} ${n} من الأبناء.`)+` كم عددًا تتوقّعين أن تظهر عليه الصفة «${t.rec}»؟`;
+   const v=n*R.r/4;opts=[...new Set([v,n/4,n/2,3*n/4,0].map(x=>String(x)))].slice(0,4);if(!opts.includes(String(v)))opts[0]=String(v);ans=String(v);
+   steps=[sym,"PUN",`احتمال «${t.rec}» = ${R.r}/4`,`العدد المتوقّع = ${n} × ${R.r}/4 = ${v}`];}
+ return {t,q,opts:shuffleA(opts),ans,steps,f,m,extra,type};}
+function shuffleA(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const PTYPES=[["كلّها",-1],["نسبة صفة الأبناء",0],["نسبة الطرز الشكلية",1],["استنتاج طراز الأبوين",2],["التهجين الاختباري",3],["من الشكل إلى الطراز",4],["العدد المتوقّع",5]];
+let PS={type:-1,cur:null,done:false};
+function solStep(p,box){p.steps.forEach((s,i)=>{if(s==="PUN"){if(p.f)box.append(h("div",{class:"solp"},h("small",{},"مربّع بانيت:"),pun(p.f,p.m)));}else box.append(h("div",{class:"step"},h("span",{class:"n"},i+1),s));});}
+function vSolve(){app.innerHTML="";if(!PS.cur)PS.cur=makeProb(PS.type<0?Math.floor(Math.random()*6):PS.type);const p=PS.cur;
+ const tsel=h("div",{class:"traits"},h("b",{},"نوع المسألة:"),...PTYPES.map(([n,v])=>h("button",{class:"tr","aria-pressed":String(PS.type===v),onclick:()=>{PS.type=v;PS.cur=null;PS.done=false;vSolve();}},n)));
+ app.append(h("div",{class:"card"},tsel));
+ const card=h("div",{class:"card",style:"margin-top:12px"});card.append(h("div",{class:"row",style:"justify-content:space-between;align-items:flex-start;gap:12px"},h("div",{style:"flex:1"},h("span",{class:"tag"},"🧬 "+p.t.name+(p.extra?" · "+p.extra:"")),h("p",{style:"font-size:19px;font-weight:700;margin:8px 0"},p.q)),svg(D[p.t.k](true)),svg(D[p.t.k](false))));
+ const fb=h("div"),sol=h("div",{class:"sol"});
+ const ob=h("div",{class:"gts",style:"justify-content:flex-start"});p.opts.forEach(o=>ob.append(h("button",{class:"gt",style:"min-width:90px;font-size:16px",onclick:e=>{if(PS.done)return;PS.done=true;score.n++;const ok=o===p.ans;if(ok)score.ok++;saveS();
+   ob.querySelectorAll(".gt").forEach(b=>{if(b.textContent===p.ans)b.style.cssText+=";border-color:#1f8f5b;background:#e3f6ec";else if(b===e.currentTarget)b.style.cssText+=";border-color:#c2410c;background:#fdeee6";});
+   fb.innerHTML=ok?'<div class="msg ok">🎉 إجابة صحيحة!</div>':'<div class="msg no">الإجابة الصحيحة: '+p.ans+'</div>';sol.innerHTML="";sol.append(h("h4",{style:"margin:10px 0 6px"},"✍️ خطوات الحل"));solStep(p,sol);}},o)));
+ card.append(ob,fb,sol,h("div",{class:"row",style:"margin-top:10px;gap:6px"},h("button",{class:"btn",onclick:()=>{PS.cur=null;PS.done=false;vSolve();}},"➡️ مسألة جديدة"),h("button",{class:"btn g",onclick:()=>{if(!PS.done){PS.done=true;sol.innerHTML="";sol.append(h("h4",{},"✍️ خطوات الحل"));solStep(p,sol);fb.innerHTML='<div class="msg">الإجابة: '+p.ans+'</div>';}}},"👀 اعرضي الحل"),h("button",{class:"btn gold",onclick:sheet},"🖨️ ورقة عمل مع الحلول")));
+ app.append(card,h("p",{class:"tip",style:"text-align:center"},"نتيجتكِ: "+score.ok+" من "+score.n));}
+function sheet(){const N=8,P=[];for(let i=0;i<N;i++)P.push(makeProb(i%6));const w=window.open("","_blank");if(!w){alert("اسمحي بالنوافذ المنبثقة للطباعة");return;}
+ const pTable=p=>p.f?`<table class="pt"><tr><th></th>${[...p.f].map(a=>`<th>${a}</th>`).join("")}</tr>${[...p.m].map(b=>`<tr><th>${b}</th>${[...p.f].map(a=>`<td>${norm(a,b)}</td>`).join("")}</tr>`).join("")}</table>`:"";
+ const qs=P.map((p,i)=>`<div class="q"><b>${i+1})</b> ${p.q}<div class="o">${p.opts.map((o,j)=>`<span>${"أبجد"[j]||"هـ"}) ${o}</span>`).join("")}</div><div class="sp">الحل: ......................................................................................</div></div>`).join("");
+ const key=P.map((p,i)=>`<div class="q"><b>${i+1})</b> الإجابة: <b>${p.ans}</b><ol>${p.steps.map(s=>s==="PUN"?`<li style="list-style:none">${pTable(p)}</li>`:`<li>${s}</li>`).join("")}</ol></div>`).join("");
+ w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ورقة عمل الوراثة</title><style>body{font-family:"Noto Naskh Arabic",Tahoma,sans-serif;margin:24px;color:#2B1218}h1{text-align:center;color:#7A1F2E;margin:4px 0}.hd{text-align:center;border-bottom:3px solid #B8902A;padding-bottom:8px;margin-bottom:12px}.q{margin:12px 0;line-height:1.9;page-break-inside:avoid}.o span{display:inline-block;margin-inline-end:22px}.sp{color:#999}.pt{border-collapse:collapse;margin:6px 0}.pt td,.pt th{border:1px solid #999;padding:4px 12px;text-align:center;font-family:monospace;font-size:16px}.pb{page-break-before:always}@page{size:A4;margin:14mm}</style></head><body>
+ <div class="hd"><div>مدرسة القطرانة الثانوية للبنات · العلوم · الصف الثامن</div><h1>ورقة عمل: مسائل في الوراثة</h1><div>الاسم: ............................ الشعبة: ........ التاريخ: ..........</div></div>${qs}
+ <div class="pb"></div><div class="hd"><h1>مفتاح الإجابة والحلول</h1></div>${key}<p style="text-align:center;color:#777;font-size:12px">تصميمُ المنصّة وتنفيذُها: نوال بني عطية</p><script>setTimeout(()=>print(),400)<\/script></body></html>`);w.document.close();}
+
+const V={cross:vCross,detective:vDet,solve:vSolve,me:vMe};let mode=(location.hash||"#cross").slice(1);if(!V[mode])mode="cross";
 function setMode(m){mode=m;history.replaceState(null,"","#"+m);document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.m===m)));V[m]();}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));addEventListener("hashchange",()=>{const m=location.hash.slice(1);if(V[m]&&m!==mode)setMode(m);});
 setMode(mode);

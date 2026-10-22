@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر القياس الدقيق</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--ok:#1f8f5b;--bad:#c2410c;--soft:#f6ece6;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--gold2:#f3dfa8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+header.hd{background:linear-gradient(135deg,var(--wine2),var(--wine));color:#fff;border-radius:18px;padding:16px 18px;border-bottom:4px solid var(--gold)}
+header.hd h1{font-family:var(--fd);margin:0;font-size:clamp(24px,4.5vw,36px)}
+header.hd p{margin:4px 0 0;color:var(--gold2)}
+header.hd a{color:#fff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:700 15px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--wine);border-color:var(--wine);color:#fff}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgba(60,20,30,.07)}
+canvas{display:block;width:100%;touch-action:none;border-radius:12px;background:#f3eee6;cursor:grab}
+.ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bench>*{min-width:0}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:8px 14px;background:var(--wine);color:#fff;cursor:pointer;min-height:42px}
+.btn.g{background:var(--soft);color:var(--ink);border:1.5px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1a00}
+.btn:active{transform:scale(.97)}
+label.l{font-weight:700;font-size:14px;color:var(--muted)}
+select,input{min-width:0;max-width:100%;font:600 16px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--card);color:var(--ink);min-height:42px}
+.read{font:700 28px/1.3 ui-monospace,Menlo,monospace;direction:ltr;text-align:center;background:var(--soft);border-radius:12px;padding:8px}
+.calc{background:#fffaf0;border:1.5px dashed var(--gold);border-radius:12px;padding:10px;font-size:15px}
+@media (prefers-color-scheme:dark){.calc{background:#2a2114}}
+.calc b{color:var(--wine)}
+@media (prefers-color-scheme:dark){.calc b{color:var(--gold2)}}
+.msg{font-weight:700;border-radius:10px;padding:8px 10px}
+.msg.ok{background:#e3f6ec;color:var(--ok)}.msg.no{background:#fdeee6;color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+th{background:var(--soft)}
+.tip{font-size:14px;color:var(--muted)}
+.sw{display:inline-flex;gap:6px;align-items:center;font-weight:600;cursor:pointer}
+.sw input{width:20px;height:20px;min-height:0}
+footer{text-align:center;color:var(--muted);font-size:13px}
+html.embed header.hd,html.embed footer{display:none!important}
+html.embed .wrap{padding-top:6px}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hd"><h1>📏 مختبر القياس الدقيق</h1><p>الورنية · الميكروميتر · خطأ اختلاف المنظر — حرّكي الأدوات بإصبعكِ وقيسي كما في المختبر تمامًا</p>
+<p><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
+<div class="tabs" role="tablist">
+ <button role="tab" data-m="vernier" aria-selected="true">🔧 الورنية</button>
+ <button role="tab" data-m="micro" aria-selected="false">🔩 الميكروميتر</button>
+ <button role="tab" data-m="ruler" aria-selected="false">👁️ المسطرة وخطأ المنظر</button>
+</div>
+<div class="bench">
+ <div class="card"><canvas id="cv" height="520" aria-label="أداة القياس التفاعلية"></canvas>
+  <p class="tip" id="hint"></p></div>
+ <div class="ctl">
+  <div class="card ctl">
+   <label class="l" for="obj">الجسم المراد قياسه</label>
+   <select id="obj"></select>
+   <div class="row" id="moves"></div>
+   <div class="row"><span class="sw"><input type="checkbox" id="learn" checked> <label for="learn">وضع التعلّم (أظهري الحساب)</label></span></div>
+   <div class="row" id="zrow"><span class="sw"><input type="checkbox" id="zerr"> <label for="zerr">أداة فيها خطأ صفري</label></span></div>
+  </div>
+  <div class="card ctl" id="readbox">
+   <div class="read" id="read">—</div>
+   <div class="calc" id="calc"></div>
+  </div>
+  <div class="card ctl">
+   <b>🎯 تحدّي القراءة</b>
+   <p class="tip" style="margin:0">أطفئي «وضع التعلّم»، أغلقي الأداة على الجسم، ثم اكتبي قراءتكِ بالمليمتر.</p>
+   <div class="row"><input id="ans" inputmode="decimal" placeholder="مثال: 23.4" style="flex:1;direction:ltr;text-align:center"><button class="btn" id="chk">تحقّقي</button></div>
+   <div id="fb"></div>
+   <div class="tip" id="score"></div>
+  </div>
+  <div class="card ctl">
+   <div class="row" style="justify-content:space-between"><b>📋 جدول القياسات</b><span class="row"><button class="btn g" id="rec">➕ سجّلي القراءة</button><button class="btn g" id="clr">مسح</button></span></div>
+   <table><thead><tr><th>#</th><th>القراءة (mm)</th></tr></thead><tbody id="tb"></tbody><tfoot><tr><th>المتوسّط</th><th id="avg">—</th></tr></tfoot></table>
+   <p class="tip" style="margin:0">كرّري القياس في مواضع مختلفة من الجسم، ثم احسبي المتوسّط لتقليل الخطأ العشوائي.</p>
+  </div>
+ </div>
+</div>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+</div>
+<script>
+(()=>{
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+const $=id=>document.getElementById(id);
+const OBJ={
+ vernier:[["كرة فلزية",23.4,"ball"],["أسطوانة (القطر الخارجي)",31.7,"cyl"],["قطعة نقد معدنية",26.1,"coin"],["مكعّب خشبي",18.6,"cube"],["قلم رصاص",7.3,"pencil"],["جسم مجهول ❓",null,"ball"]],
+ micro:[["سلك فلزي",1.37,"wire"],["ورقة دفتر",0.11,"sheet"],["شعرة (تقريبًا)",0.07,"wire"],["قطعة نقد (السُمك)",1.85,"coin"],["كرة صغيرة",4.62,"ball"],["سلك مجهول ❓",null,"wire"]],
+ ruler:[["قلم رصاص",86,"pencil"],["ممحاة",42,"cube"],["مفتاح",57,"key"]]};
+let mode=(location.hash||"#vernier").slice(1);if(!OBJ[mode])mode=mode==="micrometer"?"micro":"vernier";
+let st={},W=0,H=0,dpr=1,learn=true,zerr=false,score=JSON.parse(safeGet("meas.score")||'{"ok":0,"n":0}'),rows=[];
+function safeGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function safeSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function reset(){
+ const o=OBJ[mode][+$("obj").value||0];let d=o[1];
+ if(d==null)d=mode==="vernier"?+(10+Math.random()*40).toFixed(1):+(0.5+Math.random()*3).toFixed(2);
+ st={obj:o,d,base:d,open:mode==="vernier"?d+12:mode==="micro"?d+1.2:0,eye:0.55,ze:zerr?(mode==="micro"?0.03:0.2):0};
+ if(mode==="ruler")st.open=0;
+ $("fb").innerHTML="";draw();}
+function fillObj(){$("obj").innerHTML="";OBJ[mode].forEach((o,i)=>$("obj").append(new Option(o[0],i)));}
+function setMode(m){mode=m;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.m===m)));
+ history.replaceState(null,"","#"+m);fillObj();rows=[];renderRows();
+ const mv=$("moves");mv.innerHTML="";
+ const B=(t,f,c)=>{const b=document.createElement("button");b.className="btn "+(c||"g");b.textContent=t;b.onclick=f;mv.append(b);};
+ if(m==="vernier"){B("◀ افتحي 1mm",()=>move(1));B("افتحي 0.1",()=>move(.1));B("أغلقي 0.1",()=>move(-.1));B("أغلقي 1mm ▶",()=>move(-1));B("🤏 أطبقي على الجسم",()=>{st.open=st.d;draw();},"gold");}
+ if(m==="micro"){B("↺ +0.50",()=>move(.5));B("↺ +0.01",()=>move(.01));B("↻ −0.01",()=>move(-.01));B("↻ −0.50",()=>move(-.5));B("🔒 السقّاطة",()=>{st.open=st.d;draw();},"gold");}
+ if(m==="ruler"){B("👁️ عين عمودية",()=>{st.eye=.5;draw();},"gold");}
+ $("zrow").style.display=m==="ruler"?"none":"";$("readbox").style.display="";
+ $("hint").textContent=m==="vernier"?"اسحبي الفكّ المتحرّك يمينًا ويسارًا، أو استخدمي الأزرار. العدسة المكبّرة أسفل الأداة تُظهر التدريجين."
+  :m==="micro"?"اسحبي الأسطوانة الدوّارة (الجلبة) للأعلى أو للأسفل لتدويرها، واستخدمي السقّاطة للإطباق دون ضغط زائد."
+  :"اسحبي العين للأعلى وللأسفل. لاحظي كيف تتغيّر القراءة إذا لم تكن العين عمودية على التدريج.";
+ reset();}
+function move(dx){if(mode==="ruler")return;const mx=mode==="vernier"?120:25;let n=st.open+dx;n=Math.max(st.d,Math.min(mx,n));st.open=+n.toFixed(mode==="micro"?2:1);draw();}
+/* القراءات */
+function reading(){if(mode==="vernier")return +(st.open+st.ze).toFixed(1);if(mode==="micro")return +(st.open+st.ze).toFixed(2);
+ return Math.round((st.d+(st.eye-.5)*14)*2)/2;}
+function closed(){return Math.abs(st.open-st.d)<1e-6;}
+/* رسم */
+function size(){const r=cv.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=Math.max(380,Math.min(560,W*0.78));cv.style.height=H+"px";cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+function metal(x,y,w,h,light){const g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,light||"#f4f6f8");g.addColorStop(.45,"#c9ced4");g.addColorStop(.55,"#b3b9c0");g.addColorStop(1,"#e5e8eb");ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.strokeStyle="#7d858e";ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,w-1,h-1);}
+function shadow(on){if(on){ctx.shadowColor="rgba(0,0,0,.25)";ctx.shadowBlur=10;ctx.shadowOffsetY=4;}else{ctx.shadowColor="transparent";ctx.shadowBlur=0;ctx.shadowOffsetY=0;}}
+function bg(){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#f7f2ea");g.addColorStop(1,"#e9e0d2");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle="rgba(120,90,60,.07)";for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+function drawObj(kind,cx,cy,wpx,hmax){ctx.save();shadow(true);
+ if(kind==="ball"){const r=wpx/2;const g=ctx.createRadialGradient(cx-r*.35,cy-r*.35,r*.1,cx,cy,r);g.addColorStop(0,"#fff");g.addColorStop(.3,"#c5ccd4");g.addColorStop(1,"#5b6470");ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();}
+ else if(kind==="coin"){const h=Math.min(hmax,wpx*1.0);const g=ctx.createLinearGradient(cx-wpx/2,0,cx+wpx/2,0);g.addColorStop(0,"#8a6d1f");g.addColorStop(.5,"#f3d47a");g.addColorStop(1,"#8a6d1f");ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(cx,cy,wpx/2,h/2,0,0,7);ctx.fill();ctx.strokeStyle="#6b5212";ctx.stroke();}
+ else if(kind==="cyl"){const h=Math.min(hmax,wpx*1.2);const g=ctx.createLinearGradient(cx-wpx/2,0,cx+wpx/2,0);g.addColorStop(0,"#5d6b7a");g.addColorStop(.35,"#e9eef3");g.addColorStop(1,"#4b5866");ctx.fillStyle=g;ctx.fillRect(cx-wpx/2,cy-h/2,wpx,h);ctx.fillStyle="#cfd6dd";ctx.beginPath();ctx.ellipse(cx,cy-h/2,wpx/2,wpx/8,0,0,7);ctx.fill();}
+ else if(kind==="cube"){const h=Math.min(hmax,wpx);ctx.fillStyle="#d9a35b";ctx.fillRect(cx-wpx/2,cy-h/2,wpx,h);ctx.fillStyle="#efc589";ctx.beginPath();ctx.moveTo(cx-wpx/2,cy-h/2);ctx.lineTo(cx-wpx/2+8,cy-h/2-8);ctx.lineTo(cx+wpx/2+8,cy-h/2-8);ctx.lineTo(cx+wpx/2,cy-h/2);ctx.fill();}
+ else if(kind==="pencil"){const h=Math.min(hmax,90);ctx.fillStyle="#f2c230";ctx.fillRect(cx-wpx/2,cy-h/2,wpx,h);ctx.fillStyle="#c8961a";ctx.fillRect(cx-wpx/2,cy-h/2,wpx/3,h);}
+ else if(kind==="wire"){const h=hmax;const g=ctx.createLinearGradient(cx-wpx/2,0,cx+wpx/2,0);g.addColorStop(0,"#8a4b1c");g.addColorStop(.5,"#f0a868");g.addColorStop(1,"#8a4b1c");ctx.fillStyle=g;ctx.fillRect(cx-wpx/2,cy-h/2,Math.max(wpx,1.5),h);}
+ else if(kind==="sheet"){ctx.fillStyle="#fffef7";ctx.fillRect(cx-Math.max(wpx,1.5)/2,cy-hmax/2,Math.max(wpx,1.5),hmax);ctx.strokeStyle="#bbb";ctx.strokeRect(cx-Math.max(wpx,1.5)/2,cy-hmax/2,Math.max(wpx,1.5),hmax);}
+ else if(kind==="key"){ctx.fillStyle="#c9a23a";ctx.fillRect(cx-wpx/2,cy-6,wpx*.7,12);ctx.beginPath();ctx.arc(cx+wpx*.35,cy,wpx*.15,0,7);ctx.fill();}
+ ctx.restore();}
+function label(t,x,y,c,al){ctx.fillStyle=c||"#2B1218";ctx.font="700 14px 'Noto Naskh Arabic',Tahoma";ctx.textAlign=al||"center";ctx.fillText(t,x,y);}
+
+/* ---------- الورنية ---------- */
+function drawVernier(){bg();
+ const L=Math.min(W*.08,50),k=(W-L-30)/130,beamY=60,beamH=34,zeroX=L+10;
+ const jx=zeroX+st.open*k;
+ // الساق
+ shadow(true);metal(zeroX-30,beamY,W-zeroX+20,beamH);shadow(false);
+ for(let mm=0;mm<=130;mm++){const x=zeroX+mm*k;const h=mm%10===0?14:mm%5===0?10:6;if(k<3&&mm%5)continue;ctx.strokeStyle="#222";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,beamY+beamH);ctx.lineTo(x,beamY+beamH-h);ctx.stroke();if(mm%10===0){ctx.fillStyle="#222";ctx.font="600 10px sans-serif";ctx.textAlign="center";ctx.fillText(mm/10,x,beamY+12);}}
+ // الفكّ الثابت
+ shadow(true);ctx.fillStyle="#b9c0c7";ctx.beginPath();ctx.moveTo(zeroX-30,beamY);ctx.lineTo(zeroX,beamY);ctx.lineTo(zeroX,beamY+beamH+120);ctx.lineTo(zeroX-12,beamY+beamH+120);ctx.lineTo(zeroX-30,beamY+beamH+40);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.moveTo(zeroX-22,beamY);ctx.lineTo(zeroX,beamY);ctx.lineTo(zeroX,beamY-34);ctx.lineTo(zeroX-8,beamY-34);ctx.closePath();ctx.fill();
+ // المنزلقة
+ ctx.fillStyle="#cfd5db";ctx.fillRect(jx,beamY-6,Math.max(60,12*k),beamH+20);ctx.strokeStyle="#7d858e";ctx.strokeRect(jx+.5,beamY-6,Math.max(60,12*k),beamH+20);
+ ctx.fillStyle="#b9c0c7";ctx.beginPath();ctx.moveTo(jx,beamY+beamH+14);ctx.lineTo(jx,beamY+beamH+120);ctx.lineTo(jx+12,beamY+beamH+120);ctx.lineTo(jx+30,beamY+beamH+40);ctx.lineTo(jx+30,beamY+beamH+14);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.moveTo(jx,beamY-6);ctx.lineTo(jx,beamY-34);ctx.lineTo(jx+8,beamY-34);ctx.lineTo(jx+20,beamY-6);ctx.fill();
+ ctx.fillStyle="#9aa3ac";ctx.beginPath();ctx.arc(jx+Math.max(60,12*k)-14,beamY+beamH+8,7,0,7);ctx.fill();shadow(false);
+ // الجسم
+ const oy=beamY+beamH+75;drawObj(st.obj[2],zeroX+st.d*k/2,oy,st.d*k,90);
+ label("اسحبي الفكّ ↔",jx+40,beamY+beamH+138,"#7A1F2E","left");
+ // العدسة المكبّرة
+ const zy=beamY+beamH+165,zh=H-zy-14,kz=Math.max(14,Math.min(26,W/26));
+ const vz=st.open+st.ze;const center=vz+4.5;const x0=W/2-center*kz;
+ ctx.save();ctx.beginPath();ctx.roundRect(10,zy,W-20,zh,16);ctx.clip();
+ ctx.fillStyle="#fbfaf7";ctx.fillRect(10,zy,W-20,zh);
+ const my=zy+zh*.48;metal(10,zy,W-20,my-zy,"#f7f8f9");
+ for(let mm=Math.floor(center-W/kz);mm<=center+W/kz;mm++){if(mm<0)continue;const x=x0+mm*kz;const h=mm%10===0?30:mm%5===0?22:14;ctx.strokeStyle="#111";ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x,my);ctx.lineTo(x,my-h);ctx.stroke();
+  if(mm%10===0){ctx.fillStyle="#111";ctx.font="700 17px sans-serif";ctx.textAlign="center";ctx.fillText(mm/10+" cm",x,my-36);}else if(mm%5===0){ctx.fillStyle="#555";ctx.font="600 12px sans-serif";ctx.textAlign="center";ctx.fillText(mm,x,my-25);}}
+ ctx.fillStyle="#e6eaee";ctx.fillRect(x0+vz*kz-14,my,9*kz+28,zy+zh-my);
+ let co=-1,best=9;for(let i=0;i<=10;i++){const p=vz+i*.9,dd=Math.abs(p-Math.round(p));if(dd<best-1e-9){best=dd;co=i;}}
+ for(let i=0;i<=10;i++){const x=x0+(vz+i*.9)*kz;const h=i%5===0?30:20;const hl=learn&&i===co;ctx.strokeStyle=hl?"#c62828":"#111";ctx.lineWidth=hl?3:1.4;ctx.beginPath();ctx.moveTo(x,my);ctx.lineTo(x,my+h);ctx.stroke();
+  ctx.fillStyle=hl?"#c62828":"#111";ctx.font=(hl?"800 ":"600 ")+"14px sans-serif";ctx.textAlign="center";ctx.fillText(i,x,my+h+15);}
+ if(learn){const x=x0+vz*kz;ctx.strokeStyle="#1f4fd1";ctx.setLineDash([4,3]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,zy+6);ctx.lineTo(x,zy+zh-6);ctx.stroke();ctx.setLineDash([]);
+  const xc=x0+(vz+co*.9)*kz;ctx.strokeStyle="rgba(198,40,40,.5)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(xc,my,16,0,7);ctx.stroke();}
+ ctx.restore();ctx.strokeStyle="#B8902A";ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(10,zy,W-20,zh,16);ctx.stroke();
+ label("🔍 عدسة مكبّرة",W-24,zy+20,"#7A1F2E","right");
+ const r=reading(),main=Math.floor(r+1e-9),v=Math.round((r-main)*10);
+ $("read").textContent=(closed()?"":"(غير مُطبَقة) ")+r.toFixed(1)+" mm";
+ $("calc").innerHTML=learn?`القراءة الرئيسة (آخر تدريج على المسطرة قبل صفر الورنية) = <b>${main} mm</b><br>تدريج الورنية المنطبق = <b>${v}</b> × 0.1 = <b>${(v/10).toFixed(1)} mm</b><br>القراءة = ${main} + ${(v/10).toFixed(1)} = <b>${r.toFixed(1)} mm</b> = ${(r/10).toFixed(2)} cm`+(st.ze?`<br>⚠️ الخطأ الصفري = +${st.ze} mm ← القراءة المصحّحة = ${r.toFixed(1)} − ${st.ze} = <b>${(r-st.ze).toFixed(1)} mm</b>`:"")+`<br><span class="tip">دقّة الورنية = 1mm ÷ 10 = 0.1 mm</span>`:"أطفئتِ وضع التعلّم: اقرئي التدريجين بنفسكِ 👀";
+ geo={zeroX,k,beamY,beamH,jx};}
+
+/* ---------- الميكروميتر ---------- */
+let geo={};
+function drawMicro(){bg();
+ const sc=Math.min(1,W/640),VW=W/sc,cy=110,k=Math.min((VW-420)/8,22),anv=80;
+ ctx.save();ctx.scale(sc,sc);
+ shadow(true);ctx.strokeStyle="#5a2a32";ctx.lineWidth=22;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(anv-30,cy);ctx.lineTo(anv-30,cy+70);ctx.quadraticCurveTo(anv-30,cy+120,anv+60,cy+120);ctx.lineTo(anv+90,cy+120);ctx.quadraticCurveTo(anv+170,cy+120,anv+170,cy+30);ctx.stroke();
+ metal(anv-36,cy-14,36,28);shadow(false);
+ const sx=anv+st.open*k;metal(sx,cy-11,Math.max(10,anv+200-sx),22);
+ const slv=anv+170;const tx=Math.max(sx+40,slv+60)+(st.open*k>120?st.open*k-120:0);
+ metal(slv,cy-20,tx-slv,40,"#fafbfc");
+ const g=ctx.createLinearGradient(0,cy-34,0,cy+34);g.addColorStop(0,"#5b6168");g.addColorStop(.3,"#e8ebee");g.addColorStop(.5,"#ffffff");g.addColorStop(.7,"#c3c8ce");g.addColorStop(1,"#4e545b");
+ shadow(true);ctx.fillStyle=g;ctx.fillRect(tx,cy-34,110,68);ctx.fillStyle="#9aa1a8";ctx.fillRect(tx+110,cy-24,40,48);shadow(false);
+ for(let i=0;i<14;i++){ctx.strokeStyle="rgba(0,0,0,.15)";ctx.beginPath();ctx.moveTo(tx+60+i*3.6,cy-34);ctx.lineTo(tx+60+i*3.6,cy+34);ctx.stroke();}
+ drawObj(st.obj[2],anv+st.d*k/2,cy,st.d*k,80);
+ ctx.font="700 16px 'Noto Naskh Arabic',Tahoma";ctx.fillStyle="#7A1F2E";ctx.textAlign="center";ctx.fillText("اسحبي ↕ لتدوير الأسطوانة",tx+60,cy+62);
+ ctx.restore();
+ // عدسة مكبّرة: التدريج الخطّي + تدريج الأسطوانة
+ const zy=(cy+150)*sc,zh=H-zy-12;const r=st.open+st.ze;
+ ctx.save();ctx.beginPath();ctx.roundRect(10,zy,W-20,zh,16);ctx.clip();ctx.fillStyle="#fbfaf7";ctx.fillRect(10,zy,W-20,zh);
+ const kz=Math.max(22,Math.min(40,W/18)),ex=W*.62,refY=zy+zh/2;
+ metal(10,refY-zh*.3,ex-10,zh*.6,"#fafbfc");
+ ctx.strokeStyle="#111";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(10,refY);ctx.lineTo(ex,refY);ctx.stroke();
+ for(let h=0;h<=50;h++){const mm=h/2;const x=ex-(r-mm)*kz;if(x<12||x>ex)continue;const up=h%2===0;ctx.beginPath();ctx.moveTo(x,refY);ctx.lineTo(x,refY+(up?-1:1)*(mm%5===0&&up?22:14));ctx.stroke();
+  if(up&&mm%1===0&&(mm%5===0||kz>30)){ctx.fillStyle="#111";ctx.font="700 14px sans-serif";ctx.textAlign="center";ctx.fillText(mm,x,refY-27);}}
+ // الأسطوانة في العدسة
+ const R=zh*.42;const tg=ctx.createLinearGradient(0,refY-R,0,refY+R);tg.addColorStop(0,"#5b6168");tg.addColorStop(.35,"#eef0f2");tg.addColorStop(.5,"#ffffff");tg.addColorStop(.65,"#dde1e5");tg.addColorStop(1,"#4e545b");
+ ctx.fillStyle=tg;ctx.fillRect(ex,refY-R,W-ex-10,2*R);ctx.strokeStyle="#666";ctx.beginPath();ctx.moveTo(ex,refY-R);ctx.lineTo(ex,refY+R);ctx.stroke();
+ const t=((r%0.5)+0.5)%0.5/0.01; // 0..50
+ let co=Math.round(t)%50;
+ for(let j=0;j<50;j++){let d=j-t;while(d>25)d-=50;while(d<-25)d+=50;const th=d*2*Math.PI/50;if(Math.cos(th)<=0.05)continue;const y=refY-R*Math.sin(th);const len=j%5===0?26:15;const hl=learn&&j===co;
+  ctx.globalAlpha=Math.min(1,Math.cos(th)*1.4);ctx.strokeStyle=hl?"#c62828":"#111";ctx.lineWidth=hl?3:1.5;ctx.beginPath();ctx.moveTo(ex,y);ctx.lineTo(ex+len,y);ctx.stroke();
+  if(j%5===0||hl){ctx.fillStyle=hl?"#c62828":"#111";ctx.font=(hl?"800 ":"700 ")+"14px sans-serif";ctx.textAlign="left";ctx.fillText(j,ex+len+5,y+5);}}
+ ctx.globalAlpha=1;
+ if(learn){ctx.strokeStyle="#1f4fd1";ctx.setLineDash([4,3]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ex,zy+6);ctx.lineTo(ex,zy+zh-6);ctx.stroke();ctx.setLineDash([]);}
+ ctx.restore();ctx.strokeStyle="#B8902A";ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(10,zy,W-20,zh,16);ctx.stroke();label("🔍 عدسة مكبّرة",24,zy+22,"#7A1F2E","left");
+ const rr=reading(),half=Math.floor(rr*2+1e-9)/2,tv=Math.round((rr-half)*100);
+ $("read").textContent=(closed()?"":"(غير مُطبَق) ")+rr.toFixed(2)+" mm";
+ $("calc").innerHTML=learn?`قراءة التدريج الخطّي (آخر خط ظاهر) = <b>${half.toFixed(2)} mm</b><br>تدريج الأسطوانة المنطبق على الخط الأفقي = <b>${tv}</b> × 0.01 = <b>${(tv/100).toFixed(2)} mm</b><br>القراءة = ${half.toFixed(2)} + ${(tv/100).toFixed(2)} = <b>${rr.toFixed(2)} mm</b>`+(st.ze?`<br>⚠️ الخطأ الصفري = +${st.ze} mm ← القراءة المصحّحة = <b>${(rr-st.ze).toFixed(2)} mm</b>`:"")+`<br><span class="tip">دقّة الميكروميتر = 0.5mm ÷ 50 = 0.01 mm</span>`:"أطفئتِ وضع التعلّم: اقرئي التدريجين بنفسكِ 👀";
+ geo={cy};}
+
+/* ---------- المسطرة وخطأ المنظر ---------- */
+function drawRuler(){bg();
+ const L=40,k=(W-2*L)/110,ry=H*.5,ox=L+5*k;
+ shadow(true);const g=ctx.createLinearGradient(0,ry,0,ry+46);g.addColorStop(0,"#fff8e1");g.addColorStop(1,"#f0dfb0");ctx.fillStyle=g;ctx.fillRect(L-6,ry,W-2*L+12,46);shadow(false);
+ for(let mm=0;mm<=110;mm++){const x=L+mm*k;const h=mm%10===0?20:mm%5===0?14:8;ctx.strokeStyle="#222";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,ry);ctx.lineTo(x,ry+h);ctx.stroke();if(mm%10===0){ctx.fillStyle="#222";ctx.font="700 12px sans-serif";ctx.textAlign="center";ctx.fillText(mm/10,x,ry+34);}}
+ // الجسم فوق المسطرة (مرتفع قليلًا: هنا ينشأ خطأ المنظر)
+ const oy=ry-34,ex2=L+st.d*k;drawObj(st.obj[2]==="pencil"?"pencil_h":st.obj[2],0,0,0,0);
+ ctx.save();shadow(true);ctx.fillStyle=st.obj[2]==="pencil"?"#f2c230":st.obj[2]==="cube"?"#ef8fa7":"#c9a23a";ctx.fillRect(L,oy-12,st.d*k,24);if(st.obj[2]==="pencil"){ctx.fillStyle="#f5deb3";ctx.beginPath();ctx.moveTo(ex2,oy-12);ctx.lineTo(ex2+14,oy);ctx.lineTo(ex2,oy+12);ctx.fill();}ctx.restore();
+ // العين
+ const eyY=40+st.eye*(H*.35),eyX=ex2+(st.eye-.5)*0;
+ ctx.font="34px serif";ctx.textAlign="center";ctx.fillText("👁️",ex2,eyY);
+ // خط النظر يمرّ بطرف الجسم ويصل إلى المسطرة
+ const apparent=st.d+(st.eye-.5)*14,ax=L+apparent*k;
+ ctx.strokeStyle=Math.abs(st.eye-.5)<.04?"#1f8f5b":"#c62828";ctx.lineWidth=2.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(ex2+(0),eyY+10);ctx.lineTo(ax,ry);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle=ctx.strokeStyle;ctx.beginPath();ctx.arc(ax,ry,5,0,7);ctx.fill();
+ label(Math.abs(st.eye-.5)<.04?"✔ العين عمودية على التدريج":"✖ العين مائلة: خطأ اختلاف المنظر",W/2,H-30,Math.abs(st.eye-.5)<.04?"#1f8f5b":"#c62828");
+ label("اسحبي العين ↕",ex2+60,eyY,"#7A1F2E","left");
+ const r=reading();$("read").textContent=r.toFixed(1)+" mm";
+ $("calc").innerHTML=learn?`الطول الحقيقي = <b>${st.d} mm</b><br>القراءة الظاهرة من موضع العين = <b>${r.toFixed(1)} mm</b><br>الخطأ = <b>${(r-st.d).toFixed(1)} mm</b><br><span class="tip">لتجنّب خطأ اختلاف المنظر: ضعي العين عموديًّا فوق التدريج تمامًا. دقّة المسطرة = 1 mm.</span>`:"أطفئتِ وضع التعلّم 👀";
+ geo={eyY,ex2};}
+
+function draw(){if(!W)size();if(mode==="vernier")drawVernier();else if(mode==="micro")drawMicro();else drawRuler();}
+/* سحب */
+let drag=null;
+cv.addEventListener("pointerdown",e=>{const r=cv.getBoundingClientRect();drag={x:e.clientX-r.left,y:e.clientY-r.top,o:st.open,e:st.eye};cv.setPointerCapture(e.pointerId);cv.style.cursor="grabbing";});
+cv.addEventListener("pointermove",e=>{if(!drag)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+ if(mode==="vernier"){const n=drag.o+(x-drag.x)/geo.k;st.open=+Math.max(st.d,Math.min(120,n)).toFixed(1);}
+ else if(mode==="micro"){const n=drag.o-(y-drag.y)*0.005+(x-drag.x)*0.02;st.open=+Math.max(st.d,Math.min(25,n)).toFixed(2);}
+ else{st.eye=Math.max(0,Math.min(1,drag.e+(y-drag.y)/(H*.35)));}
+ draw();});
+const up=()=>{drag=null;cv.style.cursor="grab";};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+/* تحدّي + جدول */
+$("chk").onclick=()=>{const v=parseFloat(($("ans").value||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace("٫","."));const fb=$("fb");
+ if(isNaN(v)){fb.innerHTML='<div class="msg no">اكتبي رقمًا.</div>';return;}
+ if(mode!=="ruler"&&!closed()){fb.innerHTML='<div class="msg no">أطبقي الأداة على الجسم أولًا 🤏</div>';return;}
+ const tol=mode==="micro"?0.005:0.05,r=reading();score.n++;
+ const ok=Math.abs(v-r)<=tol+1e-9||(st.ze&&Math.abs(v-(r-st.ze))<=tol+1e-9);if(ok)score.ok++;safeSet("meas.score",JSON.stringify(score));
+ fb.innerHTML=ok?'<div class="msg ok">🎉 أحسنتِ! قراءة صحيحة'+(st.ze&&Math.abs(v-(r-st.ze))<=tol?" ومصحّحة من الخطأ الصفري":"")+'.</div>':'<div class="msg no">ليست دقيقة. القراءة الصحيحة '+r.toFixed(mode==="micro"?2:1)+' mm. شغّلي وضع التعلّم وراجعي الخطوات.</div>';
+ $("score").textContent="نتيجتكِ: "+score.ok+" صحيحة من "+score.n;
+ try{parent.postMessage({type:"sim-check",ok},"*")}catch(e){}};
+$("rec").onclick=()=>{rows.push(reading());if(mode==="micro"&&st.obj[2]==="wire"){st.d=+(st.base+(Math.round(Math.random()*4)-2)*0.01).toFixed(2);st.open=Math.max(st.open,st.d);}renderRows();draw();};
+$("clr").onclick=()=>{rows=[];renderRows();};
+function renderRows(){const tb=$("tb");tb.innerHTML="";rows.forEach((v,i)=>{const tr=document.createElement("tr");tr.innerHTML="<td>"+(i+1)+"</td><td dir='ltr'>"+v.toFixed(mode==="micro"?2:1)+"</td>";tb.append(tr);});
+ $("avg").textContent=rows.length?(rows.reduce((a,b)=>a+b,0)/rows.length).toFixed(mode==="micro"?3:2)+" mm":"—";}
+$("obj").onchange=reset;$("learn").onchange=e=>{learn=e.target.checked;draw();};$("zerr").onchange=e=>{zerr=e.target.checked;reset();};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+addEventListener("resize",()=>{size();draw();});
+addEventListener("hashchange",()=>{const m=location.hash.slice(1);if(OBJ[m]&&m!==mode)setMode(m);});
+$("score").textContent=score.n?"نتيجتكِ: "+score.ok+" صحيحة من "+score.n:"";
+setMode(mode);size();draw();
+})();
+</script>
+</body>
+</html>

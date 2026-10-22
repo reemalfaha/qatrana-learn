@@ -96,3 +96,76 @@ M3D.register("cell",{title:"الخلية الحيوانية والنباتية",
   A.control("✂️ قطع",()=>{cut=!cut;clip.constant=cut?0:50;return cut;},true);
   A.tick((dt,t)=>{G.animal.children.forEach((c,i)=>{if(c.userData.pick&&c.userData.pick.name==="الميتوكندريا")c.rotation.x+=dt*.2;});});
  }});
+
+/* ---------- الأنظمة البلّورية للمعادن ---------- */
+M3D.register("crystal",{title:"الأنظمة البلّورية للمعادن",desc:"اختاري المعدن، وأظهري عناصر التناظر، واضغطي على البلّورة لتعرفي خصائصها.",dist:9,
+ build(A){const T=A.THREE,{mat,root}=A;const G={};
+  const glass=(c)=>new T.MeshPhongMaterial({color:new T.Color(c),shininess:120,specular:0xffffff,transparent:true,opacity:.82,flatShading:true});
+  const edges=(geo,c="#3a2a30")=>new T.LineSegments(new T.EdgesGeometry(geo),new T.LineBasicMaterial({color:c}));
+  function make(k,geo,c,name,info){const g=new T.Group();const m=new T.Mesh(geo,glass(c));g.add(m,edges(geo));A.pick(m,name,info);G[k]=g;g.visible=false;root.add(g);return g;}
+  make("halite",new T.BoxGeometry(3,3,3),"#e9eef5","الهاليت (ملح الطعام) NaCl","النظام المكعّب: ثلاثة محاور متساوية متعامدة. مجموعة الهاليدات، قساوته 2.5، له انفصام مكعّب في ثلاثة اتجاهات متعامدة، وطعمه مالح.");
+  {const g=new T.CylinderGeometry(1.4,1.4,3.2,6);const q=make("quartz",g,"#d9c7f2","الكوارتز SiO₂","النظام السداسي: منشور سداسي ينتهي بهرم. من السيليكات، قساوته 7، بلا انفصام ومكسره محاري، وبريقه زجاجي.");
+   const top=new T.ConeGeometry(1.4,1.4,6);const t1=new T.Mesh(top,glass("#d9c7f2"));t1.position.y=2.3;const t2=t1.clone();t2.rotation.z=Math.PI;t2.position.y=-2.3;q.add(t1,t2,(()=>{const e=edges(top);e.position.y=2.3;return e;})());A.pick(t1,"الكوارتز SiO₂","النظام السداسي: منشور سداسي ينتهي بهرم. قساوته 7.");}
+  {const g=new T.BoxGeometry(2.6,2.6,2.6);const m4=new T.Matrix4().makeShear(0,.45,0,.45,0,0);g.applyMatrix4(m4);make("calcite",g,"#fff3d6","الكالسايت CaCO₃","النظام ثلاثي التماثل (معيني الأوجه). من الكربونات، قساوته 3، انفصام معيني في ثلاثة اتجاهات غير متعامدة، ويفور مع الحمض المخفّف، ويُظهر انكسارًا مزدوجًا.");}
+  {const g=new T.OctahedronGeometry(2.1);make("diamond",g,"#bfe9ff","الألماس C","النظام المكعّب (ثماني الأوجه). معدن أحادي العنصر من الكربون، أقسى المعادن (10 على مقياس موس)، بريقه ماسي.");}
+  {const g=new T.BoxGeometry(2.4,2.4,2.4);make("pyrite",g,"#d8b13a","البايرايت (ذهب المغفّلين) FeS₂","النظام المكعّب. من الكبريتيدات، بريقه فلزّي ولونه أصفر نحاسي، وحكاكته سوداء مخضرّة، وقساوته 6–6.5.");G.pyrite.children[0].material=new T.MeshPhongMaterial({color:"#c9a227",shininess:140,specular:0xffffff,flatShading:true});}
+  /* عناصر التناظر */
+  const sym=new T.Group();root.add(sym);sym.visible=false;
+  const plane=new T.Mesh(new T.PlaneGeometry(5,5),new T.MeshBasicMaterial({color:0xc2297a,transparent:true,opacity:.22,side:T.DoubleSide,depthWrite:false}));sym.add(plane);A.pick(plane,"مستوى التناظر","مستوى يقسم البلّورة إلى نصفين، كلٌّ منهما صورة مرآة للآخر.");
+  const ax=new T.Mesh(new T.CylinderGeometry(.05,.05,6.5,8),mat("#2563c9"));sym.add(ax);A.pick(ax,"محور التناظر","خطّ وهمي إذا دارت البلّورة حوله دورة كاملة تكرّرت أوجهها عددًا من المرّات (2 أو 3 أو 4 أو 6).");
+  const cen=new T.Mesh(new T.SphereGeometry(.16,16,12),mat("#1f8f5b"));sym.add(cen);A.pick(cen,"مركز التناظر","نقطة في مركز البلّورة، لكل وجه يقابله وجه مماثل على البعد نفسه منها.");
+  let cur="halite";const show=k=>{Object.entries(G).forEach(([x,g])=>g.visible=x===k);cur=k;A.reset();};show(cur);
+  const names=[["halite","🧂 هاليت"],["quartz","💎 كوارتز"],["calcite","🪨 كالسايت"],["pyrite","✨ بايرايت"],["diamond","💠 ألماس"]];
+  const btns=names.map(([k,t])=>A.control(t,()=>{btns.forEach(b=>b.setAttribute("aria-pressed","false"));show(k);return true;},k===cur));
+  A.control("📐 عناصر التناظر",()=>{sym.visible=!sym.visible;return sym.visible;});
+  A.tick((dt,t)=>{plane.rotation.y=Math.sin(t*.6)*.0;});}});
+
+/* ---------- دورة الماء والمياه الجوفية ---------- */
+M3D.register("water",{title:"دورة الماء والمياه الجوفية",desc:"تابعي قطرة الماء: تبخّر، تكاثف، هطل، جريان سطحي، وارتشاح إلى الخزّان الجوفي. اضغطي على أي جزء.",dist:20,
+ build(A){const T=A.THREE,{mat,root}=A;A.st.pitch=.45;
+  const box=(w,h,d,c,o)=>new T.Mesh(new T.BoxGeometry(w,h,d),mat(c,o));
+  /* الطبقات (مقطع عرضي) */
+  const L=[[-3.6,1.2,"#c9a36b","طبقة رملية (خزّان جوفي)","طبقة مسامية نفّاذة مشبّعة بالماء: خزّان مائي جوفي (Aquifer)."],[-4.8,1.2,"#8a7a6a","طبقة طينية غير نفّاذة","طبقة قليلة النفاذية تمنع تسرّب الماء إلى الأسفل، فيتجمّع فوقها الماء الجوفي."],[-2.2,1.6,"#b08d57","التربة ونطاق التهوية","نطاق غير مشبّع؛ يمرّ فيه الماء المرتشح نحو الأسفل."]];
+  L.forEach(([y,h,c,n,i])=>{const m=box(16,h,6,c);m.position.y=y;root.add(m);A.pick(m,n,i);});
+  const wt=new T.Mesh(new T.BoxGeometry(16.02,.06,6.02),mat("#2b7bd6"));wt.position.y=-3.0;root.add(wt);A.pick(wt,"منسوب المياه الجوفية","السطح العلوي لنطاق التشبّع، يرتفع في الشتاء وينخفض بالضخّ الجائر.");
+  const sat=new T.Mesh(new T.BoxGeometry(16.02,1.2,6.02),new T.MeshPhongMaterial({color:0x3a8ee6,transparent:true,opacity:.35}));sat.position.y=-3.6;root.add(sat);
+  /* السطح: جبل وبحر */
+  const ground=new T.Mesh(new T.BoxGeometry(10,.4,6),mat("#6aa84f"));ground.position.set(-3,-1.2,0);root.add(ground);A.pick(ground,"سطح الأرض","يرتشح جزء من الماء عبره إلى باطن الأرض، ويجري جزء آخر على السطح.");
+  const mt=new T.Mesh(new T.ConeGeometry(3,4.5,5),mat("#7d8f5a",{flatShading:true}));mt.position.set(-5,1.2,0);root.add(mt);const snow=new T.Mesh(new T.ConeGeometry(1.05,1.6,5),mat("#ffffff",{flatShading:true}));snow.position.set(-5,2.75,0);root.add(snow);A.pick(mt,"الجبل","تهطل عليه الأمطار والثلوج، وتنحدر منه المياه بالجريان السطحي.");
+  const sea=new T.Mesh(new T.BoxGeometry(6,.5,6),new T.MeshPhongMaterial({color:0x1e6fb8,shininess:120,transparent:true,opacity:.9}));sea.position.set(5,-1.25,0);root.add(sea);A.pick(sea,"البحر","أكبر مخزون للماء؛ تبخّر الشمس ماءه فيصعد بخارًا إلى الجو.");
+  const river=new T.Mesh(new T.BoxGeometry(6,.08,.7),mat("#3d8fe0"));river.position.set(-.5,-.98,1.6);river.rotation.z=-.08;root.add(river);A.pick(river,"الجريان السطحي (نهر)","مياه تجري على سطح الأرض نحو البحر بعد الهطل.");
+  const well=new T.Mesh(new T.CylinderGeometry(.18,.18,3.2,12),mat("#555"));well.position.set(-1,-2.6,-1.5);root.add(well);A.pick(well,"البئر","تُضخّ منه المياه الجوفية؛ والضخّ الجائر يخفض منسوبها.");
+  /* الشمس والسحب */
+  const sun=new T.Mesh(new T.SphereGeometry(1,24,16),new T.MeshBasicMaterial({color:0xffc928}));sun.position.set(7,7,-2);root.add(sun);A.pick(sun,"الشمس","مصدر الطاقة المحرّك لدورة الماء؛ تسخّن الماء فيتبخّر.");
+  const cloud=new T.Group();[[0,0,0,1.1],[1,.2,0,.9],[-1,.1,.2,.85],[.4,.6,0,.8]].forEach(([x,y,z,r])=>{const s=new T.Mesh(new T.SphereGeometry(r,18,14),mat("#f4f6fb"));s.position.set(x,y,z);cloud.add(s);});cloud.position.set(-2,5.2,0);root.add(cloud);A.pick(cloud,"السحب (التكاثف)","يبرد بخار الماء في طبقات الجو العليا فيتكاثف قطرات صغيرة تكوّن السحب.");
+  /* جسيمات: بخار ومطر ورشح */
+  const mk=(n,c,sz)=>{const g=new T.BufferGeometry(),p=new Float32Array(n*3);g.setAttribute("position",new T.BufferAttribute(p,3));const pts=new T.Points(g,new T.PointsMaterial({color:c,size:sz,transparent:true,opacity:.9}));root.add(pts);return {g,p,n};};
+  const vap=mk(70,0xdde9ff,.22),rain=mk(110,0x2f7fd8,.16),inf=mk(50,0x1d5fb0,.14);
+  const R=(a,b)=>a+Math.random()*(b-a);
+  for(let i=0;i<vap.n;i++){vap.p.set([R(3,7.5),R(-1,5),R(-2,2)],i*3);}for(let i=0;i<rain.n;i++){rain.p.set([R(-4,0),R(-1,4.5),R(-1.5,1.5)],i*3);}for(let i=0;i<inf.n;i++){inf.p.set([R(-6,0),R(-3,-1.2),R(-2.5,2.5)],i*3);}
+  let on=true;A.control("⏯ تشغيل/إيقاف",()=>{on=!on;return on;},true);
+  const lbl=(t,x,y,z)=>root.add(A.label(t,new T.Vector3(x,y,z)));lbl("تبخّر",6,2.5,2.4);lbl("تكاثف",-2,6.7,0);lbl("هطل",-3.4,3,2);lbl("جريان سطحي",.5,-.3,2.6);lbl("ارتشاح",-4,-1.9,3.2);lbl("خزّان جوفي",3,-3.6,3.2);
+  A.tick(dt=>{if(!on)return;for(let i=0;i<vap.n;i++){let y=vap.p[i*3+1]+dt*1.6,x=vap.p[i*3]-dt*.9;if(y>5){y=-1;x=R(3,7.5);}vap.p[i*3]=x;vap.p[i*3+1]=y;}vap.g.attributes.position.needsUpdate=true;
+    for(let i=0;i<rain.n;i++){let y=rain.p[i*3+1]-dt*5;if(y<-1){y=4.6;rain.p[i*3]=R(-4,0);}rain.p[i*3+1]=y;}rain.g.attributes.position.needsUpdate=true;
+    for(let i=0;i<inf.n;i++){let y=inf.p[i*3+1]-dt*.7;if(y<-3.1){y=-1.3;}inf.p[i*3+1]=y;}inf.g.attributes.position.needsUpdate=true;cloud.position.x=-2+Math.sin(A.st.t*.3)*.6;});}});
+
+/* ---------- دورة الكربون: البناء الضوئي والتنفّس ---------- */
+M3D.register("carbon",{title:"البناء الضوئي والتنفّس: تبادل الغازات",desc:"تأخذ النبتة CO₂ وتطلق O₂ في الضوء، ويتنفّس الكائن الحي فيطلق CO₂. شاهدي الجزيئات تتحرّك، واضغطي على أي جزء.",dist:16,
+ build(A){const T=A.THREE,{mat,root}=A;
+  const soil=new T.Mesh(new T.CylinderGeometry(7,7,.6,48),mat("#8a6a45"));soil.position.y=-2.3;root.add(soil);
+  const stem=new T.Mesh(new T.CylinderGeometry(.18,.25,4,10),mat("#3f7d2a"));stem.position.set(-2.5,-.2,0);root.add(stem);
+  const leaves=new T.Group();for(let i=0;i<6;i++){const l=new T.Mesh(new T.SphereGeometry(.9,16,10),mat("#2e9b43"));l.scale.set(1.3,.25,.6);const a=i/6*Math.PI*2;l.position.set(-2.5+Math.cos(a)*1,1+i*.35,Math.sin(a)*1);l.rotation.y=-a;leaves.add(l);}root.add(leaves);
+  A.pick(leaves,"أوراق النبات (البلاستيدات الخضراء)","تمتصّ الضوء بالكلوروفيل، وتأخذ CO₂ والماء لتصنع الغلوكوز وتطلق O₂: 6CO₂ + 6H₂O ← C₆H₁₂O₆ + 6O₂.");
+  const sun=new T.Mesh(new T.SphereGeometry(.9,24,16),new T.MeshBasicMaterial({color:0xffcc33}));sun.position.set(-6,5.5,-2);root.add(sun);A.pick(sun,"الضوء","مصدر الطاقة للبناء الضوئي؛ وبزيادة شدّته تزداد سرعة البناء الضوئي حتى يحدّها عامل آخر.");
+  const rab=new T.Group();const b=new T.Mesh(new T.SphereGeometry(1,20,16),mat("#d9cbbd"));b.scale.set(1.3,1,1);rab.add(b);const h=new T.Mesh(new T.SphereGeometry(.6,16,12),mat("#d9cbbd"));h.position.set(1.2,.6,0);rab.add(h);
+  [[-.15],[.15]].forEach(([z])=>{const e=new T.Mesh(new T.CapsuleGeometry?new T.CapsuleGeometry(.12,.8,4,8):new T.CylinderGeometry(.1,.1,.9),mat("#e8dccf"));e.position.set(1.2,1.4,z);rab.add(e);});
+  rab.position.set(3,-1.2,0);root.add(rab);A.pick(rab,"الكائن الحي (التنفّس الخلوي)","تحلّل خلاياه الغلوكوز بوجود O₂ في الميتوكندريا لإنتاج الطاقة، ويطلق CO₂ والماء: C₆H₁₂O₆ + 6O₂ ← 6CO₂ + 6H₂O + طاقة.");
+  const mol=(c1,c2)=>{const g=new T.Group();const a=new T.Mesh(new T.SphereGeometry(.17,12,10),mat(c1));g.add(a);[-1,1].forEach(s=>{const o=new T.Mesh(new T.SphereGeometry(.14,12,10),mat(c2));o.position.x=s*.26;g.add(o);});return g;};
+  const P=[];for(let i=0;i<14;i++){const co2=mol("#333333","#e03b3b");co2.userData={k:"co2",u:Math.random()};root.add(co2);P.push(co2);const o2=new T.Group();[-1,1].forEach(s=>{const o=new T.Mesh(new T.SphereGeometry(.15,12,10),mat("#e03b3b"));o.position.x=s*.13;o2.add(o);});o2.userData={k:"o2",u:Math.random()};root.add(o2);P.push(o2);}
+  A.pick(P[0],"ثاني أكسيد الكربون CO₂","ينتج من التنفّس، وتمتصّه النباتات في البناء الضوئي.");A.pick(P[1],"الأكسجين O₂","ينتج من البناء الضوئي، ويستخدمه الكائن الحي في التنفّس.");
+  let light=true;const lb=A.control("☀️ ضوء",()=>{light=!light;sun.visible=light;return light;},true);
+  root.add(A.label("CO₂ ← تنفّس",new T.Vector3(1.5,2.6,0),"#333"));root.add(A.label("O₂ ← بناء ضوئي",new T.Vector3(-1,3.8,0),"#c0392b"));
+  const a=new T.Vector3(3,-.4,0),bP=new T.Vector3(-2.5,2,0);
+  A.tick(dt=>{P.forEach(p=>{const d=p.userData;d.u+=dt*.18*(light||d.k==="co2"?1:.0);if(!light&&d.k==="o2"){p.visible=false;return;}p.visible=true;if(d.u>1)d.u-=1;const u=d.u;
+    const from=d.k==="co2"?a:bP,to=d.k==="co2"?bP:a;const pos=from.clone().lerp(to,u);pos.y+=Math.sin(u*Math.PI)*2.2;pos.z=Math.sin(u*9+d.u*3)*.8;p.position.copy(pos);p.rotation.y+=dt*2;});
+    leaves.children.forEach((l,i)=>{l.material.emissive&&l.material.emissive.setHex(light?0x0a2a0a:0x000000);});});}});

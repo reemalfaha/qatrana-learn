@@ -33,7 +33,7 @@ route(/^#\/?$/,V=>{
   V.append(gr);
   V.append(el("div",{class:"sec-h"},el("h2",{},"أدوات العالِمة")),el("div",{class:"grid g4"},
     tool("#/labs","⚗️","المختبرات التفاعلية","محاكاة لكل درس"),tool("#/models","🧊","نماذج ثلاثية الأبعاد","دوّري وكبّري واستكشفي"),
-    tool("#/glossary","📖","مسرد المصطلحات","عربي – إنجليزي مع البحث"),tool("#/me","🏅","إنجازاتي","الشارات والشهادات")));
+    tool("#/books","📚","كتبي التفاعلية","اكتبي وظلّلي وحلّي على صفحات الكتاب"),tool("#/glossary","🔤","مسرد المصطلحات","عربي – إنجليزي مع البحث"),tool("#/me","🏅","إنجازاتي","الشارات والشهادات")));
   V.append(credit());
 });
 function tool(h,ic,t,d){return el("a",{class:"card tcard",href:h},el("span",{class:"ic"},ic),el("div",{},el("h3",{},t),el("p",{},d)));}
@@ -60,7 +60,8 @@ route(/^#\/l\/([\w-]+)(?:\/(\w+))?$/,(V,id,tab)=>{const l=findLesson(id);if(!l){
   V.style.setProperty("--c",s.color);
   V.append(crumbs(["الرئيسية","#/"],[s.name,"#/s/"+s.key],"الوحدة "+u.n));
   V.append(el("header",{class:"lhead",style:{"--c":s.color}},el("div",{class:"en"},"الوحدة "+u.n+": "+u.title+" · الدرس "+(idx+1)+" · ص "+l.pages),
-    el("h1",{},l.title),el("div",{class:"en",style:{direction:"ltr",textAlign:"right"}},l.en),el("div",{class:"idea"},"💡 الفكرة الرئيسة: "+l.idea)));
+    el("h1",{},l.title),el("div",{class:"en",style:{direction:"ltr",textAlign:"right"}},l.en),el("div",{class:"idea"},"💡 الفكرة الرئيسة: "+l.idea),
+    (window.SCIBOOK&&SCIBOOK.lessonLink(l))?el("div",{class:"row",style:{marginTop:"10px"}},el("a",{class:"btn sm gold",href:SCIBOOK.lessonLink(l)},"📖 الدرس في الكتاب")):null));
   const tb=el("div",{class:"tabs",role:"tablist"});
   LTABS.forEach(([k,t])=>tb.append(el("button",{role:"tab","aria-selected":String(k===tab),onclick:()=>go("#/l/"+l.id+"/"+k)},t)));
   V.append(tb);const P=el("div");V.append(P);
@@ -86,7 +87,7 @@ function lLab(P,l){
   if(!l.sims.length&&!(l.m3d||[]).length){P.append(el("div",{class:"card empty"},"لا توجد محاكاة لهذا الدرس بعد. جرّبي ",el("a",{href:"#/labs"},"المختبرات التفاعلية"),"."));return;}
   let cur=0;const chips=el("div",{class:"chips",style:{marginBottom:"10px"}}),box=el("div");
   const show=()=>{chips.innerHTML="";l.sims.forEach((x,i)=>chips.append(el("button",{class:"chip","aria-pressed":String(i===cur),onclick:()=>{cur=i;show();}},x.t)));
-    const x=l.sims[cur];if(!x)return;const src="labs/"+x.lab+".html#"+x.id;
+    const x=l.sims[cur];if(!x)return;const src=x.lab==="chem3d"?"chem3d/#"+x.id:"labs/"+x.lab+".html#"+x.id;
     box.innerHTML="";box.append(el("div",{class:"simbox"},el("div",{class:"simbar"},el("b",{},"⚗️ "+x.t),el("a",{class:"btn sm ghost",href:src,target:"_blank",rel:"noopener"},"⛶ ملء الشاشة")),el("iframe",{src,title:x.t,loading:"lazy",allow:"fullscreen"})));
     const k="sim:"+x.lab+":"+x.id;if(!S.seen[k]){S.seen[k]=1;save();addPts(10,"جرّبتِ المحاكاة");}};
   if(l.sims.length){P.append(chips,box);show();}
@@ -98,7 +99,9 @@ function lExp(P,l){
   l.exps.forEach((x,i)=>gr.append(el("article",{class:"exp"},el("div",{class:"exp-h"},el("span",{class:"tag"},x.kind),el("h3",{style:{marginTop:"6px",fontSize:"19px"}},x.t),el("small",{class:"muted"},x.src)),
     el("div",{class:"exp-b"},el("div",{},el("b",{},"🎯 الهدف: "),x.goal),el("div",{},el("b",{},"🧰 المواد والأدوات: "),x.mats),el("div",{},el("b",{},"⚠️ إرشادات السلامة: "),x.safety),
       el("h5",{},"خطوات العمل"),el("ol",{},...x.steps.map(s=>el("li",{},s))),x.qs&&x.qs.length?el("div",{},el("h5",{},"التحليل والاستنتاج"),el("ol",{},...x.qs.map(q=>el("li",{},q)))):null,
-      el("div",{class:"row"},el("a",{class:"btn sm",href:"#/ws/"+l.id+"/"+i},"🖨️ ورقة عمل التجربة"))))));
+      el("div",{class:"row"},(x.sim||l.sims[0])?el("a",{class:"btn sm",href:simHref(x.sim||l.sims[0]),target:"_blank",rel:"noopener"},"⚗️ جرّبيها في المختبر التفاعلي"):null,
+        (window.SCIBOOK&&SCIBOOK.expLink(l,x))?el("a",{class:"btn sm gold",href:SCIBOOK.expLink(l,x)},"📖 موقعها في الكتاب"):null,
+        el("a",{class:"btn sm ghost",href:"#/ws/"+l.id+"/"+i},"🖨️ ورقة عمل التجربة"))))));
   P.append(gr);
 }
 /* ---------- اختبري نفسك ---------- */
@@ -169,7 +172,7 @@ route(/^#\/glossary$/,V=>{V.append(crumbs(["الرئيسية","#/"],"مسرد ا
 });
 route(/^#\/labs$/,V=>{V.append(crumbs(["الرئيسية","#/"],"المختبرات التفاعلية"));
   V.append(el("div",{class:"hero"},el("div",{class:"orb"}),el("h1",{},"⚗️ المختبرات التفاعلية"),el("p",{},"غيّري القيم، توقّعي، جرّبي، واكتشفي القانون بنفسكِ")));
-  const LABS=[["chem3d","🧊 مختبر الكيمياء ثلاثي الأبعاد","جزيئات وبلورات وموازنة معادلات واتزان كيميائي بالمجسّمات","#2563c9"],["biology","🌿 مختبر العلوم الحياتية","الخلية، الانتشار، الانقسام، البناء الضوئي، الوراثة…","#2f8f5b"],["chemistry","🧪 مختبر الكيمياء","الذرة، الجدول الدوري، الروابط، الغازات، المعايرة…","#c2297a"],["physics","⚡ مختبر الفيزياء","المتجهات، الحركة، المقذوفات، نيوتن، الضوء…","#c98408"],["earth","🌍 مختبر علوم الأرض","الصفائح، الزلازل، الصخور، الغلاف الجوي، النجوم…","#7a4fb5"]];
+  const LABS=[["measure","📏 مختبر القياس الدقيق","الورنية والميكروميتر وخطأ اختلاف المنظر مع عدسة مكبّرة وتحدّي القراءة","#7A1F2E"],["chem3d","🧊 مختبر الكيمياء ثلاثي الأبعاد","جزيئات وبلورات وموازنة معادلات واتزان كيميائي بالمجسّمات","#2563c9"],["biology","🌿 مختبر العلوم الحياتية","الخلية، الانتشار، الانقسام، البناء الضوئي، الوراثة…","#2f8f5b"],["chemistry","🧪 مختبر الكيمياء","الذرة، الجدول الدوري، الروابط، الغازات، المعايرة…","#c2297a"],["physics","⚡ مختبر الفيزياء","المتجهات، الحركة، المقذوفات، نيوتن، الضوء…","#c98408"],["earth","🌍 مختبر علوم الأرض","الصفائح، الزلازل، الصخور، الغلاف الجوي، النجوم…","#7a4fb5"]];
   const g=el("div",{class:"grid g2",style:{marginTop:"16px"}});LABS.forEach(([k,t,d,c])=>g.append(el("a",{class:"subj",href:k==="chem3d"?"chem3d/":"labs/"+k+".html",target:"_blank",rel:"noopener",style:{"--c":c,minHeight:"auto"}},el("h3",{},t),el("span",{class:"meta"},d))));
   V.append(g);
   const per=el("section",{class:"card",style:{marginTop:"16px"}},el("h3",{style:{marginBottom:"10px"}},"المحاكاة حسب دروس الصف "+S.grade));

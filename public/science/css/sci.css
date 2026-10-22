@@ -176,3 +176,38 @@ body.land-print{}
 .tabs{top:104px}.ptools{top:104px}
 .top:after{display:none}.maintabs{border-bottom:0}
 .top{border-bottom:4px solid var(--gold)}
+/* ---- الكتاب على السبّورة ---- */
+.bk-bar{position:sticky;top:0;z-index:12;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--sh);margin-bottom:12px}
+.bk-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.bk-row:empty{display:none}
+.bk-bar select.bk-sel{width:auto;font:600 14px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--card);color:var(--ink);max-width:100%;min-width:0}
+.bk-bar select.bk-sel.nav{flex:1 1 240px}
+.bk-sep{width:1px;align-self:stretch;background:var(--line);margin-inline:2px}
+.bk-num{width:72px;font:700 15px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:6px;background:var(--card);color:var(--ink);text-align:center}
+.bk-lbl{font-weight:700;font-size:14px;color:var(--wine);flex:1 1 200px}
+@media (prefers-color-scheme:dark){.bk-lbl{color:var(--gold2)}}
+.bk-tool{display:inline-flex;flex-direction:column;align-items:center;min-width:54px;padding:4px 6px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;font:600 11px var(--f)}
+.bk-tool span{font-size:20px;line-height:1.2}
+.bk-tool[aria-pressed="true"]{background:var(--wine);border-color:var(--wine);color:#fff}
+.bk-colors{display:flex;gap:5px;padding-inline:4px}
+.bk-c{width:30px;height:30px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1.5px var(--line);cursor:pointer}
+.bk-c[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold)}
+.bk-stage{display:flex;justify-content:center}
+.bk-page{position:relative;width:var(--bw,100%);max-width:100%;background:#fff;border-radius:6px;box-shadow:0 2px 18px rgba(0,0,0,.14);overflow:hidden;touch-action:pan-y}
+.bk-slice{overflow:hidden;background:#fff}
+.bk-slice img{display:block;width:100%;user-select:none;-webkit-user-drag:none}
+.bk-gap{position:relative;background:#fffdf6 repeating-linear-gradient(to bottom,transparent 0 31px,#e9e2cf 31px 32px);border-block:1.5px dashed #e3c98a}
+.bk-text{position:absolute;inset:0;padding:4px 14px;font:600 clamp(16px,2.2vw,28px)/32px var(--f);color:#1f4fd1;outline:none;overflow:auto;direction:rtl;pointer-events:none}
+.bk-page.typing .bk-text{pointer-events:auto;cursor:text}
+.bk-page.typing .bk-text:empty::before{content:attr(data-ph);color:#b9ab8a;font-weight:500}
+.bk-text:focus{background:rgba(255,236,170,.25)}
+.bk-ink{position:absolute;top:0;left:0;z-index:2;pointer-events:none;touch-action:none}
+.bk-foot{padding-block:10px}
+.bk-drawer{position:fixed;top:0;bottom:0;right:0;width:min(400px,92vw);z-index:40;background:var(--card);color:var(--ink);border-left:1px solid var(--line);box-shadow:-8px 0 30px rgba(0,0,0,.18);padding:16px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.bk-drawer ul,.bk-drawer ol{margin:0;padding-inline-start:20px}
+body.bkfull header.top,body.bkfull .bk-foot,body.bkfull .crumbs,body.bkfull .credit{display:none}
+body.bkfull .bk-bar{top:0}
+body.bkfull main{max-width:100%!important;padding-inline:6px!important}
+@media (max-width:700px){.bk-tool small{display:none}.bk-tool{min-width:42px}.bk-bar{position:static}.bk-row.tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}.bk-row.tools>*{flex:0 0 auto}}
+body.bookmode header.top{position:static}
+@media print{.bk-bar,.bk-foot{display:none!important}}

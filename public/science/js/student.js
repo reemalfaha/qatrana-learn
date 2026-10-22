@@ -54,6 +54,7 @@ route(/^#\/s\/(\w+)$/,(V,k)=>{const s=G()[k];if(!s){go("#/");return;}
 });
 
 /* ---------- الدرس ---------- */
+var LTAB_FN={learn:lLearn,lab:lLab,exp:lExp,quiz:lQuiz,cards:lCards};
 const LTABS=[["learn","📘 الدرس"],["lab","⚗️ المختبر"],["exp","🧫 التجارب"],["quiz","📝 اختبري نفسك"],["cards","🃏 المصطلحات"]];
 route(/^#\/l\/([\w-]+)(?:\/(\w+))?$/,(V,id,tab)=>{const l=findLesson(id);if(!l){go("#/");return;}tab=tab||"learn";
   const s=subjOf(l),u=l.unit,idx=u.lessons.indexOf(l);S.last=l.id;save();
@@ -65,7 +66,7 @@ route(/^#\/l\/([\w-]+)(?:\/(\w+))?$/,(V,id,tab)=>{const l=findLesson(id);if(!l){
   const tb=el("div",{class:"tabs",role:"tablist"});
   LTABS.forEach(([k,t])=>tb.append(el("button",{role:"tab","aria-selected":String(k===tab),onclick:()=>go("#/l/"+l.id+"/"+k)},t)));
   V.append(tb);const P=el("div");V.append(P);
-  ({learn:lLearn,lab:lLab,exp:lExp,quiz:lQuiz,cards:lCards}[tab]||lLearn)(P,l);
+  (LTAB_FN[tab]||lLearn)(P,l);
   const nav=el("div",{class:"row",style:{justifyContent:"space-between",marginTop:"20px"}});
   const prev=u.lessons[idx-1],next=u.lessons[idx+1];
   nav.append(prev?el("a",{class:"btn ghost sm",href:"#/l/"+prev.id},"→ "+prev.title):el("span"),next?el("a",{class:"btn ghost sm",href:"#/l/"+next.id},next.title+" ←"):el("a",{class:"btn gold sm",href:"#/exam/"+u.id},"🎓 امتحان الوحدة"));

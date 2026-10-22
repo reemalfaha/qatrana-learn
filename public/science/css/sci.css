@@ -241,3 +241,10 @@ body.bigteams .teams .mem{font-size:24px;padding:10px 18px}
 body.bigteams .teams h3{font-size:30px}
 @media (max-width:640px){.evrow{grid-template-columns:24px 1fr 46px}.evrow .crit{grid-column:1/-1;justify-content:flex-start}.cb{min-width:40px;min-height:40px;font-size:18px}}
 @media print{.evrow .crit{display:none}}
+/* ---- حقيبة الدرس وتذكرة الخروج ---- */
+.exitcard h4{margin:14px 0 6px}
+.opt.sel{border-color:var(--gold);background:var(--gold3)}
+.ta{width:100%;font:inherit;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--card);color:var(--ink);resize:vertical}
+.chip.feel[aria-pressed="true"]{background:var(--wine);color:#fff;border-color:var(--wine)}
+.tabs{overflow-x:auto;scrollbar-width:thin}
+.tabs button{white-space:nowrap}

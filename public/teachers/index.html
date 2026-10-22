@@ -56,7 +56,7 @@ const SUBJ=[
  {k:"earth",name:"علوم الأرض والبيئة",color:"#7a4fb5",grades:["التاسع","العاشر"],plat:"sci"}];
 let S=null;
 function plink(s,what){const k=S&&S.data.ppin?encodeURIComponent(S.data.ppin):"";
-  if(s.plat==="sci"){const q=k?"?k="+k:"";return SCI+q+({tools:"#/t",books:"#/books",results:"#/t/results",plan:"#/t/plan",student:"#/"}[what]||"#/t");}
+  if(s.plat==="sci"){const q=k?"?k="+k:"";return SCI+q+({tools:"#/t",books:"#/books",results:"#/t/results",plan:"#/t/plan",kit:"#/t/kit",student:"#/"}[what]||"#/t");}
   const base=s.plat==="lug"?LUG:RIY;if(what==="student")return base;return base+"?teacher"+(k?"&k="+k:"");}
 async function start(){try{S=await QClass.resume(ROSTER);}catch(e){app.innerHTML='<div class="card">تعذّر التحميل. تأكّدي من الاتصال بالإنترنت.</div>';return;}S?dash():login();}
 async function login(){tb.innerHTML="";const keys=await QClass.keys(ROSTER);const sel=h("select",{class:"in2"},...Object.entries(keys).map(([id,k])=>h("option",{value:id},k.label)));
@@ -74,7 +74,7 @@ function dash(){const T=S.teacher;tb.innerHTML="";tb.append(h("button",{class:"b
   mine.forEach(s=>{const sci=s.plat==="sci";gr.append(h("section",{class:"card subj",style:{"--c":s.color}},h("h2",{},s.name),h("div",{class:"small muted"},"الصفوف: "+s.grades.join("، ")),
     h("div",{class:"acts"},A("👥","صفّي","الفرق وتقييم الحصة والسجلّ",null,()=>openClass(s.k)),A("🧰","أدوات المعلّمة",sci?"خطط وتحليل واستراتيجيات وبنك أسئلة":"مسابقة، حلّ التدريبات، أوراق العمل",plink(s,"tools")),
       A("📖","الكتاب على السبّورة","صفحات الكتاب بفراغات للشرح",plink(s,sci?"books":"tools")),A("📈","نتائج الطالبات","متابعة الإنجاز والاختبارات",plink(s,sci?"results":"tools")),
-      sci?A("📝","خطة الدرس","تحضير جاهز للطباعة",plink(s,"plan")):null,A("🎓","منصّة الطالبات","كما تراها الطالبة",plink(s,"student")))));});
+      sci?A("🎒","حقيبة الدرس","خطة، تقويم آخر الحصة، تذكرة خروج، سلّم تقدير",plink(s,"kit")):null,A("🎓","منصّة الطالبات","كما تراها الطالبة",plink(s,"student")))));});
   app.append(gr,h("div",{class:"common"},h("a",{class:"btn gold",href:"https://lab-booking.reemalfahad-an.workers.dev",target:"_blank",rel:"noopener"},"🔬 حجز المختبر"),h("a",{class:"btn g",href:"../",target:"_blank",rel:"noopener"},"📱 بوابة الطالبات")));
   const cls=h("div",{id:"cls"});app.append(cls,h("footer",{},"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"));
   if(location.hash==="#class")openClass();}

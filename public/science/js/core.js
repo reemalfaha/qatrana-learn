@@ -3,9 +3,9 @@ const CONFIG={
   SCHOOL:"مدرسة القطرانة الثانوية للبنات", DIR:"مديرية التربية والتعليم للواء القطرانة", DESIGNER:"نوال بني عطية",
   SCRIPT_URL:"https://script.google.com/macros/s/AKfycby_MosnfxzYeiveIWwN61c_Rx5HYc-lTMRPeRueHiAyFnRdeafhSIWuUxPnPEI1imSK/exec",
   T_HASH:"1pfqq3z1hhzlsl", SUBJ:"علوم", PASS:70, YEAR:"2026/2027",
-  GRADES:["الثامن","التاسع","العاشر","الحادي عشر"], SECTIONS:g=>g==="الثامن"?["أ"]:["أ","ب"]
+  GRADES:["الثامن","التاسع","العاشر","الحادي عشر"], SECTIONS:g=>g==="التاسع"?["أ","ب"]:["أ"]
 };
-const SUBJ_ORDER=["bio","chem","phys","earth"];
+const SUBJ_ORDER=["sci","bio","chem","phys","earth"];
 const SCI={data:{},add(g,k,d){(this.data[g]=this.data[g]||{})[k]=Object.assign({key:k,grade:g},d);
   d.units.forEach(u=>{u.subj=k;u.grade=g;u.lessons.forEach(l=>{l.unit=u;l.subj=k;l.grade=g;})});}};
 const ICONS={

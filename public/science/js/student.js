@@ -6,7 +6,7 @@ function welcome(V){
   const nm=el("input",{class:"inp",id:"stName",placeholder:"اسمكِ الثلاثي",autocomplete:"name",value:S.name||""});
   const gbox=el("div",{class:"chips",role:"group","aria-label":"الصف"}),sbox=el("div",{class:"chips",role:"group","aria-label":"الشعبة"});
   const err=el("p",{class:"muted","aria-live":"polite"});
-  const draw=()=>{gbox.innerHTML="";["التاسع","العاشر"].forEach(x=>gbox.append(el("button",{class:"chip","aria-pressed":String(x===g),onclick:()=>{g=x;if(!CONFIG.SECTIONS(g).includes(sec))sec="";draw();}},"الصف "+x)));
+  const draw=()=>{gbox.innerHTML="";["الثامن","التاسع","العاشر"].forEach(x=>gbox.append(el("button",{class:"chip","aria-pressed":String(x===g),onclick:()=>{g=x;if(!CONFIG.SECTIONS(g).includes(sec))sec="";draw();}},"الصف "+x)));
     sbox.innerHTML="";CONFIG.SECTIONS(g).forEach(x=>sbox.append(el("button",{class:"chip","aria-pressed":String(x===sec),onclick:()=>{sec=x;draw();}},"الشعبة "+x)));};draw();
   V.append(el("div",{class:"hero"},el("div",{class:"orb"}),el("h1",{},"أهلًا بكِ في منصّة العلوم 🔬"),el("p",{},"أحياء · كيمياء · فيزياء · علوم الأرض — دروس تفاعلية ومختبرات ثلاثية الأبعاد")),
     el("div",{class:"card",style:{marginTop:"16px",display:"grid",gap:"12px"}},el("label",{for:"stName"},el("b",{},"اسمكِ")),nm,el("b",{},"صفّكِ"),gbox,el("b",{},"شعبتكِ"),sbox,err,
@@ -172,7 +172,7 @@ route(/^#\/glossary$/,V=>{V.append(crumbs(["الرئيسية","#/"],"مسرد ا
 });
 route(/^#\/labs$/,V=>{V.append(crumbs(["الرئيسية","#/"],"المختبرات التفاعلية"));
   V.append(el("div",{class:"hero"},el("div",{class:"orb"}),el("h1",{},"⚗️ المختبرات التفاعلية"),el("p",{},"غيّري القيم، توقّعي، جرّبي، واكتشفي القانون بنفسكِ")));
-  const LABS=[["measure","📏 مختبر القياس الدقيق","الورنية والميكروميتر وخطأ اختلاف المنظر مع عدسة مكبّرة وتحدّي القراءة","#7A1F2E"],["chem3d","🧊 مختبر الكيمياء ثلاثي الأبعاد","جزيئات وبلورات وموازنة معادلات واتزان كيميائي بالمجسّمات","#2563c9"],["biology","🌿 مختبر العلوم الحياتية","الخلية، الانتشار، الانقسام، البناء الضوئي، الوراثة…","#2f8f5b"],["chemistry","🧪 مختبر الكيمياء","الذرة، الجدول الدوري، الروابط، الغازات، المعايرة…","#c2297a"],["physics","⚡ مختبر الفيزياء","المتجهات، الحركة، المقذوفات، نيوتن، الضوء…","#c98408"],["earth","🌍 مختبر علوم الأرض","الصفائح، الزلازل، الصخور، الغلاف الجوي، النجوم…","#7a4fb5"]];
+  const LABS=[["fluids","💧 مختبر الموائع","ضغط السائل، الرافعة الهيدروليكية، الغوّاص الديكارتي، الطفو ومبدأ أرخميدس، والكثافة","#1d7f8c"],["measure","📏 مختبر القياس الدقيق","الورنية والميكروميتر وخطأ اختلاف المنظر مع عدسة مكبّرة وتحدّي القراءة","#7A1F2E"],["chem3d","🧊 مختبر الكيمياء ثلاثي الأبعاد","جزيئات وبلورات وموازنة معادلات واتزان كيميائي بالمجسّمات","#2563c9"],["biology","🌿 مختبر العلوم الحياتية","الخلية، الانتشار، الانقسام، البناء الضوئي، الوراثة…","#2f8f5b"],["chemistry","🧪 مختبر الكيمياء","الذرة، الجدول الدوري، الروابط، الغازات، المعايرة…","#c2297a"],["physics","⚡ مختبر الفيزياء","المتجهات، الحركة، المقذوفات، نيوتن، الضوء…","#c98408"],["earth","🌍 مختبر علوم الأرض","الصفائح، الزلازل، الصخور، الغلاف الجوي، النجوم…","#7a4fb5"]];
   const g=el("div",{class:"grid g2",style:{marginTop:"16px"}});LABS.forEach(([k,t,d,c])=>g.append(el("a",{class:"subj",href:k==="chem3d"?"chem3d/":"labs/"+k+".html",target:"_blank",rel:"noopener",style:{"--c":c,minHeight:"auto"}},el("h3",{},t),el("span",{class:"meta"},d))));
   V.append(g);
   const per=el("section",{class:"card",style:{marginTop:"16px"}},el("h3",{style:{marginBottom:"10px"}},"المحاكاة حسب دروس الصف "+S.grade));

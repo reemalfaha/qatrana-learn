@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر الموائع</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--ok:#1f8f5b;--bad:#c2410c;--soft:#f6ece6;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--gold2:#f3dfa8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+header.hd{background:linear-gradient(135deg,var(--wine2),var(--wine));color:#fff;border-radius:18px;padding:16px 18px;border-bottom:4px solid var(--gold)}
+header.hd h1{font-family:var(--fd);margin:0;font-size:clamp(24px,4.5vw,36px)}
+header.hd p{margin:4px 0 0;color:var(--gold2)}
+header.hd a{color:#fff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:700 15px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--wine);border-color:var(--wine);color:#fff}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgba(60,20,30,.07)}
+canvas{display:block;width:100%;touch-action:none;border-radius:12px;background:#f3eee6;cursor:grab}
+.ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bench>*{min-width:0}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:8px 14px;background:var(--wine);color:#fff;cursor:pointer;min-height:42px}
+.btn.g{background:var(--soft);color:var(--ink);border:1.5px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1a00}
+.btn:active{transform:scale(.97)}
+label.l{font-weight:700;font-size:14px;color:var(--muted)}
+select,input{min-width:0;max-width:100%;font:600 16px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--card);color:var(--ink);min-height:42px}
+.read{font:700 28px/1.3 ui-monospace,Menlo,monospace;direction:ltr;text-align:center;background:var(--soft);border-radius:12px;padding:8px}
+.calc{background:#fffaf0;border:1.5px dashed var(--gold);border-radius:12px;padding:10px;font-size:15px}
+@media (prefers-color-scheme:dark){.calc{background:#2a2114}}
+.calc b{color:var(--wine)}
+@media (prefers-color-scheme:dark){.calc b{color:var(--gold2)}}
+.msg{font-weight:700;border-radius:10px;padding:8px 10px}
+.msg.ok{background:#e3f6ec;color:var(--ok)}.msg.no{background:#fdeee6;color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+th{background:var(--soft)}
+.tip{font-size:14px;color:var(--muted)}
+.sw{display:inline-flex;gap:6px;align-items:center;font-weight:600;cursor:pointer}
+.sw input{width:20px;height:20px;min-height:0}
+footer{text-align:center;color:var(--muted);font-size:13px}
+html.embed header.hd,html.embed footer{display:none!important}
+html.embed .wrap{padding-top:6px}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hd"><h1>💧 مختبر الموائع</h1><p>الضغط · مبدأ باسكال · الغوّاص الديكارتي · الطفو ومبدأ أرخميدس · الكثافة</p>
+<p><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
+<div class="tabs" role="tablist">
+ <button role="tab" data-m="pressure">🌊 ضغط السائل</button>
+ <button role="tab" data-m="pascal">🚗 الرافعة الهيدروليكية</button>
+ <button role="tab" data-m="diver">🤿 الغوّاص</button>
+ <button role="tab" data-m="buoy">⚓ الطفو</button>
+ <button role="tab" data-m="density">⚖️ الكثافة</button>
+</div>
+<div class="bench">
+ <div class="card"><canvas id="cv" aria-label="المحاكاة"></canvas><p class="tip" id="hint"></p></div>
+ <div class="ctl">
+  <div class="card ctl" id="ctl"></div>
+  <div class="card ctl"><div class="read" id="read">—</div><div class="calc" id="calc"></div></div>
+  <div class="card ctl" id="q"></div>
+ </div>
+</div>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+</div>
+<script>
+(()=>{
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d"),$=id=>document.getElementById(id);
+let W=0,H=0,mode=(location.hash||"#pressure").slice(1),st={},t0=performance.now();
+const LIQ=[["ماء",1000,"#4aa3df"],["زيت",800,"#e1b84a"],["ماء مالح",1030,"#2f7fbf"],["زئبق",13600,"#b7bcc4"]];
+const MAT=[["فلّين",240,"#c8a27a"],["خشب",600,"#b07a43"],["جليد",920,"#cfefff"],["بلاستيك",950,"#6fc3a8"],["ألمنيوم",2700,"#c9ced6"],["حديد",7870,"#7d858e"],["نحاس",8960,"#c47a3a"],["ذهب",19300,"#e6be3a"]];
+const g=9.8;
+function size(){const r=cv.getBoundingClientRect();const d=Math.min(devicePixelRatio||1,2);W=r.width;H=Math.max(380,Math.min(560,W*.8));cv.style.height=H+"px";cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);}
+function bg(){const gr=ctx.createLinearGradient(0,0,0,H);gr.addColorStop(0,"#f7f2ea");gr.addColorStop(1,"#e9e0d2");ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);}
+function T(t,x,y,c,al,f){ctx.fillStyle=c||"#2B1218";ctx.font=f||"700 14px 'Noto Naskh Arabic',Tahoma";ctx.textAlign=al||"center";ctx.fillText(t,x,y);}
+function glass(x,y,w,h){ctx.strokeStyle="rgba(60,80,100,.75)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+h);ctx.lineTo(x+w,y+h);ctx.lineTo(x+w,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,.15)";ctx.fillRect(x+3,y,6,h);}
+function liquid(x,y,w,h,c,t){const gr=ctx.createLinearGradient(0,y,0,y+h);gr.addColorStop(0,c+"cc");gr.addColorStop(1,c);ctx.fillStyle=gr;ctx.beginPath();ctx.moveTo(x,y);for(let i=0;i<=w;i+=8)ctx.lineTo(x+i,y+Math.sin(i/18+t*2)*1.5);ctx.lineTo(x+w,y+h);ctx.lineTo(x,y+h);ctx.fill();}
+const ctl=$("ctl");
+function slider(label,min,max,step,val,unit,on){const id="s"+Math.random().toString(36).slice(2,7);const w=document.createElement("div");w.innerHTML=`<label class="l" for="${id}">${label}: <b id="${id}v">${val}</b> ${unit}</label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}" style="width:100%">`;ctl.append(w);const i=w.querySelector("input");i.oninput=()=>{w.querySelector("b").textContent=i.value;on(+i.value);};on(+val);return i;}
+function select(label,opts,val,on){const w=document.createElement("div");w.innerHTML=`<label class="l">${label}</label>`;const s=document.createElement("select");s.style.width="100%";opts.forEach((o,i)=>s.append(new Option(o[0]+(o[1]?" ("+o[1]+" kg/m³)":""),i)));s.value=val;s.onchange=()=>on(+s.value);w.append(s);ctl.append(w);on(+val);return s;}
+function button(t,f,c){const b=document.createElement("button");b.className="btn "+(c||"g");b.textContent=t;b.onclick=f;ctl.append(b);return b;}
+function quiz(q,opts,a,why){const box=$("q");box.innerHTML="<b>🎯 سؤال سريع</b><p style='margin:4px 0'>"+q+"</p>";const r=document.createElement("div");r.className="row";const fb=document.createElement("div");
+ opts.forEach((o,i)=>{const b=document.createElement("button");b.className="btn g";b.textContent=o;b.onclick=()=>{fb.innerHTML=i===a?'<div class="msg ok">✔ أحسنتِ! '+why+'</div>':'<div class="msg no">✖ حاولي مرّة أخرى، واستعيني بالمحاكاة.</div>';};r.append(b);});box.append(r,fb);}
+/* ---------- ضغط السائل ---------- */
+const M={};
+M.pressure={hint:"اسحبي المجسّ (الدائرة) داخل السائل للأعلى والأسفل، وغيّري نوع السائل. لاحظي اندفاع الماء من الثقوب.",
+ init(){st={liq:0,h:.5,atm:false};select("نوع السائل",LIQ.map(l=>[l[0],l[1]]),0,v=>st.liq=v);
+  const w=document.createElement("label");w.className="sw";w.innerHTML='<input type="checkbox"> أضيفي الضغط الجوي (101 kPa)';w.querySelector("input").onchange=e=>st.atm=e.target.checked;ctl.append(w);
+  quiz("ثلاثة ثقوب في قارورة ماء على أعماق مختلفة، يندفع الماء أبعد من الثقب:",["العلوي","الأوسط","السفلي"],2,"الضغط يزداد بزيادة العمق.");},
+ draw(t){bg();const L=LIQ[st.liq],tx=W*.3,tw=W*.32,ty=60,th=H-120,depthM=2;liquid(tx,ty+20,tw,th-20,L[2],t);glass(tx,ty,tw,th);
+  for(let i=0;i<=4;i++){const y=ty+20+(th-20)*i/4;ctx.strokeStyle="rgba(0,0,0,.25)";ctx.beginPath();ctx.moveTo(tx+tw,y);ctx.lineTo(tx+tw+10,y);ctx.stroke();T((depthM*i/4).toFixed(1)+" m",tx+tw+14,y+5,"#333","left","600 12px sans-serif");}
+  // الثقوب
+  [.25,.55,.85].forEach((f,i)=>{const y=ty+20+(th-20)*f,h=depthM*f,v=Math.sqrt(2*g*h);ctx.strokeStyle=L[2];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(tx,y);for(let k=0;k<30;k++){const tt=k*.02,sc=Math.min(60,tx/3.6),x=tx-v*tt*sc,yy=y+.5*g*tt*tt*sc;ctx.lineTo(x,yy);if(yy>H-20)break;}ctx.stroke();});
+  const py=ty+20+(th-20)*st.h,px=tx+tw*.6;ctx.strokeStyle="#333";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px,ty-20);ctx.lineTo(px,py);ctx.stroke();ctx.fillStyle="#7A1F2E";ctx.beginPath();ctx.arc(px,py,11,0,7);ctx.fill();
+  const h=depthM*st.h,P=L[1]*g*h+(st.atm?101325:0);
+  // عدّاد
+  const gx=W*.84,gy=H*.3,R=Math.min(60,W*.11);ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(gx,gy,R,0,7);ctx.fill();ctx.strokeStyle="#7A1F2E";ctx.lineWidth=4;ctx.stroke();
+  const max=st.atm?150000:(LIQ[st.liq][1]*g*depthM);const ang=Math.PI*.75+Math.PI*1.5*Math.min(1,P/max);for(let i=0;i<=10;i++){const a=Math.PI*.75+Math.PI*1.5*i/10;ctx.strokeStyle="#555";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(gx+Math.cos(a)*R*.8,gy+Math.sin(a)*R*.8);ctx.lineTo(gx+Math.cos(a)*R*.95,gy+Math.sin(a)*R*.95);ctx.stroke();}
+  ctx.strokeStyle="#c62828";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx+Math.cos(ang)*R*.75,gy+Math.sin(ang)*R*.75);ctx.stroke();T("مقياس الضغط",gx,gy+R+22);
+  // منحنى P-h
+  const ox=W*.72,oy=H-40,ow=W*.24,oh=H*.3;ctx.strokeStyle="#555";ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ox,oy-oh);ctx.lineTo(ox,oy);ctx.lineTo(ox+ow,oy);ctx.stroke();T("h",ox+ow+8,oy+4,"#333","left");T("P",ox,oy-oh-6,"#333");
+  ctx.strokeStyle=L[2];ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(ox,oy-(st.atm?oh*.6:0));ctx.lineTo(ox+ow,oy-(st.atm?oh*.6:0)-oh*(st.atm?.4:1));ctx.stroke();ctx.fillStyle="#7A1F2E";ctx.beginPath();ctx.arc(ox+ow*st.h,oy-(st.atm?oh*.6:0)-oh*(st.atm?.4:1)*st.h,5,0,7);ctx.fill();
+  $("read").textContent=(P/1000).toFixed(2)+" kPa";
+  $("calc").innerHTML=`P = ρ g h = ${L[1]} × 9.8 × ${h.toFixed(2)} = <b>${(L[1]*g*h).toFixed(0)} Pa</b>`+(st.atm?`<br>+ الضغط الجوي 101325 Pa ← الضغط الكلّي = <b>${P.toFixed(0)} Pa</b>`:"")+`<br><span class="tip">يزداد الضغط بزيادة العمق وكثافة السائل، ولا يعتمد على شكل الإناء.</span>`;
+  st.geo={tx,tw,ty:ty+20,th:th-20};},
+ drag(x,y){const G=st.geo;if(!G)return;st.h=Math.max(0,Math.min(1,(y-G.ty)/G.th));}};
+/* ---------- باسكال ---------- */
+M.pascal={hint:"غيّري القوّة المؤثّرة في المكبس الصغير ومساحتي المكبسين، وارفعي السيارة!",
+ init(){st={F1:100,A1:.01,A2:.5,lift:0};slider("القوّة على المكبس الصغير F₁",20,400,10,100,"N",v=>st.F1=v);slider("مساحة المكبس الصغير A₁",.005,.05,.005,.01,"m²",v=>st.A1=v);slider("مساحة المكبس الكبير A₂",.1,1,.05,.5,"m²",v=>st.A2=v);
+  quiz("إذا كانت مساحة المكبس الكبير 50 ضعف مساحة الصغير، فالقوّة الناتجة:",["تساوي القوّة المؤثّرة","50 ضعف القوّة المؤثّرة","نصف القوّة المؤثّرة"],1,"F₂ = F₁ × A₂/A₁.");},
+ draw(t){bg();const P=st.F1/st.A1,F2=P*st.A2,car=12000;const up=F2>=car;st.lift+=( (up?1:0)-st.lift)*.03;
+  const by=H*.75,x1=W*.15,w1=Math.max(18,Math.sqrt(st.A1)*260),x2=W*.55,w2=Math.max(60,Math.sqrt(st.A2)*200);
+  ctx.fillStyle="#4aa3df";ctx.fillRect(x1-w1/2,by-60+st.lift*30,w1,90-st.lift*30);ctx.fillRect(x1-w1/2,by+30,x2-x1+w2/2+w1/2,30);ctx.fillRect(x2-w2/2,by-60-st.lift*40,w2,90+st.lift*40);
+  glass(x1-w1/2,by-140,w1,170);glass(x2-w2/2,by-160,w2,190);
+  ctx.fillStyle="#7d858e";ctx.fillRect(x1-w1/2,by-72+st.lift*30,w1,12);ctx.fillRect(x2-w2/2,by-72-st.lift*40,w2,12);
+  // سهم القوّة
+  ctx.strokeStyle="#c62828";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x1,by-140+st.lift*30);ctx.lineTo(x1,by-80+st.lift*30);ctx.stroke();ctx.fillStyle="#c62828";ctx.beginPath();ctx.moveTo(x1-9,by-90+st.lift*30);ctx.lineTo(x1+9,by-90+st.lift*30);ctx.lineTo(x1,by-74+st.lift*30);ctx.fill();T("F₁ = "+st.F1+" N",x1,by-150+st.lift*30,"#c62828");
+  // سيارة
+  const cy=by-72-st.lift*40;ctx.fillStyle="#7A1F2E";ctx.beginPath();ctx.roundRect(x2-60,cy-34,120,26,8);ctx.fill();ctx.beginPath();ctx.roundRect(x2-36,cy-56,72,24,10);ctx.fill();ctx.fillStyle="#cfe8f7";ctx.fillRect(x2-28,cy-52,24,14);ctx.fillRect(x2+4,cy-52,24,14);ctx.fillStyle="#222";[x2-35,x2+35].forEach(x=>{ctx.beginPath();ctx.arc(x,cy-8,10,0,7);ctx.fill();});
+  T("سيارة وزنها 12000 N",x2,cy-66,"#333");T(up?"✔ ارتفعت السيارة!":"✖ القوّة غير كافية",x2,H-20,up?"#1f8f5b":"#c62828","center","800 17px 'Noto Naskh Arabic'");
+  $("read").textContent="F₂ = "+F2.toFixed(0)+" N";
+  $("calc").innerHTML=`الضغط المنقول = F₁/A₁ = ${st.F1}/${st.A1} = <b>${P.toFixed(0)} Pa</b><br>F₂ = P × A₂ = ${P.toFixed(0)} × ${st.A2} = <b>${F2.toFixed(0)} N</b><br><span class="tip">مبدأ باسكال: ينتقل الضغط في السائل المحصور بالتساوي إلى جميع أجزائه.</span>`;}};
+/* ---------- الغوّاص ---------- */
+M.diver={hint:"اضغطي على القارورة بالمنزلقة (أو اضغطي مطوّلًا على القارورة) ولاحظي الغوّاص وفقاعة الهواء داخله.",
+ init(){st={sq:0,y:.15,v:0,hold:false};st.inp=slider("قوّة الضغط على القارورة",0,100,1,0,"%",v=>st.sq=v);
+  quiz("يغوص الغوّاص عند الضغط على القارورة لأن:",["الماء يصبح أخفّ","الهواء داخله ينضغط فتزداد كثافته","الضغط يدفعه جانبًا"],1,"يقلّ حجم الهواء فيدخل ماء أكثر وتزداد كثافته.");},
+ draw(t){bg();const bx=W*.3,bw=W*.32,by=40,bh=H-80;const sq=(st.hold?100:st.sq)/100;const pinch=sq*14;
+  ctx.fillStyle="#4aa3df";ctx.beginPath();ctx.moveTo(bx+pinch,by+30);ctx.quadraticCurveTo(bx-6+pinch,by+bh/2,bx+pinch,by+bh);ctx.lineTo(bx+bw-pinch,by+bh);ctx.quadraticCurveTo(bx+bw+6-pinch,by+bh/2,bx+bw-pinch,by+30);ctx.closePath();ctx.fill();
+  ctx.strokeStyle="rgba(40,60,80,.7)";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#2f6f9a";ctx.fillRect(bx+bw/2-24,by,48,30);
+  const air=.6-sq*.35;const rho=1000*(.965+(1-air/.6)*.25);const net=(1000-rho)/1000;st.v+= (-net*2.5-st.v*1.5)*.016;st.y=Math.max(.02,Math.min(.92,st.y+st.v*.016*2));if(st.y<=.02||st.y>=.92)st.v=0;
+  const dx=bx+bw/2,dy=by+40+st.y*(bh-80),dh=60;ctx.fillStyle="rgba(255,255,255,.55)";ctx.strokeStyle="#334";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(dx-12,dy,24,dh,10);ctx.fill();ctx.stroke();
+  ctx.fillStyle="rgba(255,255,255,.95)";ctx.fillRect(dx-10,dy+2,20,dh*air);ctx.fillStyle="#4aa3df";ctx.fillRect(dx-10,dy+2+dh*air,20,dh*(1-air)-4);ctx.fillStyle="#c62828";ctx.fillRect(dx-14,dy+dh-6,28,8);
+  T("هواء",dx+30,dy+12,"#333","left","600 12px sans-serif");if(sq>0){[bx+pinch-30,bx+bw-pinch+30].forEach((x,i)=>{ctx.fillStyle="#e2b48c";ctx.beginPath();ctx.ellipse(x,by+bh/2,22,40,0,0,7);ctx.fill();T(i?"←":"→",x+(i?-30:30),by+bh/2+5,"#c62828","center","900 26px sans-serif");});}
+  $("read").textContent=st.y>.85?"غاص 🤿":st.y<.08?"يطفو 🎈":"يتحرّك…";
+  $("calc").innerHTML=`كثافة الغوّاص الكلّية ≈ <b>${rho.toFixed(0)} kg/m³</b> · كثافة الماء 1000 kg/m³<br>${rho>1000?"كثافة الغوّاص أكبر من الماء ← يغوص":"كثافة الغوّاص أقل من الماء ← يطفو"}<br><span class="tip">الضغط على القارورة ينتقل إلى الماء (باسكال) فينضغط الهواء في الغوّاص.</span>`;},
+ down(){st.hold=true;},up(){st.hold=false;}};
+/* ---------- الطفو ---------- */
+M.buoy={hint:"اختاري مادّة الجسم والسائل، ثم اسحبي الجسم لأسفل إلى السائل. لاحظي قراءة الميزان والماء المُزاح.",
+ init(){st={mat:1,liq:0,V:1,d:0};select("مادّة الجسم",MAT.map(m=>[m[0],m[1]]),1,v=>{st.mat=v;st.d=0;});select("السائل",LIQ.map(l=>[l[0],l[1]]),0,v=>st.liq=v);slider("حجم الجسم",.5,2,.1,1,"L",v=>st.V=v);
+  quiz("قطعة خشب كثافتها 600 kg/m³ في الماء، الجزء المغمور منها:",["كلّها","60%","40%","تغوص"],1,"الجزء المغمور = كثافة الجسم ÷ كثافة السائل.");},
+ draw(t){bg();const m=MAT[st.mat],L=LIQ[st.liq],V=st.V/1000,mass=m[1]*V,Wt=mass*g;const tx=W*.18,tw=W*.42,ty=H*.42,th=H*.5;
+  const side=Math.cbrt(st.V)*55;const floatFrac=Math.min(1,m[1]/L[1]);const maxSub=m[1]<L[1]?floatFrac:1;
+  const target=st.d;const sub=Math.max(0,Math.min(maxSub,target));const Fb=L[1]*V*sub*g;const scale=Math.max(0,Wt-Fb);
+  liquid(tx,ty+30-sub*side*.25,tw,th-30+sub*side*.25,L[2],t);glass(tx,ty,tw,th);
+  const ox=tx+tw/2,surf=ty+30-sub*side*.25,oy=surf-side+sub*side;
+  // الميزان النابضي
+  ctx.strokeStyle="#555";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox,20);ctx.lineTo(ox,oy-60);ctx.stroke();ctx.fillStyle="#e9ecef";ctx.strokeStyle="#7A1F2E";ctx.beginPath();ctx.roundRect(ox-26,oy-120,52,62,8);ctx.fill();ctx.stroke();T(scale.toFixed(1)+" N",ox,oy-84,"#7A1F2E","center","800 14px sans-serif");T("الميزان",ox,oy-100,"#555","center","600 11px sans-serif");
+  ctx.beginPath();ctx.moveTo(ox,oy-58);ctx.lineTo(ox,oy);ctx.stroke();
+  ctx.fillStyle=m[2];ctx.fillRect(ox-side/2,oy,side,side);ctx.strokeStyle="#333";ctx.strokeRect(ox-side/2,oy,side,side);T(m[0],ox,oy+side/2+5,"#222");
+  // أسهم القوى
+  const arr=(x,y,len,c,lab,upw)=>{ctx.strokeStyle=c;ctx.fillStyle=c;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+(upw?-len:len));ctx.stroke();const e=y+(upw?-len:len);ctx.beginPath();ctx.moveTo(x-8,e+(upw?10:-10));ctx.lineTo(x+8,e+(upw?10:-10));ctx.lineTo(x,e);ctx.fill();T(lab,x+(upw?-14:14),e+(upw?-4:14),c,upw?"right":"left","700 13px 'Noto Naskh Arabic'");};
+  const k=Math.min(4,70/Math.max(Wt,1));arr(ox+side/2+18,oy+side/2,Wt*k,"#c62828","الوزن "+Wt.toFixed(1)+" N",false);if(Fb>0)arr(ox-side/2-18,oy+side/2,Fb*k,"#1f6fd1","الطفو "+Fb.toFixed(1)+" N",true);
+  // الماء المزاح
+  const cx=W*.8,cyb=H-30,cw=60,chh=120;glass(cx-cw/2,cyb-chh,cw,chh);const disp=st.V*sub;ctx.fillStyle=L[2];ctx.fillRect(cx-cw/2+2,cyb-chh*Math.min(1,disp/2),cw-4,chh*Math.min(1,disp/2));T("السائل المُزاح",cx,cyb-chh-10,"#333");T(disp.toFixed(2)+" L",cx,cyb+18,"#333");
+  if(m[1]<L[1]&&st.d>=floatFrac-.001)T("🎈 يطفو: الوزن = قوّة الطفو",W/2,24,"#1f8f5b","center","800 16px 'Noto Naskh Arabic'");else if(m[1]>=L[1]&&sub>=1)T("⬇️ يغوص: الوزن أكبر من قوّة الطفو",W/2,24,"#c62828","center","800 16px 'Noto Naskh Arabic'");
+  $("read").textContent="قوّة الطفو = "+Fb.toFixed(1)+" N";
+  $("calc").innerHTML=`الوزن = m g = ${mass.toFixed(2)} × 9.8 = <b>${Wt.toFixed(1)} N</b><br>قوّة الطفو = ρ<sub>سائل</sub> V<sub>مغمور</sub> g = ${L[1]} × ${(V*sub).toFixed(4)} × 9.8 = <b>${Fb.toFixed(1)} N</b><br>الوزن الظاهري (قراءة الميزان) = <b>${scale.toFixed(1)} N</b><br><span class="tip">مبدأ أرخميدس: قوّة الطفو = وزن السائل المُزاح.</span>`;
+  st.geo={top:ty-side,bot:ty+th*.6};},
+ drag(x,y){const G=st.geo;if(!G)return;st.d=Math.max(0,Math.min(1,(y-(G.top+40))/(G.bot-G.top)));}};
+/* ---------- الكثافة ---------- */
+M.density={hint:"اختاري جسمًا مجهولًا: ضعيه على الميزان، ثم في المخبار المدرّج. احسبي الكثافة وحدّدي المادّة من الجدول.",
+ init(){st={o:Math.floor(Math.random()*MAT.length),V:20+Math.floor(Math.random()*30),step:0,show:false};
+  const s=select("الجسم",MAT.map((m,i)=>["جسم "+String.fromCharCode(65+i)+" ❓"]),st.o,v=>{st.o=v;st.V=20+Math.floor(Math.random()*30);st.step=0;st.show=false;});
+  button("1️⃣ ضعيه على الميزان",()=>st.step=Math.max(st.step,1));button("2️⃣ أسقطيه في المخبار",()=>st.step=2);button("🔎 اكشفي المادّة",()=>st.show=true,"gold");
+  const tb=document.createElement("table");tb.innerHTML="<tr><th>المادّة</th><th>الكثافة g/cm³</th></tr>"+MAT.map(m=>`<tr><td>${m[0]}</td><td>${(m[1]/1000).toFixed(2)}</td></tr>`).join("");ctl.append(tb);
+  quiz("قطعتان من الحديد كتلة الأولى ضعف الثانية، كثافة الأولى:",["ضعف الثانية","نصفها","تساويها"],2,"الكثافة خاصية مميّزة للمادة لا تعتمد على الكمية.");},
+ draw(t){bg();const m=MAT[st.o],mass=m[1]/1000*st.V;const sx=W*.22,sy=H*.7;
+  ctx.fillStyle="#3b3f46";ctx.fillRect(sx-80,sy,160,40);ctx.fillStyle="#d7dde3";ctx.fillRect(sx-70,sy-8,140,10);ctx.fillStyle="#0f1";ctx.fillStyle="#102a12";ctx.fillRect(sx-50,sy+10,100,22);T(st.step===1?mass.toFixed(1)+" g":"0.0 g",sx,sy+27,"#7CFC00","center","700 15px monospace");T("الميزان",sx,sy+60,"#333");
+  const cx=W*.65,cb=H-40,cw=70,ch=H*.62,ml=100,water=50;glass(cx-cw/2,cb-ch,cw,ch);const lev=water+(st.step===2?st.V:0);const lh=ch*lev/ml;liquid(cx-cw/2+2,cb-lh,cw-4,lh,"#4aa3df",t);
+  for(let i=0;i<=ml;i+=10){const y=cb-ch*i/ml;ctx.strokeStyle="#333";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx+cw/2-14,y);ctx.lineTo(cx+cw/2,y);ctx.stroke();T(i,cx+cw/2+6,y+4,"#333","left","600 11px sans-serif");}T("mL",cx+cw/2+6,cb-ch-8,"#333","left");
+  const sz=Math.cbrt(st.V)*9;let ox,oy;if(st.step===0){ox=sx;oy=H*.25;}else if(st.step===1){ox=sx;oy=sy-8-sz;}else{ox=cx;oy=cb-sz-2;}
+  if(st.step===2&&m[1]<1000)oy=cb-lh-sz*.5*(m[1]/1000)*2+sz*.0;ctx.fillStyle=m[2];ctx.beginPath();ctx.roundRect(ox-sz/2,oy,sz,sz,4);ctx.fill();ctx.strokeStyle="#333";ctx.stroke();
+  $("read").textContent=st.step<1?"—":st.step===1?"m = "+mass.toFixed(1)+" g":"m = "+mass.toFixed(1)+" g · V = "+st.V+" cm³";
+  $("calc").innerHTML=(st.step===2?`الحجم بالإزاحة = ${lev} − ${water} = <b>${st.V} cm³</b><br>`+(m[1]<1000?"⚠️ الجسم يطفو؛ نغمره كاملًا بإبرة رفيعة لقياس حجمه.<br>":"")+`ρ = m ÷ V = ${mass.toFixed(1)} ÷ ${st.V} = <b>${(mass/st.V).toFixed(2)} g/cm³</b>`:"قيسي الكتلة ثم الحجم.")+(st.show?`<br>🔎 المادّة: <b>${m[0]}</b>`:"");}};
+/* ---------- تشغيل ---------- */
+function setMode(m){if(!M[m])m="pressure";mode=m;history.replaceState(null,"","#"+m);document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.m===m)));ctl.innerHTML="";$("q").innerHTML="";$("hint").textContent=M[m].hint;M[m].init();}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+let dragging=false;const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top];};
+cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);dragging=true;const[x,y]=pos(e);M[mode].down&&M[mode].down();M[mode].drag&&M[mode].drag(x,y);});
+cv.addEventListener("pointermove",e=>{if(!dragging)return;const[x,y]=pos(e);M[mode].drag&&M[mode].drag(x,y);});
+const up=()=>{dragging=false;M[mode].up&&M[mode].up();};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+addEventListener("resize",size);addEventListener("hashchange",()=>{const m=location.hash.slice(1);if(m!==mode&&M[m])setMode(m);});
+size();setMode(mode);(function loop(now){M[mode].draw((now-t0)/1000);requestAnimationFrame(loop);})(t0);
+})();
+</script>
+</body>
+</html>

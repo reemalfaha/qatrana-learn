@@ -126,4 +126,20 @@ M3D.register("starlife",{title:"دورة حياة النجوم",desc:"تتبّع
   const bB=A.control("💥 نجم ضخم",()=>{path="big";dim(down,1);dim(up,.15);ptsD.forEach(p=>p.material.opacity=.9);ptsU.forEach(p=>p.material.opacity=.1);[bA,bS].forEach(b=>b.setAttribute("aria-pressed","false"));A.info("مصير نجم ضخم الكتلة","سديم ← نجم أوّلي ← نسق رئيس (ملايين السنين فقط) ← عملاق أحمر أعظم ← مستعر أعظم ← نجم نيوتروني أو ثقب أسود.");return true;});
   A.st.yaw=0;A.st.pitch=.15;A.st.auto=false;
   A.tick((dt,t)=>{neb.rotation.y+=dt*.15;pn.rotation.y-=dt*.2;sn.rotation.y+=dt*.25;const s=1+.08*Math.sin(t*4);sn.scale.setScalar(1+.15*Math.sin(t*2));rg.scale.setScalar(1+.04*Math.sin(t*1.3));ms.children[1].scale.setScalar(3.2*s);disk.rotation.z+=dt*1.5;});}});
+/* ---------- DNA ---------- */
+M3D.register("dna",{title:"جزيء DNA (اللولب المزدوج)",desc:"شريطان من السكّر والفوسفات تربطهما قواعد نيتروجينية متزاوجة: A مع T و G مع C. شغّلي «التضاعف» لتري انفصال الشريطين.",dist:21,
+ build(A){const T=A.THREE,{mat,root}=A;const N=22,rise=.55,R=2.1,tw=.6;const COL={A:"#e74c3c",T:"#f1c40f",G:"#2ecc71",C:"#3498db"},PAIR={A:"T",T:"A",G:"C",C:"G"};
+  const seq=Array.from({length:N},()=>"ATGC"[Math.floor(Math.random()*4)]);const g=new T.Group();root.add(g);const bb1=[],bb2=[],rungs=[];
+  const sug=new T.SphereGeometry(.26,14,10),pho=new T.SphereGeometry(.2,12,8),rg=new T.CylinderGeometry(.13,.13,1,10);
+  for(let i=0;i<N;i++){const a=i*tw,y=(i-N/2)*rise;const p1=new T.Vector3(R*Math.cos(a),y,R*Math.sin(a)),p2=new T.Vector3(R*Math.cos(a+Math.PI*.8),y,R*Math.sin(a+Math.PI*.8));
+   const s1=new T.Mesh(sug,mat("#e67e22")),s2=new T.Mesh(sug,mat("#e67e22"));s1.position.copy(p1);s2.position.copy(p2);g.add(s1,s2);A.pick(s1,"سكّر رايبوز منقوص الأكسجين","جزء من العمود الفقري لشريط DNA، ترتبط به القاعدة النيتروجينية.");A.pick(s2,"سكّر رايبوز منقوص الأكسجين","جزء من العمود الفقري لشريط DNA.");
+   if(i<N-1){[[p1,a+tw*.5,R],[p2,a+Math.PI*.8+tw*.5,R]].forEach(([p,aa],k)=>{const ph=new T.Mesh(pho,mat("#8e44ad"));ph.position.set(R*Math.cos(aa),y+rise/2,R*Math.sin(aa));g.add(ph);A.pick(ph,"مجموعة الفوسفات","تربط السكّر في نيوكليوتيد بالسكّر في النيوكليوتيد التالي.");(k?bb2:bb1).push(ph);});}
+   const b=seq[i],c=PAIR[b];const mid=p1.clone().add(p2).multiplyScalar(.5);
+   const mk=(from,to,base)=>{const m=new T.Mesh(rg,mat(COL[base]));const d=to.clone().sub(from);m.scale.y=d.length();m.position.copy(from.clone().add(to).multiplyScalar(.5));m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());
+     const nm={A:"الأدينين (A)",T:"الثايمين (T)",G:"الغوانين (G)",C:"السايتوسين (C)"}[base];A.pick(m,nm,"قاعدة نيتروجينية تتزاوج دائمًا مع "+{A:"الثايمين T",T:"الأدينين A",G:"السايتوسين C",C:"الغوانين G"}[base]+"، وترتيب القواعد يحمل المعلومات الوراثية.");g.add(m);return m;};
+   const r1=mk(p1,mid,b),r2=mk(mid,p2,c);bb1.push(s1,r1);bb2.push(s2,r2);rungs.push([r1,r2,s1,s2]);}
+  g.add(A.label("A–T  ·  G–C",new T.Vector3(0,N/2*rise+1.2,0)));
+  let rep=false,u=0;A.control("🧬 التضاعف (فكّ الشريطين)",()=>{rep=!rep;return rep;});
+  A.tick((dt,t)=>{g.rotation.y+=dt*.25;u+=((rep?1:0)-u)*dt*1.5;bb1.forEach(m=>{m.userData.o=m.userData.o||m.position.clone();m.position.x=m.userData.o.x-u*2.2;});bb2.forEach(m=>{m.userData.o=m.userData.o||m.position.clone();m.position.x=m.userData.o.x+u*2.2;});});}});
+
 })();

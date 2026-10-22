@@ -77,7 +77,7 @@ footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;paddi
 </main>
 <script>
 const GRADES=[["الثامن","الصف الثامن"],["التاسع","الصف التاسع"],["العاشر","الصف العاشر"],["الحادي عشر","الصف الحادي عشر"],["الثاني عشر","الصف الثاني عشر"]];
-const SECTIONS=g=>g==="الثامن"?["أ"]:["أ","ب"];
+const SECTIONS=g=>g==="التاسع"?["أ","ب"]:["أ"];
 const IC={ar:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 22H20v-4"/><path d="M9 8h7M9 11.5h5"/>',
  math:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7.5h8M8.5 12h1M12 12h1M15.5 12h1M8.5 16h1M12 16h1M15.5 16h1"/>',
  sci:'<path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21.5h11.6a2 2 0 0 0 1.7-3L14 9V3"/><path d="M7.5 15h9"/>',
@@ -86,7 +86,7 @@ const IC={ar:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5
 const SUBJ=[
  {k:"ar",t:"لغتي",d:"اللغة العربية",url:"https://lughati.reemalfahad-an.workers.dev",grades:["الثامن","التاسع","العاشر"]},
  {k:"math",t:"رياضيّاتي",d:"الرياضيات",url:"https://riyadiyati.reemalfahad-an.workers.dev",grades:["الثامن","التاسع","العاشر"]},
- {k:"sci",t:"العلوم",d:"أحياء · كيمياء · فيزياء · علوم الأرض",url:"science",grades:["التاسع","العاشر"]},
+ {k:"sci",t:"العلوم",d:"أحياء · كيمياء · فيزياء · علوم الأرض",url:"science",grades:["الثامن","التاسع","العاشر"]},
  {k:"en",t:"English",d:"اللغة الإنجليزية",url:"",grades:[]}];
 const $=id=>document.getElementById(id);
 let st={g:"",s:""};try{st=Object.assign(st,JSON.parse(localStorage.getItem("qatrana.learn")||"{}"))}catch(e){}

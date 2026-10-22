@@ -51,7 +51,7 @@ Lab3D.register("flame",{title:"اختلاف لون اللهب الصادر عن 
     COLORS.forEach(([n,c])=>{const b=document.createElement("button");b.className="sw";b.style.setProperty("--c",c);b.textContent=n;b.onclick=()=>{const ok=!cur.contaminated&&n===s[4];
       A.record({salt:s[0]+" "+s[1],ion:s[2],seen:n,ok:cur.contaminated?"⚠️ ملوّث، أعيدي بعد التنظيف":ok?"✅ صحيح":"❌ الصحيح: "+s[4]});if(ok)seenSet.add(cur.i);A.step("name");if(seenSet.size>=5)A.step("all");
       A.toast(ok?"✅ أحسنتِ! سُجّل في الجدول":"سُجّل. راجعي اللون في الجدول");cur=null;A.hud("");A.go(2);hints();};r.append(b);});box.append(r);return box;};
-  hints();}});
+  Lab3D._dbg={wire,bu,tip};hints();}});
 
 Lab3D.register("indicator",{title:"الكشف عن الحموض والقواعد بالكواشف",subject:"الكيمياء",grade:"التاسع",book:"كتاب الطالب",icon:"🧪",desc:"كاشف الملفوف الأحمر وورق تبّاع الشمس مع مواد من البيت",
  question:"كيف نميّز الحموض من القواعد باستخدام الكواشف؟",goal:"تصنيف مواد شائعة إلى حمضية وقاعدية ومتعادلة باستخدام كاشف الملفوف الأحمر.",

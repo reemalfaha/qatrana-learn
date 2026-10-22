@@ -44,7 +44,7 @@ function burner(){const g=new T.Group();const base=new T.Mesh(new T.CylinderGeom
   const gt=new T.CanvasTexture(gc);const halo=new T.Sprite(new T.SpriteMaterial({map:gt,color:0x7fb8ff,transparent:true,opacity:.55,depthWrite:false,toneMapped:false}));halo.scale.set(1.1,1.7,1);halo.position.y=.55;fl.add(halo);
   const light=new T.PointLight(0x88aaff,0,4);light.position.y=.5;fl.add(light);
   fl.visible=false;
-  const api={g,knob,fl,on:false,color:"#7fb8ff",lit(v){api.on=v;fl.visible=v;light.intensity=v?1.2:0;},setColor(c,strength=1){api.color=c;outer.material.color.set(c);outer.material.opacity=.45+.45*strength;halo.material.color.set(c);halo.material.opacity=.45+.45*strength;halo.scale.set(1.1+.6*strength,1.7+.9*strength,1);outer.scale.x=outer.scale.z=1+.5*strength;light.color.set(c);light.intensity=api.on?1.2+3*strength:0;},
+  const api={g,knob,fl,on:false,color:"#7fb8ff",lit(v){api.on=v;fl.visible=v;light.intensity=v?1.2:0;},setColor(c,strength=1){api.color=c;outer.material.color.set(c);outer.material.opacity=.4+.3*strength;halo.material.color.set(c);halo.material.opacity=.45+.4*strength;halo.scale.set(1.1+.6*strength,1.7+.9*strength,1);outer.scale.x=outer.scale.z=1+.5*strength;light.color.set(c);light.intensity=api.on?1.2+3*strength:0;},
    tick(t){if(!api.on)return;const s=1+.08*Math.sin(t*23)+.05*Math.sin(t*37);outer.scale.y=s;inner.scale.set(1,1+.05*Math.sin(t*31),1);}};return api;}
 function balance(L){const g=new T.Group();const body=new T.Mesh(new T.BoxGeometry(1.3,.22,1),M.std("#f5f6fa",{roughness:.4}));body.position.y=.11;body.castShadow=true;g.add(body);
   const plate=new T.Mesh(new T.CylinderGeometry(.42,.42,.04,40),M.std("#dfe6e9",{metalness:.8,roughness:.2}));plate.position.set(0,.25,-.1);g.add(plate);
@@ -85,7 +85,7 @@ function stage(host,cfg){const TEST=/[?&]test/.test(location.search);const R=new
     if(!drag)return;const dx=e.clientX-drag[0],dy=e.clientY-drag[1];moved+=Math.abs(dx)+Math.abs(dy);st.yaw-=dx*.006;st.pitch=Math.max(.12,Math.min(1.25,st.pitch+dy*.005));drag=[e.clientX,e.clientY];});
   const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=0;if(drag&&moved<7){const a=hit(e);if(a)a();}drag=null;};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",e=>{pts.delete(e.pointerId);drag=null;});
   cv.addEventListener("wheel",e=>{e.preventDefault();st.dist=Math.max(4,Math.min(16,st.dist*(e.deltaY>0?1.08:.92)));},{passive:false});
-  let last=performance.now();(function loop(now){const dt=Math.min(.05,(now-last)/1000)*(st.speed==null?1:st.speed);last=now;st.t+=dt;
+  let last=performance.now();(function loop(now){const dt=Math.max(0,Math.min(.05,(now-last)/1000))*(st.speed==null?1:st.speed);last=now;st.t+=dt;
     st.anims=st.anims.filter(a=>{a.e+=dt;const k=Math.min(1,a.e/a.d),v=ease(k);a.f(v);if(k>=1){a.done&&a.done();return false;}return true;});
     st.ticks.forEach(f=>f(dt,st.t));
     cam.position.set(st.tx+st.dist*Math.cos(st.pitch)*Math.sin(st.yaw),st.ty+st.dist*Math.sin(st.pitch),st.tz+st.dist*Math.cos(st.pitch)*Math.cos(st.yaw));cam.lookAt(st.tx,st.ty,st.tz);R.render(sc,cam);requestAnimationFrame(loop);})(last);

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر الوراثة</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--ok:#1f8f5b;--bad:#c2410c;--soft:#f6ece6;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--gold2:#f3dfa8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+header.hd{background:linear-gradient(135deg,var(--wine2),var(--wine));color:#fff;border-radius:18px;padding:16px 18px;border-bottom:4px solid var(--gold)}
+header.hd h1{font-family:var(--fd);margin:0;font-size:clamp(24px,4.5vw,36px)}
+header.hd p{margin:4px 0 0;color:var(--gold2)}
+header.hd a{color:#fff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:700 15px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--wine);border-color:var(--wine);color:#fff}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgba(60,20,30,.07)}
+canvas{display:block;width:100%;touch-action:none;border-radius:12px;background:#f3eee6;cursor:grab}
+.ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bench>*{min-width:0}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:8px 14px;background:var(--wine);color:#fff;cursor:pointer;min-height:42px}
+.btn.g{background:var(--soft);color:var(--ink);border:1.5px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1a00}
+.btn:active{transform:scale(.97)}
+label.l{font-weight:700;font-size:14px;color:var(--muted)}
+select,input{min-width:0;max-width:100%;font:600 16px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--card);color:var(--ink);min-height:42px}
+.read{font:700 28px/1.3 ui-monospace,Menlo,monospace;direction:ltr;text-align:center;background:var(--soft);border-radius:12px;padding:8px}
+.calc{background:#fffaf0;border:1.5px dashed var(--gold);border-radius:12px;padding:10px;font-size:15px}
+@media (prefers-color-scheme:dark){.calc{background:#2a2114}}
+.calc b{color:var(--wine)}
+@media (prefers-color-scheme:dark){.calc b{color:var(--gold2)}}
+.msg{font-weight:700;border-radius:10px;padding:8px 10px}
+.msg.ok{background:#e3f6ec;color:var(--ok)}.msg.no{background:#fdeee6;color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+th{background:var(--soft)}
+.tip{font-size:14px;color:var(--muted)}
+.sw{display:inline-flex;gap:6px;align-items:center;font-weight:600;cursor:pointer}
+.sw input{width:20px;height:20px;min-height:0}
+footer{text-align:center;color:var(--muted);font-size:13px}
+html.embed header.hd,html.embed footer{display:none!important}
+html.embed .wrap{padding-top:6px}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hd"><h1>🧬 مختبر الوراثة</h1><p>اختاري الصفة وطراز الأبوين الجيني، وتوقّعي، ثم شاهدي صفات الأبناء في مربّع بانيت</p>
+<p><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
+<div class="tabs" role="tablist">
+ <button role="tab" data-m="cross">🧪 مختبر الصفات</button>
+ <button role="tab" data-m="detective">🕵️ تحدّي المحقّقة</button>
+ <button role="tab" data-m="me">🙋 صفاتي أنا</button>
+</div>
+<div id="app"></div>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+</div>
+<style>
+.traits{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.traits b{font-size:14px;color:var(--muted);margin-inline-start:6px}
+.tr{font:700 15px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;min-height:42px}
+.tr[aria-pressed="true"]{background:var(--wine);color:#fff;border-color:var(--wine)}
+.parents{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:12px}
+@media (max-width:700px){.parents{grid-template-columns:1fr}.x{transform:rotate(90deg)}}
+.par{text-align:center}
+.par h3{margin:0 0 6px;font-family:var(--fd)}
+.pic{width:150px;height:150px;margin:0 auto;display:block}
+.gts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.gt{font:800 18px/1 ui-monospace,monospace;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;cursor:pointer;min-width:62px}
+.gt small{display:block;font:600 11px var(--f);margin-top:4px;color:var(--muted)}
+.gt[aria-pressed="true"]{border-color:var(--gold);background:#fbf1d6}
+.ph{font-weight:800;color:var(--wine);margin-top:6px}
+.x{font-size:40px;text-align:center;color:var(--gold);pointer-events:none;line-height:1}
+.pred{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pun{display:grid;grid-template-columns:70px repeat(2,minmax(0,1fr));grid-template-rows:70px repeat(2,auto);gap:6px;max-width:560px;margin:10px auto}
+.pun .gam{display:flex;align-items:center;justify-content:center;border-radius:50%;width:56px;height:56px;margin:auto;font:800 24px ui-monospace,monospace;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.gam.f{background:#2563c9}.gam.m{background:#c2297a}
+.cell{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:8px;text-align:center;opacity:0;transform:scale(.6);transition:.45s}
+.cell.on{opacity:1;transform:none}
+.cell svg{width:84px;height:84px}
+.cell b{display:block;font:800 22px ui-monospace,monospace;letter-spacing:2px}
+.cell small{color:var(--muted)}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:120px 1fr 54px;gap:8px;align-items:center;font-weight:700}
+.bar .t{height:24px;border-radius:12px;background:var(--soft);overflow:hidden}
+.bar .t i{display:block;height:100%;border-radius:12px;transition:width .8s}
+.ratio{font:800 22px var(--fd);text-align:center;color:var(--wine);margin:6px 0}
+.kids{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.kids svg{width:46px;height:46px}
+.mytab td,.mytab th{padding:8px}
+.mytab svg{width:56px;height:56px}
+</style>
+<script>
+(()=>{
+const app=document.getElementById("app");
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,y]of Object.entries(a)){if(y==null||y===false)continue;if(x==="class")e.className=y;else if(x==="html")e.innerHTML=y;else if(x.startsWith("on"))e.addEventListener(x.slice(2),y);else e.setAttribute(x,y);}for(const c of k.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e;};
+const svg=s=>{const d=document.createElement("div");d.innerHTML=s.trim();return d.firstChild;};
+/* ---- رسوم الصفات (SVG) ---- */
+const FACE=(inner,skin="#f2c9a5")=>`<svg viewBox="0 0 120 120" class="pic"><circle cx="60" cy="60" r="44" fill="${skin}"/><path d="M22 52 Q24 14 60 14 Q96 14 98 52 Q90 30 60 30 Q30 30 22 52Z" fill="#3a2a22"/>${inner}</svg>`;
+const D={
+ ear:dom=>`<svg viewBox="0 0 120 120" class="pic"><path d="M8 0 L8 120 L40 120 Q34 100 44 92 L44 0Z" fill="#f2c9a5"/><path d="M60 12 C92 12 104 40 96 64 C90 80 80 84 78 92 ${dom?"C78 110 64 116 56 106 C52 100 54 94 50 90":"C74 96 60 98 44 96"} C38 80 32 60 34 40 C38 22 48 12 60 12Z" fill="#f6d2b2" stroke="#b07a55" stroke-width="3"/><path d="M60 30 C78 30 84 46 78 58 C74 66 66 66 64 74" fill="none" stroke="#c98d68" stroke-width="4" stroke-linecap="round"/>${dom?'<path d="M56 106 Q46 104 44 96" stroke="#b07a55" stroke-width="2" fill="none" stroke-dasharray="3 3"/><text x="88" y="112" font-size="11" fill="#7A1F2E">حرّة</text>':'<text x="70" y="112" font-size="11" fill="#7A1F2E">ملتصقة</text>'}</svg>`,
+ tongue:dom=>FACE(`<circle cx="44" cy="54" r="5" fill="#2b1a12"/><circle cx="76" cy="54" r="5" fill="#2b1a12"/><ellipse cx="60" cy="84" rx="16" ry="11" fill="#7a1f2e"/>${dom?'<path d="M48 84 Q48 98 60 98 Q72 98 72 84 Q66 92 60 86 Q54 92 48 84Z" fill="#ff7a90"/><path d="M60 87 L60 96" stroke="#c94a63" stroke-width="2"/>':'<ellipse cx="60" cy="92" rx="13" ry="7" fill="#ff7a90"/>'}`),
+ dimple:dom=>FACE(`<path d="M38 54 Q44 48 50 54" stroke="#2b1a12" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M70 54 Q76 48 82 54" stroke="#2b1a12" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M42 74 Q60 94 78 74" stroke="#7a1f2e" stroke-width="4" fill="#fff" stroke-linejoin="round"/>${dom?'<circle cx="34" cy="76" r="3.5" fill="#c98d68"/><circle cx="86" cy="76" r="3.5" fill="#c98d68"/>':""}<circle cx="32" cy="68" r="6" fill="#f4a8a0" opacity=".5"/><circle cx="88" cy="68" r="6" fill="#f4a8a0" opacity=".5"/>`),
+ eye:dom=>`<svg viewBox="0 0 120 120" class="pic"><path d="M10 60 Q60 14 110 60 Q60 106 10 60Z" fill="#fff" stroke="#3a2a22" stroke-width="4"/><circle cx="60" cy="60" r="24" fill="${dom?"#7b4a24":"#3d8fd1"}"/><circle cx="60" cy="60" r="24" fill="url(#ig${dom?1:0})"/><circle cx="60" cy="60" r="10" fill="#111"/><circle cx="68" cy="52" r="5" fill="#fff"/><defs><radialGradient id="ig${dom?1:0}"><stop offset="40%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".35"/></radialGradient></defs><path d="M14 52 Q60 4 106 52" fill="none" stroke="#3a2a22" stroke-width="3" stroke-dasharray="2 7"/></svg>`,
+ height:dom=>{const top=dom?10:62;let leaves="";for(let y=top+14;y<104;y+=16)leaves+=`<ellipse cx="${(y/16)%2?48:72}" cy="${y}" rx="12" ry="6" fill="#4caf50" transform="rotate(${(y/16)%2?-25:25} ${(y/16)%2?48:72} ${y})"/>`;return `<svg viewBox="0 0 120 120" class="pic"><rect x="30" y="104" width="60" height="12" rx="3" fill="#8d5a3b"/><path d="M60 104 L60 ${top}" stroke="#2e7d32" stroke-width="5"/>${leaves}<circle cx="60" cy="${top}" r="7" fill="#b39ddb"/><text x="104" y="${top+4}" font-size="11" fill="#555">${dom?"طويل":"قصير"}</text></svg>`;},
+ scolor:dom=>`<svg viewBox="0 0 120 120" class="pic"><defs><radialGradient id="sc${dom?1:0}" cx="40%" cy="35%"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="${dom?"#ffe066":"#8bc34a"}"/><stop offset="1" stop-color="${dom?"#c9a200":"#3d7a1c"}"/></radialGradient></defs><circle cx="44" cy="62" r="24" fill="url(#sc${dom?1:0})"/><circle cx="80" cy="70" r="20" fill="url(#sc${dom?1:0})"/><circle cx="66" cy="34" r="16" fill="url(#sc${dom?1:0})"/></svg>`,
+ sshape:dom=>{let p="";if(dom)p=`<circle cx="60" cy="60" r="38" fill="url(#ss)"/>`;else{let d="";for(let i=0;i<=24;i++){const a=i/24*Math.PI*2,r=38+(i%2?-6:4);d+=(i?"L":"M")+(60+r*Math.cos(a)).toFixed(1)+" "+(60+r*Math.sin(a)).toFixed(1);}p=`<path d="${d}Z" fill="url(#ss)" stroke="#a88a00" stroke-width="2" stroke-linejoin="round"/><path d="M36 50 Q50 58 44 74 M70 36 Q64 54 80 62 M58 84 Q66 74 82 80" stroke="#a88a00" stroke-width="2.5" fill="none"/>`;}
+   return `<svg viewBox="0 0 120 120" class="pic"><defs><radialGradient id="ss" cx="40%" cy="35%"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#ffe066"/><stop offset="1" stop-color="#c9a200"/></radialGradient></defs>${p}</svg>`;},
+ flower:dom=>{const c=dom?"#8e44ad":"#f5f5f5",s=dom?"#5e2a75":"#bbb";let pet="";for(let i=0;i<5;i++){const a=i*72;pet+=`<ellipse cx="60" cy="34" rx="15" ry="24" fill="${c}" stroke="${s}" stroke-width="2" transform="rotate(${a} 60 58)"/>`;}return `<svg viewBox="0 0 120 120" class="pic"><path d="M60 70 L60 116" stroke="#2e7d32" stroke-width="5"/>${pet}<circle cx="60" cy="58" r="10" fill="#f1c40f"/></svg>`;}
+};
+const TR=[
+ {k:"ear",g:"h",name:"شحمة الأذن",L:"E",dom:"حرّة (منفصلة)",rec:"ملتصقة"},
+ {k:"tongue",g:"h",name:"ثني اللسان",L:"R",dom:"قادرة على ثني اللسان",rec:"غير قادرة"},
+ {k:"dimple",g:"h",name:"الغمّازات",L:"D",dom:"وجود غمّازات",rec:"بلا غمّازات"},
+ {k:"eye",g:"h",name:"لون العينين (مبسّط)",L:"B",dom:"بنّي",rec:"أزرق"},
+ {k:"height",g:"p",name:"طول الساق",L:"T",dom:"طويل",rec:"قصير"},
+ {k:"scolor",g:"p",name:"لون البذرة",L:"Y",dom:"أصفر",rec:"أخضر"},
+ {k:"sshape",g:"p",name:"شكل البذرة",L:"R",dom:"أملس (مستدير)",rec:"مجعّد"},
+ {k:"flower",g:"p",name:"لون الزهرة",L:"P",dom:"بنفسجي",rec:"أبيض"}];
+const GT=t=>[[t.L+t.L,"نقي سائد"],[t.L+t.L.toLowerCase(),"هجين"],[t.L.toLowerCase()+t.L.toLowerCase(),"نقي متنحٍّ"]];
+const isDom=g=>g!==g.toLowerCase();
+const phen=(t,g)=>isDom(g)?t.dom:t.rec;
+const norm=(a,b)=>a===a.toUpperCase()?a+b:(b===b.toUpperCase()?b+a:a+b);
+let st={t:0,f:1,m:1,pred:null,shown:false},score=(()=>{try{return JSON.parse(localStorage.getItem("gen.score"))||{ok:0,n:0}}catch(e){return {ok:0,n:0}}})();
+const saveS=()=>{try{localStorage.setItem("gen.score",JSON.stringify(score));}catch(e){}};
+function traitBar(on){const w=h("div",{class:"card"});const mk=(g,lab)=>{const r=h("div",{class:"traits"},h("b",{},lab));TR.forEach((t,i)=>{if(t.g===g)r.append(h("button",{class:"tr","aria-pressed":String(i===st.t),onclick:()=>{st.t=i;st.pred=null;st.shown=false;on();}},t.name));});return r;};
+ w.append(mk("h","👩 صفات في الإنسان:"),h("div",{style:"height:6px"}),mk("p","🌱 نبات البازيلاء (تجارب مندل):"));return w;}
+function cross(f,m){const o=[];for(const a of f)for(const b of m)o.push(norm(a,b));return o;}
+/* ---------- مختبر الصفات ---------- */
+function vCross(){app.innerHTML="";const t=TR[st.t],G=GT(t);const human=t.g==="h";
+ app.append(traitBar(vCross));
+ const parent=(key,title)=>{const g=G[st[key]][0];return h("div",{class:"card par"},h("h3",{},title),svg(D[t.k](isDom(g))),h("div",{class:"ph"},phen(t,g)),
+   h("div",{class:"gts"},...G.map(([x,lab],i)=>h("button",{class:"gt","aria-pressed":String(i===st[key]),onclick:()=>{st[key]=i;st.pred=null;st.shown=false;vCross();}},x,h("small",{},lab)))));};
+ app.append(h("div",{class:"parents"},parent("f",human?"👨 الأب":"🌱 النبات الأول"),h("div",{class:"x"},"✖"),parent("m",human?"👩 الأم":"🌱 النبات الثاني")));
+ const f=G[st.f][0],m=G[st.m][0],kids=cross(f,m),pd=Math.round(kids.filter(isDom).length/4*100);
+ const pc=h("div",{class:"card",style:"margin-top:12px;text-align:center"},h("b",{},"🤔 توقّعي أولًا: ما نسبة الأبناء الذين يحملون الصفة السائدة («"+t.dom+"»)؟"));
+ const pr=h("div",{class:"pred",style:"margin-top:8px"});[0,25,50,75,100].forEach(v=>pr.append(h("button",{class:"gt","aria-pressed":String(st.pred===v),onclick:()=>{st.pred=v;vCross();}},v+"%")));pc.append(pr);
+ pc.append(h("div",{style:"margin-top:10px"},h("button",{class:"btn gold",disabled:st.pred==null?"":null,onclick:()=>{st.shown=true;score.n++;if(st.pred===pd)score.ok++;saveS();vCross();}},"🔀 كوّني الأبناء")));app.append(pc);
+ if(!st.shown)return;
+ const ok=st.pred===pd;app.append(h("div",{class:"msg "+(ok?"ok":"no"),style:"margin-top:10px;text-align:center"},ok?"🎉 توقّع صحيح! أحسنتِ.":"توقّعتِ "+st.pred+"% والصحيح "+pd+"%. لاحظي مربّع بانيت 👇"));
+ // مربّع بانيت
+ const P=h("div",{class:"pun"});P.append(h("div"),...[...f].map(a=>h("div",{class:"gam f",title:"جاميت من "+(human?"الأب":"النبات الأول")},a)));
+ const cells=[];[...m].forEach((b,i)=>{P.append(h("div",{class:"gam m",title:"جاميت من "+(human?"الأم":"النبات الثاني")},b));[...f].forEach((a,j)=>{const g=norm(a,b);const c=h("div",{class:"cell"},svg(D[t.k](isDom(g))),h("b",{},g),h("small",{},phen(t,g)));cells.push(c);P.append(c);});});
+ app.append(h("div",{class:"card",style:"margin-top:12px"},h("h3",{style:"text-align:center;margin:0"},"مربّع بانيت"),h("p",{class:"tip",style:"text-align:center;margin:4px 0"},"الدوائر الزرقاء جاميتات "+(human?"الأب":"النبات الأول")+"، والوردية جاميتات "+(human?"الأم":"النبات الثاني")+". كل خانة احتمالها 25%."),P));
+ cells.forEach((c,i)=>setTimeout(()=>c.classList.add("on"),250+i*350));
+ // النسب
+ const cnt={};kids.forEach(g=>cnt[g]=(cnt[g]||0)+1);const gts=[t.L+t.L,t.L+t.L.toLowerCase(),t.L.toLowerCase()+t.L.toLowerCase()].filter(g=>cnt[g]);
+ const dN=kids.filter(isDom).length,rN=4-dN;
+ const bars=h("div",{class:"bars"});const bar=(lab,n,c)=>{const i=h("i",{style:"width:0;background:"+c});setTimeout(()=>i.style.width=(n/4*100)+"%",1700);return h("div",{class:"bar"},h("span",{},lab),h("div",{class:"t"},i),h("span",{},n/4*100+"%"));};
+ gts.forEach(g=>bars.append(bar("الطراز "+g,cnt[g],"#2563c9")));if(dN)bars.append(bar(t.dom,dN,"#B8902A"));if(rN)bars.append(bar(t.rec,rN,"#7A1F2E"));
+ const gRatio=[t.L+t.L,t.L+t.L.toLowerCase(),t.L.toLowerCase()+t.L.toLowerCase()].map(g=>cnt[g]||0).filter(Boolean).join(" : ");
+ const kidsRow=h("div",{class:"kids"});for(let i=0;i<20;i++){const g=kids[Math.floor(Math.random()*4)];kidsRow.append(svg(D[t.k](isDom(g))));}
+ app.append(h("div",{class:"card",style:"margin-top:12px"},h("h3",{style:"margin:0 0 8px"},"📊 نتائج الأبناء"),bars,
+   h("div",{class:"ratio"},"الطرز الجينية ",h("span",{dir:"ltr"},gRatio),"  ·  الطرز الشكلية ",h("span",{dir:"ltr"},[dN,rN].filter(Boolean).join(" : "))),
+   h("div",{class:"calc"},"• احتمال ظهور الصفة السائدة «"+t.dom+"» = "+dN+"/4 = "+dN*25+"%",h("br"),"• احتمال ظهور الصفة المتنحّية «"+t.rec+"» = "+rN+"/4 = "+rN*25+"%",h("br"),
+     rN&&!dN?"• لا تظهر الصفة المتنحّية إلا إذا اجتمع أليلان متنحّيان ("+t.L.toLowerCase()+t.L.toLowerCase()+").":dN&&rN?"• الأبناء ذوو الطراز الهجين يحملون الأليل المتنحّي دون أن تظهر صفته.":"• جميع الأبناء يحملون أليلًا سائدًا واحدًا على الأقل."),
+   h("p",{class:"tip",style:"margin:10px 0 4px"},"عيّنة عشوائية من 20 ابنًا:"),kidsRow));
+ app.append(h("p",{class:"tip",style:"text-align:center"},"نتيجتكِ في التوقّع: "+score.ok+" صحيحة من "+score.n));}
+/* ---------- تحدّي المحقّقة ---------- */
+let D2=null;function newCase(){const ti=Math.floor(Math.random()*TR.length),f=Math.floor(Math.random()*3),m=Math.floor(Math.random()*3);const t=TR[ti],G=GT(t);const kids=cross(G[f][0],G[m][0]);
+ const N=40;const sample=[];for(let i=0;i<N;i++)sample.push(kids[Math.floor(Math.random()*4)]);
+ // نضبط العيّنة لتقارب النسبة النظرية
+ const dN=Math.round(N*kids.filter(isDom).length/4);const out=[];for(let i=0;i<N;i++)out.push(i<dN);D2={ti,f,m,out:out.sort(()=>Math.random()-.5),gf:null,gm:null,done:false};}
+function vDet(){app.innerHTML="";if(!D2)newCase();const t=TR[D2.ti],G=GT(t),human=t.g==="h";const dN=D2.out.filter(Boolean).length,N=D2.out.length;
+ app.append(h("div",{class:"card"},h("h3",{style:"margin:0"},"🕵️ القضية: صفة «"+t.name+"»"),h("p",{style:"margin:6px 0"},"تزاوج "+(human?"أب وأم":"نباتان")+" وأنجبا "+N+" "+(human?"من الأبناء (في عائلات كثيرة متشابهة)":"نباتًا")+": "+dN+" «"+t.dom+"» و"+(N-dN)+" «"+t.rec+"». ما الطراز الجيني لكلٍّ من الأبوين؟"),
+  h("div",{class:"kids"},...D2.out.map(d=>svg(D[t.k](d))))));
+ const pick=(key,title)=>h("div",{class:"card par"},h("h3",{},title),h("div",{class:"gts"},...G.map(([x,lab],i)=>h("button",{class:"gt","aria-pressed":String(D2[key]===i),onclick:()=>{D2[key]=i;vDet();}},x,h("small",{},lab)))));
+ app.append(h("div",{class:"parents"},pick("gf",human?"👨 الأب":"🌱 الأول"),h("div",{class:"x"},"✖"),pick("gm",human?"👩 الأم":"🌱 الثاني")));
+ const fb=h("div",{style:"margin-top:8px"});
+ app.append(h("div",{style:"text-align:center;margin-top:12px"},h("button",{class:"btn",onclick:()=>{if(D2.gf==null||D2.gm==null){fb.innerHTML='<div class="msg no">اختاري طراز الأبوين.</div>';return;}
+   const want=cross(G[D2.f][0],G[D2.m][0]).filter(isDom).length,got=cross(G[D2.gf][0],G[D2.gm][0]).filter(isDom).length;score.n++;
+   if(want===got){score.ok++;fb.innerHTML='<div class="msg ok">🎉 أحسنتِ يا محقّقة! الطرازان يعطيان '+got*25+'% «'+t.dom+'».'+((D2.gf!==D2.f||D2.gm!==D2.m)&&got===4?" (توجد احتمالات أخرى صحيحة أيضًا)":"")+'</div>';}
+   else fb.innerHTML='<div class="msg no">ليس تمامًا: اختياركِ يعطي '+got*25+'% من الصفة السائدة، والنتيجة '+want*25+'%. تلميح: '+(want===3?"3 : 1 تعني أن الأبوين هجينان.":want===2?"1 : 1 تعني أن أحدهما هجين والآخر نقي متنحٍّ.":want===0?"إذا كان جميع الأبناء بالصفة المتنحّية فالأبوان نقيّان متنحّيان.":"إذا كان جميع الأبناء بالصفة السائدة فأحد الأبوين على الأقل نقي سائد.")+'</div>';saveS();}},"✔ تحقّقي"),
+   h("button",{class:"btn g",style:"margin-inline-start:6px",onclick:()=>{newCase();vDet();}},"🔄 قضية جديدة")),fb,h("p",{class:"tip",style:"text-align:center"},"نتيجتكِ: "+score.ok+" من "+score.n));}
+/* ---------- صفاتي ---------- */
+let ME=(()=>{try{return JSON.parse(localStorage.getItem("gen.me"))||{}}catch(e){return {}}})();
+function vMe(){app.innerHTML="";const tb=h("table",{class:"mytab",style:"width:100%;border-collapse:collapse"});tb.append(h("tr",{},h("th",{},"الصفة"),h("th",{},"صفتي"),h("th",{},"طرازي الجيني المحتمل")));
+ TR.filter(t=>t.g==="h").forEach(t=>{const v=ME[t.k];const sel=h("div",{class:"gts"},h("button",{class:"gt","aria-pressed":String(v===1),onclick:()=>{ME[t.k]=1;sv();}},svg(D[t.k](true)),h("small",{},t.dom)),h("button",{class:"gt","aria-pressed":String(v===0),onclick:()=>{ME[t.k]=0;sv();}},svg(D[t.k](false)),h("small",{},t.rec)));
+  tb.append(h("tr",{},h("td",{},h("b",{},t.name)),h("td",{},sel),h("td",{style:"text-align:center;font:800 20px ui-monospace,monospace"},v==null?"—":v?t.L+t.L+" أو "+t.L+t.L.toLowerCase():t.L.toLowerCase()+t.L.toLowerCase())));});
+ const sv=()=>{try{localStorage.setItem("gen.me",JSON.stringify(ME));}catch(e){}vMe();};
+ app.append(h("div",{class:"card"},h("h3",{style:"margin-top:0"},"🙋 ما صفاتي الوراثية؟"),h("p",{class:"tip"},"اختاري صفتكِ الظاهرة (الطراز الشكلي) لتعرفي طرازكِ الجيني المحتمل. لماذا يوجد احتمالان عندما تكون صفتكِ سائدة؟"),h("div",{style:"overflow-x:auto"},tb),
+  h("div",{class:"calc",style:"margin-top:10px"},"💡 إذا ظهرت عليكِ الصفة المتنحّية فطرازكِ الجيني مؤكّد (نقي متنحٍّ). أمّا الصفة السائدة فقد تكونين نقيّة أو هجينة، ويمكن معرفة ذلك من صفات والديكِ أو أبنائكِ.")));}
+const V={cross:vCross,detective:vDet,me:vMe};let mode=(location.hash||"#cross").slice(1);if(!V[mode])mode="cross";
+function setMode(m){mode=m;history.replaceState(null,"","#"+m);document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.m===m)));V[m]();}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));addEventListener("hashchange",()=>{const m=location.hash.slice(1);if(V[m]&&m!==mode)setMode(m);});
+setMode(mode);
+})();
+</script>
+</body>
+</html>

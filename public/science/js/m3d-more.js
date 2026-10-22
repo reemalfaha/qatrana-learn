@@ -142,4 +142,60 @@ M3D.register("dna",{title:"جزيء DNA (اللولب المزدوج)",desc:"ش�
   let rep=false,u=0;A.control("🧬 التضاعف (فكّ الشريطين)",()=>{rep=!rep;return rep;});
   A.tick((dt,t)=>{g.rotation.y+=dt*.25;u+=((rep?1:0)-u)*dt*1.5;bb1.forEach(m=>{m.userData.o=m.userData.o||m.position.clone();m.position.x=m.userData.o.x-u*2.2;});bb2.forEach(m=>{m.userData.o=m.userData.o||m.position.clone();m.position.x=m.userData.o.x+u*2.2;});});}});
 
+
+/* ---------- نموذج بور للذرّة (العناصر 1–20) ---------- */
+M3D.register("atom",{title:"بناء الذرّة (نموذج بور)",desc:"اختاري العنصر بالأزرار ← →: تظهر البروتونات والنيوترونات في النواة والإلكترونات في مستويات الطاقة. اضغطي على أي جزء.",dist:21,
+ build(A){const T=A.THREE,{mat,root}=A;
+  const EL=[["H","الهيدروجين",1],["He","الهيليوم",4],["Li","الليثيوم",7],["Be","البيريليوم",9],["B","البورون",11],["C","الكربون",12],["N","النيتروجين",14],["O","الأكسجين",16],["F","الفلور",19],["Ne","النيون",20],["Na","الصوديوم",23],["Mg","المغنيسيوم",24],["Al","الألمنيوم",27],["Si","السيليكون",28],["P","الفسفور",31],["S","الكبريت",32],["Cl","الكلور",35],["Ar","الأرغون",40],["K","البوتاسيوم",39],["Ca","الكالسيوم",40]];
+  let Z=lsGetSafe("m3d.atomZ",11);const G=new T.Group();root.add(G);let shells=[],lbl=null;
+  function lsGetSafe(k,d){try{return +localStorage.getItem(k)||d;}catch(e){return d;}}
+  const pG=new T.SphereGeometry(.32,16,12),eG=new T.SphereGeometry(.2,14,10);
+  function build(){while(G.children.length)G.remove(G.children[0]);shells=[];A.st.picks.length=0;const [sym,name,mass]=EL[Z-1],N=mass-Z;
+   const nuc=new T.Group();const tot=Z+N;const r0=.32*Math.cbrt(tot)*1.25;
+   for(let i=0;i<tot;i++){const isP=i%2===0?(Math.floor(i/2)<Z):false;}
+   let pLeft=Z,nLeft=N;for(let i=0;i<tot;i++){const useP=(pLeft>0&&(nLeft===0||(i%2===0)));if(useP)pLeft--;else nLeft--;
+     const m=new T.Mesh(pG,mat(useP?"#e74c3c":"#95a5a6"));const phi=Math.acos(1-2*(i+.5)/tot),th=Math.PI*(1+Math.sqrt(5))*i;const rr=r0*Math.cbrt((i+1)/tot);
+     m.position.set(rr*Math.sin(phi)*Math.cos(th),rr*Math.cos(phi),rr*Math.sin(phi)*Math.sin(th));nuc.add(m);
+     A.pick(m,useP?"بروتون (+)":"نيوترون (متعادل)",useP?"جسيم موجب الشحنة في النواة. عددها = العدد الذرّي = "+Z+".":"جسيم متعادل في النواة. عددها = العدد الكتلي − العدد الذرّي = "+mass+" − "+Z+" = "+N+".");}
+   G.add(nuc);
+   const cfg=[];let left=Z;[2,8,8,2].forEach(c=>{if(left>0){cfg.push(Math.min(c,left));left-=c;}});
+   cfg.forEach((n,si)=>{const R=2.4+si*1.7;const ring=new T.Mesh(new T.TorusGeometry(R,.03,8,90),new T.MeshBasicMaterial({color:0x7A1F2E,transparent:true,opacity:.45}));ring.rotation.x=Math.PI/2;G.add(ring);
+     A.pick(ring,"مستوى الطاقة "+(si+1),"يتّسع المستوى "+(si+1)+" لـ "+[2,8,8,2][si]+" إلكترونات (للعناصر العشرين الأولى). فيه هنا "+n+".");
+     const es=new T.Group();for(let k=0;k<n;k++){const e=new T.Mesh(eG,mat("#2563c9",{emissive:0x0a2a6a}));const a=k/n*Math.PI*2;e.position.set(R*Math.cos(a),0,R*Math.sin(a));es.add(e);A.pick(e,"إلكترون (−)","جسيم سالب الشحنة كتلته صغيرة جدًّا، يدور في مستوى الطاقة "+(si+1)+".");}
+     G.add(es);shells.push({es,sp:.9/(si+1)});});
+   G.add(A.label(sym+" · "+name+" · Z = "+Z+" · A = "+mass,new T.Vector3(0,2.4+cfg.length*1.7+.6,0)));
+   G.add(A.label("التوزيع الإلكتروني: "+cfg.join("، "),new T.Vector3(0,-(2.4+cfg.length*1.7)-.4,0),"#1d4f8a"));
+   A.info(name+" ("+sym+")","العدد الذرّي "+Z+" ← "+Z+" بروتونًا و"+Z+" إلكترونًا، والعدد الكتلي "+mass+" ← "+N+" نيوترونًا. التوزيع الإلكتروني: "+cfg.join("، ")+". إلكترونات التكافؤ: "+cfg[cfg.length-1]+".");}
+  A.control("→ السابق",()=>{Z=Math.max(1,Z-1);try{localStorage.setItem("m3d.atomZ",Z);}catch(e){}build();});A.control("التالي ←",()=>{Z=Math.min(20,Z+1);try{localStorage.setItem("m3d.atomZ",Z);}catch(e){}build();});
+  build();A.st.pitch=.4;
+  A.tick((dt)=>{shells.forEach(s=>s.es.rotation.y+=dt*s.sp);});}});
+
+/* ---------- الصفائح التكتونية وحدودها ---------- */
+M3D.register("plates",{title:"الصفائح التكتونية وحدودها",desc:"مقطع في الأرض يبيّن الحدود المتباعدة والمتقاربة والتحويلية وتيارات الحمل في الوشاح. شغّلي الحركة واضغطي على أي جزء.",dist:24,
+ build(A){const T=A.THREE,{mat,root}=A;const W=22,Dp=8;
+  const slab=(x,w,y,h,c,name,info)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,Dp),mat(c,{flatShading:true}));m.position.set(x,y,0);root.add(m);if(name)A.pick(m,name,info);return m;};
+  const mantle=slab(0,W,-4,5,"#d35400","الوشاح (الغلاف المائع في جزئه العلوي)","صخور ساخنة لدنة تتحرّك ببطء بتيارات الحمل، فتجرّ الصفائح فوقها.");mantle.material.emissive=new T.Color(0x5a1a00);
+  const ocL=slab(-7.5,7,-.9,1.2,"#34495e","صفيحة محيطية","قشرة محيطية رقيقة كثيفة من البازلت.");
+  const ocR=slab(-0.6,6,-.9,1.2,"#34495e","صفيحة محيطية","تتباعد عن الصفيحة المجاورة عند حيد منتصف المحيط.");
+  const water=new T.Mesh(new T.BoxGeometry(14.5,1,Dp),new T.MeshPhongMaterial({color:0x2e86de,transparent:true,opacity:.55}));water.position.set(-4,.1,0);root.add(water);
+  const cont=slab(6.5,9,-.3,2.4,"#8d6e63","صفيحة قارّية","قشرة قارّية سميكة أقل كثافة من المحيطية.");
+  // اندساس
+  const sub=new T.Mesh(new T.BoxGeometry(4,1.1,Dp),mat("#34495e"));sub.position.set(3.2,-2.2,0);sub.rotation.z=-.55;root.add(sub);A.pick(sub,"الاندساس (حدود متقاربة)","تهبط الصفيحة المحيطية الأكثر كثافة تحت القارّية، فتتكوّن الأخاديد والبراكين والزلازل.");
+  const vol=new T.Mesh(new T.ConeGeometry(1.6,2.6,24),mat("#6d4c41"));vol.position.set(5.3,2.2,0);root.add(vol);const lava=new T.Mesh(new T.ConeGeometry(.45,.6,16),new T.MeshBasicMaterial({color:0xff5a1f}));lava.position.set(5.3,3.3,0);root.add(lava);
+  A.pick(vol,"بركان","يتكوّن فوق منطقة الاندساس حين تنصهر الصخور وتصعد الماغما.");
+  const mt=new T.Mesh(new T.ConeGeometry(1.8,3.2,5),mat("#a1887f",{flatShading:true}));mt.position.set(8.8,2.5,0);root.add(mt);A.pick(mt,"سلسلة جبلية","ترتفع القشرة القارّية بفعل الضغط عند الحدود المتقاربة.");
+  const ridge=new T.Mesh(new T.ConeGeometry(.9,1.2,4),mat("#c0392b"));ridge.position.set(-4.05,.1,0);root.add(ridge);A.pick(ridge,"حيد منتصف المحيط (حدود متباعدة)","تتباعد الصفيحتان فتصعد الماغما وتتكوّن قشرة محيطية جديدة، مثل حيد الأطلسي والبحر الأحمر.");
+  // تيارات الحمل
+  const conv=[];[-7,1].forEach((cx,i)=>{const pts=[];for(let k=0;k<=40;k++){const a=k/40*Math.PI*2;pts.push(new T.Vector3(cx+3*Math.cos(a)*(i?1:-1),-4+1.8*Math.sin(a),Dp/2+.05));}
+    const tb=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts,true),80,.08,8,true),new T.MeshBasicMaterial({color:0xffe08a}));root.add(tb);A.pick(tb,"تيارات الحمل","تسخن المواد في أعماق الوشاح فتصعد، وتبرد قرب السطح فتهبط، فتتحرّك الصفائح.");conv.push(new T.CatmullRomCurve3(pts,true));});
+  const dots=conv.map(()=>Array.from({length:6},()=>{const d=new T.Mesh(new T.SphereGeometry(.14,10,8),new T.MeshBasicMaterial({color:0xfff3c4}));root.add(d);return d;}));
+  // تحويلية (مقطع خلفي)
+  const tf1=slab(-3,8,-.9,1.2,"#566573",null),tf2=slab(-3,8,-.9,1.2,"#4d5b6a",null);tf1.position.z=-Dp-2;tf2.position.z=-Dp-2-Dp;tf1.scale.z=.5;tf2.scale.z=.5;tf1.position.z=-6;tf2.position.z=-10;
+  A.pick(tf1,"حدود تحويلية","تنزلق الصفيحتان أفقيًّا بجانب بعضهما فتحدث الزلازل، مثل صدع البحر الميت التحويلي.");A.pick(tf2,"حدود تحويلية","تنزلق الصفيحتان أفقيًّا بجانب بعضهما.");
+  const lb=(t,x,y,z,c)=>root.add(A.label(t,new T.Vector3(x,y,z),c));lb("متباعدة",-4,2.2,0,"#c0392b");lb("متقاربة",4,4.6,0,"#6d4c41");lb("تحويلية",-3,1.2,-8,"#4d5b6a");lb("تيارات الحمل",-3,-7,4,"#b35a00");
+  let on=true,u=0;A.control("⏯ الحركة",()=>{on=!on;return on;},true);
+  A.tick((dt,t)=>{if(!on)return;u+=dt*.08;dots.forEach((arr,i)=>arr.forEach((d,k)=>d.position.copy(conv[i].getPoint(((i?u:-u)+k/6+10)%1))));
+   ocL.position.x=-7.5-Math.sin(t*.5)*.12;ocR.position.x=-.6+Math.sin(t*.5)*.12;tf1.position.x=-3+Math.sin(t*.7)*.25;tf2.position.x=-3-Math.sin(t*.7)*.25;lava.scale.setScalar(1+.15*Math.sin(t*4));});
+  A.st.pitch=.25;A.st.yaw=.35;}});
+
 })();

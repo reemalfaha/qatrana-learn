@@ -7,7 +7,7 @@ const META={};
 let K,B,page,tool="move",color=COLORS[0][0],size=4,gap,width,data,blocks,cv,ctx,pageEl,undo=[],keyH,resizeH,SUB,KIND;
 /* كتب كل مبحث: s = كتاب الطالب، a = كتاب الأنشطة؛ off = الفرق بين رقم صفحة الملف ورقم الصفحة المطبوع */
 function booksOf(s){return s.books||[];}
-function bookTitle(b){return (b.kind==="a"?"كتاب الأنشطة والتجارب العملية":"كتاب الطالب")+(b.part?" · "+b.part:"");}
+function bookTitle(b){return (b.kind[0]==="a"?"كتاب الأنشطة والتجارب العملية":"كتاب الطالب")+(b.part?" · "+b.part:"");}
 const pdfPage=(b,printed)=>printed+(b.off||0);
 const firstNum=s=>{const m=String(s||"").match(/\d+/);return m?+m[0]:1;};
 function expRef(x){const m=String(x.src||"").match(/كتاب\s*(الطالب|الأنشطة)\D*?(\d+)/);if(!m)return null;return {kind:m[1]==="الأنشطة"?"a":"s",p:+m[2]};}
@@ -21,7 +21,7 @@ async function meta(key){if(META[key])return META[key];const r=await fetch("book
 route(/^#\/books$/,V=>{V.append(crumbs(["الرئيسية","#/"],"الكتب"));
   V.append(el("div",{class:"hero"},el("div",{class:"orb"}),el("h1",{},"📚 الكتاب على السبّورة"),el("p",{},"صفحات الكتاب مقسّمة فقرات بينها فراغات للشرح وحلّ الأسئلة · قلم وتظليل وكتابة · وروابط التجارب إلى المختبر التفاعلي")));
   const gs=Object.keys(SCI.data);gs.forEach(g=>{const box=el("section",{class:"card",style:{marginTop:"14px"}},el("h3",{style:{marginBottom:"10px"}},"الصف "+g));const gr=el("div",{class:"grid g2"});
-    SUBJ_ORDER.forEach(k=>{const s=SCI.data[g][k];if(!s)return;booksOf(s).forEach(b=>gr.append(el("a",{class:"les",href:"#/book/"+b.key,style:{"--c":s.color}},el("span",{class:"st"},b.kind==="a"?"🧪":"📘"),el("div",{},el("b",{},s.name),el("small",{},bookTitle(b))))));});
+    SUBJ_ORDER.forEach(k=>{const s=SCI.data[g][k];if(!s)return;booksOf(s).forEach(b=>gr.append(el("a",{class:"les",href:"#/book/"+b.key,style:{"--c":s.color}},el("span",{class:"st"},b.kind[0]==="a"?"🧪":"📘"),el("div",{},el("b",{},s.name),el("small",{},bookTitle(b))))));});
     box.append(gr);V.append(box);});V.append(credit());});
 
 /* ---- عارض الكتاب ---- */
@@ -68,7 +68,7 @@ function toolbar(){
   const other=booksOf(SUB).filter(x=>x!==KIND);
   const bar=el("div",{class:"bk-bar"},
     el("div",{class:"bk-row"},el("button",{class:"btn ghost sm",onclick:()=>go2(-1),"aria-label":"السابقة"},"→"),sel,num,el("button",{class:"btn ghost sm",onclick:()=>go2(1),"aria-label":"التالية"},"←"),el("span",{class:"bk-lbl",id:"bkLbl"}),
-      ...other.map(x=>el("a",{class:"btn ghost sm",href:"#/book/"+x.key},(x.kind==="a"?"🧪 ":"📘 ")+bookTitle(x)))),
+      ...other.map(x=>el("a",{class:"btn ghost sm",href:"#/book/"+x.key},(x.kind[0]==="a"?"🧪 ":"📘 ")+bookTitle(x)))),
     el("div",{class:"bk-row tools"},T("move","✋","تصفّح"),T("pen","✏️","قلم"),T("hl","🖍️","تظليل"),T("type","🔤","كتابة"),T("erase","🧽","ممحاة"),el("span",{class:"bk-sep"}),colors,sz,el("span",{class:"bk-sep"}),
       el("button",{class:"bk-tool",onclick:doUndo,title:"تراجع"},el("span",{},"↶"),el("small",{},"تراجع")),
       el("button",{class:"bk-tool",onclick:wipe,title:"مسح الصفحة"},el("span",{},"🗑️"),el("small",{},"مسح")),

@@ -1,6 +1,6 @@
 /* الفيزياء — الصف التاسع — الفصل الأول (كتاب الطالب) */
 SCI.add("التاسع","phys",{
- name:"الفيزياء", short:"الفيزياء", icon:"bolt", color:"#c98408", periods:3, lab:"physics", books:[{key:"p9",kind:"s",off:1},{key:"p9a2",kind:"a",off:0}],
+ name:"الفيزياء", short:"الفيزياء", icon:"bolt", color:"#c98408", periods:3, lab:"physics", books:[{key:"p9",kind:"s",off:1},{key:"p9a",kind:"a",off:1},{key:"p9a2",kind:"a2",part:"الفصل الثاني",off:0}],
  units:[
  {id:"p9u1",n:1,title:"القياس",pages:"7–44",idea:"القياس أساس العلوم؛ نحتاج إلى وحدات موحّدة وأدوات دقيقة وتقدير صحيح للأخطاء.",
   lessons:[

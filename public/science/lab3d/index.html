@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>المختبر ثلاثي الأبعاد</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--soft:#f6ece6;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.lh{background:linear-gradient(135deg,var(--w2),var(--w) 55%,#9b2c3f);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;border-bottom:4px solid var(--g)}
+.lh h1{font:700 clamp(18px,3.2vw,26px) var(--fd);margin:0}.lh small{color:var(--g2)}.back{color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.6);border-radius:999px;padding:5px 12px;white-space:nowrap;font-weight:700}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:0;min-height:calc(100vh - 70px)}
+.view{position:relative;min-height:440px;height:calc(100vh - 70px);overflow:hidden;touch-action:none}
+.view canvas{display:block}
+.hud{position:absolute;top:12px;right:12px;max-width:min(360px,70%);background:rgba(255,255,255,.92);border:2px solid var(--g);border-radius:14px;padding:8px 12px;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:none}
+.ltoast{position:absolute;bottom:16px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:rgba(43,18,24,.92);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+.ltoast.on{opacity:1;transform:translateX(-50%)}
+.panel{background:var(--card);border-inline-start:1px solid var(--ln);display:flex;flex-direction:column;max-height:calc(100vh - 70px);overflow:auto}
+.stepper{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:8px;background:var(--soft);position:sticky;top:0;z-index:2}
+.sg{border:0;background:transparent;border-radius:10px;padding:4px 0;cursor:pointer;font:inherit;color:var(--mut);display:flex;flex-direction:column;align-items:center}
+.sg span{font-size:20px}.sg small{font-size:11px;font-weight:700}.sg.on{background:var(--w);color:#fff}.sg.past{color:var(--ink)}
+.pbody{padding:14px 16px 24px}.pbody h2{font:700 21px var(--fd);margin:0 0 8px;color:var(--w)}.pbody h3{margin:14px 0 6px}
+.big{font-size:18px;font-weight:700}.muted{color:var(--mut);font-size:14px}
+.box{background:#fffaf0;border:1.5px dashed var(--g);border-radius:12px;padding:8px 10px;margin:8px 0}.box.warn{background:#fff1ec;border-color:#e17055}
+.opts{display:flex;flex-direction:column;gap:6px;margin:8px 0}.opt{font:inherit;text-align:right;border:1.5px solid var(--ln);background:#fff;border-radius:12px;padding:9px 12px;cursor:pointer;color:var(--ink)}
+.opt.sel{border-color:var(--g);background:#fbf1d6}.opt.ok{border-color:#1f8f5b;background:#e3f6ec}.opt.no{border-color:#c2410c;background:#fdeee6}
+.why{background:var(--soft);border-radius:10px;padding:6px 10px;font-size:14px}
+.cq{margin:10px 0 14px}
+.lbtn{font:700 15px var(--f);border:0;border-radius:12px;padding:9px 14px;min-height:44px;background:var(--w);color:#fff;cursor:pointer;margin-top:8px}.lbtn.gold{background:var(--g);color:#2b1a00}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.steps{padding-inline-start:20px}.steps li{margin:6px 0;padding:6px 8px;border-radius:10px}.steps li.ok{color:#1f8f5b;text-decoration:line-through;opacity:.8}.steps li.ok::marker{content:"✔ "}.steps li.cur{background:#fbf1d6;font-weight:700;border:1.5px solid var(--g)}
+.dt{width:100%;border-collapse:collapse;font-size:14px}.dt td,.dt th{border:1px solid var(--ln);padding:5px;text-align:center}.dt th{background:var(--soft)}
+.chart{width:100%;height:auto;border:1px solid var(--ln);border-radius:12px}
+.swatches{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.sw{font:700 14px var(--f);border:2px solid var(--c);background:linear-gradient(90deg,var(--c) 0 28%,#fff 28%);border-radius:12px;padding:10px 8px 10px 4px;cursor:pointer;text-align:left;color:var(--ink);min-height:46px}
+.ta{width:100%;font:inherit;border:1.5px solid var(--ln);border-radius:12px;padding:8px}
+.list{max-width:1100px;margin:0 auto;padding:18px 16px 40px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.xc{display:block;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--ln);border-radius:18px;padding:16px;box-shadow:0 6px 18px rgba(60,20,30,.07);border-top:6px solid var(--c)}
+.xc .ic{font-size:40px}.xc b{display:block;font:700 19px var(--fd);margin:4px 0}.xc small{color:var(--mut)}
+@media (max-width:900px){.lab{grid-template-columns:1fr}.view{height:58vh;min-height:340px}.panel{max-height:none;border:0;border-top:1px solid var(--ln)}}
+html.embed .lh{display:none}html.embed .view{height:62vh}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div id="app"></div>
+<script src="../js/three.min.js"></script>
+<script src="engine.js"></script>
+<script src="exp-chem.js"></script>
+<script src="exp-bio.js"></script>
+<script src="exp-phys.js"></script>
+<script src="exp-earth.js"></script>
+<script>
+(function(){const id=location.hash.slice(1);
+ if(id){Lab3D.run(id);return;}
+ const app=document.getElementById("app");const COL={"الكيمياء":"#c2297a","العلوم الحياتية":"#2f8f5b","الفيزياء":"#c98408","علوم الأرض والبيئة":"#7a4fb5"};
+ app.innerHTML='<header class="lh"><div><small>منصّة العلوم · مدرسة القطرانة الثانوية للبنات</small><h1>🔬 المختبر ثلاثي الأبعاد</h1></div><a class="back" href="../#/labs">→ منصّة العلوم</a></header><div class="list"><p class="muted">تجارب الكتاب في مختبر ثلاثي الأبعاد: توقّعي، جرّبي بيدكِ، سجّلي البيانات، استنتجي، واكتبي تقريرك.</p><div class="grid" id="g"></div></div>';
+ Lab3D.list().forEach(x=>{const a=document.createElement("a");a.className="xc";a.href="#"+x.id;a.style.setProperty("--c",COL[x.subject]||"#7A1F2E");a.onclick=()=>setTimeout(()=>location.reload(),10);
+   a.innerHTML='<div class="ic">'+x.icon+'</div><b>'+x.title+'</b><small>'+x.subject+' · الصف '+x.grade+'</small><p class="muted" style="margin:6px 0 0">'+x.desc+'</p>';document.getElementById("g").append(a);});
+ addEventListener("hashchange",()=>location.reload());})();
+</script>
+</body>
+</html>

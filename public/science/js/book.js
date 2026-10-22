@@ -133,4 +133,4 @@ function guide(){let d=document.getElementById("bkDrawer");if(d){d.remove();retu
     el("div",{class:"row"},el("a",{class:"btn sm",href:"#/l/"+L.id+"/lab"},"⚗️ المختبر"),el("a",{class:"btn sm ghost",href:"#/t/plan/"+L.id},"📝 خطة الدرس"),el("a",{class:"btn sm ghost",href:"#/t/contest/"+L.unit.id},"🏆 مسابقة")));
   document.body.append(d);}
 })();
-function simHref(x){return x.lab==="chem3d"?"chem3d/#"+x.id:"labs/"+x.lab+".html#"+x.id;}
+function simHref(x){return x.lab==="chem3d"?"chem3d/#"+x.id:x.lab==="lab3d"?"lab3d/#"+x.id:"labs/"+x.lab+".html#"+x.id;}

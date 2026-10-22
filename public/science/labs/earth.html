@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر علوم الأرض والبيئة | مختبر بلا حدود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: field station — specimen canvas on stone-grey paper (wide column) beside an instrument panel; stacks on phones */
+:root{
+  --paper:#edf0ea; --panel:#ffffff; --ink:#1b2620; --muted:#5b6a61; --grid:#e2e7de; --line:#cbd4c8;
+  --accent:#b14f1c; --accent2:#1c6ea4; --accent3:#3a8733; --warn:#c08d14; --sum:#6a4aae; --chip:#e1e7dc;
+  --f-display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0e1411; --panel:#161f1a; --ink:#e3eae4; --muted:#98a69d; --grid:#1e2922; --line:#2c3a31;
+  --accent:#f07a3e; --accent2:#5ea8e0; --accent3:#6cc35d; --warn:#eabf4a; --sum:#a98cf0; --chip:#1d2821; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0e1411; --panel:#161f1a; --ink:#e3eae4; --muted:#98a69d; --grid:#1e2922; --line:#2c3a31;
+  --accent:#f07a3e; --accent2:#5ea8e0; --accent3:#6cc35d; --warn:#eabf4a; --sum:#a98cf0; --chip:#1d2821; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:0;max-width:62ch}
+nav{display:flex;flex-wrap:wrap;gap:10px 18px;padding-block:10px;border-block:1px solid var(--line)}
+.grp{display:flex;flex-direction:column;gap:6px}
+.grp b{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.grp div{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
+.chip:hover{border-color:var(--accent2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
+.stage{display:flex;flex-direction:column;gap:10px;min-width:0}
+.simhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.simhead h2{font-family:var(--f-display);font-weight:500;font-size:26px;margin:0}
+.simhead small{display:block;font-size:12px;color:var(--accent);font-weight:600}
+.law{font-family:var(--f-mono);font-size:14px;background:var(--chip);padding:4px 10px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+.cvbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;touch-action:none}
+canvas{display:block;width:100%}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{border-color:var(--accent2)}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.card h3{margin:0;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.note{margin:0;font-size:14px;color:var(--muted)}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl .top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.ctl output{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--chip);padding:3px;border-radius:8px}
+.seg button{flex:1 1 auto;font:inherit;font-size:13px;border:0;background:transparent;color:var(--ink);padding:5px 8px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.15);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;text-align:left}
+dd.hot{color:var(--accent);font-weight:600}
+dt.wide{grid-column:1/-1;margin-bottom:-6px}
+dd.wide{grid-column:1/-1;direction:rtl;text-align:right;font-family:var(--f-body);font-size:14px}
+dd.ar{direction:rtl;text-align:left;font-family:var(--f-body);font-size:14px}
+.try{border-inline-start:3px solid var(--accent3);background:var(--panel);padding:12px 14px;border-radius:0 8px 8px 0;font-size:14px}
+.try b{color:var(--accent3)}
+.back{align-self:flex-start;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--panel);padding:5px 12px;border-radius:999px}
+.back:hover{border-color:var(--accent)}
+footer{font-size:12px;color:var(--muted)}
+
+/* ---- free experimentation tools ---- */
+[hidden]{display:none!important}
+.num{display:inline-flex;align-items:center;gap:4px}
+.num input{width:84px;font:inherit;font-family:var(--f-mono);font-size:13px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);direction:ltr;text-align:left}
+.num small{font-size:12px;color:var(--muted)}
+select.sel,.panel select,.panel input,.nbaxes select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);min-width:0}
+.panel{display:flex;flex-direction:column;gap:10px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.frow{display:grid;grid-template-columns:26px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 30px;gap:6px;align-items:center}
+.frow.fhead{font-size:12px;color:var(--muted);font-weight:600}
+.frow input{width:100%;direction:ltr;text-align:left;font-family:var(--f-mono);font-size:13px}
+.sw{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:#fff;font-size:12px;font-weight:600;flex:0 0 auto}
+.xbtn{font:inherit;font-size:16px;line-height:1;width:28px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--accent);cursor:pointer}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.pred{display:flex;flex-direction:column;gap:8px;border:1px dashed var(--line);border-radius:8px;padding:10px;font-size:14px}
+.prow{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:14px}
+.prow label{flex:1 1 110px;font-size:13px;color:var(--muted)}
+.prow input,.prow select{flex:1 1 110px}
+.prow input[type=number]{direction:ltr;text-align:left;font-family:var(--f-mono)}
+.prow .short{flex:0 0 60px;text-align:center;font-family:var(--f-mono)}
+.fb{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--chip);line-height:1.5}
+.fb.ok{color:var(--accent3);font-weight:600}.fb.bad{color:var(--accent);font-weight:600}
+.eqin{width:100%;font-family:var(--f-mono)!important;font-size:15px!important;direction:ltr;text-align:left}
+.keypad{display:flex;flex-wrap:wrap;gap:4px}
+.keypad button{font-family:var(--f-mono);font-size:13px;min-width:34px;padding:5px 7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer;direction:ltr}
+.keypad button:hover{border-color:var(--accent2)}
+.keypad.ex button{font-size:11.5px;color:var(--muted)}
+.nb textarea{font:inherit;font-size:14px;width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+.nbl{font-size:13px;color:var(--muted);font-weight:600}
+.nbtw{overflow-x:auto;max-width:100%}
+.nbtw table{border-collapse:collapse;font-size:12px;width:max-content;min-width:100%}
+.nbtw th,.nbtw td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right;white-space:nowrap}
+.nbtw th{color:var(--muted);font-weight:600;font-size:11.5px}
+.nbtw td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.nbplot{display:flex;flex-direction:column;gap:8px}
+.nbaxes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.nbaxes select{flex:1 1 140px}
+#nb-cv{width:100%;display:block;border:1px solid var(--line);border-radius:8px}
+dt.wide{grid-column:1/-1;margin-bottom:-6px}
+dd.wide{grid-column:1/-1;direction:rtl;text-align:right;font-family:var(--f-body);font-size:14px}
+dd.ar{direction:rtl;text-align:left;font-family:var(--f-body);font-size:14px}
+</style>
+
+<style>html.embed .wrap>header,html.embed #nav,html.embed .wrap>footer{display:none!important}html.embed body{padding-top:6px}</style><script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script></head>
+<body>
+<div class="wrap" dir="rtl">
+  <header>
+    <a class="back" href="../#/labs">→ العودة إلى منصّة العلوم</a>
+    <span class="eyebrow">14 محاكاة حيّة · 7 أقسام</span>
+    <h1>مختبر <span>علوم الأرض</span> والبيئة</h1>
+    <p class="sub">من باطن الأرض إلى الغلاف الجوي والفضاء والنظم البيئية. حرّكي المتغيرات وراقبي كيف يستجيب كوكبنا، وكل رقم في لوحة القياسات يُحسب لحظة بلحظة. اكتبي القيم التي تريدينها بنفسك، وسجّلي محاولاتك في دفتر التجارب، وارسمي العلاقة بين المتغيرات لتستنتجي القانون.</p>
+  </header>
+  <nav id="nav" aria-label="أقسام علوم الأرض والبيئة"></nav>
+  <main class="bench">
+    <section class="stage">
+      <div class="simhead">
+        <div><small id="branch"></small><h2 id="name"></h2></div>
+        <span class="law" id="law"></span>
+      </div>
+      <div class="cvbox"><canvas id="cv" aria-label="لوحة المحاكاة"></canvas></div>
+      <div class="acts" id="acts"></div>
+    </section>
+    <aside class="side">
+      <div class="card"><h3>المتغيرات</h3><div id="ctls" style="display:flex;flex-direction:column;gap:14px"></div></div>
+      <div class="card"><h3>القياسات</h3><dl id="ro"></dl></div>
+      <div class="try" id="try"></div>
+    </aside>
+  </main>
+  <footer>جزء من منصة «مختبر بلا حدود» · إعداد المعلمة نوال بني عطية · مدرسة القطرانة الثانوية للبنات<br>القيم مبسّطة ومقرّبة لأغراض تعليمية.</footer>
+</div>
+
+<script>
+const D=Math.PI/180,$=s=>document.querySelector(s),C={};
+function readColors(){const s=getComputedStyle(document.documentElement);['paper','panel','ink','muted','grid','line','accent','accent2','accent3','warn','sum'].forEach(k=>C[k]=s.getPropertyValue('--'+k).trim());}
+readColors();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readColors);
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d):'—';
+const FONT='"IBM Plex Sans Arabic",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
+function niceStep(r){const raw=r/5,p=10**Math.floor(Math.log10(raw||1)),n=raw/p;return(n<1.5?1:n<3.5?2:n<7.5?5:10)*p}
+function interp(tb,x){if(x<=tb[0][0])return tb[0][1];for(let i=1;i<tb.length;i++)if(x<=tb[i][0]){const a=tb[i-1],b=tb[i];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return tb[tb.length-1][1]}
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hex(h){h=(h||'#000').trim();if(h.length===4)h='#'+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+function arrow(ctx,x1,y1,x2,y2,col,label,w=2.5){const L=Math.hypot(x2-x1,y2-y1);if(L<2)return;const a=Math.atan2(y2-y1,x2-x1),h=Math.min(10,L*.45);
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(a)*h*.8,y2-Math.sin(a)*h*.8);ctx.stroke();
+  ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.4),y2-h*Math.sin(a-.4));ctx.lineTo(x2-h*Math.cos(a+.4),y2-h*Math.sin(a+.4));ctx.fill();
+  if(label){ctx.font='600 12px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x2+Math.cos(a)*16,y2+Math.sin(a)*14)}}
+function text(ctx,t,x,y,col,size=12,align='center',font=FONT,weight=500){ctx.fillStyle=col;ctx.font=`${weight} ${size}px ${font}`;ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(t,x,y)}
+function textS(ctx,t,x,y,size=12,align='center'){ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=3;text(ctx,t,x,y,'#fff',size,align,FONT,600);ctx.restore()}
+function grid(ctx,W,H,step=24){ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();for(let x=.5;x<W;x+=step){ctx.moveTo(x,0);ctx.lineTo(x,H)}for(let y=.5;y<H;y+=step){ctx.moveTo(0,y);ctx.lineTo(W,y)}ctx.stroke()}
+function yearsFmt(y){if(y>=1e9)return fmt(y/1e9,2)+' مليار سنة';if(y>=1e6)return fmt(y/1e6,1)+' مليون سنة';return Math.round(y).toLocaleString('en')+' سنة'}
+let W=0,H=0;
+
+/* ================= SIMULATIONS ================= */
+const SIMS=[
+/* ---------- Earth's interior ---------- */
+{id:'layers',branch:'الأرض الصلبة',name:'طبقات الأرض الداخلية',law:'R = 6371 km',
+ tip:'انزلي بالمسبار ببطء: عند أي عمق تصبح المادة سائلة؟ لماذا يكون اللب الداخلي صلبًا مع أنه الأشد حرارة؟ (فكّري في الضغط). ولماذا لا تعبر الموجات الزلزالية الثانوية S اللب الخارجي؟',
+ controls:[{id:'d',label:'عمق المسبار تحت السطح',min:0,max:6371,step:1,val:1800,unit:'km'}],
+ L:[{n:'القشرة',to:35,st:'صلبة',co:'صخور سيليكاتية خفيفة (الجرانيت في القارات والبازلت تحت المحيطات)',c:'#8f6a48'},
+    {n:'الوشاح العلوي',to:660,st:'صلب لدن يتحرك ببطء شديد (الغلاف الضعيف)',co:'صخر البريدوتيت الغني بسيليكات الحديد والمغنيسيوم',c:'#c4612c'},
+    {n:'الوشاح السفلي',to:2890,st:'صلب',co:'سيليكات وأكاسيد عالية الكثافة',c:'#9c3f27'},
+    {n:'اللب الخارجي',to:5150,st:'سائل',co:'حديد ونيكل منصهران، وحركته تولّد المجال المغناطيسي للأرض',c:'#df8f27'},
+    {n:'اللب الداخلي',to:6371,st:'صلب',co:'حديد ونيكل صلبان بفعل الضغط الهائل',c:'#f0c447'}],
+ T:[[0,15],[35,500],[100,1300],[660,1900],[2890,3700],[5150,5000],[6371,5400]],
+ P:[[0,0],[35,1],[660,24],[2890,136],[5150,330],[6371,364]],
+ R:[[0,2.7],[35,3.3],[660,4.4],[2890,5.6],[2890.5,9.9],[5150,12.2],[5150.5,12.8],[6371,13.1]],
+ lay(d){return this.L.find(l=>d<=l.to)||this.L[4]},
+ reset(){this.s={}},step(){},
+ draw(ctx,W,H,p){const Ht=Math.round(H*.6),cx=W/2,cy=Ht,R=Math.min(W/2-16,Ht-24),cur=this.lay(p.d);let from=0;
+  this.L.forEach(l=>{const r=R*(6371-from)/6371;ctx.fillStyle=l.c;ctx.beginPath();ctx.moveTo(cx-r,cy);ctx.arc(cx,cy,r,Math.PI,0);ctx.closePath();ctx.fill();from=l.to});
+  from=0;this.L.forEach((l,i)=>{const ro=R*(6371-from)/6371,ri=R*(6371-l.to)/6371;if(l===cur){ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,ro-1,Math.PI,0);ctx.stroke()}
+   if(i>=2)textS(ctx,l.n,cx-(ro+ri)/2,cy-10,W<420?10:12);from=l.to});
+  text(ctx,'القشرة',cx-R*.74-6,cy-R*.74-12,C.ink,12,'center',FONT,600);
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx+R*.72,cy-R*.72);ctx.lineTo(cx+R*.86,cy-R*.86-6);ctx.stroke();
+  text(ctx,'الوشاح العلوي',Math.min(W-40,cx+R*.86),cy-R*.86-16,C.ink,12,'center',FONT,600);
+  const py=cy-R*(1-p.d/6371);ctx.strokeStyle=C.ink;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cx,cy-R-14);ctx.lineTo(cx,py);ctx.stroke();
+  ctx.fillStyle=C.accent2;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,py,8,0,7);ctx.fill();ctx.stroke();
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(10,cy+.5);ctx.lineTo(W-10,cy+.5);ctx.stroke();
+  const gx0=16,gx1=W-16,gy0=Ht+22,gy1=H-22,X=d=>gx0+(gx1-gx0)*d/6371;
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(gx0+.5,gy0+.5,gx1-gx0,gy1-gy0);
+  ctx.setLineDash([3,4]);this.L.slice(0,4).forEach(l=>{ctx.beginPath();ctx.moveTo(X(l.to),gy0);ctx.lineTo(X(l.to),gy1);ctx.stroke()});ctx.setLineDash([]);
+  const line=(tb,mx,col,w)=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();for(let i=0;i<=200;i++){const d=6371*i/200,x=X(d),y=gy1-interp(tb,d)/mx*(gy1-gy0-6);i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke()};
+  line(this.T,6000,C.accent,2.5);line(this.R,14,C.accent2,2);
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(X(p.d),gy0);ctx.lineTo(X(p.d),gy1);ctx.stroke();
+  text(ctx,'الحرارة',gx1-6,gy0+11,C.accent,11,'right',FONT,600);text(ctx,'الكثافة',gx1-56,gy0+11,C.accent2,11,'right',FONT,600);
+  [0,2000,4000,6000].forEach(d=>text(ctx,d+'',X(d),gy1+11,C.muted,10,'center',MONO,400));text(ctx,'العمق km',gx0+30,gy1+11,C.muted,10,'center')},
+ readouts(p){const l=this.lay(p.d),Pg=interp(this.P,p.d);return[['الطبقة',l.n,1],['حالة المادة',l.st,'w'],['درجة الحرارة',Math.round(interp(this.T,p.d)).toLocaleString('en')+' °C'],['الضغط',fmt(Pg,1)+' GPa'],['يعادل الضغط الجوي',Math.round(Pg*9869).toLocaleString('en')+' ×'],['الكثافة',fmt(interp(this.R,p.d),1)+' g/cm³'],['التركيب',l.co,'w']]}},
+
+/* ---------- Plate tectonics ---------- */
+{id:'plates',branch:'الأرض الصلبة',name:'حدود الصفائح التكتونية',law:'المسافة = السرعة × الزمن',
+ tip:'في الحد التباعدي لاحظي الأشرطة المغناطيسية المتماثلة على جانبي الحيد. في الحد التحويلي راقبي الطريق: ينحني ببطء ثم ينكسر فجأة مع الزلزال. هذا ما يحدث على صدع البحر الميت التحويلي في الأردن.',
+ controls:[{id:'type',type:'seg',label:'نوع الحد',options:[['div','تباعدي'],['con','تقاربي'],['tra','تحويلي']],val:'div'},{id:'sp',label:'سرعة حركة الصفائح',min:1,max:10,step:.5,val:5,unit:'cm/yr'}],
+ actions:[['من البداية','reset']],
+ reset(){this.s={t:0,m:0,slip:0,q:[],qs:0}},onChange(p,k){if(k==='type')this.reset(p)},
+ step(dt,p){const s=this.s;s.t+=dt;s.m+=dt*p.sp*4;s.q=s.q.filter(e=>(e.a-=dt)>0);
+  if(p.type==='con'&&Math.random()<dt*p.sp*.35){s.q.push({u:Math.random(),a:1});s.qs++}
+  if(p.type==='tra'&&s.m-s.slip>44){s.slip=s.m;s.qs++;s.q.push({u:Math.random(),a:1.3})}},
+ draw(ctx,W,H,p){const s=this.s,cx=W/2;
+  if(p.type==='div'){const sea=H*.16,ct=H*.38,cb=H*.5,rate=p.sp*2;
+   ctx.fillStyle=C.accent2;ctx.globalAlpha=.22;ctx.fillRect(0,sea,W,ct-sea);ctx.globalAlpha=1;
+   ctx.fillStyle='#c4612c';ctx.globalAlpha=.3;ctx.fillRect(0,cb,W,H-cb);ctx.globalAlpha=1;
+   const ink=hex(C.ink);for(let x=0;x<W;x+=2){const d=Math.abs(x-cx);let col;if(d<s.m/2){const pol=Math.floor((s.m/2-d)/rate/1.6)%2;col=pol?C.line:C.ink}else col=C.muted;ctx.fillStyle=col;ctx.fillRect(x,ct,2,cb-ct)}
+   ctx.fillStyle=C.accent;ctx.beginPath();ctx.moveTo(cx-26,H-10);ctx.lineTo(cx-5,ct-6);ctx.lineTo(cx+5,ct-6);ctx.lineTo(cx+26,H-10);ctx.closePath();ctx.fill();
+   [-1,1].forEach(sg=>{ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.lineDashOffset=-s.t*20;ctx.beginPath();ctx.ellipse(cx+sg*W*.25,(cb+H)/2+6,W*.2,(H-cb)/2-14,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+    arrow(ctx,cx+sg*40,ct-18,cx+sg*100,ct-18,C.ink,'',3)});
+   textS(ctx,'صهارة صاعدة',cx,cb+(H-cb)*.55,11);text(ctx,'حيد وسط المحيط',cx,sea-12,C.ink,12,'center',FONT,600);
+   text(ctx,'قشرة محيطية جديدة',cx+W*.26,cb+12,C.ink,11);text(ctx,'تيارات الحمل في الوشاح',W*.2,H-12,C.muted,11)}
+  else if(p.type==='con'){const ct=H*.36,xt=W*.48,a=.6,L=W*.6;
+   ctx.fillStyle='#c4612c';ctx.globalAlpha=.25;ctx.fillRect(0,ct,W,H-ct);ctx.globalAlpha=1;
+   ctx.fillStyle=C.accent2;ctx.globalAlpha=.25;ctx.fillRect(0,H*.16,xt,ct-H*.16);ctx.globalAlpha=1;
+   const pts=[[-10,ct+6],[xt,ct+6],[xt+L*Math.cos(a),ct+6+L*Math.sin(a)]];
+   ctx.lineJoin='round';ctx.strokeStyle=C.ink;ctx.lineWidth=14;ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();
+   ctx.strokeStyle=C.panel;ctx.lineWidth=2;ctx.setLineDash([6,12]);ctx.lineDashOffset=-s.m;ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.setLineDash([]);
+   const xv=W*.74,top=ct-24;ctx.fillStyle=C.muted;ctx.beginPath();ctx.moveTo(xt+8,ct-2);ctx.lineTo(xt+30,top);ctx.lineTo(W,top);ctx.lineTo(W,ct+44);ctx.lineTo(xt+60,ct+44);ctx.closePath();ctx.fill();
+   ctx.fillStyle='#7a5a42';ctx.beginPath();ctx.moveTo(xv-46,top);ctx.lineTo(xv-6,top-48);ctx.lineTo(xv+6,top-48);ctx.lineTo(xv+46,top);ctx.closePath();ctx.fill();
+   [[xv-90,26],[xv+80,20]].forEach(([x,h])=>{ctx.beginPath();ctx.moveTo(x-30,top);ctx.lineTo(x,top-h);ctx.lineTo(x+30,top);ctx.fill()});
+   const sy=ct+6+(xv-xt)*Math.tan(a);ctx.fillStyle=C.accent;for(let k=0;k<5;k++){const f=((s.t*.25+k/5)%1),y=sy-(sy-(top-46))*f;ctx.globalAlpha=1-f*.6;ctx.beginPath();ctx.arc(xv+Math.sin(f*9+k)*4,y,4,0,7);ctx.fill()}ctx.globalAlpha=1;
+   for(let k=0;k<6;k++){const f=(s.t*.5+k/6)%1;ctx.fillStyle=C.muted;ctx.globalAlpha=.6*(1-f);ctx.beginPath();ctx.arc(xv+f*30,top-52-f*40,5+f*10,0,7);ctx.fill()}ctx.globalAlpha=1;
+   s.q.forEach(e=>{const u=e.u*L*.75,x=xt+u*Math.cos(a),y=ct+6+u*Math.sin(a);ctx.strokeStyle=C.warn;ctx.globalAlpha=e.a;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,(1-e.a)*22+4,0,7);ctx.stroke();ctx.globalAlpha=1});
+   arrow(ctx,W*.1,ct-14,W*.26,ct-14,C.ink,'',3);
+   text(ctx,'صفيحة محيطية (أكثف)',W*.2,ct+30,C.ink,11,'center',FONT,600);text(ctx,'صفيحة قارية (أخف)',W*.86,ct+28,C.panel,11,'center',FONT,600);
+   text(ctx,'خندق محيطي',xt,H*.16-12,C.ink,11,'center',FONT,600);text(ctx,'بركان',xv,top-60-40,C.ink,12,'center',FONT,600);
+   text(ctx,'منطقة اندساس وزلازل',xt+L*.34,ct+6+L*.62*Math.sin(a)+20,C.ink,11,'center',FONT,600)}
+  else{const fy=H/2,x0=W/2,up=s.m/2,sl=s.slip/2;
+   ctx.fillStyle=C.accent3;ctx.globalAlpha=.1;ctx.fillRect(0,0,W,fy);ctx.fillStyle=C.warn;ctx.fillRect(0,fy,W,H-fy);ctx.globalAlpha=1;
+   ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(0,fy);ctx.lineTo(W,fy);ctx.stroke();ctx.setLineDash([]);
+   const sm=t=>t*t*(3-2*t),road=sg=>{ctx.beginPath();for(let i=0;i<=40;i++){const dy=i/40*(fy-10),w=sm(Math.min(1,dy/(H*.32))),x=x0+sg*(sl+(up-sl)*w);const y=fy-sg*(-dy);const yy=sg<0?fy-dy:fy+dy;i?ctx.lineTo(x,yy):ctx.moveTo(x,yy)}ctx.stroke()};
+   ctx.lineWidth=12;ctx.strokeStyle=C.ink;road(-1);road(1);ctx.lineWidth=1.5;ctx.strokeStyle=C.warn;ctx.setLineDash([6,6]);road(-1);road(1);ctx.setLineDash([]);
+   arrow(ctx,W*.85,fy*.4,W*.65,fy*.4,C.ink,'',3);arrow(ctx,W*.15,fy+(H-fy)*.6,W*.35,fy+(H-fy)*.6,C.ink,'',3);
+   s.q.forEach(e=>{ctx.strokeStyle=C.accent;ctx.globalAlpha=Math.min(1,e.a);ctx.lineWidth=3;ctx.beginPath();ctx.arc(x0,fy,(1.3-e.a)*80+6,0,7);ctx.stroke();ctx.globalAlpha=1});
+   const st=(s.m-s.slip)/44;ctx.fillStyle=C.line;ctx.fillRect(14,14,90,8);ctx.fillStyle=C.accent;ctx.fillRect(14,14,90*st,8);text(ctx,'الإجهاد المتراكم',14,32,C.muted,11,'left');
+   text(ctx,'صدع تحويلي (منظر من الأعلى)',W-14,fy-12,C.accent,12,'right',FONT,600)}},
+ readouts(p){const s=this.s,info={div:['حيود وسط المحيطات، قشرة محيطية جديدة، براكين وزلازل ضحلة','البحر الأحمر وحيد وسط المحيط الأطلسي'],con:['خنادق محيطية، سلاسل جبلية، براكين، زلازل عميقة','جبال الأنديز في أمريكا الجنوبية'],tra:['صدوع وزلازل متكررة دون تكوّن قشرة جديدة أو استهلاكها','صدع البحر الميت التحويلي في الأردن، وصدع سان أندرياس']}[p.type];
+  return[['الزمن الجيولوجي',fmt(s.t*.1,1)+' مليون سنة'],['المسافة المقطوعة',fmt(p.sp*s.t,0)+' km',1],['عدد الزلازل',s.qs+''],['الظواهر الناتجة',info[0],'w'],['مثال',info[1],'w']]}},
+
+/* ---------- Earthquakes ---------- */
+{id:'quake',branch:'الأرض الصلبة',name:'الزلازل والموجات الزلزالية',law:'d = Δt · vP·vS / (vP − vS)',
+ tip:'أبعدي محطة الرصد وراقبي الفرق بين وصول الموجة P والموجة S على الرسم الزلزالي: بهذا الفرق يحدد العلماء بُعد مركز الزلزال. كم ضعفًا تزداد الطاقة عند زيادة القدر درجة واحدة؟',
+ controls:[{id:'d',label:'بُعد محطة الرصد عن المركز السطحي',min:100,max:2000,step:50,val:800,unit:'km'},{id:'M',label:'قدر الزلزال (مقياس ريختر)',min:3,max:9,step:.1,val:6,unit:''}],
+ actions:[['أطلق الزلزال','reset']],vp:6,vs:3.5,
+ reset(){this.s={t:0}},onChange(p){this.reset(p)},
+ step(dt,p){const tot=p.d/this.vs+60;this.s.t+=dt*tot/9;if(this.s.t>tot*1.2)this.s.t=0},
+ sig(t,p){const tP=p.d/this.vp,tS=p.d/this.vs,A=.15+(p.M-3)/6*.85;let y=.03*(Math.sin(t*7.3)+.6*Math.sin(t*11.1+1));
+  if(t>tP){const u=t-tP;y+=.3*A*Math.exp(-u/12)*Math.sin(u*9)}if(t>tS){const u=t-tS;y+=A*Math.exp(-u/18)*Math.sin(u*4.2)*Math.min(1,u/1.5)}return y},
+ draw(ctx,W,H,p){const s=this.s,tP=p.d/this.vp,tS=p.d/this.vs,tot=tS+60,t=Math.min(s.t,tot),my=H*.24,ex=36,sc=(W-72)/2000,sx=ex+p.d*sc;
+  ctx.save();ctx.beginPath();ctx.rect(0,0,W,H*.46);ctx.clip();
+  ctx.lineWidth=2.5;ctx.strokeStyle=C.accent2;ctx.beginPath();ctx.arc(ex,my,this.vp*t*sc,0,7);ctx.stroke();
+  ctx.strokeStyle=C.accent;ctx.beginPath();ctx.arc(ex,my,this.vs*t*sc,0,7);ctx.stroke();ctx.restore();
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ex,my+28);ctx.lineTo(W-36,my+28);ctx.stroke();
+  [0,500,1000,1500,2000].forEach(d=>{const x=ex+d*sc;ctx.beginPath();ctx.moveTo(x,my+28);ctx.lineTo(x,my+33);ctx.stroke();text(ctx,d+'',x,my+42,C.muted,10,'center',MONO,400)});text(ctx,'km',W-22,my+42,C.muted,10,'center',MONO);
+  ctx.fillStyle=C.accent;ctx.beginPath();for(let i=0;i<10;i++){const r=i%2?5:12,a=-Math.PI/2+i*Math.PI/5;ctx.lineTo(ex+Math.cos(a)*r,my+Math.sin(a)*r)}ctx.fill();
+  text(ctx,'المركز',ex+2,my-22,C.ink,11,'center',FONT,600);
+  ctx.fillStyle=C.ink;ctx.beginPath();ctx.moveTo(sx,my-10);ctx.lineTo(sx-9,my+8);ctx.lineTo(sx+9,my+8);ctx.fill();text(ctx,'محطة الرصد',Math.min(W-40,sx),my-22,C.ink,11,'center',FONT,600);
+  text(ctx,'P',W-30,14,C.accent2,13,'center',MONO,600);text(ctx,'S',W-14,14,C.accent,13,'center',MONO,600);
+  const y0=H*.52,y1=H-24,ym=(y0+y1)/2,X=tt=>16+(W-32)*tt/tot,amp=(y1-y0)/2-4;
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(16.5,y0+.5,W-33,y1-y0);text(ctx,'الرسم الزلزالي في المحطة',W-22,y0+12,C.muted,11,'right');
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1.3;ctx.beginPath();for(let i=0;i<=600;i++){const tt=t*i/600,x=X(tt),y=ym-this.sig(tt,p)*amp;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
+  if(t>=tP){ctx.strokeStyle=C.accent2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(X(tP),y0);ctx.lineTo(X(tP),y1);ctx.stroke();text(ctx,'P',X(tP),y1+11,C.accent2,12,'center',MONO,600)}
+  if(t>=tS){ctx.strokeStyle=C.accent;ctx.beginPath();ctx.moveTo(X(tS),y0);ctx.lineTo(X(tS),y1);ctx.stroke();ctx.setLineDash([]);text(ctx,'S',X(tS),y1+11,C.accent,12,'center',MONO,600);
+   arrow(ctx,X(tP),y0+26,X(tS),y0+26,C.sum,'',1.5);text(ctx,'Δt = '+fmt(tS-tP,0)+' s',(X(tP)+X(tS))/2,y0+38,C.sum,11,'center',MONO,600)}ctx.setLineDash([])},
+ readouts(p){const tP=p.d/this.vp,tS=p.d/this.vs,e=10**(1.5*(p.M-5)),M=p.M;
+  const desc=M<4?'يُسجَّل بالأجهزة ونادرًا ما يشعر به الناس':M<5?'يشعر به الناس وأضراره طفيفة':M<6?'قد يسبب أضرارًا للمباني الضعيفة':M<7?'قوي: أضرار في مساحات واسعة':M<8?'كبير: دمار واسع':'هائل: دمار شامل وقد يولّد موجات تسونامي';
+  return[['وصول الموجة الأولية P',fmt(tP,0)+' s'],['وصول الموجة الثانوية S',fmt(tS,0)+' s'],['الفرق Δt',fmt(tS-tP,0)+' s',1],['البُعد المحسوب عن المركز',fmt((tS-tP)*this.vp*this.vs/(this.vp-this.vs),0)+' km'],['الطاقة مقارنة بزلزال قدره 5','× '+(e>=100?Math.round(e).toLocaleString('en'):fmt(e,e<1?3:1))],['وصف الزلزال',desc,'w']]}},
+
+/* ---------- Locate the epicenter (student triangulation) ---------- */
+{id:'tri',branch:'الأرض الصلبة',name:'حدّدي مركز الزلزال بنفسك',law:'d = Δt × vP·vS / (vP − vS) ≈ Δt × 8.4 km',
+ tip:'المسي الخريطة لتضعي ثلاث محطات رصد في أي أماكن تختارينها. اقرئي من الرسم الزلزالي لكل محطة زمن وصول الموجة P وزمن وصول الموجة S، واحسبي الفرق Δt، ثم المسافة = Δt × 8.4. اكتبي المسافة لكل محطة فتُرسم دائرة حولها. مركز الزلزال هو نقطة تقاطع الدوائر الثلاث. اكشفي المركز الحقيقي وقارني.',
+ controls:[],vp:6,vs:3.5,NM:['أ','ب','ج'],
+ actions:[['اكشفي مركز الزلزال','reveal'],['زلزال جديد','newq'],['احذفي المحطات','clr']],
+ col(i){return[C.accent2,C.accent3,C.sum][i]},
+ map(){const h=Math.round(H*.56);return{x0:10,y0:10,w:W-20,h:h-10,sc:(W-20)/2000}},
+ reset(){const m=this.map(),kh=m.h/m.sc;this.s={st:[],ep:[250+Math.random()*1500,Math.max(80,Math.min(kh-80,120+Math.random()*(kh-240)))],show:false,t:0,gk:'',g:null}},
+ newq(){this.reset();renderPanel()},clr(){this.s.st=[];this.s.show=false;renderPanel()},reveal(){this.s.show=true},
+ step(dt){this.s.t+=dt},
+ dist(q){return Math.hypot(q.x-this.s.ep[0],q.y-this.s.ep[1])},
+ dtt(q){const d=this.dist(q);return d/this.vs-d/this.vp},
+ pointer(x,y,p,type){if(type!=='pointerdown')return;const m=this.map();if(x<m.x0||x>m.x0+m.w||y<m.y0||y>m.y0+m.h)return;const kx=(x-m.x0)/m.sc,ky=(y-m.y0)/m.sc,s=this.s;
+  const i=s.st.findIndex(q=>Math.hypot(q.x-kx,q.y-ky)*m.sc<16);if(i>=0)s.st.splice(i,1);else if(s.st.length<3)s.st.push({x:kx,y:ky,r:null});else return;renderPanel()},
+ panel(el){const s=this.s;
+  el.innerHTML=(s.st.length?s.st.map((q,i)=>`<div class="prow"><span class="sw" style="background:${this.col(i)}">${this.NM[i]}</span><label for="tr-${i}">بُعد المحطة ${this.NM[i]} عن المركز (km)</label><input type="number" id="tr-${i}" min="0" max="4000" step="10" value="${q.r??''}" placeholder="اكتبي المسافة"></div>`).join(''):'<p class="note">المسي الخريطة لتضعي محطة رصد. تحتاجين إلى ثلاث محطات، ولمس محطة موجودة يحذفها.</p>')+
+   (s.st.length&&s.st.length<3?'<p class="note">أضيفي '+(3-s.st.length)+' محطة أخرى بلمس الخريطة.</p>':'');
+  s.st.forEach((q,i)=>{const inp=el.querySelector('#tr-'+i);inp.onchange=()=>{const v=parseFloat(inp.value);q.r=Number.isFinite(v)?Math.max(0,Math.min(4000,v)):null}})},
+ guess(){const st=this.s.st.filter(q=>q.r!=null&&q.r>0);if(st.length<3)return null;const key=JSON.stringify(st);if(key===this.s.gk)return this.s.g;
+  const m=this.map(),kh=m.h/m.sc,f=(x,y)=>st.reduce((a,q)=>a+(Math.hypot(x-q.x,y-q.y)-q.r)**2,0);let best=[0,0],bv=1e18;
+  for(let x=-200;x<=2200;x+=25)for(let y=-200;y<=kh+200;y+=25){const v=f(x,y);if(v<bv){bv=v;best=[x,y]}}
+  for(let d=16;d>=1;d/=2)for(let k=0;k<10;k++)[[d,0],[-d,0],[0,d],[0,-d]].forEach(([a,b])=>{const v=f(best[0]+a,best[1]+b);if(v<bv){bv=v;best=[best[0]+a,best[1]+b]}});
+  this.s.gk=key;this.s.g=best;return best},
+ sig(t,tP,tS){let y=.05*(Math.sin(t*1.7)+.6*Math.sin(t*2.9+1));if(t>tP){const u=t-tP;y+=.35*Math.exp(-u/45)*Math.sin(u*1.3)}if(t>tS){const u=t-tS;y+=.95*Math.exp(-u/70)*Math.sin(u*.7)*Math.min(1,u/5)}return y},
+ draw(ctx,W,H,p){const s=this.s,m=this.map(),X=k=>m.x0+k*m.sc,Y=k=>m.y0+k*m.sc;
+  ctx.fillStyle=C.accent3;ctx.globalAlpha=.08;ctx.fillRect(m.x0,m.y0,m.w,m.h);ctx.globalAlpha=1;
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;for(let k=250;k<2000;k+=250){ctx.beginPath();ctx.moveTo(X(k),m.y0);ctx.lineTo(X(k),m.y0+m.h);ctx.stroke()}for(let k=250;k*m.sc<m.h;k+=250){ctx.beginPath();ctx.moveTo(m.x0,Y(k));ctx.lineTo(m.x0+m.w,Y(k));ctx.stroke()}
+  ctx.strokeStyle=C.ink;ctx.strokeRect(m.x0+.5,m.y0+.5,m.w,m.h);
+  ctx.fillStyle=C.ink;ctx.fillRect(m.x0+10,m.y0+m.h-12,500*m.sc,3);ctx.direction='ltr';text(ctx,'500 km',m.x0+10+250*m.sc,m.y0+m.h-22,C.ink,10,'center',MONO,600);ctx.direction='inherit';
+  ctx.save();ctx.beginPath();ctx.rect(m.x0,m.y0,m.w,m.h);ctx.clip();
+  s.st.forEach((q,i)=>{if(q.r){ctx.strokeStyle=this.col(i);ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(X(q.x),Y(q.y),q.r*m.sc,0,7);ctx.stroke()}
+   if(s.show){ctx.setLineDash([4,4]);ctx.strokeStyle=this.col(i);ctx.globalAlpha=.55;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(X(q.x),Y(q.y),this.dist(q)*m.sc,0,7);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1}});
+  const g=this.guess();if(g){ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;const gx=X(g[0]),gy=Y(g[1]);ctx.beginPath();ctx.moveTo(gx-7,gy-7);ctx.lineTo(gx+7,gy+7);ctx.moveTo(gx+7,gy-7);ctx.lineTo(gx-7,gy+7);ctx.stroke();text(ctx,'توقّعك',gx,gy-14,C.ink,11,'center',FONT,600)}
+  if(s.show){const ex=X(s.ep[0]),ey=Y(s.ep[1]);ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.globalAlpha=.5;ctx.beginPath();ctx.arc(ex,ey,10+(s.t*20)%26,0,7);ctx.stroke();ctx.globalAlpha=1;
+   ctx.fillStyle=C.accent;ctx.beginPath();for(let i=0;i<10;i++){const r=i%2?5:12,a=-Math.PI/2+i*Math.PI/5;ctx.lineTo(ex+Math.cos(a)*r,ey+Math.sin(a)*r)}ctx.fill();text(ctx,'المركز الحقيقي',ex,ey+20,C.accent,11,'center',FONT,600)}
+  ctx.restore();
+  s.st.forEach((q,i)=>{const x=X(q.x),y=Y(q.y);ctx.fillStyle=this.col(i);ctx.beginPath();ctx.moveTo(x,y-11);ctx.lineTo(x-10,y+7);ctx.lineTo(x+10,y+7);ctx.closePath();ctx.fill();text(ctx,this.NM[i],x,y+1,'#fff',11,'center',FONT,600)});
+  if(!s.st.length)text(ctx,'المسي الخريطة لوضع محطة رصد',W/2,m.y0+m.h/2,C.muted,14,'center',FONT,600);
+  const y0=m.y0+m.h+12,rh=(H-y0-20)/3,ts=s.st.map(q=>this.dist(q)/this.vs),T=Math.max(300,100*Math.ceil((Math.max(0,...ts)+80)/100)),gx0=26,gx1=W-10,TX=t=>gx0+(gx1-gx0)*t/T;
+  ctx.strokeStyle=C.grid;ctx.lineWidth=1;for(let t=0;t<=T;t+=10){ctx.globalAlpha=t%50?.5:1;ctx.beginPath();ctx.moveTo(TX(t),y0);ctx.lineTo(TX(t),y0+rh*3);ctx.stroke()}ctx.globalAlpha=1;
+  for(let t=0;t<=T;t+=100)text(ctx,t+'',TX(t),y0+rh*3+9,C.muted,9,'center',MONO,400);text(ctx,'(s)',gx0-14,y0+rh*3+9,C.muted,9,'center',MONO);
+  for(let i=0;i<3;i++){const ym=y0+i*rh+rh/2,q=s.st[i];text(ctx,this.NM[i],12,ym,q?this.col(i):C.line,12,'center',FONT,600);ctx.strokeStyle=C.line;ctx.beginPath();ctx.moveTo(gx0,ym);ctx.lineTo(gx1,ym);ctx.stroke();if(!q)continue;
+   const d=this.dist(q),tP=d/this.vp,tS=d/this.vs;ctx.strokeStyle=C.ink;ctx.lineWidth=1.1;ctx.beginPath();for(let k=0;k<=700;k++){const t=T*k/700,y=ym-this.sig(t,tP,tS)*rh*.42;k?ctx.lineTo(TX(t),y):ctx.moveTo(TX(t),y)}ctx.stroke();
+   text(ctx,'P',TX(tP),y0+i*rh+7,C.accent2,10,'center',MONO,600);text(ctx,'S',TX(tS),y0+i*rh+7,C.accent,10,'center',MONO,600)}},
+ readouts(){const s=this.s,g=this.guess(),r=[];
+  s.st.forEach((q,i)=>{r.push(['المحطة '+this.NM[i]+': فرق الوصول Δt',s.show?fmt(this.dtt(q),0)+' s':'اقرئيه من الرسم','ar']);r.push(['المسافة التي كتبتِها للمحطة '+this.NM[i],q.r!=null?fmt(q.r,0)+' km':'لم تُكتب بعد','ar']);if(s.show)r.push(['المسافة الحقيقية للمحطة '+this.NM[i],fmt(this.dist(q),0)+' km'])});
+  r.push(['عدد المحطات',s.st.length+' / 3']);
+  r.push(['الخطأ في تحديد المركز',g?(s.show?fmt(Math.hypot(g[0]-s.ep[0],g[1]-s.ep[1]),0)+' km':'اكشفي المركز لتعرفي'):'اكتبي ثلاث مسافات أولًا',1]);
+  r.push(['طريقة الحساب','الموجة P تقطع نحو 6 km في الثانية والموجة S نحو 3.5 km، فكل ثانية من الفرق Δt تقابل نحو 8.4 km من البُعد عن المركز.','w']);return r}},
+
+/* ---------- Rock cycle ---------- */
+{id:'rocks',branch:'الصخور والزمن الجيولوجي',name:'دورة الصخور',law:'نارية ⇄ رسوبية ⇄ متحولة',
+ tip:'ابدئي من الصهارة وحاولي الوصول إلى الرخام. هل يمكن لصخر متحول أن يصبح رسوبيًا؟ ما العمليات اللازمة؟ تذكّري أن صخور البتراء ووادي رم صخور رسوبية رملية.',
+ note:'اختاري عملية جيولوجية من الأزرار أسفل الرسم لتنقلي الصخر من حالة إلى أخرى. العمليات المسموح بها الآن تظهر في القياسات.',
+ controls:[],
+ N:{magma:{n:'الصهارة',ex:'صخر منصهر في باطن الأرض',x:.3,y:.78,c:'#e0702a'},ign:{n:'صخر ناري',ex:'الجرانيت، البازلت',x:.15,y:.4,c:'#6f625b'},sed0:{n:'رسوبيات',ex:'رمل، طين، حصى',x:.5,y:.14,c:'#d6b064'},sed:{n:'صخر رسوبي',ex:'الحجر الرملي، الحجر الجيري',x:.85,y:.4,c:'#c08a52'},met:{n:'صخر متحول',ex:'الرخام، النايس، الأردواز',x:.7,y:.78,c:'#6c7d95'}},
+ PR:[['تبريد وتبلّور',{magma:'ign'}],['تجوية وتعرية',{ign:'sed0',sed:'sed0',met:'sed0'}],['ترسيب ودفن وتماسك',{sed0:'sed'}],['حرارة وضغط مرتفعان',{ign:'met',sed:'met'}],['انصهار',{ign:'magma',sed:'magma',met:'magma'}]],
+ actions:[['تبريد وتبلّور','p0'],['تجوية وتعرية','p1'],['ترسيب ودفن وتماسك','p2'],['حرارة وضغط مرتفعان','p3'],['انصهار','p4']],
+ p0(){this.go(0)},p1(){this.go(1)},p2(){this.go(2)},p3(){this.go(3)},p4(){this.go(4)},
+ reset(){this.s={cur:'magma',path:['magma'],an:null,msg:'',t:0}},
+ go(i){const s=this.s,[lab,map]=this.PR[i],to=map[s.cur];if(!to){s.msg=`لا يمكن تطبيق «${lab}» على ${this.N[s.cur].n}`;s.bad=1.2;return}
+  s.an={from:s.cur,to,t:0,lab};s.cur=to;s.path.push(to);s.msg='';s.bad=0},
+ step(dt){const s=this.s;s.t+=dt;if(s.an&&s.an.t<1.6)s.an.t+=dt;if(s.bad>0)s.bad-=dt},
+ geo(a,b,W,H,rn){const A=this.N[a],B=this.N[b],x1=A.x*W,y1=A.y*H,x2=B.x*W,y2=B.y*H,dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),nx=-dy/L,ny=dx/L,cx=(x1+x2)/2+nx*22,cy=(y1+y2)/2+ny*22;
+  const tr=(x,y,tx,ty)=>{const l=Math.hypot(tx-x,ty-y);return[x+(tx-x)/l*(rn+6),y+(ty-y)/l*(rn+6)]};return{p0:tr(x1,y1,cx,cy),c:[cx,cy],p1:tr(x2,y2,cx,cy)}},
+ qp(g,t){const u=1-t;return[u*u*g.p0[0]+2*u*t*g.c[0]+t*t*g.p1[0],u*u*g.p0[1]+2*u*t*g.c[1]+t*t*g.p1[1]]},
+ draw(ctx,W,H){const s=this.s,rn=Math.min(W,H)*.085;
+  this.PR.forEach(([lab,map])=>Object.entries(map).forEach(([a,b])=>{const g=this.geo(a,b,W,H,rn),act=s.an&&s.an.from===a&&s.an.to===b;
+   ctx.strokeStyle=act?C.accent:C.line;ctx.lineWidth=act?3:1.5;ctx.beginPath();ctx.moveTo(g.p0[0],g.p0[1]);ctx.quadraticCurveTo(g.c[0],g.c[1],g.p1[0],g.p1[1]);ctx.stroke();
+   const e=this.qp(g,.92);arrow(ctx,e[0],e[1],g.p1[0],g.p1[1],act?C.accent:C.muted,'',act?3:1.5);
+   if(act){const m=this.qp(g,.5);ctx.font='600 12px '+FONT;const w=ctx.measureText(lab).width+12;ctx.fillStyle=C.panel;ctx.fillRect(m[0]-w/2,m[1]-11,w,22);text(ctx,lab,m[0],m[1],C.accent,12,'center',FONT,600);
+    if(s.an.t<1){const q=this.qp(g,s.an.t);ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(q[0],q[1],6,0,7);ctx.fill()}}}));
+  Object.entries(this.N).forEach(([k,n])=>{const x=n.x*W,y=n.y*H,cur=k===s.cur&&(!s.an||s.an.t>=1);
+   ctx.fillStyle=n.c;ctx.beginPath();ctx.arc(x,y,rn,0,7);ctx.fill();
+   const r=rng(k.length*7);ctx.fillStyle='rgba(0,0,0,.18)';for(let i=0;i<14;i++){const a=r()*7,d=r()*rn*.8;ctx.beginPath();ctx.arc(x+Math.cos(a)*d,y+Math.sin(a)*d,1.5+r()*2.5,0,7);ctx.fill()}
+   if(cur){ctx.strokeStyle=C.accent3;ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,rn+5+Math.sin(s.t*4)*2,0,7);ctx.stroke()}
+   text(ctx,n.n,x,y+rn+13,C.ink,13,'center',FONT,600);text(ctx,n.ex,x,y+rn+29,C.muted,11)});
+  if(s.msg&&s.bad>0)text(ctx,s.msg,W/2,H/2,C.accent,13,'center',FONT,600)},
+ readouts(){const s=this.s,ok=this.PR.filter(([,m])=>m[s.cur]).map(([l])=>l).join('، ');
+  return[['الحالة الحالية',this.N[s.cur].n,1],['أمثلة',this.N[s.cur].ex,'w'],['العمليات الممكنة الآن',ok,'w'],['عدد الخطوات',(s.path.length-1)+''],['المسار',s.path.slice(-5).map(k=>this.N[k].n).join(' ← '),'w']]}},
+
+/* ---------- Radiometric dating ---------- */
+{id:'dating',branch:'الصخور والزمن الجيولوجي',name:'التأريخ الإشعاعي وعمر النصف',law:'N = N₀ · (½)^(t / T½)',
+ tip:'بعد عمر نصف واحد يبقى نصف الذرات الأم. كم يبقى بعد ثلاثة أعمار نصف؟ لاحظي أن تحلل كل ذرة عشوائي، لكن النسبة الكلية متوقعة. لماذا لا يصلح الكربون-14 لتأريخ صخر عمره مليون سنة؟',
+ controls:[{id:'iso',type:'seg',label:'النظير المشع',options:[['c','كربون-14'],['k','بوتاسيوم-40'],['u','يورانيوم-238']],val:'c'},{id:'spd',label:'سرعة مرور الزمن',min:.1,max:1,step:.05,val:.35,unit:'عمر نصف/ث'}],
+ actions:[['ابدئي من جديد','reset']],
+ I:{c:{n:'كربون-14',d:'نيتروجين-14',T:5730,use:'تأريخ البقايا العضوية مثل العظام والخشب حتى نحو 50 ألف سنة'},k:{n:'بوتاسيوم-40',d:'أرغون-40',T:1.25e9,use:'تأريخ الصخور البركانية القديمة'},u:{n:'يورانيوم-238',d:'رصاص-206',T:4.47e9,use:'تأريخ أقدم صخور الأرض والنيازك (عمر الأرض نحو 4.6 مليار سنة)'}},
+ reset(){const a=[];for(let i=0;i<400;i++)a.push(-Math.log(1-Math.random())/Math.LN2);this.s={t:0,a}},onChange(p,k){if(k==='iso')this.reset(p)},
+ step(dt,p){if(this.s.t<6)this.s.t=Math.min(6,this.s.t+dt*p.spd)},
+ left(){return this.s.a.filter(v=>v>this.s.t).length},
+ draw(ctx,W,H,p){const s=this.s,g=Math.min(H-50,W*.46),x0=16,y0=16,c=g/20;
+  for(let i=0;i<400;i++){const par=s.a[i]>s.t;ctx.fillStyle=par?C.accent:C.accent3;ctx.globalAlpha=par?1:.75;ctx.beginPath();ctx.arc(x0+(i%20+.5)*c,y0+(Math.floor(i/20)+.5)*c,c*.36,0,7);ctx.fill()}ctx.globalAlpha=1;
+  const iso=this.I[p.iso];ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(x0+6,y0+g+14,5,0,7);ctx.fill();text(ctx,iso.n+' (الأم)',x0+16,y0+g+14,C.ink,11,'left');
+  ctx.fillStyle=C.accent3;ctx.beginPath();ctx.arc(x0+6,y0+g+30,5,0,7);ctx.fill();text(ctx,iso.d+' (البنت)',x0+16,y0+g+30,C.ink,11,'left');
+  const gx0=x0+g+40,gx1=W-12,gy0=20,gy1=H-34,X=t=>gx0+(gx1-gx0)*t/6,Y=v=>gy1-v/100*(gy1-gy0);
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(gx0+.5,gy0+.5,gx1-gx0,gy1-gy0);
+  ctx.setLineDash([3,4]);[50,25,12.5].forEach(v=>{ctx.beginPath();ctx.moveTo(gx0,Y(v));ctx.lineTo(gx1,Y(v));ctx.stroke();text(ctx,v+'%',gx0-4,Y(v),C.muted,10,'right',MONO,400)});ctx.setLineDash([]);
+  text(ctx,'100%',gx0-4,Y(100)+6,C.muted,10,'right',MONO,400);for(let k=0;k<=6;k+=1)text(ctx,k+'',X(k),gy1+11,C.muted,10,'center',MONO,400);
+  text(ctx,'عدد أعمار النصف',(gx0+gx1)/2,gy1+25,C.muted,10);
+  ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=120;i++){const t=6*i/120;i?ctx.lineTo(X(t),Y(100*.5**t)):ctx.moveTo(X(t),Y(100))}ctx.stroke();
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(s.t),gy0);ctx.lineTo(X(s.t),gy1);ctx.stroke();
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(s.t),Y(this.left()/4),5,0,7);ctx.fill()},
+ readouts(p){const s=this.s,iso=this.I[p.iso],l=this.left();return[['النظير الأم ← البنت',iso.n+' ← '+iso.d,'w'],['عمر النصف',yearsFmt(iso.T)],['الزمن المنقضي',yearsFmt(s.t*iso.T),1],['عدد أعمار النصف',fmt(s.t,2)],['الذرات الأم المتبقية',l+' / 400 ('+fmt(l/4,1)+'%)'],['النسبة المتوقعة نظريًا',fmt(100*.5**s.t,1)+'%'],['الاستخدام',iso.use,'w']]}},
+
+/* ---------- Atmosphere layers ---------- */
+{id:'atmo',branch:'الغلاف الجوي والمناخ',name:'طبقات الغلاف الجوي',law:'P ≈ 1013 · e^(−h / 7.5) hPa',
+ tip:'اصعدي بالمنطاد: في أي طبقة تنخفض الحرارة مع الارتفاع، وفي أيها ترتفع؟ لماذا ترتفع الحرارة في الستراتوسفير؟ (ابحثي عن طبقة الأوزون). عند أي ارتفاع يصبح الضغط نصف قيمته عند سطح البحر؟',
+ controls:[{id:'h',label:'ارتفاع المنطاد',min:0,max:120,step:.5,val:8,unit:'km'}],
+ T:[[0,15],[11,-56.5],[20,-56.5],[32,-44.5],[47,-2.5],[51,-2.5],[71,-58.5],[85,-86],[100,-78],[110,-20],[120,90]],
+ LY:[{n:'التروبوسفير',to:12,c:'#7fb2dd',f:'تحدث فيه ظواهر الطقس والسحب، ويحتوي معظم كتلة الهواء وبخار الماء'},{n:'الستراتوسفير',to:50,c:'#5a8ccc',f:'يحتوي طبقة الأوزون التي تمتص الأشعة فوق البنفسجية، وتطير الطائرات النفاثة في أسفله'},{n:'الميزوسفير',to:85,c:'#3a5ea6',f:'أبرد طبقات الغلاف الجوي، وفيه تحترق معظم الشهب'},{n:'الثيرموسفير',to:121,c:'#212f6c',f:'ترتفع فيه الحرارة كثيرًا لامتصاصه أشعة الشمس عالية الطاقة، وتحدث فيه ظاهرة الشفق القطبي'}],
+ lay(h){return this.LY.find(l=>h<=l.to)},
+ reset(){this.s={t:0,met:[]}},
+ step(dt){const s=this.s;s.t+=dt;if(Math.random()<dt*.9)s.met.push({x:Math.random(),h:74+Math.random()*10,a:1});s.met=s.met.filter(m=>(m.a-=dt*1.6)>0)},
+ draw(ctx,W,H,p){const s=this.s,x0=40,cw=W*.4,top=12,bot=H-22,Y=h=>bot-h/120*(bot-top);let from=0;
+  this.LY.forEach(l=>{ctx.fillStyle=l.c;ctx.fillRect(x0,Y(Math.min(120,l.to)),cw,Y(from)-Y(Math.min(120,l.to)));from=l.to});
+  from=0;this.LY.forEach(l=>{textS(ctx,l.n,x0+cw-6,(Y(from)+Y(Math.min(120,l.to)))/2,W<420?10:12,'right');from=l.to});
+  ctx.fillStyle=C.warn;ctx.globalAlpha=.4;ctx.fillRect(x0,Y(30),cw,Y(20)-Y(30));ctx.globalAlpha=1;textS(ctx,'طبقة الأوزون',x0+8,Y(25),10,'left');
+  ctx.fillStyle='rgba(255,255,255,.85)';[[.2,4],[.5,6],[.3,2.5]].forEach(([u,h])=>{const x=x0+cw*u,y=Y(h);ctx.beginPath();ctx.ellipse(x,y,14,5,0,0,7);ctx.ellipse(x+10,y-3,10,5,0,0,7);ctx.fill()});
+  ctx.fillStyle='#fff';const px=x0+cw*.72,pyy=Y(10.5);ctx.fillRect(px-10,pyy-1.5,20,3);ctx.fillRect(px-2,pyy-6,4,12);
+  s.met.forEach(m=>{const x=x0+cw*m.x,y=Y(m.h);ctx.strokeStyle='#ffe9a8';ctx.globalAlpha=m.a;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-14,y-8);ctx.stroke();ctx.globalAlpha=1});
+  ctx.strokeStyle='#5be38a';ctx.lineWidth=3;ctx.globalAlpha=.75;ctx.beginPath();for(let i=0;i<=40;i++){const x=x0+cw*i/40,y=Y(106+Math.sin(i*.5+s.t*2)*3);i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();ctx.globalAlpha=1;
+  [0,20,40,60,80,100,120].forEach(h=>text(ctx,h+'',x0-6,Y(h),C.muted,10,'right',MONO,400));text(ctx,'km',x0-6,Y(120)+12,C.muted,9,'right',MONO);
+  const by=Y(p.h),bx=x0+cw*.42;ctx.setLineDash([4,4]);ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,by);ctx.lineTo(W-12,by);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(bx,by-10,8,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx-3,by-3);ctx.lineTo(bx-2,by+3);ctx.moveTo(bx+3,by-3);ctx.lineTo(bx+2,by+3);ctx.stroke();ctx.fillStyle='#fff';ctx.fillRect(bx-3,by+2,6,4);
+  const gx0=x0+cw+30,gx1=W-14,X=t=>gx0+(gx1-gx0)*(t+100)/200;
+  ctx.strokeStyle=C.line;ctx.strokeRect(gx0+.5,top+.5,gx1-gx0,bot-top);ctx.beginPath();ctx.moveTo(X(0),top);ctx.lineTo(X(0),bot);ctx.stroke();
+  [-100,0,100].forEach(t=>text(ctx,t+'',X(t),bot+11,C.muted,10,'center',MONO,400));text(ctx,'الحرارة °C',(gx0+gx1)/2,top+12,C.muted,10);
+  ctx.strokeStyle=C.accent;ctx.lineWidth=2.5;ctx.beginPath();for(let i=0;i<=240;i++){const h=120*i/240,x=X(interp(this.T,h)),y=Y(h);i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(interp(this.T,p.h)),by,5,0,7);ctx.fill()},
+ readouts(p){const l=this.lay(p.h),T=interp(this.T,p.h),d=interp(this.T,Math.min(120,p.h+.5))-interp(this.T,Math.max(0,p.h-.5)),P=1013*Math.exp(-p.h/7.5);
+  return[['الطبقة',l.n,1],['درجة الحرارة',fmt(T,1)+' °C'],['الضغط الجوي',(P<1?fmt(P,4):fmt(P,0))+' hPa'],['نسبة الضغط من سطح البحر',fmt(P/10.13,P<10.13?3:1)+'%'],['تغير الحرارة مع الارتفاع',Math.abs(d)<.05?'ثابتة تقريبًا':d<0?'تتناقص':'تتزايد'],['خصائص الطبقة',l.f,'w']]}},
+
+/* ---------- Greenhouse effect ---------- */
+{id:'green',branch:'الغلاف الجوي والمناخ',name:'الاحتباس الحراري',law:'ΔF = 5.35 · ln(C / C₀)',
+ tip:'ارفعي تركيز ثاني أكسيد الكربون من 280 ppm (قبل الثورة الصناعية) إلى 560: كم درجة ترتفع حرارة الأرض المتوازنة؟ ثم زيدي الغطاء الجليدي. لاحظي أن ضوء الشمس (أصفر) يعبر الغلاف الجوي بسهولة، بينما تمتص الغازات الدفيئة الأشعة تحت الحمراء (أحمر) وتعيد إشعاعها.',
+ controls:[{id:'co2',label:'تركيز ثاني أكسيد الكربون',min:180,max:1000,step:10,val:420,unit:'ppm'},{id:'alb',label:'الانعكاسية (جليد وسحب)',min:.2,max:.45,step:.01,val:.3,unit:''}],
+ Teq(c,a){const Te=255*Math.pow((1-a)/.7,.25);return Te+33+.8*5.35*Math.log(c/280)-273.15},
+ reset(p){const r=rng(11);this.s={ph:[],T:this.Teq(p.co2,p.alb),mol:Array.from({length:60},()=>[r(),r()]),acc:0}},
+ step(dt,p){const s=this.s,top=30,gnd=H-46,sp=115;s.T+=(this.Teq(p.co2,p.alb)-s.T)*Math.min(1,dt*.4);
+  s.acc+=dt*20;while(s.acc>1){s.acc--;s.ph.push({x:W*(.08+Math.random()*.84),y:top,vx:-14,vy:150,ir:0})}
+  const pa=.15+.6*Math.log(p.co2/150)/Math.log(1000/150),up=()=>{const a=-Math.PI/2+(Math.random()-.5)*1.4;return[Math.cos(a)*sp,Math.sin(a)*sp]};
+  for(const f of s.ph){f.x+=f.vx*dt;f.y+=f.vy*dt;if(f.fl>0)f.fl-=dt;
+   if(!f.ir&&f.vy>0&&f.y>=gnd){if(Math.random()<p.alb)f.vy=-f.vy;else{f.ir=1;f.y=gnd-1;[f.vx,f.vy]=up()}}
+   else if(f.ir){if(f.y>=gnd&&f.vy>0){f.y=gnd-1;[f.vx,f.vy]=up()}else if(f.y>top+12&&f.y<gnd-12&&Math.random()<pa*dt*1.3){const a=Math.random()*Math.PI*2;f.vx=Math.cos(a)*sp;f.vy=Math.sin(a)*sp;f.fl=.25}}
+   if(f.x<0)f.x+=W;if(f.x>W)f.x-=W}
+  s.ph=s.ph.filter(f=>f.y>top-14);if(s.ph.length>500)s.ph.splice(0,s.ph.length-500)},
+ draw(ctx,W,H,p){const s=this.s,top=30,gnd=H-46;
+  ctx.fillStyle=C.accent2;ctx.globalAlpha=.07;ctx.fillRect(0,top,W,gnd-top);ctx.globalAlpha=1;
+  ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(22,4,34,0,7);ctx.fill();text(ctx,'الفضاء',W/2,14,C.muted,11);
+  ctx.fillStyle='#6f8a4a';ctx.fillRect(0,gnd,W,H-gnd);const iw=(p.alb-.2)/.25*.55*W;ctx.fillStyle='#eef4f7';ctx.fillRect(0,gnd,iw/2,H-gnd);ctx.fillRect(W-iw/2,gnd,iw/2,H-gnd);
+  textS(ctx,'سطح الأرض',W/2,gnd+18,12);
+  const n=Math.round(p.co2/18);s.mol.slice(0,n).forEach(([u,v])=>{const x=u*W,y=top+20+v*(gnd-top-40);ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(x,y,2.6,0,7);ctx.fill();ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(x-5,y,2.2,0,7);ctx.arc(x+5,y,2.2,0,7);ctx.fill()});
+  s.ph.forEach(f=>{ctx.fillStyle=f.ir?C.accent:C.warn;ctx.beginPath();ctx.arc(f.x,f.y,f.ir?2.6:2.4,0,7);ctx.fill();if(f.fl>0){ctx.strokeStyle=C.accent;ctx.lineWidth=1;ctx.beginPath();ctx.arc(f.x,f.y,8,0,7);ctx.stroke()}});
+  const tx=W-30,t0=top+16,t1=gnd-14,fr=Math.max(0,Math.min(1,(s.T-5)/25));ctx.fillStyle=C.panel;ctx.fillRect(tx-7,t0,14,t1-t0);ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.strokeRect(tx-7,t0,14,t1-t0);
+  ctx.fillStyle=C.accent;ctx.fillRect(tx-5,t1-(t1-t0)*fr,10,(t1-t0)*fr);ctx.beginPath();ctx.arc(tx,t1+6,9,0,7);ctx.fill();text(ctx,fmt(s.T,1)+'°C',tx-12,t0-8,C.ink,12,'center',MONO,600);
+  ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(16,H-14,4,0,7);ctx.fill();text(ctx,'ضوء الشمس',24,H-14,'#fff',11,'left');ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(110,H-14,4,0,7);ctx.fill();text(ctx,'أشعة تحت حمراء',118,H-14,'#fff',11,'left')},
+ readouts(p){const s=this.s,eq=this.Teq(p.co2,p.alb);return[['درجة الحرارة الآن',fmt(s.T,1)+' °C',1],['درجة الحرارة المتوازنة',fmt(eq,1)+' °C'],['التغير عن ما قبل الصناعة',(eq-this.Teq(280,p.alb)>=0?'+':'')+fmt(eq-this.Teq(280,p.alb),2)+' °C'],['الطاقة الإضافية المحتجزة ΔF',fmt(5.35*Math.log(p.co2/280),2)+' W/m²'],['ضوء الشمس المنعكس',fmt(p.alb*100,0)+'%']]}},
+
+/* ---------- Water cycle ---------- */
+{id:'water',branch:'الغلاف المائي',name:'دورة الماء في الطبيعة',law:'تبخر ← تكاثف ← هطل ← جريان',
+ tip:'ارفعي درجة الحرارة: هل يتسارع تكوّن السحب؟ اخفضيها تحت 15°C لتري الهطل يتحول إلى ثلج على القمة. لاحظي أن جزءًا من مياه الأمطار يتسرب ليغذي المياه الجوفية، وهي أهم مصادر المياه في الأردن.',
+ controls:[{id:'T',label:'درجة حرارة سطح البحر',min:0,max:40,step:1,val:26,unit:'°C'},{id:'w',label:'سرعة الرياح نحو اليابسة',min:0,max:10,step:.5,val:4,unit:''}],
+ reset(){this.s={v:[],d:[],r:[],g:[],cl:{x:W*.3,m:0},rain:false,run:0,gw:0,snow:0,acc:0,racc:0}},
+ gy(x){const sea=W*.36;if(x<sea)return H*.8;const pk=W*.78,h=H*.46*Math.exp(-(((x-pk)/(W*.13))**2)),beach=x<sea+24?(H*.04)*(1-(x-sea)/24):0;return H*.76-h+beach},
+ snowT(p){return p.T-15},
+ step(dt,p){const s=this.s,sea=W*.36,cy=H*.2,rate=3*Math.exp(.055*p.T);s.rate=rate;
+  s.acc+=dt*rate;while(s.acc>1){s.acc--;s.v.push({x:Math.random()*sea,y:H*.8})}
+  if(Math.random()<dt*rate*.15){const x=sea+30+Math.random()*W*.25;s.v.push({x,y:this.gy(x)})}
+  s.v.forEach(v=>{v.y-=dt*(26+p.T*.6);v.x+=dt*p.w*6;if(v.y<=cy+8){s.cl.m++;v.dead=1}});s.v=s.v.filter(v=>!v.dead&&v.x<W);
+  if(!s.rain){s.cl.x=Math.min(W*.8,s.cl.x+dt*p.w*5);if(s.cl.m>=40||(s.cl.x>W*.62&&s.cl.m>=16))s.rain=true}
+  else{s.racc+=dt*16;while(s.racc>1&&s.cl.m>0){s.racc--;s.cl.m--;s.d.push({x:s.cl.x+(Math.random()-.5)*(30+Math.sqrt(40)*8),y:cy+14,sn:this.snowT(p)<0})}if(s.cl.m<=0){s.rain=false;s.cl={x:W*.3,m:0}}}
+  s.d.forEach(d=>{d.y+=dt*(d.sn?55:170);d.x+=dt*p.w*2;const g=this.gy(d.x);if(d.y>=g){d.dead=1;if(d.x<sea)return;if(d.sn&&g<H*.55){s.snow++;return}if(Math.random()<.3){s.gw++;s.g.push({x:d.x,y:g,t:7})}else s.r.push({x:d.x})}});s.d=s.d.filter(d=>!d.dead);
+  if(s.snow>0&&this.snowT(p)>1&&Math.random()<dt*3){s.snow--;s.r.push({x:W*.74})}
+  s.r.forEach(r=>{r.x-=dt*45;if(r.x<sea){r.dead=1;s.run++}});s.r=s.r.filter(r=>!r.dead);
+  s.g.forEach(g=>{if(g.y<H*.93)g.y+=dt*10;else g.x-=dt*12;g.t-=dt});s.g=s.g.filter(g=>g.t>0)},
+ draw(ctx,W,H,p){const s=this.s,sea=W*.36,cy=H*.2;
+  ctx.fillStyle=C.warn;ctx.globalAlpha=.4+p.T/80;ctx.beginPath();ctx.arc(30,26,14+p.T*.3,0,7);ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=C.accent2;ctx.globalAlpha=.16;ctx.fillRect(0,H*.9,W,H*.1);ctx.globalAlpha=1;
+  ctx.fillStyle='#8a6a45';ctx.beginPath();ctx.moveTo(sea-2,H);for(let x=sea-2;x<=W;x+=4)ctx.lineTo(x,this.gy(x));ctx.lineTo(W,H);ctx.closePath();ctx.globalAlpha=.85;ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=C.accent2;ctx.globalAlpha=.25;ctx.fillRect(sea,H*.9,W-sea,H*.1);ctx.globalAlpha=.6;ctx.fillRect(0,H*.8,sea+1,H*.2);ctx.globalAlpha=1;
+  if(s.snow>0){const pk=W*.78,r=Math.min(1,s.snow/50);ctx.fillStyle='#f4f7fa';ctx.beginPath();const y=this.gy(pk);ctx.moveTo(pk-W*.09*r-6,y+H*.08*r+6);ctx.lineTo(pk,y-2);ctx.lineTo(pk+W*.09*r+6,y+H*.08*r+6);ctx.fill()}
+  [.45,.52,.6,.93].forEach(u=>{const x=W*u,y=this.gy(x);ctx.fillStyle=C.accent3;ctx.beginPath();ctx.moveTo(x-7,y);ctx.lineTo(x,y-18);ctx.lineTo(x+7,y);ctx.fill()});
+  ctx.fillStyle=C.muted;s.v.forEach(v=>{ctx.globalAlpha=.55;ctx.beginPath();ctx.arc(v.x,v.y,2,0,7);ctx.fill()});ctx.globalAlpha=1;
+  const cs=10+Math.sqrt(s.cl.m)*5;ctx.fillStyle=s.rain?'#8c98a4':'#c9d2da';[[-1,0],[0,-.5],[1,0],[0,.2]].forEach(([a,b])=>{ctx.beginPath();ctx.ellipse(s.cl.x+a*cs*.8,cy+b*cs*.6,cs*.8,cs*.5,0,0,7);ctx.fill()});
+  s.d.forEach(d=>{if(d.sn){ctx.fillStyle='#fff';ctx.strokeStyle=C.muted;ctx.lineWidth=.5;ctx.beginPath();ctx.arc(d.x,d.y,2.5,0,7);ctx.fill();ctx.stroke()}else{ctx.strokeStyle=C.accent2;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-1,d.y-7);ctx.stroke()}});
+  ctx.fillStyle=C.accent2;s.r.forEach(r=>{ctx.beginPath();ctx.arc(r.x,this.gy(r.x)-2,2.6,0,7);ctx.fill()});
+  ctx.fillStyle='#1d4f86';s.g.forEach(g=>{ctx.beginPath();ctx.arc(g.x,g.y,2.2,0,7);ctx.fill()});
+  textS(ctx,'البحر',sea/2,H*.86,12);text(ctx,'تبخر',sea*.5,H*.5,C.ink,12,'center',FONT,600);text(ctx,s.rain?'هطل':'تكاثف',s.cl.x,cy-30,C.ink,12,'center',FONT,600);
+  textS(ctx,'مياه جوفية',W*.66,H*.95,11);textS(ctx,'جريان سطحي ←',W*.48,this.gy(W*.48)+18,11)},
+ readouts(p){const s=this.s;return[['معدل التبخر',fmt(s.rate||0,1)+' جزيء/ث',1],['كتلة السحابة',s.cl.m+''],['حالة السحابة',s.rain?'تهطل':'تتكاثف وتكبر'],['نوع الهطل على القمة',this.snowT(p)<0?'ثلج':'مطر'],['مياه جرت إلى البحر',s.run+''],['مياه تسربت إلى باطن الأرض',s.gw+'']]}},
+
+/* ---------- Seasons ---------- */
+{id:'seasons',branch:'الأرض والفضاء',name:'الفصول الأربعة',law:'δ = −ε · cos(360° · (n + 10) / 365)',
+ tip:'ثبّتي التاريخ على 21 حزيران ثم اجعلي ميل المحور صفرًا: هل تبقى الفصول؟ قارني طول النهار في الكرك صيفًا وشتاءً، ثم انتقلي إلى خط العرض 70° شمالًا.',
+ controls:[{id:'day',label:'اليوم من السنة',min:1,max:365,step:1,val:172,unit:''},{id:'tilt',label:'ميل محور الأرض ε',min:0,max:45,step:.5,val:23.5,unit:'°'},{id:'lat',label:'خط العرض',min:-80,max:80,step:1,val:31,unit:'°'}],
+ actions:[['شغّلي السنة / أوقفيها','toggle']],
+ MN:['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'],
+ date(n){const ml=[31,28,31,30,31,30,31,31,30,31,30,31];let m=0;n=Math.round(n);while(n>ml[m]){n-=ml[m];m++}return n+' '+this.MN[m]},
+ calc(p){const dec=-p.tilt*Math.cos(2*Math.PI*(p.day+10)/365),x=-Math.tan(p.lat*D)*Math.tan(dec*D),dl=x<=-1?24:x>=1?0:24/Math.PI*Math.acos(x);return{dec,alt:90-Math.abs(p.lat-dec),dl}},
+ season(p){const n=p.day;let s=n>=80&&n<172?0:n>=172&&n<266?1:n>=266&&n<355?2:3;if(p.lat<0)s=(s+2)%4;return['الربيع','الصيف','الخريف','الشتاء'][s]},
+ reset(){this.s=this.s||{run:false,acc:0}},toggle(){this.s.run=!this.s.run},
+ step(dt,p){const s=this.s;if(!s.run)return;s.acc+=dt*35;while(s.acc>=1){s.acc--;setParam('day',p.day%365+1)}},
+ draw(ctx,W,H,p){const k=this.calc(p),Ht=H*.6,cx=W/2,cy=Ht/2+6,rx=W*.37,ry=Ht*.3;
+  ctx.strokeStyle=C.line;ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,7);ctx.stroke();
+  ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(cx,cy,17,0,7);ctx.fill();
+  const pos=n=>{const t=2*Math.PI*(n-172)/365;return[cx-rx*Math.cos(t),cy+ry*Math.sin(t)]};
+  [[172,'21 حزيران'],[266,'23 أيلول'],[355,'21 كانون الأول'],[80,'21 آذار']].forEach(([n,l])=>{const[x,y]=pos(n);ctx.fillStyle=C.muted;ctx.beginPath();ctx.arc(x,y,3,0,7);ctx.fill();text(ctx,l,x+(x<cx?-4:x>cx+5?4:0),y+(y>cy+5?14:y<cy-5?-12:-14),C.muted,10,x<cx-5?'right':x>cx+5?'left':'center')});
+  const[ex,ey]=pos(p.day),ps=Math.atan2(cy-ey,cx-ex),er=14;
+  ctx.fillStyle='#22314f';ctx.beginPath();ctx.arc(ex,ey,er,0,7);ctx.fill();ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(ex,ey,er,ps-Math.PI/2,ps+Math.PI/2);ctx.fill();
+  const ta=p.tilt*D;ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ex-Math.sin(ta)*24,ey+Math.cos(ta)*24);ctx.lineTo(ex+Math.sin(ta)*24,ey-Math.cos(ta)*24);ctx.stroke();
+  text(ctx,'ش',ex+Math.sin(ta)*32,ey-Math.cos(ta)*32,C.ink,11,'center',FONT,600);
+  const gy=H-22,bx=W*.42,sh=46;ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(16,gy);ctx.lineTo(W-16,gy);ctx.stroke();
+  ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bx,gy);ctx.lineTo(bx,gy-sh);ctx.stroke();
+  text(ctx,'الشمس وقت الظهر',W-16,Ht+12,C.muted,11,'right');
+  if(k.alt>0){const a=k.alt*D,R=Math.min(W*.45,(H-Ht)-18),sx=bx+Math.cos(a)*R,sy=gy-sh-Math.sin(a)*R*.85;
+   ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(sx,Math.max(Ht+14,sy),9,0,7);ctx.fill();
+   const L=Math.min(W*.38,sh/Math.tan(a));ctx.strokeStyle=C.warn;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(sx,Math.max(Ht+14,sy));ctx.lineTo(bx-L,gy);ctx.stroke();ctx.setLineDash([]);
+   ctx.strokeStyle=C.muted;ctx.lineWidth=5;ctx.globalAlpha=.6;ctx.beginPath();ctx.moveTo(bx,gy-1);ctx.lineTo(bx-L,gy-1);ctx.stroke();ctx.globalAlpha=1;text(ctx,'الظل',bx-L/2,gy+11,C.muted,10);
+   text(ctx,'α = '+fmt(k.alt,1)+'°',bx+30,gy-12,C.ink,12,'left',MONO,600)}
+  else text(ctx,'الشمس لا تشرق اليوم (ليل قطبي)',W/2,gy-24,C.accent,12,'center',FONT,600)},
+ readouts(p){const k=this.calc(p),h=Math.floor(k.dl),m=Math.round((k.dl-h)*60);
+  return[['التاريخ',this.date(p.day),'ar'],['الفصل',this.season(p)+(p.lat<0?' (نصف الكرة الجنوبي)':''),1],['خط العرض الذي تتعامد عليه الشمس',fmt(Math.abs(k.dec),1)+'° '+(k.dec>=0?'N':'S')],['ارتفاع الشمس وقت الظهر',fmt(Math.max(0,k.alt),1)+'°'],['طول النهار',h+' h '+m+' min'],['المكان',Math.abs(p.lat-31)<1?'الكرك، الأردن':(Math.abs(p.lat)<1?'خط الاستواء':'خط العرض '+Math.abs(p.lat)+'° '+(p.lat>0?'شمالًا':'جنوبًا')),'w']]}},
+
+/* ---------- Moon phases ---------- */
+{id:'moon',branch:'الأرض والفضاء',name:'أطوار القمر',law:'الشهر القمري ≈ 29.5 يومًا',
+ tip:'نصف القمر مضاء دائمًا بالشمس، لكن ما نراه من الأرض يتغير مع موضعه في مداره. متى يظهر الهلال الذي يبدأ به الشهر الهجري؟ ولماذا لا نرى البدر في النهار عادةً؟',
+ controls:[{id:'day',label:'عمر القمر',min:0,max:29.5,step:.1,val:3,unit:'يوم'},{id:'spd',label:'سرعة الحركة',min:0,max:4,step:.25,val:1,unit:'يوم/ث'}],
+ reset(){this.s=this.s||{acc:0}},
+ step(dt,p){const s=this.s;s.acc+=dt*p.spd;while(s.acc>=.1){s.acc-=.1;setParam('day',Math.round(((p.day+.1)%29.5)*10)/10)}},
+ phase(f){return f<.03||f>.97?'محاق':f<.22?'هلال متزايد':f<.28?'تربيع أول':f<.47?'أحدب متزايد':f<.53?'بدر':f<.72?'أحدب متناقص':f<.78?'تربيع أخير':'هلال متناقص'},
+ disk(ctx,cx,cy,r,f){ctx.fillStyle='#2a3048';ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fill();if(f<.015||f>.985)return;
+  ctx.save();ctx.translate(cx,cy);let ph=f;if(f>.5){ctx.scale(-1,1);ph=1-f}const k=Math.cos(2*Math.PI*ph)*r;
+  ctx.fillStyle='#f3ebcf';ctx.beginPath();ctx.arc(0,0,r,-Math.PI/2,Math.PI/2,false);ctx.ellipse(0,0,Math.abs(k),r,0,Math.PI/2,-Math.PI/2,k>0);ctx.fill();ctx.restore()},
+ draw(ctx,W,H,p){const f=p.day/29.5,cx=W*.3,cy=H/2,ro=Math.min(W*.22,H*.36),a=2*Math.PI*f;
+  for(let i=0;i<5;i++){const y=cy-ro+i*ro/2;arrow(ctx,W*.58,y,W*.53,y,C.warn,'',1.5)}text(ctx,'أشعة الشمس',W*.555,cy-ro-16,C.warn,11,'center',FONT,600);
+  ctx.strokeStyle=C.line;ctx.setLineDash([4,5]);ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,ro,0,7);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#22314f';ctx.beginPath();ctx.arc(cx,cy,16,0,7);ctx.fill();ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(cx,cy,16,-Math.PI/2,Math.PI/2);ctx.fill();
+  [[0,'محاق'],[Math.PI/2,'تربيع أول'],[Math.PI,'بدر'],[3*Math.PI/2,'تربيع أخير']].forEach(([b,l])=>text(ctx,l,cx+Math.cos(b)*(ro+26),cy-Math.sin(b)*(ro+16),C.muted,10));
+  const mx=cx+Math.cos(a)*ro,my=cy-Math.sin(a)*ro;ctx.strokeStyle=C.ink;ctx.globalAlpha=.4;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(mx,my);ctx.stroke();ctx.globalAlpha=1;
+  ctx.fillStyle='#2a3048';ctx.beginPath();ctx.arc(mx,my,10,0,7);ctx.fill();ctx.fillStyle='#f3ebcf';ctx.beginPath();ctx.arc(mx,my,10,-Math.PI/2,Math.PI/2);ctx.fill();
+  text(ctx,'منظر من الفضاء',cx,16,C.muted,11);
+  const vx=W*.8,vr=Math.min(W*.15,H*.28),bw=vr*2+30;ctx.fillStyle='#0d1530';ctx.beginPath();ctx.rect(vx-bw/2,cy-vr-40,bw,vr*2+80);ctx.fill();
+  this.disk(ctx,vx,cy-6,vr,f);text(ctx,'كما نراه من الأرض',vx,cy-vr-26,'#c9d2e8',11);text(ctx,this.phase(f),vx,cy+vr+22,'#f3ebcf',13,'center',FONT,600)},
+ readouts(p){const f=p.day/29.5,n=this.phase(f),r=((6*60+p.day*50.5)%1440),hh=Math.floor(r/60),mm=Math.round(r%60);
+  const best={'محاق':'لا يُرى','هلال متزايد':'بعد غروب الشمس غربًا','تربيع أول':'في المساء','أحدب متزايد':'من المساء حتى منتصف الليل','بدر':'طوال الليل','أحدب متناقص':'من منتصف الليل حتى الفجر','تربيع أخير':'بعد منتصف الليل وفي الصباح','هلال متناقص':'قبيل شروق الشمس شرقًا'}[n];
+  return[['عمر القمر',fmt(p.day,1)+' يوم'],['الطور',n,1],['نسبة الجزء المضاء',fmt((1-Math.cos(2*Math.PI*f))/2*100,0)+'%'],['وقت الشروق التقريبي',String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')],['أفضل وقت للرؤية',best,'w']]}},
+
+/* ---------- Predator–prey ---------- */
+{id:'eco',branch:'البيئة والنظم البيئية',name:'العلاقة بين الفريسة والمفترس',law:'dx/dt = αx − βxy ,  dy/dt = δxy − γy',
+ tip:'لاحظي أن ذروة أعداد الثعالب تأتي دائمًا بعد ذروة الأرانب. ماذا يحدث للثعالب إذا قضى الجفاف على نصف الأرانب؟ وماذا يحدث للأرانب عند الصيد الجائر للثعالب؟ هل يعود النظام إلى التوازن؟',
+ controls:[{id:'al',label:'معدل تكاثر الأرانب α',min:.2,max:1.5,step:.05,val:.8,unit:''},{id:'be',label:'معدل افتراس الثعالب β',min:.01,max:.08,step:.005,val:.04,unit:''},{id:'ga',label:'معدل موت الثعالب γ',min:.2,max:1.2,step:.05,val:.6,unit:''}],
+ de:.01,actions:[['جفاف: يهلك نصف الأرانب','drought'],['صيد جائر لنصف الثعالب','hunt'],['ابدئي من جديد','reset']],
+ reset(){this.s={x:40,y:10,t:0,h:[],r:[],f:[],dx:0,dy:0}},drought(){this.s.x/=2},hunt(){this.s.y/=2},
+ step(dt,p){const s=this.s,n=8,h=dt*1.5/n,F=(x,y)=>[p.al*x-p.be*x*y,this.de*x*y-p.ga*y];
+  for(let i=0;i<n;i++){const k1=F(s.x,s.y),k2=F(s.x+h/2*k1[0],s.y+h/2*k1[1]),k3=F(s.x+h/2*k2[0],s.y+h/2*k2[1]),k4=F(s.x+h*k3[0],s.y+h*k3[1]);s.x=Math.max(.05,s.x+h/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]));s.y=Math.max(.05,s.y+h/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]))}
+  [s.dx,s.dy]=F(s.x,s.y);s.t+=dt*1.5;s.h.push([s.x,s.y]);if(s.h.length>700)s.h.shift();
+  const Ht=H*.4,sync=(arr,n)=>{while(arr.length<n)arr.push({x:Math.random()*W,y:14+Math.random()*(Ht-28),a:Math.random()*7});arr.length=n};
+  sync(s.r,Math.min(80,Math.round(s.x/2.5)));sync(s.f,Math.min(40,Math.round(s.y/1.2)));
+  [...s.r,...s.f].forEach(o=>{o.a+=(Math.random()-.5)*dt*4;o.x+=Math.cos(o.a)*dt*18;o.y+=Math.sin(o.a)*dt*18;if(o.x<6||o.x>W-6)o.a=Math.PI-o.a;if(o.y<12||o.y>Ht-12)o.a=-o.a;o.x=Math.max(6,Math.min(W-6,o.x));o.y=Math.max(12,Math.min(Ht-12,o.y))})},
+ draw(ctx,W,H,p){const s=this.s,Ht=H*.4;ctx.fillStyle=C.accent3;ctx.globalAlpha=.1;ctx.fillRect(0,0,W,Ht);ctx.globalAlpha=1;
+  s.r.forEach(o=>{ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(o.x,o.y,4,0,7);ctx.fill();ctx.strokeStyle=C.accent2;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(o.x-1.5,o.y-3);ctx.lineTo(o.x-2.5,o.y-9);ctx.moveTo(o.x+1.5,o.y-3);ctx.lineTo(o.x+2.5,o.y-9);ctx.stroke()});
+  s.f.forEach(o=>{ctx.fillStyle=C.accent;ctx.beginPath();ctx.moveTo(o.x-7,o.y-5);ctx.lineTo(o.x-3,o.y-2);ctx.lineTo(o.x+3,o.y-2);ctx.lineTo(o.x+7,o.y-5);ctx.lineTo(o.x+5,o.y+2);ctx.lineTo(o.x,o.y+7);ctx.lineTo(o.x-5,o.y+2);ctx.closePath();ctx.fill()});
+  const gx0=40,gx1=W-14,gy0=Ht+14,gy1=H-22,mx=Math.max(120,...s.h.map(q=>q[0]))*1.05,X=i=>gx0+(gx1-gx0)*i/699,Y=v=>gy1-v/mx*(gy1-gy0);
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(gx0+.5,gy0+.5,gx1-gx0,gy1-gy0);text(ctx,fmt(mx,0),gx0-4,gy0+8,C.muted,10,'right',MONO,400);text(ctx,'0',gx0-4,gy1-4,C.muted,10,'right',MONO,400);
+  ctx.setLineDash([4,5]);ctx.strokeStyle=C.accent2;ctx.beginPath();ctx.moveTo(gx0,Y(p.ga/this.de));ctx.lineTo(gx1,Y(p.ga/this.de));ctx.stroke();ctx.strokeStyle=C.accent;ctx.beginPath();ctx.moveTo(gx0,Y(p.al/p.be));ctx.lineTo(gx1,Y(p.al/p.be));ctx.stroke();ctx.setLineDash([]);
+  [[0,C.accent2],[1,C.accent]].forEach(([j,c])=>{ctx.strokeStyle=c;ctx.lineWidth=2.2;ctx.beginPath();s.h.forEach((q,i)=>{i?ctx.lineTo(X(i),Y(q[j])):ctx.moveTo(X(i),Y(q[j]))});ctx.stroke()});
+  text(ctx,'الأرانب',gx1-6,gy0+11,C.accent2,11,'right',FONT,600);text(ctx,'الثعالب',gx1-56,gy0+11,C.accent,11,'right',FONT,600);text(ctx,'الزمن ←',gx0+30,gy1+11,C.muted,10)},
+ readouts(p){const s=this.s;return[['عدد الأرانب',fmt(s.x,0),1],['عدد الثعالب',fmt(s.y,0),1],['توازن الأرانب γ/δ',fmt(p.ga/this.de,0)],['توازن الثعالب α/β',fmt(p.al/p.be,0)],['الزمن',fmt(s.t,1)+' سنة'],['الحالة',(s.dx>0?'الأرانب تتزايد':'الأرانب تتناقص')+' و'+(s.dy>0?'الثعالب تتزايد':'الثعالب تتناقص'),'w']]}},
+
+/* ---------- Energy pyramid ---------- */
+{id:'pyramid',branch:'البيئة والنظم البيئية',name:'هرم الطاقة في السلسلة الغذائية',law:'E(n+1) ≈ 10% × E(n)',
+ tip:'لماذا تكون أعداد الصقور في الصحراء الأردنية قليلة جدًا مقارنة بالأعشاب؟ غيّري كفاءة انتقال الطاقة ولاحظي كم يصل إلى قمة الهرم. أين تذهب الطاقة المفقودة؟',
+ controls:[{id:'E',label:'الطاقة المخزنة في المنتجات',min:1000,max:100000,step:1000,val:10000,unit:'kJ'},{id:'eff',label:'كفاءة انتقال الطاقة',min:5,max:20,step:1,val:10,unit:'%'},{id:'n',label:'عدد المستويات الغذائية',min:2,max:5,step:1,val:4,unit:''}],
+ LV:[['المنتجات','أعشاب صحراوية','#4f9a3f'],['مستهلك أول','جرادة','#97ad35'],['مستهلك ثانٍ','سحلية','#cf962a'],['مستهلك ثالث','أفعى','#c25f2c'],['مستهلك رابع','صقر','#963a29']],
+ reset(){this.s={pt:[],acc:0}},
+ geo(p){const n=p.n,lh=Math.min(64,(H-40)/n),bot=H-20,r=Math.pow(p.eff/100,.3),wmax=W-40;return{lh,bot,w:i=>130+(wmax-130)*r**i}},
+ step(dt,p){const s=this.s,g=this.geo(p);s.acc+=dt*26;while(s.acc>1){s.acc--;s.pt.push({lv:0,u:Math.random()-.5,y:g.bot-2,h:0})}
+  s.pt.forEach(q=>{if(q.h){q.x+=q.vx*dt;q.y-=dt*12;q.h-=dt;return}q.y-=dt*55;const top=g.bot-(q.lv+1)*g.lh;
+   if(q.y<top){if(q.lv+1<p.n&&Math.random()<p.eff/100)q.lv++;else{q.h=1.4;q.x=W/2+q.u*g.w(q.lv);q.vx=(q.u>0?1:-1)*70}}});
+  s.pt=s.pt.filter(q=>q.h===0||q.h>0)},
+ draw(ctx,W,H,p){const g=this.geo(p);for(let i=0;i<p.n;i++){const w=g.w(i),y=g.bot-(i+1)*g.lh,E=p.E*(p.eff/100)**i,[a,b,c]=this.LV[i];
+   ctx.fillStyle=c;ctx.fillRect(W/2-w/2,y+1,w,g.lh-2);textS(ctx,a+' · '+b,W/2,y+g.lh*.36,W<420?11:12);textS(ctx,(E>=10?Math.round(E).toLocaleString('en'):fmt(E,2))+' kJ',W/2,y+g.lh*.7,11)}
+  this.s.pt.forEach(q=>{if(q.h){ctx.fillStyle=C.accent;ctx.globalAlpha=Math.max(0,q.h/1.4);ctx.beginPath();ctx.arc(q.x,q.y,2.5,0,7);ctx.fill();ctx.globalAlpha=1}else{ctx.fillStyle=C.warn;ctx.strokeStyle=C.ink;ctx.lineWidth=.6;ctx.beginPath();ctx.arc(W/2+q.u*g.w(q.lv)*.9,q.y,2.8,0,7);ctx.fill();ctx.stroke()}});
+  text(ctx,'● طاقة تنتقل للمستوى التالي',W-14,14,C.warn,11,'right',FONT,600);text(ctx,'● حرارة مفقودة (تنفس، حركة، فضلات)',W-14,30,C.accent,11,'right',FONT,600)},
+ readouts(p){const r=[];for(let i=0;i<p.n;i++){const E=p.E*(p.eff/100)**i;r.push([this.LV[i][0]+' ('+this.LV[i][1]+')',(E>=10?Math.round(E).toLocaleString('en'):fmt(E,2))+' kJ',i===p.n-1?1:0])}
+  const top=p.E*(p.eff/100)**(p.n-1);r.push(['ما يصل إلى القمة',fmt(top/p.E*100,top/p.E<.001?4:2)+'%']);return r}},
+
+/* ---------- Topographic map ---------- */
+{id:'topo',branch:'الخرائط والتضاريس',name:'الخرائط الطبوغرافية وخطوط الكنتور',law:'الانحدار = فرق الارتفاع ÷ المسافة الأفقية',
+ tip:'اسحبي الدائرتين أ و ب على الخريطة لترسمي مقطعًا تضاريسيًا. أين تتقارب خطوط الكنتور؟ قارني ذلك بشدة الانحدار في المقطع. غيّري الفاصل الكنتوري ولاحظي كيف تتغير دقة الخريطة.',
+ controls:[{id:'ci',type:'seg',label:'الفاصل الكنتوري',options:[['50','50 m'],['100','100 m'],['200','200 m']],val:'100'},{id:'pk',label:'ارتفاع القمة الرئيسية',min:300,max:1200,step:50,val:900,unit:'m'},{id:'col',type:'seg',label:'تلوين الارتفاعات',options:[['1','ملوّنة'],['0','خطوط فقط']],val:'1'}],
+ PAL:['#5d9c58','#84b15c','#b3c268','#d6c078','#c99a5e','#a87449','#87593b','#efece4'],
+ hg(u,v,p){return p.pk*Math.exp(-((u-.3)**2/.02+(v-.38)**2/.035))+p.pk*.6*Math.exp(-((u-.7)**2/.012+(v-.62)**2/.014))+260*Math.exp(-((u-.52)**2/.08+(v-.88)**2/.01))+90*u+40},
+ reset(){this.s={a:[.1,.72],b:[.9,.3],drag:-1,key:'',img:null}},onChange(){this.s.key=''},step(){},
+ map(){return{x0:12,y0:12,w:W-24,h:Math.round(H*.64)-12}},
+ build(p,m){const cell=2,cols=Math.ceil(m.w/cell),rows=Math.ceil(m.h/cell),hs=new Float32Array(cols*rows);
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)hs[j*cols+i]=this.hg(i/cols,j/rows,p);
+  const cv=document.createElement('canvas');cv.width=cols;cv.height=rows;const c2=cv.getContext('2d'),im=c2.createImageData(cols,rows),ci=+p.ci,ink=hex(C.ink),bg=hex(C.panel),pal=this.PAL.map(hex);
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const k=j*cols+i,h=hs[k],b=Math.floor(h/ci),br=i<cols-1?Math.floor(hs[k+1]/ci):b,bd=j<rows-1?Math.floor(hs[k+cols]/ci):b,o=k*4;
+   let c=p.col==='1'?pal[Math.min(7,Math.floor(h/1450*8))]:bg;if(br!==b||bd!==b)c=(b%5===4)?ink:ink.map((v,q)=>Math.round(v*.75+c[q]*.25));im.data[o]=c[0];im.data[o+1]=c[1];im.data[o+2]=c[2];im.data[o+3]=255}
+  c2.putImageData(im,0,0);return cv},
+ pointer(x,y,p,type){const m=this.map(),s=this.s,P=q=>[m.x0+q[0]*m.w,m.y0+q[1]*m.h];
+  if(type==='pointerdown'){s.drag=-1;const A=P(s.a),B=P(s.b),da=Math.hypot(x-A[0],y-A[1]),db=Math.hypot(x-B[0],y-B[1]);if(Math.min(da,db)<34)s.drag=da<db?0:1}
+  if(s.drag<0)return;const q=[Math.min(1,Math.max(0,(x-m.x0)/m.w)),Math.min(1,Math.max(0,(y-m.y0)/m.h))];if(s.drag)s.b=q;else s.a=q},
+ pointerUp(){if(this.s)this.s.drag=-1},
+ prof(p){const s=this.s,r=[];for(let i=0;i<=150;i++){const t=i/150;r.push(this.hg(s.a[0]+(s.b[0]-s.a[0])*t,s.a[1]+(s.b[1]-s.a[1])*t,p))}return r},
+ len(){const s=this.s,m=this.map();return Math.hypot((s.b[0]-s.a[0])*m.w,(s.b[1]-s.a[1])*m.h)/m.w*10},
+ draw(ctx,W,H,p){const s=this.s,m=this.map(),key=[W,H,p.ci,p.pk,p.col,C.ink,C.panel].join('|');if(s.key!==key){s.img=this.build(p,m);s.key=key}
+  ctx.imageSmoothingEnabled=false;ctx.drawImage(s.img,m.x0,m.y0,m.w,m.h);ctx.imageSmoothingEnabled=true;ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.strokeRect(m.x0+.5,m.y0+.5,m.w,m.h);
+  const A=[m.x0+s.a[0]*m.w,m.y0+s.a[1]*m.h],B=[m.x0+s.b[0]*m.w,m.y0+s.b[1]*m.h];ctx.strokeStyle=C.accent;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+  [[A,'أ'],[B,'ب']].forEach(([q,l])=>{ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(q[0],q[1],11,0,7);ctx.fill();text(ctx,l,q[0],q[1]+1,'#fff',12,'center',FONT,600)});
+  const kb=m.w/10;ctx.fillStyle=C.panel;ctx.fillRect(m.x0+8,m.y0+m.h-26,kb*2+16,20);ctx.fillStyle=C.ink;ctx.fillRect(m.x0+16,m.y0+m.h-14,kb*2,3);text(ctx,'2 km',m.x0+16+kb,m.y0+m.h-20,C.ink,10,'center',MONO,600);
+  text(ctx,'ش ↑',m.x0+m.w-18,m.y0+14,C.ink,12,'center',FONT,600);
+  const pr=this.prof(p),py0=m.y0+m.h+18,py1=H-18,px0=40,px1=W-14,top=Math.max(600,p.pk+250),Y=v=>py1-v/top*(py1-py0),X=i=>px0+(px1-px0)*i/150;
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(px0+.5,py0+.5,px1-px0,py1-py0);const st=Math.max(+p.ci,200);for(let v=st;v<top;v+=st){ctx.beginPath();ctx.moveTo(px0,Y(v));ctx.lineTo(px1,Y(v));ctx.stroke();text(ctx,v+'',px0-4,Y(v),C.muted,9,'right',MONO,400)}
+  ctx.fillStyle='#a87449';ctx.globalAlpha=.35;ctx.beginPath();ctx.moveTo(X(0),py1);pr.forEach((v,i)=>ctx.lineTo(X(i),Y(v)));ctx.lineTo(X(150),py1);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();pr.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.stroke();
+  text(ctx,'أ',px0+8,py0+10,C.accent,12,'center',FONT,600);text(ctx,'ب',px1-8,py0+10,C.accent,12,'center',FONT,600);text(ctx,'المقطع التضاريسي (m)',(px0+px1)/2,py0+10,C.muted,10)},
+ readouts(p){const pr=this.prof(p),L=this.len(),ha=pr[0],hb=pr[150];let ms=0;for(let i=1;i<=150;i++)ms=Math.max(ms,Math.abs(pr[i]-pr[i-1])/(L*1000/150||1));
+  return[['ارتفاع النقطة أ',fmt(ha,0)+' m'],['ارتفاع النقطة ب',fmt(hb,0)+' m'],['أعلى نقطة على المقطع',fmt(Math.max(...pr),0)+' m',1],['طول المقطع',fmt(L,2)+' km'],['متوسط الانحدار بين أ و ب',fmt(Math.abs(hb-ha)/(L*1000||1)*100,1)+'%'],['أشد انحدار على المقطع',fmt(ms*100,1)+'%']]}}
+];
+
+/* ================= ENGINE ================= */
+const cv=$('#cv'),ctx=cv.getContext('2d');let cur=null,P={},paused=false,last=0,lastRO=0,lastW=0;
+function resize(){const w=cv.parentElement.clientWidth;if(!w||w===lastW)return;lastW=w;W=w;H=Math.round(Math.max(280,Math.min(540,W*(W<600?.95:.62))));const r=window.devicePixelRatio||1;cv.width=W*r;cv.height=H*r;cv.style.height=H+'px';ctx.setTransform(r,0,0,r,0,0);if(cur){if(cur.id==='seasons'||cur.id==='moon'||cur.id==='tri')return;cur.reset(P)}}
+new ResizeObserver(resize).observe(cv.parentElement);
+const branches=[...new Set(SIMS.map(s=>s.branch))];
+$('#nav').innerHTML=branches.map(b=>`<div class="grp"><b>${b}</b><div>${SIMS.filter(s=>s.branch===b).map(s=>`<button class="chip" data-id="${s.id}" aria-pressed="false">${s.name.replace('العلاقة بين ','').replace(' في السلسلة الغذائية','').replace(' وخطوط الكنتور','').replace(' وعمر النصف','')}</button>`).join('')}</div></div>`).join('');
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)select(b.dataset.id)});
+function fmtVal(c,v){return(c.step<1?(+v).toFixed(c.step<.1?(c.step<.01?3:2):1):v)+(c.unit?' '+c.unit:'')}
+function setParam(id,v){P[id]=v;const c=cur.controls.find(c=>c.id===id);if(!c)return;
+  if(c.type==='seg')document.querySelectorAll(`[data-seg="${id}"] button`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
+  else{const el=$('#c_'+id);if(el&&+el.value!==v)el.value=v;const o=$('#o_'+id);if(o)o.textContent=fmtVal(c,v)}
+  cur.onChange&&cur.onChange(P,id)}
+function select(id){cur=SIMS.find(s=>s.id===id)||SIMS[0];P={};cur.controls.forEach(c=>P[c.id]=c.val);
+  document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===cur.id));
+  $('#branch').textContent=cur.branch;$('#name').textContent=cur.name;$('#law').textContent=cur.law;$('#try').innerHTML='<b>جرّبي واكتشفي: </b>'+cur.tip;
+  $('#ctls').innerHTML=cur.controls.length?cur.controls.map(c=>c.type==='seg'
+    ?`<div class="ctl"><div class="top"><span>${c.label}</span></div><div class="seg" data-seg="${c.id}">${c.options.map(([v,l])=>`<button data-v="${v}" aria-pressed="${v===c.val}">${l}</button>`).join('')}</div></div>`
+    :`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><output id="o_${c.id}">${fmtVal(c,c.val)}</output></div><input type="range" id="c_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.val}"></div>`).join(''):`<p class="note">${cur.note||''}</p>`;
+  cur.controls.forEach(c=>{if(c.type==='seg')document.querySelectorAll(`[data-seg="${c.id}"] button`).forEach(b=>b.onclick=()=>setParam(c.id,b.dataset.v));else $('#c_'+c.id).oninput=e=>setParam(c.id,+e.target.value)});
+  const acts=$('#acts');acts.innerHTML='';
+  const pb=document.createElement('button');pb.className='btn';
+  (cur.actions||[]).forEach(([l,fn])=>{const b=document.createElement('button');b.className='btn primary';b.textContent=l;b.onclick=()=>{cur[fn](P);paused=false;pb.textContent='إيقاف مؤقت'};acts.append(b)});
+  pb.textContent=paused?'تشغيل':'إيقاف مؤقت';pb.onclick=()=>{paused=!paused;pb.textContent=paused?'تشغيل':'إيقاف مؤقت'};acts.append(pb);
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='القيم الافتراضية';rb.onclick=()=>{cur.s=null;select(cur.id)};acts.append(rb);
+  if(cur.id==='seasons'||cur.id==='moon')cur.s=null;cur.reset(P);renderRO();try{localStorage.setItem('earth-tab',cur.id)}catch(e){}
+  if(location.hash!=='#'+cur.id)history.replaceState(null,'','#'+cur.id)}
+function renderRO(){$('#ro').innerHTML=cur.readouts(P).map(([l,v,h])=>h==='w'?`<dt class="wide">${l}</dt><dd class="wide">${v}</dd>`:`<dt>${l}</dt><dd class="${h===1?'hot':''} ${h==='ar'?'ar':''}">${v}</dd>`).join('')}
+function onPtr(e){if(!cur.pointer||(e.type==='pointermove'&&!e.buttons))return;if(e.type==='pointerdown'){try{cv.setPointerCapture(e.pointerId)}catch(_){}}const r=cv.getBoundingClientRect();cur.pointer(e.clientX-r.left,e.clientY-r.top,P,e.type)}
+cv.addEventListener('pointerdown',onPtr);cv.addEventListener('pointermove',onPtr);['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>cur.pointerUp&&cur.pointerUp()));
+function frame(ts){const dt=Math.min(.04,last?(ts-last)/1000:0);last=ts;
+  if(W){if(!paused)cur.step(dt,P);ctx.fillStyle=C.panel;ctx.fillRect(0,0,W,H);grid(ctx,W,H);cur.draw(ctx,W,H,P);if(ts-lastRO>150){renderRO();lastRO=ts}}
+  requestAnimationFrame(frame)}
+let start=location.hash.slice(1);if(!SIMS.some(s=>s.id===start)){try{start=localStorage.getItem('earth-tab')}catch(e){start=null}}
+resize();select(SIMS.some(s=>s.id===start)?start:'layers');requestAnimationFrame(frame);
+</script>
+<script>
+const LABKEY='earth';
+/* ===== أدوات التجريب الحر: إدخال القيم + دفتر التجارب + الرسم البياني ===== */
+window.escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+(function(){
+const NB={};try{Object.assign(NB,JSON.parse(localStorage.getItem('nb-'+LABKEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('nb-'+LABKEY,JSON.stringify(NB))}catch(e){}};
+const esc=window.escH,q=s=>document.querySelector(s);
+const nb=()=>NB[cur.id]||(NB[cur.id]={rows:[],pred:'',conc:'',x:'',y:'',hot:''});
+const dec=st=>{const s=String(st);return s.includes('.')?s.split('.')[1].length:0};
+const num=v=>{const s=String(v);if(/×10| \/ |∠/.test(s)||(s.match(/\d+(\.\d+)?/g)||[]).length>1)return NaN;const m=s.replace(/−/g,'-').replace(/,/g,'').match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):NaN};
+const pv=v=>{if(!Number.isFinite(v))return'';const a=Math.abs(v);return a>=1000||a===Math.round(a)?String(Math.round(v)):a>=10?v.toFixed(1):v.toFixed(2)};
+
+/* ---------- controls with typed values ---------- */
+function ctlHTML(c){
+  if(c.type==='seg')return`<div class="ctl"><div class="top"><span>${c.label}</span></div><div class="seg" data-seg="${c.id}">${c.options.map(([v,l])=>`<button data-v="${v}" aria-pressed="${String(v)===String(P[c.id])}">${l}</button>`).join('')}</div></div>`;
+  if(c.type==='sel')return`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><output id="o_${c.id}" hidden></output></div><select id="c_${c.id}" class="sel">${c.options.map(([v,l])=>`<option value="${v}" ${String(v)===String(P[c.id])?'selected':''}>${l}</option>`).join('')}</select></div>`;
+  return`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><span class="num"><input type="number" id="n_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${P[c.id]}" inputmode="decimal" aria-label="اكتبي قيمة: ${c.label}">${c.unit?`<small>${c.unit}</small>`:''}</span><output id="o_${c.id}" hidden></output></div><input type="range" id="c_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${P[c.id]}"></div>`}
+window.renderPanel=function(){const el=document.getElementById('cpanel');if(el&&cur.panel){el.innerHTML='';cur.panel(el,P)}};
+function renderCtls(){const box=q('#ctls');let h=cur.panel?'<div class="panel" id="cpanel"></div>':'';
+  h+=cur.controls.length?cur.controls.map(ctlHTML).join(''):(cur.panel?'':`<p class="note">${cur.note||''}</p>`);
+  box.innerHTML=h;renderPanel();
+  cur.controls.forEach(c=>{
+    if(c.type==='seg')box.querySelectorAll(`[data-seg="${c.id}"] button`).forEach(b=>b.onclick=()=>setParam(c.id,b.dataset.v));
+    else if(c.type==='sel')q('#c_'+c.id).onchange=e=>setParam(c.id,e.target.value);
+    else{const r=q('#c_'+c.id),n=q('#n_'+c.id);r.oninput=e=>setParam(c.id,+e.target.value);
+      const apply=()=>{let v=parseFloat(String(n.value).replace(/−/g,'-'));if(!Number.isFinite(v)){n.value=P[c.id];return}
+        v=Math.min(c.max,Math.max(c.min,v));v=+(Math.round(v/c.step)*c.step).toFixed(dec(c.step));n.value=v;setParam(c.id,v)};
+      n.onchange=apply;n.onkeydown=e=>{if(e.key==='Enter')apply()}}})}
+const _sp=setParam;
+setParam=function(id,v){const c=cur.controls.find(c=>c.id===id);
+  if(c&&c.type==='sel'){P[id]=v;const el=q('#c_'+id);if(el&&el.value!==String(v))el.value=v;cur.onChange&&cur.onChange(P,id);return}
+  _sp(id,v);const n=document.getElementById('n_'+id);if(n&&document.activeElement!==n)n.value=v};
+const _sel=select;select=function(id){_sel(id);renderCtls();nbShow()};
+
+/* ---------- notebook ---------- */
+const card=document.createElement('div');card.className='card nb';
+card.innerHTML=`<h3>دفتر التجارب</h3>
+<label class="nbl" for="nb-pred">توقّعي قبل أن تجرّبي</label>
+<textarea id="nb-pred" rows="2" placeholder="ماذا تتوقعين أن يحدث إذا غيّرتِ المتغير؟ ولماذا؟"></textarea>
+<div class="acts"><button class="btn primary" id="nb-rec">سجّلي هذه المحاولة</button><button class="btn" id="nb-undo">احذفي آخر محاولة</button><button class="btn" id="nb-clear">امسحي الدفتر</button></div>
+<div class="nbtw" id="nb-tw"></div>
+<div class="nbplot" id="nb-plotwrap" hidden>
+  <div class="nbaxes"><label for="nb-x">المحور الأفقي</label><select id="nb-x"></select><label for="nb-y">المحور الرأسي</label><select id="nb-y"></select></div>
+  <canvas id="nb-cv" aria-label="رسم بياني لمحاولاتك"></canvas>
+</div>
+<label class="nbl" for="nb-conc">استنتاجي</label>
+<textarea id="nb-conc" rows="3" placeholder="ما العلاقة التي لاحظتِها بين المتغيرات؟ هل تحقق توقعك؟"></textarea>`;
+q('.side').appendChild(card);
+const pred=q('#nb-pred'),conc=q('#nb-conc');
+pred.oninput=()=>{nb().pred=pred.value;save()};conc.oninput=()=>{nb().conc=conc.value;save()};
+q('#nb-rec').onclick=()=>{const n=nb(),r={};
+  cur.controls.forEach(c=>{if(c.type==='seg'||c.type==='sel'){const o=c.options.find(o=>String(o[0])===String(P[c.id]));r[c.label]=o?o[1]:P[c.id]}else r[c.label+(c.unit?' ('+c.unit+')':'')]=String(P[c.id])});
+  (cur.record?cur.record(P):[]).forEach(([k,v])=>r[k]=String(v));
+  let hot='';cur.readouts(P).forEach(([l,v,h])=>{if(h==='w')return;r[l]=String(v);if(h===1&&!hot)hot=l});
+  if(hot)n.hot=hot;n.rows.push(r);if(n.rows.length>40)n.rows.shift();save();nbTable();
+  const b=q('#nb-rec');b.textContent='سُجّلت المحاولة '+n.rows.length;setTimeout(()=>b.textContent='سجّلي هذه المحاولة',1200)};
+q('#nb-undo').onclick=()=>{nb().rows.pop();save();nbTable()};
+let clr=0;q('#nb-clear').onclick=e=>{const b=e.currentTarget;if(!clr){clr=1;b.textContent='اضغطي مرة أخرى للتأكيد';setTimeout(()=>{clr=0;b.textContent='امسحي الدفتر'},2500);return}
+  clr=0;b.textContent='امسحي الدفتر';const n=nb();n.rows=[];save();nbTable()};
+q('#nb-x').onchange=e=>{nb().x=e.target.value;save();nbTable()};q('#nb-y').onchange=e=>{nb().y=e.target.value;save();nbTable()};
+function cols(n){const k=[];n.rows.forEach(r=>Object.keys(r).forEach(x=>{if(!k.includes(x))k.push(x)}));return k}
+function nbTable(){const n=nb(),tw=q('#nb-tw'),pw=q('#nb-plotwrap');
+  if(!n.rows.length){tw.innerHTML='<p class="note">لم تسجّلي أي محاولة بعد. غيّري قيمة متغير واحد، ثم اضغطي «سجّلي هذه المحاولة»، وكرري ذلك عدة مرات.</p>';pw.hidden=true;return}
+  const k=cols(n);tw.innerHTML='<table><thead><tr><th>#</th>'+k.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr></thead><tbody>'+n.rows.map((r,i)=>'<tr><td>'+(i+1)+'</td>'+k.map(x=>`<td>${esc(r[x]??'')}</td>`).join('')+'</tr>').join('')+'</tbody></table>';
+  const nc=k.filter(x=>n.rows.every(r=>Number.isFinite(num(r[x]))));
+  if(n.rows.length<2||nc.length<2){pw.hidden=true;return}pw.hidden=false;
+  if(!nc.includes(n.x)){const varied=nc.find(x=>new Set(n.rows.map(r=>num(r[x]))).size>1);n.x=varied||nc[0]}
+  if(!nc.includes(n.y)||n.y===n.x)n.y=nc.includes(n.hot)&&n.hot!==n.x?n.hot:nc.find(x=>x!==n.x);
+  const opt=v=>nc.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');q('#nb-x').innerHTML=opt(n.x);q('#nb-y').innerHTML=opt(n.y);nbPlot()}
+function nbPlot(){const n=nb(),cv=q('#nb-cv');if(!cv||q('#nb-plotwrap').hidden)return;const w=cv.clientWidth||300,h=190,dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  const pts=n.rows.map(r=>[num(r[n.x]),num(r[n.y])]).sort((a,b)=>a[0]-b[0]);
+  let x0=Math.min(...pts.map(p=>p[0])),x1=Math.max(...pts.map(p=>p[0])),y0=Math.min(...pts.map(p=>p[1])),y1=Math.max(...pts.map(p=>p[1]));
+  if(x1===x0){x0-=1;x1+=1}if(y1===y0){y0-=1;y1+=1}const px=(x1-x0)*.08,py=(y1-y0)*.1;x0-=px;x1+=px;y0-=py;y1+=py;
+  const L=48,R=w-10,T=10,B=h-34,X=v=>L+(R-L)*(v-x0)/(x1-x0),Y=v=>B-(B-T)*(v-y0)/(y1-y0);
+  c.fillStyle=C.panel;c.fillRect(0,0,w,h);c.strokeStyle=C.line;c.lineWidth=1;c.strokeRect(L+.5,T+.5,R-L,B-T);
+  c.font='400 10px '+'"JetBrains Mono",ui-monospace,monospace';c.fillStyle=C.muted;c.textBaseline='middle';
+  c.textAlign='right';[y0+py,y1-py].forEach(v=>c.fillText(pv(v),L-4,Y(v)));c.textAlign='center';[x0+px,x1-px].forEach(v=>c.fillText(pv(v),X(v),B+10));
+  c.font='600 11px "IBM Plex Sans Arabic",system-ui,sans-serif';c.fillStyle=C.ink;c.textAlign='center';c.fillText(n.x.length>40?n.x.slice(0,40)+'…':n.x,(L+R)/2,h-9);
+  c.save();c.translate(11,(T+B)/2);c.rotate(-Math.PI/2);c.fillText(n.y.length>28?n.y.slice(0,28)+'…':n.y,0,0);c.restore();
+  c.setLineDash([4,4]);c.strokeStyle=C.muted;c.lineWidth=1.3;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));c.stroke();c.setLineDash([]);
+  pts.forEach(p=>{c.fillStyle=C.accent;c.beginPath();c.arc(X(p[0]),Y(p[1]),4.5,0,7);c.fill()})}
+function nbShow(){const n=nb();pred.value=n.pred||'';conc.value=n.conc||'';nbTable()}
+try{new ResizeObserver(()=>nbPlot()).observe(card)}catch(e){}
+renderCtls();nbShow();
+})();
+</script>
+
+
+</body>
+</html>

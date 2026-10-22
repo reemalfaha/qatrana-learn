@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر الكيمياء التفاعلي | مختبر بلا حدود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: lab bench — reaction canvas on cool glassware-grey paper (wide column) beside a reagent/control panel; stacks on phones */
+:root{
+  --paper:#eff0f5; --panel:#ffffff; --ink:#1e1d33; --muted:#5f6079; --grid:#e4e5ee; --line:#cfd0de;
+  --accent:#c2297a; --accent2:#2563c9; --accent3:#1f8f6a; --warn:#c98408; --sum:#6a49c0; --chip:#e3e4ee;
+  --f-display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f0f19; --panel:#181826; --ink:#e7e7f2; --muted:#9d9db8; --grid:#21212f; --line:#2f2f44;
+  --accent:#f0559f; --accent2:#6b9cf5; --accent3:#4cc79a; --warn:#eab04a; --sum:#a98cf0; --chip:#22223a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f0f19; --panel:#181826; --ink:#e7e7f2; --muted:#9d9db8; --grid:#21212f; --line:#2f2f44;
+  --accent:#f0559f; --accent2:#6b9cf5; --accent3:#4cc79a; --warn:#eab04a; --sum:#a98cf0; --chip:#22223a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:0;max-width:62ch}
+nav{display:flex;flex-wrap:wrap;gap:10px 18px;padding-block:10px;border-block:1px solid var(--line)}
+.grp{display:flex;flex-direction:column;gap:6px}
+.grp b{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.grp div{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
+.chip:hover{border-color:var(--accent2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
+.stage{display:flex;flex-direction:column;gap:10px;min-width:0}
+.simhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.simhead h2{font-family:var(--f-display);font-weight:500;font-size:26px;margin:0}
+.simhead small{display:block;font-size:12px;color:var(--accent);font-weight:600}
+.law{font-family:var(--f-mono);font-size:14px;background:var(--chip);padding:4px 10px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+.cvbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;touch-action:none}
+canvas{display:block;width:100%}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{border-color:var(--accent2)}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.card h3{margin:0;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.note{margin:0;font-size:14px;color:var(--muted)}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl .top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.ctl output{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--chip);padding:3px;border-radius:8px}
+.seg button{flex:1 1 auto;font:inherit;font-size:13px;border:0;background:transparent;color:var(--ink);padding:5px 8px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.15);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;text-align:left}
+dd.hot{color:var(--accent);font-weight:600}
+dt.wide{grid-column:1/-1;margin-bottom:-6px}
+dd.wide{grid-column:1/-1;direction:rtl;text-align:right;font-family:var(--f-body);font-size:14px}
+dd.ar{direction:rtl;text-align:left;font-family:var(--f-body);font-size:14px}
+.try{border-inline-start:3px solid var(--accent3);background:var(--panel);padding:12px 14px;border-radius:0 8px 8px 0;font-size:14px}
+.try b{color:var(--accent3)}
+.back{align-self:flex-start;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--panel);padding:5px 12px;border-radius:999px}
+.back:hover{border-color:var(--accent)}
+footer{font-size:12px;color:var(--muted)}
+
+/* ---- free experimentation tools ---- */
+[hidden]{display:none!important}
+.num{display:inline-flex;align-items:center;gap:4px}
+.num input{width:84px;font:inherit;font-family:var(--f-mono);font-size:13px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);direction:ltr;text-align:left}
+.num small{font-size:12px;color:var(--muted)}
+select.sel,.panel select,.panel input,.nbaxes select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);min-width:0}
+.panel{display:flex;flex-direction:column;gap:10px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.frow{display:grid;grid-template-columns:26px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 30px;gap:6px;align-items:center}
+.frow.fhead{font-size:12px;color:var(--muted);font-weight:600}
+.frow input{width:100%;direction:ltr;text-align:left;font-family:var(--f-mono);font-size:13px}
+.sw{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:#fff;font-size:12px;font-weight:600;flex:0 0 auto}
+.xbtn{font:inherit;font-size:16px;line-height:1;width:28px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--accent);cursor:pointer}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.pred{display:flex;flex-direction:column;gap:8px;border:1px dashed var(--line);border-radius:8px;padding:10px;font-size:14px}
+.prow{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:14px}
+.prow label{flex:1 1 110px;font-size:13px;color:var(--muted)}
+.prow input,.prow select{flex:1 1 110px}
+.prow input[type=number]{direction:ltr;text-align:left;font-family:var(--f-mono)}
+.prow .short{flex:0 0 60px;text-align:center;font-family:var(--f-mono)}
+.fb{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--chip);line-height:1.5}
+.fb.ok{color:var(--accent3);font-weight:600}.fb.bad{color:var(--accent);font-weight:600}
+.eqin{width:100%;font-family:var(--f-mono)!important;font-size:15px!important;direction:ltr;text-align:left}
+.keypad{display:flex;flex-wrap:wrap;gap:4px}
+.keypad button{font-family:var(--f-mono);font-size:13px;min-width:34px;padding:5px 7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer;direction:ltr}
+.keypad button:hover{border-color:var(--accent2)}
+.keypad.ex button{font-size:11.5px;color:var(--muted)}
+.nb textarea{font:inherit;font-size:14px;width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+.nbl{font-size:13px;color:var(--muted);font-weight:600}
+.nbtw{overflow-x:auto;max-width:100%}
+.nbtw table{border-collapse:collapse;font-size:12px;width:max-content;min-width:100%}
+.nbtw th,.nbtw td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right;white-space:nowrap}
+.nbtw th{color:var(--muted);font-weight:600;font-size:11.5px}
+.nbtw td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.nbplot{display:flex;flex-direction:column;gap:8px}
+.nbaxes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.nbaxes select{flex:1 1 140px}
+#nb-cv{width:100%;display:block;border:1px solid var(--line);border-radius:8px}
+dt.wide{grid-column:1/-1;margin-bottom:-6px}
+dd.wide{grid-column:1/-1;direction:rtl;text-align:right;font-family:var(--f-body);font-size:14px}
+dd.ar{direction:rtl;text-align:left;font-family:var(--f-body);font-size:14px}
+</style>
+
+<style>html.embed .wrap>header,html.embed #nav,html.embed .wrap>footer{display:none!important}html.embed body{padding-top:6px}</style><script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script></head>
+<body>
+<div class="wrap" dir="rtl">
+  <header>
+    <a class="back" href="../#/labs">→ العودة إلى منصّة العلوم</a>
+    <span class="eyebrow">13 محاكاة حيّة · 7 أقسام</span>
+    <h1>مختبر <span>الكيمياء</span> التفاعلي</h1>
+    <p class="sub">من بنية الذرة إلى التفاعلات والاتزان والأحماض والكيمياء الكهربائية والعضوية. غيّري الكميات والظروف، وراقبي ما يحدث للجسيمات والأرقام لحظة بلحظة. اكتبي القيم التي تريدينها بنفسك، وسجّلي محاولاتك في دفتر التجارب، وارسمي العلاقة بين المتغيرات لتستنتجي القانون.</p>
+  </header>
+  <nav id="nav" aria-label="أقسام الكيمياء"></nav>
+  <main class="bench">
+    <section class="stage">
+      <div class="simhead">
+        <div><small id="branch"></small><h2 id="name"></h2></div>
+        <span class="law" id="law"></span>
+      </div>
+      <div class="cvbox"><canvas id="cv" aria-label="لوحة المحاكاة"></canvas></div>
+      <div class="acts" id="acts"></div>
+    </section>
+    <aside class="side">
+      <div class="card"><h3>المتغيرات</h3><div id="ctls" style="display:flex;flex-direction:column;gap:14px"></div></div>
+      <div class="card"><h3>القياسات</h3><dl id="ro"></dl></div>
+      <div class="try" id="try"></div>
+    </aside>
+  </main>
+  <footer>جزء من منصة «مختبر بلا حدود» · إعداد المعلمة نوال بني عطية · مدرسة القطرانة الثانوية للبنات<br>القيم مقرّبة ومبسّطة لأغراض تعليمية.</footer>
+</div>
+
+<script>
+const D=Math.PI/180,$=s=>document.querySelector(s),C={};
+function readColors(){const s=getComputedStyle(document.documentElement);['paper','panel','ink','muted','grid','line','accent','accent2','accent3','warn','sum'].forEach(k=>C[k]=s.getPropertyValue('--'+k).trim())}
+readColors();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readColors);
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d):'—';
+const FONT='"IBM Plex Sans Arabic",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
+const SUBD='₀₁₂₃₄₅₆₇₈₉',SUPD='⁰¹²³⁴⁵⁶⁷⁸⁹',sub=n=>String(n).split('').map(c=>SUBD[c]||c).join(''),sup=n=>String(n).split('').map(c=>SUPD[c]||c).join('');
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function interp(tb,x){if(x<=tb[0][0])return tb[0][1];for(let i=1;i<tb.length;i++)if(x<=tb[i][0]){const a=tb[i-1],b=tb[i];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return tb[tb.length-1][1]}
+function hex(h){h=(h||'#000').trim();if(h.length===4)h='#'+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+function mix(a,b,t){const A=hex(a),B=hex(b);t=Math.max(0,Math.min(1,t));return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`}
+function lum(c){const m=c.match(/\d+/g).map(Number);return(.299*m[0]+.587*m[1]+.114*m[2])/255}
+function arrow(ctx,x1,y1,x2,y2,col,label,w=2.5){const L=Math.hypot(x2-x1,y2-y1);if(L<2)return;const a=Math.atan2(y2-y1,x2-x1),h=Math.min(10,L*.45);
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(a)*h*.8,y2-Math.sin(a)*h*.8);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.4),y2-h*Math.sin(a-.4));ctx.lineTo(x2-h*Math.cos(a+.4),y2-h*Math.sin(a+.4));ctx.fill();
+  if(label){ctx.font='600 12px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x2+Math.cos(a)*16,y2+Math.sin(a)*14)}}
+function text(ctx,t,x,y,col,size=12,align='center',font=FONT,weight=500){ctx.fillStyle=col;ctx.font=`${weight} ${size}px ${font}`;ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(t,x,y)}
+function textS(ctx,t,x,y,size=12,align='center'){ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=3;text(ctx,t,x,y,'#fff',size,align,FONT,600);ctx.restore()}
+function grid(ctx,W,H,step=24){ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();for(let x=.5;x<W;x+=step){ctx.moveTo(x,0);ctx.lineTo(x,H)}for(let y=.5;y<H;y+=step){ctx.moveTo(0,y);ctx.lineTo(W,y)}ctx.stroke()}
+function ball(ctx,x,y,r,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();const L=col[0]==='#'?lum(mix(col,col,0)):lum(col);if(L>.85){ctx.strokeStyle='#8a8aa0';ctx.lineWidth=.8;ctx.stroke()}}
+function axes(ctx,x0,y0,x1,y1){ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(x0+.5,y0+.5,x1-x0,y1-y0)}
+let W=0,H=0;
+
+/* ---------- Element data Z 1–36 ---------- */
+const EL=[null,
+['H','هيدروجين',1.008,1,1,53,2.20,1312,'nm'],['He','هيليوم',4.003,18,1,31,null,2372,'ng'],
+['Li','ليثيوم',6.94,1,2,167,.98,520,'al'],['Be','بيريليوم',9.012,2,2,112,1.57,900,'ae'],['B','بورون',10.81,13,2,87,2.04,801,'md'],['C','كربون',12.011,14,2,67,2.55,1086,'nm'],['N','نيتروجين',14.007,15,2,56,3.04,1402,'nm'],['O','أكسجين',15.999,16,2,48,3.44,1314,'nm'],['F','فلور',18.998,17,2,42,3.98,1681,'hg'],['Ne','نيون',20.18,18,2,38,null,2081,'ng'],
+['Na','صوديوم',22.99,1,3,190,.93,496,'al'],['Mg','مغنيسيوم',24.305,2,3,145,1.31,738,'ae'],['Al','ألمنيوم',26.98,13,3,118,1.61,578,'pt'],['Si','سيليكون',28.085,14,3,111,1.90,787,'md'],['P','فسفور',30.97,15,3,98,2.19,1012,'nm'],['S','كبريت',32.06,16,3,88,2.58,1000,'nm'],['Cl','كلور',35.45,17,3,79,3.16,1251,'hg'],['Ar','أرغون',39.95,18,3,71,null,1521,'ng'],
+['K','بوتاسيوم',39.10,1,4,243,.82,419,'al'],['Ca','كالسيوم',40.08,2,4,194,1.00,590,'ae'],['Sc','سكانديوم',44.96,3,4,184,1.36,633,'tm'],['Ti','تيتانيوم',47.87,4,4,176,1.54,659,'tm'],['V','فاناديوم',50.94,5,4,171,1.63,651,'tm'],['Cr','كروم',52.00,6,4,166,1.66,653,'tm'],['Mn','منغنيز',54.94,7,4,161,1.55,717,'tm'],['Fe','حديد',55.85,8,4,156,1.83,763,'tm'],['Co','كوبالت',58.93,9,4,152,1.88,760,'tm'],['Ni','نيكل',58.69,10,4,149,1.91,737,'tm'],['Cu','نحاس',63.55,11,4,145,1.90,746,'tm'],['Zn','خارصين',65.38,12,4,142,1.65,906,'tm'],['Ga','غاليوم',69.72,13,4,136,1.81,579,'pt'],['Ge','جرمانيوم',72.63,14,4,125,2.01,762,'md'],['As','زرنيخ',74.92,15,4,114,2.18,947,'md'],['Se','سيلينيوم',78.97,16,4,103,2.55,941,'nm'],['Br','بروم',79.90,17,4,94,2.96,1140,'hg'],['Kr','كربتون',83.80,18,4,88,3.00,1351,'ng']];
+const CAT={al:['فلز قلوي','#e7765a'],ae:['فلز قلوي ترابي','#f0a75e'],tm:['فلز انتقالي','#e2c262'],pt:['فلز','#aab3c2'],md:['شبه فلز','#86b07a'],nm:['لافلز','#36a59a'],hg:['هالوجين','#56a8dd'],ng:['غاز نبيل','#9f80d8']};
+const bySym=s=>EL.findIndex(e=>e&&e[0]===s);
+function config(z,short){const O=[['1s',2],['2s',2],['2p',6],['3s',2],['3p',6],['4s',2],['3d',10],['4p',6]];let left=z,r=[];for(const[o,c]of O){if(left<=0)break;const n=Math.min(c,left);r.push([o,n]);left-=n}
+  if(z===24)r=r.map(([o,n])=>o==='4s'?[o,1]:o==='3d'?[o,5]:[o,n]);if(z===29)r=r.map(([o,n])=>o==='4s'?[o,1]:o==='3d'?[o,10]:[o,n]);
+  let pre='',drop=0;if(short){if(z>18){pre='[Ar] ';drop=5}else if(z>10){pre='[Ne] ';drop=3}else if(z>2){pre='[He] ';drop=1}}
+  return pre+r.slice(drop).map(([o,n])=>o+sup(n)).join(' ')}
+function shells(z){const s=[];let l=z;[2,8,8,18].forEach(c=>{if(l>0){s.push(Math.min(c,l));l-=c}});return s}
+const CPK={H:'#f4f4f4',C:'#3a3a3a',O:'#e53935',N:'#3f6fe0',Fe:'#c0662b',Al:'#a7adb4',Cl:'#3fbf4f',S:'#e6c229',P:'#f08a24',F:'#9be05a',Br:'#a2471a',I:'#6b2f8f',Na:'#8e5bd6',K:'#7a4fc0',Li:'#b07ad6',Mg:'#5bbf6a',Ca:'#4f9a5f',Ba:'#3f8f7a',Cu:'#c46a2e',Zn:'#8a93a6',Ag:'#c0c4cc',Si:'#c9a26b',Mn:'#9c7fd0',Cr:'#8aa0c8',Ni:'#6aa06a',Co:'#d070a0',Pb:'#5c6170',B:'#e8a0a0'};
+
+/* ================= SIMULATIONS ================= */
+const SIMS=[
+/* ---------- Atom builder ---------- */
+{id:'atom',branch:'بنية المادة',name:'بناء الذرة',law:'A = Z + N',
+ tip:'عدد البروتونات وحده يحدد هوية العنصر. غيّري عدد النيوترونات: هل يتغير العنصر؟ (هذه نظائر). غيّري عدد الإلكترونات: متى تصبح الذرة أيونًا موجبًا ومتى سالبًا؟',
+ controls:[{id:'p',label:'عدد البروتونات',min:1,max:20,step:1,val:6,unit:''},{id:'n',label:'عدد النيوترونات',min:0,max:24,step:1,val:6,unit:''},{id:'e',label:'عدد الإلكترونات',min:0,max:20,step:1,val:6,unit:''}],
+ ST:{1:[0,1],2:[1,2],3:[3,4],4:[5],5:[5,6],6:[6,7],7:[7,8],8:[8,9,10],9:[10],10:[10,11,12],11:[12],12:[12,13,14],13:[14],14:[14,15,16],15:[16],16:[16,17,18,20],17:[18,20],18:[18,20,22],19:[20,22],20:[20,22,23,24,26,28]},
+ reset(){this.s={t:0}},step(dt){this.s.t+=dt},
+ draw(ctx,W,H,p){const cx=W/2,cy=H/2,sh=shells(p.e),R0=Math.min(W,H)*.13,gap=Math.min(W,H)*.1;
+  sh.forEach((n,i)=>{const r=R0+gap*(i+.6);ctx.strokeStyle=C.line;ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();
+   for(let k=0;k<n;k++){const a=this.s.t*(.9-i*.18)+k*2*Math.PI/n;ball(ctx,cx+Math.cos(a)*r,cy+Math.sin(a)*r,5,C.accent2)}});
+  const tot=p.p+p.n,rr=Math.max(5,Math.min(8,R0/Math.sqrt(tot)*.95));let k=0;const pts=[];
+  for(let i=0;i<tot;i++){const a=i*2.399,r=rr*1.05*Math.sqrt(i);pts.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r])}
+  const types=[];for(let i=0;i<tot;i++)types.push(i%2===0?(k<p.p?'p':'n'):'x');let np=0,nn=0;const ord=pts.map((q,i)=>i).map(i=>{if(np<p.p&&(nn>=p.n||i%2===0)){np++;return'p'}nn++;return'n'});
+  pts.forEach((q,i)=>ball(ctx,q[0],q[1],rr,ord[i]==='p'?C.accent:'#9a9aae'));
+  const el=EL[p.p];text(ctx,el[0],W-30,30,C.ink,26,'center',MONO,600);text(ctx,el[1],W-30,56,C.muted,12);
+  const q=p.p-p.e;text(ctx,(q?'أيون ':'ذرة متعادلة'),W-30,74,q>0?C.accent:q<0?C.accent2:C.accent3,11,'center',FONT,600);
+  [[C.accent,'بروتون'],['#9a9aae','نيوترون'],[C.accent2,'إلكترون']].forEach(([c,l],i)=>{ball(ctx,18,H-58+i*18,5,c);text(ctx,l,28,H-58+i*18,C.ink,11,'left')})},
+ readouts(p){const el=EL[p.p],A=p.p+p.n,q=p.p-p.e,ok=(this.ST[p.p]||[]).includes(p.n);
+  return[['العنصر',el[1]+' ('+el[0]+')','ar'],['الرمز النووي',sup(A)+el[0]+(q?sup(Math.abs(q)>1?Math.abs(q):'')+(q>0?'⁺':'⁻'):''),1],['العدد الذري Z',p.p+''],['العدد الكتلي A',A+''],['الشحنة',(q>0?'+':'')+q],['نوع الجسيم',q>0?'أيون موجب (كاتيون)':q<0?'أيون سالب (أنيون)':'ذرة متعادلة','ar'],['النواة',ok?'مستقرة':'غير مستقرة (مشعة)','ar'],['التوزيع الإلكتروني',p.e?shells(p.e).join(' ، ')+'   |   '+config(p.e):'لا توجد إلكترونات','w']]}},
+
+/* ---------- Periodic table ---------- */
+{id:'ptable',branch:'بنية المادة',name:'الجدول الدوري والخصائص الدورية',law:'Z = 1 … 36',
+ tip:'اختاري «نصف القطر الذري» ولاحظي: كيف يتغير عبر الدورة من اليسار إلى اليمين؟ وكيف يتغير نزولًا في المجموعة؟ قارني ذلك مع طاقة التأين والكهروسالبية. لماذا تكون الاتجاهات متعاكسة؟',
+ controls:[{id:'prop',type:'seg',label:'الخاصية المعروضة',options:[['cat','نوع العنصر'],['r','نصف القطر'],['en','الكهروسالبية'],['ie','طاقة التأين']],val:'r'},{id:'z',label:'العنصر المختار (العدد الذري)',min:1,max:36,step:1,val:11,unit:''}],
+ reset(){this.s={}},step(){},
+ val(z,pr){const e=EL[z];return pr==='r'?e[5]:pr==='en'?e[6]:pr==='ie'?e[7]:null},
+ rng(pr){return pr==='r'?[30,250]:pr==='en'?[.7,4]:[400,2400]},
+ col(z,pr){if(pr==='cat')return CAT[EL[z][8]][1];const v=this.val(z,pr);if(v==null)return mix(C.line,C.line,0);const[a,b]=this.rng(pr);return mix('#dfe9f7','#b3125f',(v-a)/(b-a))},
+ geo(){const cw=(W-24)/18,ch=Math.min(cw*1.15,(H*.56)/4);return{cw,ch,x0:12,y0:10}},
+ cell(z){const g=this.geo(),e=EL[z],col=18-e[3];return[g.x0+col*g.cw,g.y0+(e[4]-1)*g.ch]},
+ pointer(x,y,p,type){if(type!=='pointerdown'&&type!=='pointermove')return;const g=this.geo();for(let z=1;z<=36;z++){const[cx,cy]=this.cell(z);if(x>=cx&&x<cx+g.cw&&y>=cy&&y<cy+g.ch){if(p.z!==z)setParam('z',z);return}}},
+ draw(ctx,W,H,p){const g=this.geo();
+  for(let z=1;z<=36;z++){const[x,y]=this.cell(z),c=this.col(z,p.prop);ctx.fillStyle=c;ctx.fillRect(x+1,y+1,g.cw-2,g.ch-2);
+   if(z===p.z){ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.strokeRect(x+1,y+1,g.cw-2,g.ch-2)}
+   const tc=lum(c.startsWith('#')?mix(c,c,0):c)>.6?'#1e1d33':'#fff';text(ctx,EL[z][0],x+g.cw/2,y+g.ch*.58,tc,Math.min(13,g.cw*.45),'center',MONO,600);if(g.cw>34)text(ctx,z+'',x+g.cw/2,y+g.ch*.22,tc,9,'center',MONO,400)}
+  for(let gr=1;gr<=18;gr++)if(g.cw>26)text(ctx,gr+'',12+(18-gr)*g.cw+g.cw/2,g.y0+4*g.ch+9,C.muted,9,'center',MONO,400);
+  const y0=g.y0+4*g.ch+26,y1=H-24,x0=34,x1=W-12;axes(ctx,x0,y0,x1,y1);
+  if(p.prop==='cat'){let i=0;Object.values(CAT).forEach(([n,c])=>{const cols=W<500?2:4,xx=x0+10+(i%cols)*((x1-x0)/cols),yy=y0+16+Math.floor(i/cols)*22;ctx.fillStyle=c;ctx.fillRect(xx,yy-7,14,14);text(ctx,n,xx+20,yy,C.ink,12,'left');i++});return}
+  const[a,b]=this.rng(p.prop),bw=(x1-x0)/36;text(ctx,{r:'نصف القطر (pm)',en:'الكهروسالبية',ie:'طاقة التأين (kJ/mol)'}[p.prop],x1-6,y0+11,C.muted,11,'right');
+  for(let z=1;z<=36;z++){const v=this.val(z,p.prop);if(v==null)continue;const h=(v-a*.6)/(b-a*.6)*(y1-y0-22);ctx.fillStyle=z===p.z?C.accent:this.col(z,p.prop);ctx.fillRect(x0+(z-1)*bw+1,y1-h,bw-2,h)}
+  [1,10,18,36].forEach(z=>text(ctx,z+'',x0+(z-.5)*bw,y1+11,C.muted,9,'center',MONO,400));text(ctx,'Z',x0-14,y1+11,C.muted,10,'center',MONO)},
+ readouts(p){const e=EL[p.z];return[['العنصر',e[1]+' ('+e[0]+')',1],['العدد الذري',p.z+''],['الكتلة الذرية',fmt(e[2],2)+' u'],['الدورة / المجموعة',e[4]+' / '+e[3]],['النوع',CAT[e[8]][0],'ar'],['نصف القطر الذري',e[5]+' pm'],['الكهروسالبية',e[6]==null?'—':fmt(e[6],2)],['طاقة التأين الأولى',e[7]+' kJ/mol'],['التوزيع الإلكتروني',config(p.z,true),'w']]}},
+
+/* ---------- Chemical bonds ---------- */
+{id:'bonds',branch:'الروابط وحالات المادة',name:'الروابط الكيميائية',law:'ΔEN = |EN(A) − EN(B)|',
+ tip:'قارني الصوديوم مع الكلور، ثم الهيدروجين مع الأكسجين، ثم الهيدروجين مع الهيدروجين. كيف يحدد فرق الكهروسالبية نوع الرابطة؟ ولماذا تنتقل الإلكترونات بين الفلز واللافلز بدل أن تُشارك؟',
+ controls:[{id:'a',type:'sel',label:'الذرة الأولى',options:['Li','Na','K','Mg','Ca','Al','H','C'].map(e=>[e,e+' · '+EL[bySym(e)][1]]),val:'Na'},{id:'b',type:'sel',label:'الذرة الثانية',options:['F','Cl','Br','O','S','N','P','H','C'].map(e=>[e,e+' · '+EL[bySym(e)][1]]),val:'Cl'}],
+ VAL:{H:1,Li:1,Na:1,K:1,Mg:2,Ca:2,Al:3,C:4,N:3,P:3,O:2,S:2,F:1,Cl:1,Br:1},MET:['Li','Na','K','Mg','Ca','Al'],
+ info(p){const A=p.a,B=p.b,ea=EL[bySym(A)][6],eb=EL[bySym(B)][6],d=Math.abs(ea-eb),metal=this.MET.includes(A);
+  const type=metal?'أيونية':d<.4?'تساهمية غير قطبية':'تساهمية قطبية';const va=this.VAL[A],vb=this.VAL[B],g=gcd(va,vb),ia=vb/g,ib=va/g,S=n=>n>1?sub(n):'';let f,ord=1;
+  if(metal)f=A+S(ia)+B+S(ib);
+  else if(A===B)f=A==='C'?'C–C':A+'₂';
+  else if(A==='H'&&['C','N','P'].includes(B))f=B+'H'+sub(vb);
+  else if(B==='H'&&['C','N','P'].includes(A))f=A+'H'+sub(va);
+  else if(A==='H'||B==='H'){const Xe=A==='H'?B:A;f='H'+S(this.VAL[Xe])+Xe}
+  else{f=A+S(ia)+B+S(ib);ord=ia===1?Math.max(1,Math.round(va/ib)):(ib===1?Math.max(1,Math.round(vb/ia)):1)}
+  return{ea,eb,d,metal,type,f,ord:metal?0:Math.min(3,ord),va,vb}},
+ reset(){this.s={t:0}},step(dt){this.s.t+=dt},
+ draw(ctx,W,H,p){const k=this.info(p),t=this.s.t%4,cy=H*.38,ra=Math.max(18,EL[bySym(p.a)][5]*.16),rb=Math.max(18,EL[bySym(p.b)][5]*.16);
+  if(k.metal){const ax=W*.28,bx=W*.72,ph=Math.min(1,Math.max(0,(t-1)/1.2));
+   ctx.fillStyle=C.accent2;ctx.globalAlpha=.15;ctx.beginPath();ctx.arc(ax,cy,ra*(1-ph*.25)+10,0,7);ctx.fill();ctx.fillStyle=C.accent3;ctx.beginPath();ctx.arc(bx,cy,rb*(1+ph*.1)+10,0,7);ctx.fill();ctx.globalAlpha=1;
+   ball(ctx,ax,cy,ra*(1-ph*.25),'#a7adb4');ball(ctx,bx,cy,rb,CPK[p.b]||'#3fbf4f');
+   text(ctx,p.a,ax,cy,'#1e1d33',16,'center',MONO,600);text(ctx,p.b,bx,cy,lum(mix(CPK[p.b]||'#3fbf4f',CPK[p.b]||'#3fbf4f',0))>.6?'#1e1d33':'#fff',16,'center',MONO,600);
+   for(let i=0;i<k.va;i++){const sx=ax+ra+6,sy=cy-6+i*12,ex=bx-rb-8,ey=cy-6+i*12,x=sx+(ex-sx)*ph,y=sy+(ey-sy)*ph-Math.sin(ph*Math.PI)*30;ball(ctx,x,y,5,C.accent2)}
+   if(ph>=1){text(ctx,sup(k.va>1?k.va:'')+'+',ax+ra,cy-ra-6,C.accent,18,'center',MONO,600);text(ctx,sup(k.vb>1?k.vb:'')+'−',bx+rb,cy-rb-6,C.accent2,18,'center',MONO,600);
+    text(ctx,'تجاذب كهربائي بين أيونين',W/2,cy+Math.max(ra,rb)+28,C.ink,13,'center',FONT,600)}
+   else arrow(ctx,ax+ra+10,cy-ra-14,bx-rb-10,cy-rb-14,C.muted,'انتقال الإلكترونات',1.5)}
+  else{const dist=(ra+rb)*.75,ax=W/2-dist/2,bx=W/2+dist/2,sh=(k.eb>k.ea?1:-1)*Math.min(1,k.d/1.7);
+   const g=ctx.createRadialGradient(W/2+sh*dist*.35,cy,4,W/2,cy,(ra+rb)*1.1);const sc=hex(C.sum);g.addColorStop(0,`rgba(${sc},.45)`);g.addColorStop(1,`rgba(${sc},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(W/2,cy,dist/2+Math.max(ra,rb)+14,Math.max(ra,rb)+14,0,0,7);ctx.fill();
+   ball(ctx,ax,cy,ra,CPK[p.a]||'#3a3a3a');ball(ctx,bx,cy,rb,CPK[p.b]||'#3fbf4f');
+   const tc=s=>lum(mix(CPK[s]||'#3a3a3a',CPK[s]||'#3a3a3a',0))>.6?'#1e1d33':'#fff';text(ctx,p.a,ax-ra*.35,cy,tc(p.a),15,'center',MONO,600);text(ctx,p.b,bx+rb*.35,cy,tc(p.b),15,'center',MONO,600);
+   for(let i=0;i<k.ord;i++){const yy=cy+(i-(k.ord-1)/2)*16,xx=W/2+sh*dist*.22+Math.sin(this.s.t*3+i)*2;ball(ctx,xx-5,yy,4.5,C.accent2);ball(ctx,xx+5,yy,4.5,C.accent2)}
+   if(k.d>=.4){text(ctx,'δ+',k.eb>k.ea?ax:bx,cy-Math.max(ra,rb)-14,C.accent,15,'center',MONO,600);text(ctx,'δ−',k.eb>k.ea?bx:ax,cy-Math.max(ra,rb)-14,C.accent2,15,'center',MONO,600)}
+   text(ctx,k.ord===1?'زوج إلكترونات مشترك':k.ord===2?'زوجان مشتركان (رابطة ثنائية)':'ثلاثة أزواج (رابطة ثلاثية)',W/2,cy+Math.max(ra,rb)+28,C.ink,13,'center',FONT,600)}
+  const x0=24,x1=W-24,y=H-46,X=v=>x0+(x1-x0)*(v-.7)/3.3;
+  [[0,.4,C.accent3,'غير قطبية'],[.4,1.7,C.warn,'قطبية'],[1.7,3.3,C.accent,'أيونية']].forEach(([a,b,c,l],i)=>{});
+  ctx.fillStyle=C.line;ctx.fillRect(x0,y-3,x1-x0,6);[.7,1,1.5,2,2.5,3,3.5,4].forEach(v=>text(ctx,v+'',X(v),y+16,C.muted,10,'center',MONO,400));text(ctx,'مقياس الكهروسالبية (باولنغ)',W/2,y-22,C.muted,11);
+  [[p.a,k.ea,C.accent],[p.b,k.eb,C.accent2]].forEach(([s,v,c])=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(X(v),y,7,0,7);ctx.fill();text(ctx,s,X(v),y-14+(s===p.b&&Math.abs(k.ea-k.eb)<.25?-12:0),c,12,'center',MONO,600)})},
+ readouts(p){const k=this.info(p);return[['كهروسالبية '+p.a,fmt(k.ea,2)],['كهروسالبية '+p.b,fmt(k.eb,2)],['فرق الكهروسالبية ΔEN',fmt(k.d,2),1],['نوع الرابطة',k.type,'ar'],['صيغة المركب',k.f],['التفسير',k.metal?'الفلز يفقد إلكترونات تكافئه بسهولة واللافلز يكتسبها، فيتكون أيونان متجاذبان':k.d<.4?'تتشارك الذرتان الإلكترونات بالتساوي تقريبًا':'تتشارك الذرتان الإلكترونات، لكنها تنجذب أكثر نحو الذرة الأعلى كهروسالبية','w']]}},
+
+/* ---------- Heating curve ---------- */
+{id:'heat',branch:'الروابط وحالات المادة',name:'منحنى التسخين وتغيرات الحالة',law:'Q = m·c·ΔT ,  Q = m·L',
+ tip:'لاحظي الخطين الأفقيين في المنحنى: الحرارة تُضاف لكن درجة الحرارة لا ترتفع. أين تذهب هذه الطاقة؟ لماذا يكون خط الغليان أطول بكثير من خط الانصهار؟ قارني الماء بالإيثانول.',
+ controls:[{id:'sub',type:'seg',label:'المادة (100 g)',options:[['w','ماء'],['e','إيثانول']],val:'w'},{id:'pw',label:'قدرة السخّان',min:100,max:1000,step:50,val:500,unit:'W'}],
+ actions:[['ابدئي التسخين من جديد','reset']],
+ S:{w:{n:'الماء',mp:0,bp:100,cs:2.1,cl:4.18,cg:2.0,Lf:334,Lv:2260,T0:-30},e:{n:'الإيثانول',mp:-114,bp:78,cs:2.4,cl:2.44,cg:1.4,Lf:108,Lv:841,T0:-140}},
+ seg(p){const s=this.S[p.sub],m=100,a=m*s.cs*(s.mp-s.T0),b=a+m*s.Lf,c=b+m*s.cl*(s.bp-s.mp),d=c+m*s.Lv,e=d+m*s.cg*30;return{s,a,b,c,d,e}},
+ state(p,Q){const g=this.seg(p),s=g.s;if(Q<g.a)return{T:s.T0+Q/(100*s.cs),ph:'تسخين الصلب',f:0,st:'صلب'};if(Q<g.b)return{T:s.mp,ph:'انصهار',f:(Q-g.a)/(g.b-g.a),st:'صلب + سائل'};
+  if(Q<g.c)return{T:s.mp+(Q-g.b)/(100*s.cl),ph:'تسخين السائل',f:1,st:'سائل'};if(Q<g.d)return{T:s.bp,ph:'غليان',f:1+(Q-g.c)/(g.d-g.c),st:'سائل + غاز'};return{T:s.bp+(Math.min(Q,g.e)-g.d)/(100*s.cg),ph:'تسخين الغاز',f:2,st:'غاز'}},
+ reset(p){this.s={Q:0,pts:Array.from({length:36},(_,i)=>({i,x:0,y:0,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,init:0}))}},onChange(p,k){if(k==='sub')this.reset(p)},
+ step(dt,p){const s=this.s,g=this.seg(p);s.Q=Math.min(g.e,s.Q+p.pw*dt*30);const st=this.state(p,s.Q),bx=16,by=16,bw=Math.min(W*.36,190),bh=H-60;
+  s.pts.forEach(q=>{const ph=q.i/36<st.f-1?2:(q.i/36<st.f?1:0),lx=bx+20+(q.i%6)*(bw-40)/5,ly=by+bh-20-Math.floor(q.i/6)*18,amp=1+Math.max(0,st.T-g.s.T0)/40;
+   if(ph===0){q.x=lx+(Math.random()-.5)*amp;q.y=ly+(Math.random()-.5)*amp;q.vx=0;q.vy=0}
+   else{const sp=ph===1?35:140;if(!q.vx&&!q.vy){q.vx=(Math.random()-.5)*sp;q.vy=-Math.random()*sp}const v=Math.hypot(q.vx,q.vy)||1;q.vx=q.vx/v*sp;q.vy=q.vy/v*sp;q.x+=q.vx*dt;q.y+=q.vy*dt;const top=ph===1?by+bh*.45:by+6;
+    if(q.x<bx+6||q.x>bx+bw-6){q.vx*=-1;q.x=Math.max(bx+6,Math.min(bx+bw-6,q.x))}if(q.y<top||q.y>by+bh-6){q.vy*=-1;q.y=Math.max(top,Math.min(by+bh-6,q.y))}if(ph===1)q.vx+=(Math.random()-.5)*60*dt*10}})},
+ draw(ctx,W,H,p){const s=this.s,g=this.seg(p),st=this.state(p,s.Q),bx=16,by=16,bw=Math.min(W*.36,190),bh=H-60;
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx,by+bh);ctx.lineTo(bx+bw,by+bh);ctx.lineTo(bx+bw,by);ctx.stroke();
+  s.pts.forEach(q=>ball(ctx,q.x,q.y,6,p.sub==='w'?C.accent2:C.sum));
+  ctx.fillStyle=C.accent;for(let i=0;i<5;i++){const f=(Date.now()/400+i*.2)%1;ctx.globalAlpha=1-f;ctx.beginPath();ctx.moveTo(bx+bw*(i+.5)/5-6,by+bh+22);ctx.quadraticCurveTo(bx+bw*(i+.5)/5,by+bh+6-f*4,bx+bw*(i+.5)/5+6,by+bh+22);ctx.fill()}ctx.globalAlpha=1;
+  text(ctx,st.st,bx+bw/2,by+bh+36,C.ink,12,'center',FONT,600);
+  const x0=bx+bw+44,x1=W-12,y0=16,y1=H-30,Tmin=g.s.T0,Tmax=g.s.bp+30,X=Q=>x0+(x1-x0)*Q/g.e,Y=T=>y1-(T-Tmin)/(Tmax-Tmin)*(y1-y0);axes(ctx,x0,y0,x1,y1);
+  [[g.s.mp,'درجة الانصهار'],[g.s.bp,'درجة الغليان']].forEach(([T,l])=>{ctx.setLineDash([3,4]);ctx.strokeStyle=C.line;ctx.beginPath();ctx.moveTo(x0,Y(T));ctx.lineTo(x1,Y(T));ctx.stroke();ctx.setLineDash([]);text(ctx,T+'°',x0-4,Y(T),C.muted,10,'right',MONO,400)});
+  text(ctx,Tmin+'°',x0-4,y1-4,C.muted,10,'right',MONO,400);text(ctx,'الحرارة المضافة ←',x0+50,y1+12,C.muted,10);text(ctx,fmt(g.e/1000,0)+' kJ',x1,y1+12,C.muted,10,'right',MONO,400);
+  ctx.setLineDash([4,4]);ctx.strokeStyle=C.muted;ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<=200;i++){const Q=g.e*i/200;i?ctx.lineTo(X(Q),Y(this.state(p,Q).T)):ctx.moveTo(X(Q),Y(this.state(p,Q).T))}ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle=C.accent;ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=200;i++){const Q=s.Q*i/200;i?ctx.lineTo(X(Q),Y(this.state(p,Q).T)):ctx.moveTo(X(Q),Y(this.state(p,Q).T))}ctx.stroke();
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(s.Q),Y(st.T),5,0,7);ctx.fill();
+  text(ctx,'انصهار',X((g.a+g.b)/2),Y(g.s.mp)-10,C.ink,11,'center',FONT,600);text(ctx,'غليان',X((g.c+g.d)/2),Y(g.s.bp)-10,C.ink,11,'center',FONT,600)},
+ readouts(p){const s=this.s,st=this.state(p,s.Q),g=this.seg(p);return[['درجة الحرارة',fmt(st.T,1)+' °C',1],['الحالة',st.st,'ar'],['المرحلة',st.ph,'ar'],['الحرارة المضافة',fmt(s.Q/1000,1)+' kJ'],['حرارة الانصهار الكامنة',g.s.Lf+' J/g'],['حرارة التبخر الكامنة',g.s.Lv+' J/g']]}},
+
+/* ---------- Gas laws ---------- */
+{id:'gas',branch:'الروابط وحالات المادة',name:'قوانين الغازات',law:'P·V = n·R·T',
+ tip:'في قانون بويل صغّري الحجم إلى النصف: ماذا يحدث للضغط؟ في قانون شارل ضاعفي درجة الحرارة المطلقة: ماذا يحدث للحجم؟ لاحظي أن درجة الحرارة يجب أن تكون بالكلفن.',
+ controls:[{id:'law',type:'seg',label:'القانون',options:[['b','بويل (T ثابتة)'],['c','شارل (P ثابت)'],['g','جاي-لوساك (V ثابت)']],val:'b'},{id:'V',label:'الحجم',min:5,max:50,step:1,val:25,unit:'L'},{id:'T',label:'درجة الحرارة',min:100,max:600,step:10,val:300,unit:'K'},{id:'n',label:'كمية الغاز',min:.5,max:2,step:.1,val:1,unit:'mol'}],
+ R:.0821,
+ calc(p){if(p.law==='c'){const P=1,V=p.n*this.R*p.T/P;return{P,V}}return{V:p.V,P:p.n*this.R*p.T/p.V}},
+ reset(p){this.s={ps:[],T:p.T}},
+ step(dt,p){const s=this.s,k=this.calc(p),N=Math.round(p.n*30),bx=16,by=16,bh=H-40,bwMax=Math.min(W*.42,260),bw=bwMax*Math.min(1,k.V/60),sp=60*Math.sqrt(p.T/300);
+  while(s.ps.length<N){const a=Math.random()*7;s.ps.push({x:bx+10+Math.random()*(bw-20),y:by+10+Math.random()*(bh-20),a})}s.ps.length=N;
+  s.ps.forEach(q=>{q.x+=Math.cos(q.a)*sp*dt;q.y+=Math.sin(q.a)*sp*dt;if(q.x<bx+4){q.x=bx+4;q.a=Math.PI-q.a}if(q.x>bx+bw-4){q.x=bx+bw-4;q.a=Math.PI-q.a}if(q.y<by+4){q.y=by+4;q.a=-q.a}if(q.y>by+bh-4){q.y=by+bh-4;q.a=-q.a}})},
+ draw(ctx,W,H,p){const s=this.s,k=this.calc(p),bx=16,by=16,bh=H-40,bwMax=Math.min(W*.42,260),bw=bwMax*Math.min(1,k.V/60);
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx+bw,by);ctx.lineTo(bx,by);ctx.lineTo(bx,by+bh);ctx.lineTo(bx+bw,by+bh);ctx.stroke();
+  ctx.fillStyle=C.muted;ctx.fillRect(bx+bw,by-4,8,bh+8);ctx.fillRect(bx+bw+8,by+bh/2-3,bwMax-bw+20,6);
+  const hot=Math.min(1,(p.T-100)/500);s.ps.forEach(q=>ball(ctx,q.x,q.y,4,mix(C.accent2,C.accent,hot)));
+  const gx=bx+bwMax+70,gr=24;ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(gx,by+gr+4,gr,0,7);ctx.stroke();const ga=Math.PI*.75+Math.min(1,k.P/10)*Math.PI*1.5;arrow(ctx,gx,by+gr+4,gx+Math.cos(ga)*gr*.8,by+gr+4+Math.sin(ga)*gr*.8,C.accent,'',2);
+  text(ctx,fmt(k.P,2)+' atm',gx,by+gr*2+18,C.ink,11,'center',MONO,600);
+  const x0=gx+gr+40>W-140?bx+bwMax+30:gx+gr+30,y0=by+gr*2+36,x1=W-12,y1=H-28;axes(ctx,x0,y0,x1,y1);
+  let fx,fy,xl,yl,xr,yr;
+  if(p.law==='b'){xl='V (L)';yl='P (atm)';xr=[0,50];yr=[0,p.n*this.R*p.T/5*1.05];fx=v=>v;fy=v=>p.n*this.R*p.T/v}
+  else if(p.law==='c'){xl='T (K)';yl='V (L)';xr=[0,600];yr=[0,p.n*this.R*600*1.05];fx=t=>t;fy=t=>p.n*this.R*t}
+  else{xl='T (K)';yl='P (atm)';xr=[0,600];yr=[0,p.n*this.R*600/p.V*1.05];fx=t=>t;fy=t=>p.n*this.R*t/p.V}
+  const X=v=>x0+(x1-x0)*(v-xr[0])/(xr[1]-xr[0]),Y=v=>y1-(v-yr[0])/(yr[1]-yr[0])*(y1-y0);
+  ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=100;i++){const v=p.law==='b'?5+45*i/100:600*i/100;const y=Math.min(yr[1],fy(v));i?ctx.lineTo(X(v),Y(y)):ctx.moveTo(X(v),Y(y))}ctx.stroke();
+  const cx=p.law==='b'?k.V:p.T,cyv=p.law==='c'?k.V:k.P;ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(cx),Y(Math.min(yr[1],cyv)),6,0,7);ctx.fill();
+  text(ctx,xl,x1-4,y1+12,C.muted,10,'right',MONO);text(ctx,yl,x0+4,y0+10,C.muted,10,'left',MONO);text(ctx,fmt(yr[1],1),x0-3,y0+8,C.muted,9,'right',MONO,400)},
+ readouts(p){const k=this.calc(p),name={b:'بويل: P₁V₁ = P₂V₂',c:'شارل: V₁/T₁ = V₂/T₂',g:'جاي-لوساك: P₁/T₁ = P₂/T₂'}[p.law];
+  return[['الضغط P',fmt(k.P,2)+' atm',1],['الحجم V',fmt(k.V,1)+' L'],['درجة الحرارة T',p.T+' K ('+(p.T-273)+' °C)'],['كمية الغاز n',fmt(p.n,1)+' mol'],['P·V ÷ (n·T)',fmt(k.P*k.V/(p.n*p.T),4)+' = R'],['القانون',name,'w']]}},
+
+/* ---------- Balancing equations (with student-written equations) ---------- */
+{id:'balance',branch:'التفاعلات والحسابات',name:'موازنة المعادلات الكيميائية',law:'عدد الذرات قبل = عدد الذرات بعد',
+ tip:'اكتبي أي معادلة تريدينها بلوحة العناصر (مثل Fe + O2 -> Fe2O3)، أو اختاري تفاعلًا جاهزًا. ثم غيّري المعاملات بالأسهم ▲ ▼ على الرسم حتى يتساوى عدد ذرات كل عنصر في الطرفين. لا يجوز تغيير الأرقام الصغيرة داخل الصيغة، لأن ذلك يغيّر المادة نفسها.',
+ controls:[{id:'r',type:'sel',label:'التفاعل',options:[['0','تكوين الماء'],['1','الأمونيا'],['2','احتراق الميثان'],['3','صدأ الحديد'],['4','الألمنيوم مع حمض HCl'],['5','احتراق البروبان'],['c','معادلتي الخاصة']],val:'0'}],
+ actions:[['أعيدي المعاملات إلى 1','clear'],['أظهري الحل','solve']],
+ RX:[{s:[['H₂',{H:2}],['O₂',{O:2}]],p:[['H₂O',{H:2,O:1}]],a:[2,1,2]},{s:[['N₂',{N:2}],['H₂',{H:2}]],p:[['NH₃',{N:1,H:3}]],a:[1,3,2]},
+  {s:[['CH₄',{C:1,H:4}],['O₂',{O:2}]],p:[['CO₂',{C:1,O:2}],['H₂O',{H:2,O:1}]],a:[1,2,1,2]},{s:[['Fe',{Fe:1}],['O₂',{O:2}]],p:[['Fe₂O₃',{Fe:2,O:3}]],a:[4,3,2]},
+  {s:[['Al',{Al:1}],['HCl',{H:1,Cl:1}]],p:[['AlCl₃',{Al:1,Cl:3}],['H₂',{H:2}]],a:[2,6,2,3]},{s:[['C₃H₈',{C:3,H:8}],['O₂',{O:2}]],p:[['CO₂',{C:1,O:2}],['H₂O',{H:2,O:1}]],a:[1,5,3,4]}],
+ custom:null,last:'',
+ KN:null,known(e){if(!this.KN)this.KN=new Set(EL.filter(Boolean).map(x=>x[0]).concat(['Ag','I','Ba','Pb','Sn','Hg','Au','Pt','Sr','Rb','Cs']));return this.KN.has(e)},
+ pf(str){let i=0;const num=()=>{const m=/^\d+/.exec(str.slice(i));if(!m)return 1;i+=m[0].length;return+m[0]};
+  const grp=()=>{const m={};while(i<str.length&&str[i]!==')'){if(str[i]==='('){i++;const g=grp();if(str[i]!==')')throw 0;i++;const n=num();for(const k in g)m[k]=(m[k]||0)+g[k]*n}
+   else{const mm=/^[A-Z][a-z]?/.exec(str.slice(i));if(!mm)throw 0;i+=mm[0].length;const n=num();m[mm[0]]=(m[mm[0]]||0)+n}}return m};
+  const r=grp();if(i!==str.length||!Object.keys(r).length)throw 0;return r},
+ parse(txt){const t=String(txt).replace(/[₀-₉]/g,d=>'₀₁₂₃₄₅₆₇₈₉'.indexOf(d)).replace(/\s+/g,'');const sides=t.split(/->|→|⟶|=/);
+  if(sides.length!==2||!sides[0]||!sides[1])return{err:'اكتبي سهمًا واحدًا (->) يفصل المتفاعلات عن النواتج.'};
+  const sp=[],co=[];for(let k=0;k<2;k++){const L=[];for(const raw of sides[k].split('+')){if(!raw)return{err:'توجد إشارة + زائدة أو مادة ناقصة.'};
+    const m=/^(\d*)(.+)$/.exec(raw);let a;try{a=this.pf(m[2])}catch(e){return{err:'تعذّرت قراءة الصيغة «'+raw+'». ابدئي كل رمز بحرف كبير، مثل Na و Cl و O2.'}}
+    for(const e in a)if(!this.known(e))return{err:'الرمز «'+e+'» ليس عنصرًا معروفًا. تأكدي من كتابة الحرف الكبير والصغير.'};
+    L.push([m[2].replace(/\d+/g,d=>sub(d)),a]);co.push(m[1]?Math.max(1,Math.min(12,+m[1])):1)}sp.push(L)}
+  if(sp[0].length+sp[1].length>6)return{err:'الحد الأقصى ست مواد في المعادلة.'};
+  const e0=new Set(sp[0].flatMap(x=>Object.keys(x[1]))),e1=new Set(sp[1].flatMap(x=>Object.keys(x[1])));
+  for(const e of e0)if(!e1.has(e))return{err:'العنصر '+e+' موجود في المتفاعلات فقط. يجب أن تظهر العناصر نفسها في الطرفين، فالذرات لا تفنى ولا تُستحدث.'};
+  for(const e of e1)if(!e0.has(e))return{err:'العنصر '+e+' موجود في النواتج فقط. يجب أن تظهر العناصر نفسها في الطرفين، فالذرات لا تفنى ولا تُستحدث.'};
+  const rx={s:sp[0],p:sp[1],c0:co,a:null};rx.a=this.solveRx(rx);return{rx}},
+ solveRx(rx){const all=rx.s.concat(rx.p),n=all.length,ns=rx.s.length,els=[...new Set(all.flatMap(x=>Object.keys(x[1])))],M=9;let best=null,bs=1e9;const c=new Array(n).fill(1);
+  const ok=()=>els.every(e=>{let s=0;for(let i=0;i<n;i++)s+=(i<ns?1:-1)*(all[i][1][e]||0)*c[i];return s===0});
+  const rec=(i,sm)=>{if(sm>=bs)return;if(i===n){if(ok()){bs=sm;best=c.slice()}return}for(let v=1;v<=M;v++){c[i]=v;rec(i+1,sm+v)}};rec(0,0);return best},
+ build(txt){this.last=txt;const r=this.parse(txt),fb=$('#eq-fb');if(fb)fb.hidden=false;
+  if(r.err){if(fb){fb.className='fb bad';fb.textContent=r.err}return false}
+  this.custom=r.rx;if(fb){fb.className='fb ok';fb.textContent=r.rx.a?'أُنشئت المعادلة. وازنيها الآن بالأسهم ▲ ▼ على الرسم.':'أُنشئت المعادلة، لكن لا يوجد لها حل بمعاملات أصغر من 10. تأكدي من صيغ المواد.'}
+  if(P.r!=='c')setParam('r','c');else this.reset(P);return true},
+ panel(el){const keys=['H','C','N','O','S','P','F','Cl','Br','I','Na','K','Mg','Ca','Al','Fe','Cu','Zn','Ag','Ba','(',')','2','3','4','5','6','7','8'];
+  el.innerHTML=`<label class="nbl" for="eq-in">اكتبي معادلتك الخاصة</label><input id="eq-in" class="eqin" dir="ltr" autocomplete="off" spellcheck="false" placeholder="Fe + O2 -> Fe2O3" value="${escH(this.last||'')}">
+   <div class="keypad">${keys.map(k=>`<button data-k="${k}">${k}</button>`).join('')}<button data-k=" + ">+</button><button data-k=" -> ">→</button><button data-k="BS" aria-label="احذفي آخر رمز">⌫</button><button data-k="CLR">مسح</button></div>
+   <div class="acts"><button class="btn primary" id="eq-go">أنشئي المعادلة</button></div>
+   <span class="nbl">أمثلة جاهزة</span><div class="keypad ex">${['CH4 + O2 -> CO2 + H2O','Ca(OH)2 + HCl -> CaCl2 + H2O','C6H12O6 + O2 -> CO2 + H2O','KClO3 -> KCl + O2','Fe2O3 + CO -> Fe + CO2','Na + H2O -> NaOH + H2'].map(x=>`<button data-ex="${x}">${x}</button>`).join('')}</div>
+   <div id="eq-fb" class="fb" hidden></div>`;
+  const inp=el.querySelector('#eq-in');
+  el.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='BS')inp.value=inp.value.replace(/\s*(->|\+)\s*$|[A-Z][a-z]?$|.$/,'');else if(k==='CLR')inp.value='';else inp.value+=k;this.last=inp.value});
+  el.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{inp.value=b.dataset.ex;this.build(inp.value)});
+  inp.oninput=()=>{this.last=inp.value};inp.onkeydown=e=>{if(e.key==='Enter')this.build(inp.value)};
+  el.querySelector('#eq-go').onclick=()=>this.build(inp.value)},
+ rx(p){if(p.r==='c'){if(!this.custom)this.custom=this.parse('Na + Cl2 -> NaCl').rx;return this.custom}return this.RX[+p.r]},
+ reset(p){const r=this.rx(p);this.s={c:r.c0?r.c0.slice():r.s.concat(r.p).map(()=>1),hit:[],msg:''}},onChange(p){this.reset(p)},clear(p){const r=this.rx(p);this.s.c=r.s.concat(r.p).map(()=>1);this.s.msg=''},
+ solve(p){const a=this.rx(p).a;if(a){this.s.c=a.slice();this.s.msg=''}else this.s.msg='لا يوجد حل بمعاملات صحيحة أصغر من 10.'},
+ count(p){const r=this.rx(p),c=this.s.c,L={},R={};r.s.forEach(([f,a],i)=>Object.entries(a).forEach(([e,n])=>L[e]=(L[e]||0)+n*c[i]));r.p.forEach(([f,a],i)=>Object.entries(a).forEach(([e,n])=>R[e]=(R[e]||0)+n*c[i+r.s.length]));return{L,R}},
+ ok(p){const{L,R}=this.count(p);return Object.keys(L).every(e=>L[e]===R[e])&&Object.keys(R).every(e=>L[e]===R[e])},
+ step(){},
+ pointer(x,y,p,type){if(type!=='pointerdown')return;this.s.hit.forEach(h=>{if(x>h.x-16&&x<h.x+16&&y>h.y-14&&y<h.y+14){this.s.c[h.i]=Math.max(1,Math.min(12,this.s.c[h.i]+h.d));this.s.msg=''}})},
+ mol(ctx,a,cx,cy,r){const at=[];Object.entries(a).forEach(([e,n])=>{for(let i=0;i<n;i++)at.push(e)});const N=at.length;
+  if(N>10){const R=r*3.2;const g=Object.entries(a).sort((u,v)=>v[1]-u[1]);ctx.fillStyle=CPK[g[0][0]]||'#9aa0b0';ctx.globalAlpha=.85;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();ctx.globalAlpha=1;
+   let k=0;g.forEach(([e,n])=>{for(let i=0;i<Math.min(n,6);i++){const an=k*2.4;ball(ctx,cx+Math.cos(an)*R*.55,cy+Math.sin(an)*R*.55,r*.6,CPK[e]||'#9aa0b0');k++}});return}
+  at.forEach((e,i)=>{const ang=i*2*Math.PI/N,d=N>1?r*1.1*Math.min(1.6,Math.sqrt(N)/1.4):0;ball(ctx,cx+Math.cos(ang)*d,cy+Math.sin(ang)*d,r,CPK[e]||'#9aa0b0')})},
+ draw(ctx,W,H,p){const r=this.rx(p),c=this.s.c,all=r.s.concat(r.p),n=all.length,ns=r.s.length,slot=(W-20)/(n+.6),ey=40;this.s.hit=[];
+  let x=10;all.forEach(([f,a],i)=>{if(i===ns){text(ctx,'→',x+slot*.3,ey,C.ink,22,'center',MONO,600);x+=slot*.6}const cx=x+slot/2,lbl=(c[i]>1?c[i]:'')+f;
+   ctx.direction='ltr';text(ctx,lbl,cx,ey,C.ink,Math.max(10,Math.min(W<420?16:20,slot/(lbl.length*.62))),'center',MONO,600);ctx.direction='inherit';
+   if(i<n-1&&i!==ns-1)text(ctx,'+',x+slot,ey,C.ink,18,'center',MONO,600);
+   [[-1,cx-18],[1,cx+18]].forEach(([d,bx])=>{ctx.fillStyle=C.grid;ctx.fillRect(bx-14,ey+22,28,24);ctx.strokeStyle=C.line;ctx.strokeRect(bx-14+.5,ey+22.5,28,24);text(ctx,d>0?'▲':'▼',bx,ey+34,d>0?C.accent3:C.accent,13,'center',MONO,600);this.s.hit.push({x:bx,y:ey+34,i,d})});
+   const atoms=Object.values(a).reduce((s,v)=>s+v,0),rr=atoms>6?3.4:4.5,shown=Math.min(c[i],8),cols=shown>4?2:1,per=Math.ceil(shown/cols),gap=Math.min(atoms>10?40:30,(H*.5-60)/per);
+   for(let k=0;k<shown;k++){const col=Math.floor(k/per),row=k%per;this.mol(ctx,a,cx+(cols>1?(col-.5)*slot*.42:0),ey+76+row*gap,rr)}
+   if(c[i]>8)text(ctx,'… ×'+c[i],cx,ey+76+per*gap,C.muted,11,'center',MONO,600);x+=slot});
+  const{L,R}=this.count(p),els=[...new Set(Object.keys(L).concat(Object.keys(R)))],ty=H*.62,bh=(H-ty-30)/els.length,mx=Math.max(...els.map(e=>Math.max(L[e]||0,R[e]||0)));
+  els.forEach((e,i)=>{const y=ty+i*bh+bh/2,l=L[e]||0,rv=R[e]||0,ok=l===rv,mid=W/2,sc=(W/2-70)/mx;ball(ctx,mid,y,Math.min(8,bh*.3),CPK[e]||'#9aa0b0');text(ctx,e,mid,y-Math.min(16,bh*.45),C.ink,11,'center',MONO,600);
+   ctx.fillStyle=ok?C.accent3:C.accent;const bt=Math.min(12,bh*.5);ctx.fillRect(mid-12-l*sc,y-bt/2,l*sc,bt);ctx.fillRect(mid+12,y-bt/2,rv*sc,bt);
+   text(ctx,l+'',mid-18-l*sc,y,C.ink,12,'right',MONO,600);text(ctx,rv+'',mid+18+rv*sc,y,C.ink,12,'left',MONO,600)});
+  text(ctx,'المتفاعلات',W*.22,ty-12,C.muted,11);text(ctx,'النواتج',W*.78,ty-12,C.muted,11);
+  if(this.s.msg)text(ctx,this.s.msg,W/2,H-12,C.accent,13,'center',FONT,600);else if(this.ok(p))text(ctx,'✓ المعادلة موزونة',W/2,H-12,C.accent3,14,'center',FONT,600)},
+ record(p){const r=this.rx(p),c=this.s.c,f=(L,o)=>L.map(([s],i)=>(c[i+o]>1?c[i+o]:'')+s).join(' + ');return[['المعادلة',f(r.s,0)+' → '+f(r.p,r.s.length)]]},
+ readouts(p){const ok=this.ok(p),c=this.s.c,g=c.reduce((a,b)=>gcd(a,b));const{L,R}=this.count(p),els=[...new Set(Object.keys(L).concat(Object.keys(R)))];
+  return[['الحالة',ok?(g>1?'موزونة، لكن ليست بأبسط نسبة':'موزونة'):'غير موزونة',1],['المعاملات',c.join(' : ')],...els.map(e=>['ذرات '+e+' (قبل / بعد)',(L[e]||0)+' / '+(R[e]||0)])]}},
+
+/* ---------- Limiting reactant ---------- */
+{id:'limit',branch:'التفاعلات والحسابات',name:'المادة المحددة للتفاعل',law:'2H₂ + O₂ → 2H₂O',
+ tip:'ضعي 6 جزيئات H₂ و4 جزيئات O₂ وابدئي التفاعل: أي مادة تنفد أولًا؟ لاحظي أن مجموع الكتل قبل التفاعل يساوي مجموعها بعده (قانون حفظ الكتلة).',
+ controls:[{id:'rx',type:'seg',label:'التفاعل',options:[['w','تكوين الماء'],['a','تكوين الأمونيا']],val:'w'},{id:'na',label:'عدد جزيئات المادة الأولى',min:0,max:12,step:1,val:6,unit:''},{id:'nb',label:'عدد جزيئات المادة الثانية',min:0,max:12,step:1,val:4,unit:''}],
+ actions:[['ابدئي التفاعل','go'],['أعيدي الخليط','reset']],
+ RX:{w:{a:['H₂',{H:2},2,2.016],b:['O₂',{O:2},1,32],c:['H₂O',{H:2,O:1},2,18.015],eq:'2H₂ + O₂ → 2H₂O'},a:{a:['N₂',{N:2},1,28.014],b:['H₂',{H:2},3,2.016],c:['NH₃',{N:1,H:3},2,17.031],eq:'N₂ + 3H₂ → 2NH₃'}},
+ reset(p){const r=this.RX[p.rx],m=[];const add=(t,n)=>{for(let i=0;i<n;i++)m.push({t,x:30+Math.random()*(W-60),y:30+Math.random()*(H*.6-40),a:Math.random()*7})};add('a',p.na);add('b',p.nb);this.s={m,run:false,acc:0,made:0};this.law=r.eq},
+ onChange(p){this.reset(p);$('#law').textContent=this.RX[p.rx].eq},go(){this.s.run=true},
+ step(dt,p){const s=this.s,r=this.RX[p.rx];s.m.forEach(q=>{q.a+=(Math.random()-.5)*dt*3;q.x+=Math.cos(q.a)*25*dt;q.y+=Math.sin(q.a)*25*dt;if(q.x<20||q.x>W-20)q.a=Math.PI-q.a;if(q.y<20||q.y>H*.62-20)q.a=-q.a;q.x=Math.max(20,Math.min(W-20,q.x));q.y=Math.max(20,Math.min(H*.62-20,q.y))});
+  if(!s.run)return;s.acc+=dt;if(s.acc<.45)return;s.acc=0;const A=s.m.filter(q=>q.t==='a'),B=s.m.filter(q=>q.t==='b');
+  if(A.length>=r.a[2]&&B.length>=r.b[2]){const used=A.slice(0,r.a[2]).concat(B.slice(0,r.b[2])),cx=used.reduce((t,q)=>t+q.x,0)/used.length,cy=used.reduce((t,q)=>t+q.y,0)/used.length;s.m=s.m.filter(q=>!used.includes(q));for(let i=0;i<r.c[2];i++)s.m.push({t:'c',x:cx+i*14,y:cy,a:Math.random()*7,fl:.6});s.made++}else s.run=false},
+ draw(ctx,W,H,p){const s=this.s,r=this.RX[p.rx];ctx.strokeStyle=C.line;ctx.strokeRect(10.5,10.5,W-21,H*.62);
+  s.m.forEach(q=>{const sp=r[q.t];SIMS.find(z=>z.id==='balance').mol(ctx,sp[1],q.x,q.y,4.5);if(q.fl>0){q.fl-=.016;ctx.strokeStyle=C.warn;ctx.lineWidth=2;ctx.beginPath();ctx.arc(q.x,q.y,16,0,7);ctx.stroke()}});
+  const cnt=t=>s.m.filter(q=>q.t===t).length,y0=H*.62+24,bw=(W-40)/3;
+  ['a','b','c'].forEach((t,i)=>{const x=20+i*bw+bw/2,n=cnt(t);ctx.direction='ltr';text(ctx,r[t][0],x,y0,C.ink,16,'center',MONO,600);ctx.direction='inherit';
+   for(let k=0;k<n;k++){ctx.fillStyle=t==='c'?C.accent3:t==='a'?C.accent2:C.accent;ctx.fillRect(x-bw*.4+(k%12)*(bw*.8/12),y0+18+Math.floor(k/12)*12,bw*.8/12-2,9)}
+   text(ctx,n+' جزيء',x,y0+48,C.muted,11)})},
+ readouts(p){const s=this.s,r=this.RX[p.rx],na=s.m.filter(q=>q.t==='a').length,nb=s.m.filter(q=>q.t==='b').length,nc=s.m.filter(q=>q.t==='c').length;
+  const ra=p.na/r.a[2],rb=p.nb/r.b[2],lim=ra<rb?r.a[0]:rb<ra?r.b[0]:'لا يوجد (بالنسب الصحيحة)',ex=ra<rb?r.b[0]:rb<ra?r.a[0]:'—';
+  const m0=p.na*r.a[3]+p.nb*r.b[3],m1=na*r.a[3]+nb*r.b[3]+nc*r.c[3];
+  return[['المادة المحددة',lim,1],['المادة الفائضة',ex],['الجزيئات الناتجة '+r.c[0],nc+''],['المتبقي من '+r.a[0]+' / '+r.b[0],na+' / '+nb],['الكتلة قبل (u)',fmt(m0,1)],['الكتلة الآن (u)',fmt(m1,1)]]}},
+
+/* ---------- Reaction rate ---------- */
+{id:'rate',branch:'الحركية والاتزان',name:'سرعة التفاعل ونظرية التصادم',law:'k = A · e^(−Ea / RT)',
+ tip:'ارفعي درجة الحرارة وراقبي نسبة التصادمات الفعالة. ثم أضيفي العامل المساعد: ماذا يحدث لطاقة التنشيط في منحنى الطاقة؟ لماذا تزيد زيادة التركيز عدد التصادمات؟',
+ controls:[{id:'T',label:'درجة الحرارة',min:250,max:500,step:10,val:300,unit:'K'},{id:'N',label:'التركيز (عدد الجسيمات)',min:10,max:60,step:2,val:30,unit:''},{id:'cat',type:'seg',label:'العامل المساعد',options:[['0','بدون'],['1','مع عامل مساعد']],val:'0'}],
+ actions:[['أعيدي الخليط','reset']],
+ Ea(p){return p.cat==='1'?12:20},pe(p){return Math.min(1,91*Math.exp(-this.Ea(p)*1000/(8.314*p.T)))},
+ reset(p){const m=[];for(let i=0;i<p.N*2;i++){const a=Math.random()*7;m.push({t:i%2?'b':'a',x:20+Math.random()*(W*.58-40),y:20+Math.random()*(H-40),a})}this.s={m,col:0,eff:0,made:0,rate:0,hist:[],tt:0}},onChange(p,k){if(k==='N')this.reset(p)},
+ step(dt,p){const s=this.s,sp=60*Math.sqrt(p.T/300),bx=W*.58,pe=this.pe(p);let made=0;
+  s.m.forEach(q=>{q.x+=Math.cos(q.a)*sp*dt;q.y+=Math.sin(q.a)*sp*dt;if(q.x<10||q.x>bx-10){q.a=Math.PI-q.a;q.x=Math.max(10,Math.min(bx-10,q.x))}if(q.y<10||q.y>H-10){q.a=-q.a;q.y=Math.max(10,Math.min(H-10,q.y))}if(q.fl>0)q.fl-=dt});
+  for(let i=0;i<s.m.length;i++){const a=s.m[i];if(a.t==='c'||a.dead)continue;for(let j=i+1;j<s.m.length;j++){const b=s.m[j];if(b.t==='c'||b.dead||a.t===b.t)continue;if(Math.hypot(a.x-b.x,a.y-b.y)<12){s.col++;if(Math.random()<pe){a.t='c';a.fl=.5;b.dead=1;s.eff++;made++}else{const t=a.a;a.a=b.a;b.a=t}break}}}
+  s.m=s.m.filter(q=>!q.dead);s.made+=made;s.rate+=(made/Math.max(dt,1e-3)-s.rate)*Math.min(1,dt);s.tt+=dt;if(s.hist.length<600||true){s.hist.push(s.m.filter(q=>q.t==='a').length);if(s.hist.length>600)s.hist.shift()}},
+ draw(ctx,W,H,p){const s=this.s,bx=W*.58;ctx.strokeStyle=C.line;ctx.strokeRect(6.5,6.5,bx-6,H-13);
+  s.m.forEach(q=>{if(q.t==='c'){ball(ctx,q.x-3,q.y,5,C.accent3);ball(ctx,q.x+3,q.y,5,C.accent3)}else ball(ctx,q.x,q.y,5,q.t==='a'?C.accent:C.accent2);if(q.fl>0){ctx.strokeStyle=C.warn;ctx.lineWidth=2;ctx.beginPath();ctx.arc(q.x,q.y,13,0,7);ctx.stroke()}});
+  const x0=bx+20,x1=W-10,y0=14,y1=H*.55;axes(ctx,x0,y0,x1,y1);text(ctx,'منحنى الطاقة',x1-4,y0+10,C.muted,10,'right');
+  const lv=(e)=>y1-10-e/30*(y1-y0-24),Er=5,Ep=1.5,sm=u=>{const t=Math.max(0,Math.min(1,(u-.35)/.3));return t*t*(3-2*t)},path=(ea,dash,col)=>{ctx.setLineDash(dash);ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.beginPath();for(let i=0;i<=80;i++){const u=i/80,X=x0+8+(x1-x0-16)*u,e=Er+(Ep-Er)*sm(u)+(ea+(Er-Ep)*.5)*Math.exp(-((u-.5)**2)/.008);i?ctx.lineTo(X,lv(e)):ctx.moveTo(X,lv(e))}ctx.stroke();ctx.setLineDash([])};
+  path(20,[],C.ink);path(12,[5,4],C.accent3);
+  text(ctx,'Ea',x0+(x1-x0)*.5+14,lv(Er+(p.cat==='1'?12:20)/2),p.cat==='1'?C.accent3:C.ink,12,'left',MONO,600);
+  arrow(ctx,x0+(x1-x0)*.5,lv(Er),x0+(x1-x0)*.5,lv(Er+(p.cat==='1'?12:20)),p.cat==='1'?C.accent3:C.ink,'',1.5);
+  text(ctx,'متفاعلات',x0+22,lv(Er)+12,C.muted,10);text(ctx,'نواتج',x1-22,lv(Ep)+12,C.muted,10);
+  const gy0=y1+24,gy1=H-14;axes(ctx,x0,gy0,x1,gy1);text(ctx,'تركيز المتفاعل A',x1-4,gy0+10,C.muted,10,'right');
+  ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.beginPath();s.hist.forEach((v,i)=>{const x=x0+(x1-x0)*i/599,y=gy1-v/p.N*(gy1-gy0-14);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()},
+ readouts(p){const s=this.s;return[['احتمال أن يكون التصادم فعالًا',fmt(this.pe(p)*100,1)+'%',1],['طاقة التنشيط Ea',this.Ea(p)+' kJ/mol (نموذجية)'],['عدد التصادمات',s.col+''],['التصادمات الفعالة',s.eff+''],['سرعة التفاعل',fmt(s.rate,2)+' ناتج/ث'],['المتفاعل A المتبقي',s.m.filter(q=>q.t==='a').length+' / '+p.N]]}},
+
+/* ---------- Equilibrium ---------- */
+{id:'equil',branch:'الحركية والاتزان',name:'الاتزان الكيميائي ومبدأ لوتشاتلييه',law:'N₂O₄ (عديم اللون) ⇌ 2NO₂ (بني)  ΔH > 0',
+ tip:'سخّني الخليط: هل يصبح أكثر بنية؟ لماذا؟ (التفاعل الأمامي ماص للحرارة). صغّري الحجم: في أي اتجاه يُزاح الاتزان؟ أضيفي NO₂ وراقبي كيف يعود النظام إلى اتزان جديد.',
+ controls:[{id:'T',label:'درجة الحرارة',min:273,max:373,step:1,val:298,unit:'K'},{id:'V',label:'حجم الوعاء',min:.5,max:2,step:.05,val:1,unit:'L'}],
+ actions:[['أضيفي N₂O₄','addA'],['أضيفي NO₂','addB'],['اسحبي نصف NO₂','rmB'],['من البداية','reset']],
+ K(p){return .15*Math.exp(-57200/8.314*(1/p.T-1/298))},
+ reset(){this.s={a:1,b:0,h:[]}},addA(){this.s.a+=.5},addB(){this.s.b+=.5},rmB(){this.s.b/=2},
+ step(dt,p){const s=this.s,K=this.K(p),kf=.9*Math.exp(-3000*(1/p.T-1/298)),kr=kf/K,n=20,h=dt/n;
+  for(let i=0;i<n;i++){const A=s.a/p.V,B=s.b/p.V;let x=(kf*A-kr*B*B)*p.V*h;x=Math.max(-s.b/2*.5,Math.min(s.a*.5,x));s.a-=x;s.b+=2*x}
+  s.h.push([s.a/p.V,s.b/p.V]);if(s.h.length>600)s.h.shift()},
+ draw(ctx,W,H,p){const s=this.s,A=s.a/p.V,B=s.b/p.V,fx=W*.22,fy=H*.5,fr=Math.min(W*.16,H*.26)*Math.sqrt(p.V);
+  ctx.fillStyle='#8b3a0e';ctx.globalAlpha=Math.min(.92,B*1.1);ctx.beginPath();ctx.arc(fx,fy,fr,0,7);ctx.fill();ctx.globalAlpha=1;
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(fx,fy,fr,-Math.PI/2+.25,-Math.PI/2-.25+Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(fx-fr*.25,fy-fr*.97);ctx.lineTo(fx-fr*.25,fy-fr-28);ctx.moveTo(fx+fr*.25,fy-fr*.97);ctx.lineTo(fx+fr*.25,fy-fr-28);ctx.stroke();
+  text(ctx,fmt(p.T-273,0)+' °C',fx,fy+fr+20,C.ink,12,'center',MONO,600);
+  const x0=W*.44,x1=W-12,y0=16,y1=H-28,mx=Math.max(1.2,...s.h.map(q=>Math.max(q[0],q[1])))*1.05,X=i=>x0+(x1-x0)*i/599,Y=v=>y1-v/mx*(y1-y0);axes(ctx,x0,y0,x1,y1);
+  [[0,C.accent2,'[N₂O₄]'],[1,'#a2471a','[NO₂]']].forEach(([j,c,l],k)=>{ctx.strokeStyle=c;ctx.lineWidth=2.4;ctx.beginPath();s.h.forEach((q,i)=>i?ctx.lineTo(X(i),Y(q[j])):ctx.moveTo(X(i),Y(q[j])));ctx.stroke();ctx.direction='ltr';text(ctx,l,x0+8+k*70,y0+12,c,11,'left',MONO,600);ctx.direction='inherit'});
+  text(ctx,fmt(mx,1)+' M',x0-3,y0+8,C.muted,9,'right',MONO,400);text(ctx,'الزمن ←',x0+30,y1+12,C.muted,10)},
+ readouts(p){const s=this.s,A=s.a/p.V,B=s.b/p.V,K=this.K(p),Q=A>0?B*B/A:Infinity,r=Q/K;
+  return[['[N₂O₄]',fmt(A,3)+' M'],['[NO₂]',fmt(B,3)+' M'],['ثابت الاتزان Kc',fmt(K,3),1],['حاصل التفاعل Qc',Number.isFinite(Q)?fmt(Q,3):'∞'],['حالة النظام',Math.abs(r-1)<.03?'في حالة اتزان':r<1?'يُزاح نحو النواتج (تكوين NO₂)':'يُزاح نحو المتفاعلات (تكوين N₂O₄)','w']]}},
+
+/* ---------- Solubility ---------- */
+{id:'solub',branch:'المحاليل والأحماض والقواعد',name:'الذائبية ومنحنى الذوبان',law:'g مذاب / 100 g ماء',
+ tip:'أذيبي 60 g من نترات البوتاسيوم في 100 g ماء عند 20°C: هل تذوب كلها؟ سخّني المحلول حتى يذوب الراسب، ثم برّديه. قارني ذلك بملح الطعام: لماذا لا تتأثر ذائبيته كثيرًا بالحرارة؟',
+ controls:[{id:'sub',type:'seg',label:'المادة المذابة',options:[['k','نترات البوتاسيوم KNO₃'],['n','ملح الطعام NaCl'],['c','كبريتات النحاس CuSO₄']],val:'k'},{id:'T',label:'درجة الحرارة',min:0,max:100,step:1,val:20,unit:'°C'},{id:'g',label:'كتلة المادة المضافة إلى 100 g ماء',min:0,max:200,step:1,val:60,unit:'g'}],
+ S:{k:[[0,13.3],[20,31.6],[40,63.9],[60,110],[80,169],[100,246]],n:[[0,35.7],[20,36],[40,36.6],[60,37.3],[80,38.4],[100,39.8]],c:[[0,14.3],[20,20.7],[40,28.5],[60,40],[80,55],[100,75.4]]},
+ reset(){this.s={t:0}},step(dt){this.s.t+=dt},
+ draw(ctx,W,H,p){const S=interp(this.S[p.sub],p.T),dis=Math.min(p.g,S),ppt=Math.max(0,p.g-S),bx=20,bw=Math.min(W*.34,200),by=40,bh=H-80;
+  ctx.fillStyle=p.sub==='c'?C.accent2:C.accent2;ctx.globalAlpha=p.sub==='c'?.12+Math.min(.6,dis/80):.12;ctx.fillRect(bx,by+bh*.18,bw,bh*.82);ctx.globalAlpha=1;
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx,by+bh);ctx.lineTo(bx+bw,by+bh);ctx.lineTo(bx+bw,by);ctx.stroke();
+  const r=Math.random,n=Math.round(dis/2.5);for(let i=0;i<n;i++){const u=(i*.6180339)%1,v=(i*.38196+.13)%1;ball(ctx,bx+8+u*(bw-16)+Math.sin(this.s.t*2+i)*2,by+bh*.2+v*(bh*.72),2.6,p.sub==='c'?C.accent2:C.accent)}
+  const ph=Math.min(bh*.3,Math.sqrt(ppt)*6);if(ppt>0){ctx.fillStyle=p.sub==='c'?'#2f7fd6':mix(C.muted,C.muted,0);ctx.beginPath();ctx.moveTo(bx+4,by+bh-2);ctx.quadraticCurveTo(bx+bw/2,by+bh-2-ph*2,bx+bw-4,by+bh-2);ctx.fill();text(ctx,'راسب',bx+bw/2,by+bh-ph/2-4,'#fff',11,'center',FONT,600)}
+  text(ctx,p.T+' °C',bx+bw/2,by-14,C.ink,12,'center',MONO,600);
+  const x0=bx+bw+44,x1=W-12,y0=16,y1=H-28,X=t=>x0+(x1-x0)*t/100,Y=g=>y1-g/250*(y1-y0);axes(ctx,x0,y0,x1,y1);
+  ctx.fillStyle=C.accent3;ctx.globalAlpha=.08;ctx.beginPath();ctx.moveTo(X(0),y1);for(let t=0;t<=100;t+=2)ctx.lineTo(X(t),Y(interp(this.S[p.sub],t)));ctx.lineTo(X(100),y1);ctx.fill();ctx.globalAlpha=1;
+  Object.keys(this.S).forEach(k=>{ctx.strokeStyle=k===p.sub?C.accent:C.line;ctx.lineWidth=k===p.sub?2.5:1.5;ctx.beginPath();for(let t=0;t<=100;t+=2){const y=Y(interp(this.S[k],t));t?ctx.lineTo(X(t),y):ctx.moveTo(X(t),y)}ctx.stroke()});
+  ctx.fillStyle=ppt>0?C.accent:C.accent3;ctx.beginPath();ctx.arc(X(p.T),Y(Math.min(250,p.g)),6,0,7);ctx.fill();
+  [0,50,100].forEach(t=>text(ctx,t+'',X(t),y1+11,C.muted,10,'center',MONO,400));[50,100,150,200,250].forEach(g=>text(ctx,g+'',x0-3,Y(g),C.muted,9,'right',MONO,400));
+  text(ctx,'غير مشبع',X(70),Y(15),C.accent3,11,'center',FONT,600);text(ctx,'الذائبية (g/100 g ماء)',x0+6,y0+10,C.muted,10,'left')},
+ readouts(p){const S=interp(this.S[p.sub],p.T),dis=Math.min(p.g,S),ppt=Math.max(0,p.g-S);
+  return[['الذائبية عند '+p.T+' °C',fmt(S,1)+' g',1],['الكمية المذابة',fmt(dis,1)+' g'],['الراسب غير المذاب',fmt(ppt,1)+' g'],['التركيز بالكتلة',fmt(dis/(100+dis)*100,1)+'%'],['حالة المحلول',ppt>0?'مشبع ويوجد راسب':Math.abs(p.g-S)<1?'مشبع تقريبًا':'غير مشبع','ar']]}},
+
+/* ---------- Titration ---------- */
+{id:'titr',branch:'المحاليل والأحماض والقواعد',name:'المعايرة والرقم الهيدروجيني',law:'pH = −log[H₃O⁺]',
+ tip:'أضيفي القاعدة تدريجيًا وراقبي القفزة الحادة في pH قرب نقطة التكافؤ. جرّبي الحمض الضعيف مع كاشف الميثيل البرتقالي: هل يتغير لونه عند نقطة التكافؤ؟ لماذا يُفضّل الفينولفثالين هنا؟',
+ controls:[{id:'ac',type:'seg',label:'الحمض في الدورق (25 mL)',options:[['s','قوي HCl'],['w','ضعيف CH₃COOH']],val:'s'},{id:'Ca',label:'تركيز الحمض',min:.05,max:.2,step:.01,val:.1,unit:'M'},{id:'Vb',label:'حجم NaOH المضاف (0.1 M)',min:0,max:60,step:.1,val:0,unit:'mL'},{id:'ind',type:'seg',label:'الكاشف',options:[['pp','فينولفثالين'],['mo','ميثيل برتقالي'],['bb','أزرق بروموثيمول']],val:'pp'}],
+ actions:[['تنقيط تلقائي / إيقاف','drip']],
+ IND:{pp:{n:'فينولفثالين',r:'8.2 – 10',c:[[8.2,'#f7f0f4'],[10,'#d6247e']]},mo:{n:'ميثيل برتقالي',r:'3.1 – 4.4',c:[[3.1,'#d8342a'],[4.4,'#f0c419']]},bb:{n:'أزرق بروموثيمول',r:'6.0 – 7.6',c:[[6,'#e8c821'],[6.8,'#4da94a'],[7.6,'#2d5fc4']]}},
+ pH(p,Vb){const Ka=1.8e-5,Va=25,a=p.Ca*Va/1000,b=.1*Vb/1000,V=(Va+Vb)/1000;
+  if(p.ac==='s'){if(Math.abs(a-b)<1e-9)return 7;if(b<a)return-Math.log10((a-b)/V);return 14+Math.log10((b-a)/V)}
+  if(b===0)return-Math.log10(Math.sqrt(Ka*p.Ca));if(b<a*.999)return-Math.log10(Ka)+Math.log10(b/(a-b));if(b<=a*1.001){const Cb=a/V;return 14+Math.log10(Math.sqrt(1e-14/Ka*Cb))}return 14+Math.log10((b-a)/V)},
+ color(p,ph){const c=this.IND[p.ind].c;if(ph<=c[0][0])return c[0][1];if(ph>=c[c.length-1][0])return c[c.length-1][1];for(let i=1;i<c.length;i++)if(ph<=c[i][0])return mix(c[i-1][1],c[i][1],(ph-c[i-1][0])/(c[i][0]-c[i-1][0]))},
+ reset(){this.s=this.s||{run:false,acc:0,t:0}},drip(){this.s.run=!this.s.run},
+ step(dt,p){const s=this.s;s.t+=dt;if(!s.run)return;s.acc+=dt*1.5;while(s.acc>=.1){s.acc-=.1;if(p.Vb>=60){s.run=false;break}setParam('Vb',Math.round((p.Vb+.1)*10)/10)}},
+ draw(ctx,W,H,p){const s=this.s,ph=this.pH(p,p.Vb),cx=Math.min(W*.2,110),top=10,bw=12,bh=H*.42;
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.strokeRect(cx-bw/2,top,bw,bh);const lvl=bh*(1-p.Vb/60);ctx.fillStyle=C.accent2;ctx.globalAlpha=.25;ctx.fillRect(cx-bw/2+1,top+bh-lvl,bw-2,lvl);ctx.globalAlpha=1;
+  for(let k=0;k<=6;k++){ctx.beginPath();ctx.moveTo(cx+bw/2,top+bh*k/6);ctx.lineTo(cx+bw/2+5,top+bh*k/6);ctx.stroke();text(ctx,k*10+'',cx+bw/2+16,top+bh*k/6,C.muted,9,'center',MONO,400)}
+  ctx.beginPath();ctx.moveTo(cx,top+bh);ctx.lineTo(cx,top+bh+16);ctx.stroke();
+  if(s.run){const f=(s.t*3)%1;ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(cx,top+bh+18+f*(H*.18),3,0,7);ctx.fill()}
+  const fy=H-24,fw=Math.min(W*.3,150),neck=top+bh+H*.2;ctx.fillStyle=this.color(p,ph);ctx.beginPath();ctx.moveTo(cx-fw/2+4,fy-2);ctx.lineTo(cx-12,neck+38);ctx.lineTo(cx+12,neck+38);ctx.lineTo(cx+fw/2-4,fy-2);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-10,neck);ctx.lineTo(cx-10,neck+20);ctx.lineTo(cx-fw/2,fy);ctx.lineTo(cx+fw/2,fy);ctx.lineTo(cx+10,neck+20);ctx.lineTo(cx+10,neck);ctx.stroke();
+  text(ctx,'pH '+fmt(ph,2),cx,fy+14,C.ink,12,'center',MONO,600);
+  const Ve=p.Ca*25/.1,x0=cx+fw/2+40,x1=W-12,y0=14,y1=H-28,X=v=>x0+(x1-x0)*v/60,Y=v=>y1-v/14*(y1-y0);axes(ctx,x0,y0,x1,y1);
+  const ic=this.IND[p.ind].c;ctx.fillStyle=C.warn;ctx.globalAlpha=.12;ctx.fillRect(x0,Y(ic[ic.length-1][0]),x1-x0,Y(ic[0][0])-Y(ic[ic.length-1][0]));ctx.globalAlpha=1;
+  [0,7,14].forEach(v=>text(ctx,v+'',x0-4,Y(v),C.muted,10,'right',MONO,400));[0,20,40,60].forEach(v=>text(ctx,v+'',X(v),y1+11,C.muted,10,'center',MONO,400));text(ctx,'mL',x1-2,y1+11,C.muted,9,'right',MONO);
+  ctx.setLineDash([4,4]);ctx.strokeStyle=C.muted;ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<=600;i++){const v=60*i/600;i?ctx.lineTo(X(v),Y(this.pH(p,v))):ctx.moveTo(X(v),Y(this.pH(p,v)))}ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X(Ve),y0);ctx.lineTo(X(Ve),y1);ctx.stroke();ctx.setLineDash([]);text(ctx,'نقطة التكافؤ',X(Ve)+4,y0+10,C.muted,10,'left');
+  ctx.strokeStyle=C.accent;ctx.lineWidth=2.6;ctx.beginPath();for(let i=0;i<=300;i++){const v=p.Vb*i/300;i?ctx.lineTo(X(v),Y(this.pH(p,v))):ctx.moveTo(X(v),Y(this.pH(p,v)))}ctx.stroke();
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(p.Vb),Y(ph),5,0,7);ctx.fill()},
+ readouts(p){const ph=this.pH(p,p.Vb),Ve=p.Ca*25/.1,i=this.IND[p.ind],phE=this.pH(p,Ve),lo=i.c[0][0],hi=i.c[i.c.length-1][0],good=phE>=lo-1&&phE<=hi+1.2||(p.ac==='s'&&p.ind!=='mo')||(p.ac==='s');
+  return[['الرقم الهيدروجيني pH',fmt(ph,2),1],['طبيعة المحلول',ph<6.9?'حمضي':ph>7.1?'قاعدي':'متعادل','ar'],['حجم القاعدة عند التكافؤ',fmt(Ve,1)+' mL'],['pH عند نقطة التكافؤ',fmt(phE,2)],['مدى تغير لون الكاشف',i.r],['ملاءمة الكاشف',(p.ac==='w'&&p.ind==='mo')?'غير مناسب: يتغير لونه قبل نقطة التكافؤ بكثير':(p.ac==='w'&&p.ind==='bb')?'مقبول تقريبًا':'مناسب لهذه المعايرة','w']]}},
+
+/* ---------- Galvanic cell ---------- */
+{id:'cell',branch:'الكيمياء الكهربائية',name:'الخلية الجلفانية',law:'E°خلية = E°كاثود − E°أنود',
+ tip:'اختاري الخارصين والنحاس (خلية دانيال) وقيسي الجهد. أي القطبين تقل كتلته؟ بدّلي إلى المغنيسيوم والفضة: لماذا يكبر الجهد؟ في أي اتجاه تتحرك الإلكترونات في السلك؟',
+ controls:[{id:'m1',type:'seg',label:'القطب الأول',options:[['Mg','Mg'],['Zn','Zn'],['Fe','Fe'],['Pb','Pb'],['Cu','Cu'],['Ag','Ag']],val:'Zn'},{id:'m2',type:'seg',label:'القطب الثاني',options:[['Mg','Mg'],['Zn','Zn'],['Fe','Fe'],['Pb','Pb'],['Cu','Cu'],['Ag','Ag']],val:'Cu'}],
+ actions:[['أعيدي الأقطاب','reset']],
+ E:{Mg:[-2.37,2,'مغنيسيوم','#c9ccd1','#eef1f4'],Zn:[-.76,2,'خارصين','#a9b3bd','#eef1f4'],Fe:[-.44,2,'حديد','#8d7b6e','#dde9d6'],Pb:[-.13,2,'رصاص','#6d7380','#eef1f4'],Cu:[.34,2,'نحاس','#c46a2e','#7fb3e8'],Ag:[.80,1,'فضة','#d8dbe0','#eef1f4']},
+ info(p){const a=this.E[p.m1],b=this.E[p.m2];if(p.m1===p.m2)return{E:0,an:p.m1,ca:p.m2};const an=a[0]<b[0]?p.m1:p.m2,ca=an===p.m1?p.m2:p.m1;return{E:this.E[ca][0]-this.E[an][0],an,ca}},
+ reset(){this.s={t:0,dm:0}},onChange(p){this.reset(p)},
+ step(dt,p){const k=this.info(p);this.s.t+=dt;if(k.E>0)this.s.dm=Math.min(1,this.s.dm+dt*.02)},
+ draw(ctx,W,H,p){const s=this.s,k=this.info(p),bw=Math.min(W*.3,170),bh=H*.42,by=H-24-bh,lx=W*.25,rx=W*.75;
+  [[lx,p.m1],[rx,p.m2]].forEach(([x,m])=>{const e=this.E[m];ctx.fillStyle=e[4];ctx.globalAlpha=.7;ctx.fillRect(x-bw/2,by+bh*.2,bw,bh*.8);ctx.globalAlpha=1;ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x-bw/2,by);ctx.lineTo(x-bw/2,by+bh);ctx.lineTo(x+bw/2,by+bh);ctx.lineTo(x+bw/2,by);ctx.stroke();
+   const isAn=k.E>0&&m===k.an&&x===(p.m1===k.an?lx:rx),isCa=k.E>0&&!isAn,ew=22*(isAn?1-s.dm*.45:isCa?1+s.dm*.3:1);ctx.fillStyle=e[3];ctx.fillRect(x-ew/2,by-40,ew,bh*.85);ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.strokeRect(x-ew/2,by-40,ew,bh*.85);
+   text(ctx,m,x,by+bh*.55,'#1e1d33',14,'center',MONO,600);ctx.direction='ltr';text(ctx,m+(e[1]>1?'²⁺':'⁺')+' (aq)',x,by+bh*.8,'#1e1d33',11,'center',MONO,500);ctx.direction='inherit';
+   if(k.E>0)text(ctx,isAn?'أنود (−) تأكسد':'كاثود (+) اختزال',x,by+bh+14,isAn?C.accent:C.accent2,12,'center',FONT,600)});
+  ctx.strokeStyle=C.warn;ctx.lineWidth=12;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(lx+bw*.3,by+bh*.35);ctx.lineTo(lx+bw*.3,by-12);ctx.lineTo(rx-bw*.3,by-12);ctx.lineTo(rx-bw*.3,by+bh*.35);ctx.stroke();ctx.lineCap='butt';
+  textS(ctx,'قنطرة ملحية',W/2,by-12,10);
+  const wy=24;ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(lx,by-40);ctx.lineTo(lx,wy);ctx.lineTo(rx,wy);ctx.lineTo(rx,by-40);ctx.stroke();
+  ctx.fillStyle=C.panel;ctx.beginPath();ctx.arc(W/2,wy,20,0,7);ctx.fill();ctx.stroke();text(ctx,fmt(k.E,2)+' V',W/2,wy,C.ink,11,'center',MONO,600);
+  if(k.E>0){const ax=p.m1===k.an?lx:rx,cxx=ax===lx?rx:lx,path=[[ax,by-40],[ax,wy],[cxx,wy],[cxx,by-40]],L=(by-40-wy)*2+Math.abs(cxx-ax),spd=30+k.E*30;
+   for(let d=(s.t*spd)%30;d<L;d+=30){let rem=d,pt=null;for(let i=0;i<3;i++){const a=path[i],b=path[i+1],l=Math.hypot(b[0]-a[0],b[1]-a[1]);if(rem<=l){pt=[a[0]+(b[0]-a[0])*rem/l,a[1]+(b[1]-a[1])*rem/l];break}rem-=l}if(pt&&Math.hypot(pt[0]-W/2,pt[1]-wy)>22)ball(ctx,pt[0],pt[1],3.5,C.accent2)}
+   text(ctx,'e⁻ →',(ax+W/2)/2,wy-12,C.accent2,12,'center',MONO,600)}
+  else text(ctx,'لا يوجد فرق جهد بين قطبين متماثلين',W/2,H/2,C.accent,13,'center',FONT,600)},
+ readouts(p){const k=this.info(p),an=this.E[k.an],ca=this.E[k.ca];if(k.E<=0)return[['جهد الخلية',fmt(0,2)+' V',1]];
+  const za=an[1],zc=ca[1],l=za*zc/gcd(za,zc),fa=l/za,fc=l/zc;const pre=n=>n>1?n:'';
+  return[['جهد الخلية E°',fmt(k.E,2)+' V',1],['الأنود (يتأكسد وتقل كتلته)',an[2]+' ('+k.an+')','ar'],['الكاثود (يختزل وتزداد كتلته)',ca[2]+' ('+k.ca+')','ar'],['نصف تفاعل الأنود',k.an+' → '+k.an+(za>1?'²⁺':'⁺')+' + '+pre(za)+'e⁻'],['نصف تفاعل الكاثود',k.ca+(zc>1?'²⁺':'⁺')+' + '+pre(zc)+'e⁻ → '+k.ca],['التفاعل الكلي',pre(fa)+k.an+' + '+pre(fc)+k.ca+(zc>1?'²⁺':'⁺')+' → '+pre(fa)+k.an+(za>1?'²⁺':'⁺')+' + '+pre(fc)+k.ca]]}},
+
+/* ---------- Hydrocarbons ---------- */
+{id:'organic',branch:'الكيمياء العضوية',name:'الهيدروكربونات والسلسلة المتجانسة',law:'CₙH₂ₙ₊₂ · CₙH₂ₙ · CₙH₂ₙ₋₂',
+ tip:'زيدي عدد ذرات الكربون في الألكانات وراقبي درجة الغليان: لماذا ترتفع؟ (قوى التجاذب بين الجزيئات). عند أي عدد من ذرات الكربون يصبح المركب سائلًا في درجة حرارة الغرفة؟ قارني الألكان بالألكين المقابل.',
+ controls:[{id:'type',type:'seg',label:'نوع الهيدروكربون',options:[['ane','ألكان (روابط أحادية)'],['ene','ألكين (رابطة ثنائية)'],['yne','ألكاين (رابطة ثلاثية)']],val:'ane'},{id:'n',label:'عدد ذرات الكربون',min:1,max:10,step:1,val:3,unit:''}],
+ ST:['ميث','إيث','بروب','بيوت','بنت','هكس','هبت','أوكت','نون','ديك'],
+ BP:{ane:[-162,-89,-42,-.5,36,69,98,126,151,174],ene:[null,-104,-47,-6.3,30,63,94,121,146,171],yne:[null,-84,-23,8,40,71,100,125,151,174]},
+ nn(p){return p.type==='ane'?p.n:Math.max(2,p.n)},
+ Hs(p){const n=this.nn(p),h=[];for(let i=0;i<n;i++)h.push(n===1?4:(i===0||i===n-1)?3:2);if(p.type==='ene'){h[0]-=1;h[1]-=1}if(p.type==='yne'){h[0]-=2;h[1]-=2}return h},
+ nameOf(p){const n=this.nn(p),st=this.ST[n-1];if(p.type==='ane')return st+'ان';const pre=n>=4?'1-':'';return pre+st+(p.type==='ene'?'ين':'اين')},
+ formula(p){const n=this.nn(p),h=this.Hs(p).reduce((a,b)=>a+b,0);return'C'+(n>1?sub(n):'')+'H'+sub(h)},
+ cond(p){const h=this.Hs(p),b=p.type==='ene'?'=':p.type==='yne'?'≡':'-';const parts=h.map(k=>'C'+(k?'H'+(k>1?sub(k):''):''));return parts.map((q,i)=>i===0?q:(i===1?b:'-')+q).join('')},
+ reset(){this.s={}},step(){},
+ draw(ctx,W,H,p){const n=this.nn(p),h=this.Hs(p),gy=H*.3,sp=Math.min(70,(W-60)/(n+1)),x0=W/2-sp*(n-1)/2,bl=Math.min(30,sp*.55);ctx.direction='ltr';
+  for(let i=0;i<n-1;i++){const xa=x0+i*sp+11,xb=x0+(i+1)*sp-11,ord=i===0&&p.type!=='ane'?(p.type==='ene'?2:3):1;ctx.strokeStyle=ord>1?C.accent:C.ink;ctx.lineWidth=2;for(let k=0;k<ord;k++){const off=(k-(ord-1)/2)*5;ctx.beginPath();ctx.moveTo(xa,gy+off);ctx.lineTo(xb,gy+off);ctx.stroke()}}
+  for(let i=0;i<n;i++){const x=x0+i*sp,pos=[];const want=h[i];const cand=n===1?[[0,-1],[0,1],[-1,0],[1,0]]:i===0?[[0,-1],[0,1],[-1,0]]:i===n-1?[[0,-1],[0,1],[1,0]]:[[0,-1],[0,1]];
+   let use=cand;if(want<cand.length){use=want===1&&i===0?[[-1,0]]:want===1&&i===n-1?[[1,0]]:want===1?[[0,-1]]:cand.slice(0,want)}
+   use.slice(0,want).forEach(([dx,dy])=>{ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+dx*10,gy+dy*10);ctx.lineTo(x+dx*bl,gy+dy*bl);ctx.stroke();text(ctx,'H',x+dx*(bl+8),gy+dy*(bl+8),C.muted,13,'center',MONO,600)});
+   text(ctx,'C',x,gy,C.ink,16,'center',MONO,600)}ctx.direction='inherit';
+  const x1=W-14,xa=40,y0=H*.58,y1=H-24,X=k=>xa+(x1-xa)*(k-.5)/10,Y=t=>y1-(t+200)/400*(y1-y0);axes(ctx,xa,y0,x1,y1);
+  ctx.setLineDash([4,4]);ctx.strokeStyle=C.warn;ctx.beginPath();ctx.moveTo(xa,Y(25));ctx.lineTo(x1,Y(25));ctx.stroke();ctx.setLineDash([]);text(ctx,'25 °C (حرارة الغرفة)',x1-4,Y(25)-9,C.warn,10,'right');
+  [['ane',C.accent2],['ene',C.accent3],['yne',C.sum]].forEach(([t,c])=>{ctx.strokeStyle=c;ctx.lineWidth=t===p.type?2.6:1.2;ctx.globalAlpha=t===p.type?1:.5;ctx.beginPath();let st=false;this.BP[t].forEach((v,k)=>{if(v==null)return;st?ctx.lineTo(X(k+1),Y(v)):ctx.moveTo(X(k+1),Y(v));st=true});ctx.stroke();ctx.globalAlpha=1});
+  const bp=this.BP[p.type][n-1];ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(n),Y(bp),6,0,7);ctx.fill();
+  for(let k=1;k<=10;k++)text(ctx,k+'',X(k),y1+11,C.muted,10,'center',MONO,400);[-200,0,200].forEach(t=>text(ctx,t+'',xa-4,Y(t),C.muted,9,'right',MONO,400));text(ctx,'درجة الغليان (°C) مقابل عدد ذرات C',xa+6,y0+10,C.muted,10,'left')},
+ readouts(p){const n=this.nn(p),h=this.Hs(p).reduce((a,b)=>a+b,0),bp=this.BP[p.type][n-1];
+  return[['الاسم',this.nameOf(p),1],['الصيغة الجزيئية',this.formula(p)],['الصيغة العامة',{ane:'CₙH₂ₙ₊₂',ene:'CₙH₂ₙ',yne:'CₙH₂ₙ₋₂'}[p.type]],['الكتلة المولية',fmt(n*12.011+h*1.008,2)+' g/mol'],['درجة الغليان',bp+' °C'],['الحالة عند 25 °C',bp<25?'غاز':'سائل','ar'],['الصيغة البنائية المختصرة',this.cond(p)],['التسمية: البادئة',this.ST[n-1]+' = '+n+' ذرات كربون','w']]}}
+];
+
+/* ================= ENGINE ================= */
+const cv=$('#cv'),ctx=cv.getContext('2d');let cur=null,P={},paused=false,last=0,lastRO=0,lastW=0;
+const KEEP=['titr','balance'];
+function resize(){const w=cv.parentElement.clientWidth;if(!w||w===lastW)return;lastW=w;W=w;H=Math.round(Math.max(290,Math.min(540,W*(W<600?.98:.62))));const r=window.devicePixelRatio||1;cv.width=W*r;cv.height=H*r;cv.style.height=H+'px';ctx.setTransform(r,0,0,r,0,0);if(cur&&!KEEP.includes(cur.id))cur.reset(P)}
+new ResizeObserver(resize).observe(cv.parentElement);
+const branches=[...new Set(SIMS.map(s=>s.branch))];
+const short=s=>s.name.replace(' والخصائص الدورية','').replace(' وتغيرات الحالة','').replace(' ونظرية التصادم','').replace(' ومبدأ لوتشاتلييه','').replace(' ومنحنى الذوبان','').replace(' والرقم الهيدروجيني','').replace(' والسلسلة المتجانسة','').replace(' الكيميائية','').replace(' للتفاعل','');
+$('#nav').innerHTML=branches.map(b=>`<div class="grp"><b>${b}</b><div>${SIMS.filter(s=>s.branch===b).map(s=>`<button class="chip" data-id="${s.id}" aria-pressed="false">${short(s)}</button>`).join('')}</div></div>`).join('');
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)select(b.dataset.id)});
+function fmtVal(c,v){return(c.step<1?(+v).toFixed(c.step<.1?(c.step<.01?3:2):1):v)+(c.unit?' '+c.unit:'')}
+function setParam(id,v){P[id]=v;const c=cur.controls.find(c=>c.id===id);if(!c)return;
+  if(c.type==='seg')document.querySelectorAll(`[data-seg="${id}"] button`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
+  else{const el=$('#c_'+id);if(el&&+el.value!==v)el.value=v;const o=$('#o_'+id);if(o)o.textContent=fmtVal(c,v)}
+  cur.onChange&&cur.onChange(P,id)}
+function select(id){cur=SIMS.find(s=>s.id===id)||SIMS[0];P={};cur.controls.forEach(c=>P[c.id]=c.val);
+  document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===cur.id));
+  $('#branch').textContent=cur.branch;$('#name').textContent=cur.name;$('#law').textContent=cur.law;$('#try').innerHTML='<b>جرّبي واكتشفي: </b>'+cur.tip;
+  $('#ctls').innerHTML=cur.controls.length?cur.controls.map(c=>c.type==='seg'
+    ?`<div class="ctl"><div class="top"><span>${c.label}</span></div><div class="seg" data-seg="${c.id}">${c.options.map(([v,l])=>`<button data-v="${v}" aria-pressed="${v===c.val}">${l}</button>`).join('')}</div></div>`
+    :`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><output id="o_${c.id}">${fmtVal(c,c.val)}</output></div><input type="range" id="c_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.val}"></div>`).join(''):`<p class="note">${cur.note||''}</p>`;
+  cur.controls.forEach(c=>{if(c.type==='seg')document.querySelectorAll(`[data-seg="${c.id}"] button`).forEach(b=>b.onclick=()=>setParam(c.id,b.dataset.v));else $('#c_'+c.id).oninput=e=>setParam(c.id,+e.target.value)});
+  const acts=$('#acts');acts.innerHTML='';const pb=document.createElement('button');pb.className='btn';
+  (cur.actions||[]).forEach(([l,fn])=>{const b=document.createElement('button');b.className='btn primary';b.textContent=l;b.onclick=()=>{cur[fn](P);paused=false;pb.textContent='إيقاف مؤقت'};acts.append(b)});
+  pb.textContent=paused?'تشغيل':'إيقاف مؤقت';pb.onclick=()=>{paused=!paused;pb.textContent=paused?'تشغيل':'إيقاف مؤقت'};acts.append(pb);
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='القيم الافتراضية';rb.onclick=()=>select(cur.id);acts.append(rb);
+  cur.s=null;cur.reset(P);renderRO();try{localStorage.setItem('chem-tab',cur.id)}catch(e){}
+  if(location.hash!=='#'+cur.id)history.replaceState(null,'','#'+cur.id)}
+function renderRO(){$('#ro').innerHTML=cur.readouts(P).map(([l,v,h])=>h==='w'?`<dt class="wide">${l}</dt><dd class="wide">${v}</dd>`:`<dt>${l}</dt><dd class="${h===1?'hot':''} ${h==='ar'?'ar':''}">${v}</dd>`).join('')}
+function onPtr(e){if(!cur.pointer||(e.type==='pointermove'&&!e.buttons))return;if(e.type==='pointerdown'){try{cv.setPointerCapture(e.pointerId)}catch(_){}}const r=cv.getBoundingClientRect();cur.pointer(e.clientX-r.left,e.clientY-r.top,P,e.type)}
+cv.addEventListener('pointerdown',onPtr);cv.addEventListener('pointermove',onPtr);['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>cur.pointerUp&&cur.pointerUp()));
+function frame(ts){const dt=Math.min(.04,last?(ts-last)/1000:0);last=ts;
+  if(W){if(!paused)cur.step(dt,P);ctx.fillStyle=C.panel;ctx.fillRect(0,0,W,H);grid(ctx,W,H);cur.draw(ctx,W,H,P);if(ts-lastRO>150){renderRO();lastRO=ts}}
+  requestAnimationFrame(frame)}
+let start=location.hash.slice(1);if(!SIMS.some(s=>s.id===start)){try{start=localStorage.getItem('chem-tab')}catch(e){start=null}}
+resize();select(SIMS.some(s=>s.id===start)?start:'atom');requestAnimationFrame(frame);
+</script>
+<script>
+const LABKEY='chem';
+/* ===== أدوات التجريب الحر: إدخال القيم + دفتر التجارب + الرسم البياني ===== */
+window.escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+(function(){
+const NB={};try{Object.assign(NB,JSON.parse(localStorage.getItem('nb-'+LABKEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('nb-'+LABKEY,JSON.stringify(NB))}catch(e){}};
+const esc=window.escH,q=s=>document.querySelector(s);
+const nb=()=>NB[cur.id]||(NB[cur.id]={rows:[],pred:'',conc:'',x:'',y:'',hot:''});
+const dec=st=>{const s=String(st);return s.includes('.')?s.split('.')[1].length:0};
+const num=v=>{const s=String(v);if(/×10| \/ |∠/.test(s)||(s.match(/\d+(\.\d+)?/g)||[]).length>1)return NaN;const m=s.replace(/−/g,'-').replace(/,/g,'').match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):NaN};
+const pv=v=>{if(!Number.isFinite(v))return'';const a=Math.abs(v);return a>=1000||a===Math.round(a)?String(Math.round(v)):a>=10?v.toFixed(1):v.toFixed(2)};
+
+/* ---------- controls with typed values ---------- */
+function ctlHTML(c){
+  if(c.type==='seg')return`<div class="ctl"><div class="top"><span>${c.label}</span></div><div class="seg" data-seg="${c.id}">${c.options.map(([v,l])=>`<button data-v="${v}" aria-pressed="${String(v)===String(P[c.id])}">${l}</button>`).join('')}</div></div>`;
+  if(c.type==='sel')return`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><output id="o_${c.id}" hidden></output></div><select id="c_${c.id}" class="sel">${c.options.map(([v,l])=>`<option value="${v}" ${String(v)===String(P[c.id])?'selected':''}>${l}</option>`).join('')}</select></div>`;
+  return`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><span class="num"><input type="number" id="n_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${P[c.id]}" inputmode="decimal" aria-label="اكتبي قيمة: ${c.label}">${c.unit?`<small>${c.unit}</small>`:''}</span><output id="o_${c.id}" hidden></output></div><input type="range" id="c_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${P[c.id]}"></div>`}
+window.renderPanel=function(){const el=document.getElementById('cpanel');if(el&&cur.panel){el.innerHTML='';cur.panel(el,P)}};
+function renderCtls(){const box=q('#ctls');let h=cur.panel?'<div class="panel" id="cpanel"></div>':'';
+  h+=cur.controls.length?cur.controls.map(ctlHTML).join(''):(cur.panel?'':`<p class="note">${cur.note||''}</p>`);
+  box.innerHTML=h;renderPanel();
+  cur.controls.forEach(c=>{
+    if(c.type==='seg')box.querySelectorAll(`[data-seg="${c.id}"] button`).forEach(b=>b.onclick=()=>setParam(c.id,b.dataset.v));
+    else if(c.type==='sel')q('#c_'+c.id).onchange=e=>setParam(c.id,e.target.value);
+    else{const r=q('#c_'+c.id),n=q('#n_'+c.id);r.oninput=e=>setParam(c.id,+e.target.value);
+      const apply=()=>{let v=parseFloat(String(n.value).replace(/−/g,'-'));if(!Number.isFinite(v)){n.value=P[c.id];return}
+        v=Math.min(c.max,Math.max(c.min,v));v=+(Math.round(v/c.step)*c.step).toFixed(dec(c.step));n.value=v;setParam(c.id,v)};
+      n.onchange=apply;n.onkeydown=e=>{if(e.key==='Enter')apply()}}})}
+const _sp=setParam;
+setParam=function(id,v){const c=cur.controls.find(c=>c.id===id);
+  if(c&&c.type==='sel'){P[id]=v;const el=q('#c_'+id);if(el&&el.value!==String(v))el.value=v;cur.onChange&&cur.onChange(P,id);return}
+  _sp(id,v);const n=document.getElementById('n_'+id);if(n&&document.activeElement!==n)n.value=v};
+const _sel=select;select=function(id){_sel(id);renderCtls();nbShow()};
+
+/* ---------- notebook ---------- */
+const card=document.createElement('div');card.className='card nb';
+card.innerHTML=`<h3>دفتر التجارب</h3>
+<label class="nbl" for="nb-pred">توقّعي قبل أن تجرّبي</label>
+<textarea id="nb-pred" rows="2" placeholder="ماذا تتوقعين أن يحدث إذا غيّرتِ المتغير؟ ولماذا؟"></textarea>
+<div class="acts"><button class="btn primary" id="nb-rec">سجّلي هذه المحاولة</button><button class="btn" id="nb-undo">احذفي آخر محاولة</button><button class="btn" id="nb-clear">امسحي الدفتر</button></div>
+<div class="nbtw" id="nb-tw"></div>
+<div class="nbplot" id="nb-plotwrap" hidden>
+  <div class="nbaxes"><label for="nb-x">المحور الأفقي</label><select id="nb-x"></select><label for="nb-y">المحور الرأسي</label><select id="nb-y"></select></div>
+  <canvas id="nb-cv" aria-label="رسم بياني لمحاولاتك"></canvas>
+</div>
+<label class="nbl" for="nb-conc">استنتاجي</label>
+<textarea id="nb-conc" rows="3" placeholder="ما العلاقة التي لاحظتِها بين المتغيرات؟ هل تحقق توقعك؟"></textarea>`;
+q('.side').appendChild(card);
+const pred=q('#nb-pred'),conc=q('#nb-conc');
+pred.oninput=()=>{nb().pred=pred.value;save()};conc.oninput=()=>{nb().conc=conc.value;save()};
+q('#nb-rec').onclick=()=>{const n=nb(),r={};
+  cur.controls.forEach(c=>{if(c.type==='seg'||c.type==='sel'){const o=c.options.find(o=>String(o[0])===String(P[c.id]));r[c.label]=o?o[1]:P[c.id]}else r[c.label+(c.unit?' ('+c.unit+')':'')]=String(P[c.id])});
+  (cur.record?cur.record(P):[]).forEach(([k,v])=>r[k]=String(v));
+  let hot='';cur.readouts(P).forEach(([l,v,h])=>{if(h==='w')return;r[l]=String(v);if(h===1&&!hot)hot=l});
+  if(hot)n.hot=hot;n.rows.push(r);if(n.rows.length>40)n.rows.shift();save();nbTable();
+  const b=q('#nb-rec');b.textContent='سُجّلت المحاولة '+n.rows.length;setTimeout(()=>b.textContent='سجّلي هذه المحاولة',1200)};
+q('#nb-undo').onclick=()=>{nb().rows.pop();save();nbTable()};
+let clr=0;q('#nb-clear').onclick=e=>{const b=e.currentTarget;if(!clr){clr=1;b.textContent='اضغطي مرة أخرى للتأكيد';setTimeout(()=>{clr=0;b.textContent='امسحي الدفتر'},2500);return}
+  clr=0;b.textContent='امسحي الدفتر';const n=nb();n.rows=[];save();nbTable()};
+q('#nb-x').onchange=e=>{nb().x=e.target.value;save();nbTable()};q('#nb-y').onchange=e=>{nb().y=e.target.value;save();nbTable()};
+function cols(n){const k=[];n.rows.forEach(r=>Object.keys(r).forEach(x=>{if(!k.includes(x))k.push(x)}));return k}
+function nbTable(){const n=nb(),tw=q('#nb-tw'),pw=q('#nb-plotwrap');
+  if(!n.rows.length){tw.innerHTML='<p class="note">لم تسجّلي أي محاولة بعد. غيّري قيمة متغير واحد، ثم اضغطي «سجّلي هذه المحاولة»، وكرري ذلك عدة مرات.</p>';pw.hidden=true;return}
+  const k=cols(n);tw.innerHTML='<table><thead><tr><th>#</th>'+k.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr></thead><tbody>'+n.rows.map((r,i)=>'<tr><td>'+(i+1)+'</td>'+k.map(x=>`<td>${esc(r[x]??'')}</td>`).join('')+'</tr>').join('')+'</tbody></table>';
+  const nc=k.filter(x=>n.rows.every(r=>Number.isFinite(num(r[x]))));
+  if(n.rows.length<2||nc.length<2){pw.hidden=true;return}pw.hidden=false;
+  if(!nc.includes(n.x)){const varied=nc.find(x=>new Set(n.rows.map(r=>num(r[x]))).size>1);n.x=varied||nc[0]}
+  if(!nc.includes(n.y)||n.y===n.x)n.y=nc.includes(n.hot)&&n.hot!==n.x?n.hot:nc.find(x=>x!==n.x);
+  const opt=v=>nc.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');q('#nb-x').innerHTML=opt(n.x);q('#nb-y').innerHTML=opt(n.y);nbPlot()}
+function nbPlot(){const n=nb(),cv=q('#nb-cv');if(!cv||q('#nb-plotwrap').hidden)return;const w=cv.clientWidth||300,h=190,dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  const pts=n.rows.map(r=>[num(r[n.x]),num(r[n.y])]).sort((a,b)=>a[0]-b[0]);
+  let x0=Math.min(...pts.map(p=>p[0])),x1=Math.max(...pts.map(p=>p[0])),y0=Math.min(...pts.map(p=>p[1])),y1=Math.max(...pts.map(p=>p[1]));
+  if(x1===x0){x0-=1;x1+=1}if(y1===y0){y0-=1;y1+=1}const px=(x1-x0)*.08,py=(y1-y0)*.1;x0-=px;x1+=px;y0-=py;y1+=py;
+  const L=48,R=w-10,T=10,B=h-34,X=v=>L+(R-L)*(v-x0)/(x1-x0),Y=v=>B-(B-T)*(v-y0)/(y1-y0);
+  c.fillStyle=C.panel;c.fillRect(0,0,w,h);c.strokeStyle=C.line;c.lineWidth=1;c.strokeRect(L+.5,T+.5,R-L,B-T);
+  c.font='400 10px '+'"JetBrains Mono",ui-monospace,monospace';c.fillStyle=C.muted;c.textBaseline='middle';
+  c.textAlign='right';[y0+py,y1-py].forEach(v=>c.fillText(pv(v),L-4,Y(v)));c.textAlign='center';[x0+px,x1-px].forEach(v=>c.fillText(pv(v),X(v),B+10));
+  c.font='600 11px "IBM Plex Sans Arabic",system-ui,sans-serif';c.fillStyle=C.ink;c.textAlign='center';c.fillText(n.x.length>40?n.x.slice(0,40)+'…':n.x,(L+R)/2,h-9);
+  c.save();c.translate(11,(T+B)/2);c.rotate(-Math.PI/2);c.fillText(n.y.length>28?n.y.slice(0,28)+'…':n.y,0,0);c.restore();
+  c.setLineDash([4,4]);c.strokeStyle=C.muted;c.lineWidth=1.3;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));c.stroke();c.setLineDash([]);
+  pts.forEach(p=>{c.fillStyle=C.accent;c.beginPath();c.arc(X(p[0]),Y(p[1]),4.5,0,7);c.fill()})}
+function nbShow(){const n=nb();pred.value=n.pred||'';conc.value=n.conc||'';nbTable()}
+try{new ResizeObserver(()=>nbPlot()).observe(card)}catch(e){}
+renderCtls();nbShow();
+})();
+</script>
+
+
+</body>
+</html>

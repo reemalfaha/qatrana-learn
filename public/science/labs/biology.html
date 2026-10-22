@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر العلوم الحياتية | مختبر بلا حدود</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: histology bench — specimen canvas stained in H&E tones (eosin pink, hematoxylin blue) beside a control panel; stacks on phones */
+:root{
+  --paper:#f2f0f3; --panel:#ffffff; --ink:#22192a; --muted:#665c6e; --grid:#e8e4ea; --line:#d6cfdb;
+  --accent:#c93a55; --accent2:#3a5fc8; --accent3:#2e9b5f; --warn:#d08a1e; --sum:#7b4fb8; --chip:#e8e3ec;
+  --f-display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#120f15; --panel:#1b1720; --ink:#ece6f0; --muted:#a59aae; --grid:#241f2a; --line:#352e3d;
+  --accent:#f2707f; --accent2:#7f9cf5; --accent3:#57c98a; --warn:#edb458; --sum:#b392f0; --chip:#28222f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#120f15; --panel:#1b1720; --ink:#ece6f0; --muted:#a59aae; --grid:#241f2a; --line:#352e3d;
+  --accent:#f2707f; --accent2:#7f9cf5; --accent3:#57c98a; --warn:#edb458; --sum:#b392f0; --chip:#28222f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.15;margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:0;max-width:62ch}
+nav{display:flex;flex-wrap:wrap;gap:10px 18px;padding-block:10px;border-block:1px solid var(--line)}
+.grp{display:flex;flex-direction:column;gap:6px}
+.grp b{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.grp div{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
+.chip:hover{border-color:var(--accent2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
+.stage{display:flex;flex-direction:column;gap:10px;min-width:0}
+.simhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.simhead h2{font-family:var(--f-display);font-weight:500;font-size:26px;margin:0}
+.simhead small{display:block;font-size:12px;color:var(--accent);font-weight:600}
+.law{font-family:var(--f-mono);font-size:14px;background:var(--chip);padding:4px 10px;border-radius:6px;direction:ltr;unicode-bidi:isolate}
+.cvbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;touch-action:none}
+canvas{display:block;width:100%}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 14px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{border-color:var(--accent2)}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.card h3{margin:0;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.note{margin:0;font-size:14px;color:var(--muted)}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl .top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.ctl output{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--chip);padding:3px;border-radius:8px}
+.seg button{flex:1 1 auto;font:inherit;font-size:13px;border:0;background:transparent;color:var(--ink);padding:5px 8px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.15);font-weight:600}
+dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:14px}
+dt{color:var(--muted)}
+dd{margin:0;font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;text-align:left}
+dd.hot{color:var(--accent);font-weight:600}
+dt.wide{grid-column:1/-1;margin-bottom:-6px}
+dd.wide{grid-column:1/-1;direction:rtl;text-align:right;font-family:var(--f-body);font-size:14px}
+dd.ar{direction:rtl;text-align:left;font-family:var(--f-body);font-size:14px}
+.try{border-inline-start:3px solid var(--accent3);background:var(--panel);padding:12px 14px;border-radius:0 8px 8px 0;font-size:14px}
+.try b{color:var(--accent3)}
+.back{align-self:flex-start;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--panel);padding:5px 12px;border-radius:999px}
+.back:hover{border-color:var(--accent)}
+footer{font-size:12px;color:var(--muted)}
+
+/* ---- free experimentation tools ---- */
+[hidden]{display:none!important}
+.num{display:inline-flex;align-items:center;gap:4px}
+.num input{width:84px;font:inherit;font-family:var(--f-mono);font-size:13px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);direction:ltr;text-align:left}
+.num small{font-size:12px;color:var(--muted)}
+select.sel,.panel select,.panel input,.nbaxes select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);min-width:0}
+.panel{display:flex;flex-direction:column;gap:10px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.frow{display:grid;grid-template-columns:26px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 30px;gap:6px;align-items:center}
+.frow.fhead{font-size:12px;color:var(--muted);font-weight:600}
+.frow input{width:100%;direction:ltr;text-align:left;font-family:var(--f-mono);font-size:13px}
+.sw{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:#fff;font-size:12px;font-weight:600;flex:0 0 auto}
+.xbtn{font:inherit;font-size:16px;line-height:1;width:28px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--accent);cursor:pointer}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.pred{display:flex;flex-direction:column;gap:8px;border:1px dashed var(--line);border-radius:8px;padding:10px;font-size:14px}
+.prow{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:14px}
+.prow label{flex:1 1 110px;font-size:13px;color:var(--muted)}
+.prow input,.prow select{flex:1 1 110px}
+.prow input[type=number]{direction:ltr;text-align:left;font-family:var(--f-mono)}
+.prow .short{flex:0 0 60px;text-align:center;font-family:var(--f-mono)}
+.fb{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--chip);line-height:1.5}
+.fb.ok{color:var(--accent3);font-weight:600}.fb.bad{color:var(--accent);font-weight:600}
+.eqin{width:100%;font-family:var(--f-mono)!important;font-size:15px!important;direction:ltr;text-align:left}
+.keypad{display:flex;flex-wrap:wrap;gap:4px}
+.keypad button{font-family:var(--f-mono);font-size:13px;min-width:34px;padding:5px 7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer;direction:ltr}
+.keypad button:hover{border-color:var(--accent2)}
+.keypad.ex button{font-size:11.5px;color:var(--muted)}
+.nb textarea{font:inherit;font-size:14px;width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+.nbl{font-size:13px;color:var(--muted);font-weight:600}
+.nbtw{overflow-x:auto;max-width:100%}
+.nbtw table{border-collapse:collapse;font-size:12px;width:max-content;min-width:100%}
+.nbtw th,.nbtw td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right;white-space:nowrap}
+.nbtw th{color:var(--muted);font-weight:600;font-size:11.5px}
+.nbtw td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.nbplot{display:flex;flex-direction:column;gap:8px}
+.nbaxes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.nbaxes select{flex:1 1 140px}
+#nb-cv{width:100%;display:block;border:1px solid var(--line);border-radius:8px}
+dt.wide{grid-column:1/-1;margin-bottom:-6px}
+dd.wide{grid-column:1/-1;direction:rtl;text-align:right;font-family:var(--f-body);font-size:14px}
+dd.ar{direction:rtl;text-align:left;font-family:var(--f-body);font-size:14px}
+</style>
+
+<style>html.embed .wrap>header,html.embed #nav,html.embed .wrap>footer{display:none!important}html.embed body{padding-top:6px}</style><script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script></head>
+<body>
+<div class="wrap" dir="rtl">
+  <header>
+    <a class="back" href="../#/labs">→ العودة إلى منصّة العلوم</a>
+    <span class="eyebrow">16 محاكاة حيّة · 7 أقسام</span>
+    <h1>مختبر <span>العلوم الحياتية</span></h1>
+    <p class="sub">من الخلية وعضياتها إلى الوراثة والطاقة وأجهزة الجسم والمناعة والتطور. غيّري الظروف وراقبي كيف تستجيب الحياة، فالتركيب في الكائنات الحية يخدم الوظيفة. اكتبي القيم التي تريدينها بنفسك، وسجّلي محاولاتك في دفتر التجارب، وارسمي العلاقة بين المتغيرات لتستنتجي القانون.</p>
+  </header>
+  <nav id="nav" aria-label="أقسام العلوم الحياتية"></nav>
+  <main class="bench">
+    <section class="stage">
+      <div class="simhead">
+        <div><small id="branch"></small><h2 id="name"></h2></div>
+        <span class="law" id="law"></span>
+      </div>
+      <div class="cvbox"><canvas id="cv" aria-label="لوحة المحاكاة"></canvas></div>
+      <div class="acts" id="acts"></div>
+    </section>
+    <aside class="side">
+      <div class="card"><h3>المتغيرات</h3><div id="ctls" style="display:flex;flex-direction:column;gap:14px"></div></div>
+      <div class="card"><h3>القياسات</h3><dl id="ro"></dl></div>
+      <div class="try" id="try"></div>
+    </aside>
+  </main>
+  <footer>جزء من منصة «مختبر بلا حدود» · إعداد المعلمة نوال بني عطية · مدرسة القطرانة الثانوية للبنات<br>القيم مقرّبة ومبسّطة لأغراض تعليمية.</footer>
+</div>
+
+<script>
+const D=Math.PI/180,$=s=>document.querySelector(s),C={};
+function readColors(){const s=getComputedStyle(document.documentElement);['paper','panel','ink','muted','grid','line','accent','accent2','accent3','warn','sum'].forEach(k=>C[k]=s.getPropertyValue('--'+k).trim())}
+readColors();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readColors);
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d):'—';
+const FONT='"IBM Plex Sans Arabic",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
+const SUBD='₀₁₂₃₄₅₆₇₈₉',SUPD='⁰¹²³⁴⁵⁶⁷⁸⁹',sub=n=>String(n).split('').map(c=>SUBD[c]||c).join(''),sup=n=>String(n).split('').map(c=>SUPD[c]||c).join('');
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function interp(tb,x){if(x<=tb[0][0])return tb[0][1];for(let i=1;i<tb.length;i++)if(x<=tb[i][0]){const a=tb[i-1],b=tb[i];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return tb[tb.length-1][1]}
+function hex(h){h=(h||'#000').trim();if(h.length===4)h='#'+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+function mix(a,b,t){const A=hex(a),B=hex(b);t=Math.max(0,Math.min(1,t));return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`}
+function lum(c){const m=c.match(/\d+/g).map(Number);return(.299*m[0]+.587*m[1]+.114*m[2])/255}
+function arrow(ctx,x1,y1,x2,y2,col,label,w=2.5){const L=Math.hypot(x2-x1,y2-y1);if(L<2)return;const a=Math.atan2(y2-y1,x2-x1),h=Math.min(10,L*.45);
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(a)*h*.8,y2-Math.sin(a)*h*.8);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-.4),y2-h*Math.sin(a-.4));ctx.lineTo(x2-h*Math.cos(a+.4),y2-h*Math.sin(a+.4));ctx.fill();
+  if(label){ctx.font='600 12px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x2+Math.cos(a)*16,y2+Math.sin(a)*14)}}
+function text(ctx,t,x,y,col,size=12,align='center',font=FONT,weight=500){ctx.fillStyle=col;ctx.font=`${weight} ${size}px ${font}`;ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(t,x,y)}
+function textS(ctx,t,x,y,size=12,align='center'){ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=3;text(ctx,t,x,y,'#fff',size,align,FONT,600);ctx.restore()}
+function grid(ctx,W,H,step=24){ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();for(let x=.5;x<W;x+=step){ctx.moveTo(x,0);ctx.lineTo(x,H)}for(let y=.5;y<H;y+=step){ctx.moveTo(0,y);ctx.lineTo(W,y)}ctx.stroke()}
+function ball(ctx,x,y,r,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();const L=col[0]==='#'?lum(mix(col,col,0)):lum(col);if(L>.85){ctx.strokeStyle='#8a8aa0';ctx.lineWidth=.8;ctx.stroke()}}
+function axes(ctx,x0,y0,x1,y1){ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(x0+.5,y0+.5,x1-x0,y1-y0)}
+let W=0,H=0;
+
+const sm=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t)};
+function rr(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
+const hh=(i,j,k=0)=>{const v=Math.sin(i*127.1+j*311.7+k*74.7)*43758.5453;return v-Math.floor(v)};
+const RED='#d1495b',BLUE='#3a5fc8';
+
+/* ================= SIMULATIONS ================= */
+const SIMS=[
+/* ---------- Cell structure ---------- */
+{id:'cell',short:'تركيب الخلية',branch:'الخلية',name:'تركيب الخلية وعضياتها',law:'التركيب يخدم الوظيفة',
+ tip:'المسي أي عضية لتعرفي اسمها ووظيفتها وكيف يناسب تركيبُها وظيفتَها. ما العضيات الموجودة في الخلية النباتية فقط؟ ولماذا تُعد البكتيريا بدائية النواة؟',
+ controls:[{id:'type',type:'seg',label:'نوع الخلية',options:[['an','حيوانية'],['pl','نباتية'],['ba','بكتيرية']],val:'an'}],
+ INF:{nuc:['النواة','تحتوي المادة الوراثية (DNA) وتتحكم في أنشطة الخلية جميعها.','يحيط بها غلاف نووي مزدوج تتخلله ثقوب تسمح بخروج mRNA إلى السيتوبلازم.'],
+  nucl:['النوية','تصنيع مكونات الرايبوسومات.','منطقة كثيفة داخل النواة غنية بالـ RNA والبروتين.'],
+  mito:['الميتوكندريا','إنتاج الطاقة على شكل ATP بالتنفس الخلوي الهوائي.','غشاؤها الداخلي كثير الطيات (الأعراف) فتزداد المساحة التي تحدث عليها تفاعلات إنتاج الطاقة.'],
+  rer:['الشبكة الإندوبلازمية الخشنة','نقل البروتينات التي تصنعها الرايبوسومات الملتصقة بها وتعديلها.','قنوات غشائية مترابطة تتصل بالغلاف النووي وتغطيها الرايبوسومات.'],
+  gol:['جهاز غولجي','تعديل البروتينات وتغليفها في حويصلات وتوجيهها إلى أماكن عملها.','أكياس غشائية مسطحة متراصة تنفصل عن أطرافها حويصلات النقل.'],
+  ribo:['الرايبوسومات','بناء البروتينات بترجمة شيفرة mRNA.','عضيات صغيرة جدًا غير محاطة بغشاء، توجد حرة في السيتوبلازم أو على الشبكة الإندوبلازمية.'],
+  lyso:['الليسوسوم','هضم جزيئات الغذاء والعضيات التالفة بإنزيماته الهاضمة.','حويصلة يحيط بها غشاء يعزل إنزيماتها الهاضمة عن باقي الخلية.'],
+  cent:['السنتريولات','تنظيم خيوط المغزل في أثناء انقسام الخلية الحيوانية.','أسطوانتان متعامدتان مكونتان من أنيبيبات دقيقة.'],
+  mem:['الغشاء البلازمي','ينظم دخول المواد إلى الخلية وخروجها منها، فهو منفذ اختياريًا.','طبقتان من الدهون المفسفرة تتخللهما بروتينات ناقلة وقنوات.'],
+  cyto:['السيتوبلازم','وسط تحدث فيه معظم تفاعلات الخلية وتسبح فيه العضيات.','سائل هلامي يتكون معظمه من الماء وتذوب فيه مواد كثيرة.'],
+  wall:['الجدار الخلوي','يدعم الخلية النباتية ويحميها ويحافظ على شكلها الثابت.','طبقة قوية من السليلوز خارج الغشاء البلازمي.'],
+  chl:['البلاستيدات الخضراء','القيام بعملية البناء الضوئي وصنع الغذاء.','تحتوي أغشية الثايلاكويد المتراصة (الغرانا) التي يوجد فيها الكلوروفيل لامتصاص الضوء.'],
+  vac:['الفجوة العصارية المركزية','تخزين الماء والأملاح والفضلات، وتحافظ على امتلاء الخلية.','كيس كبير يحيط به غشاء ويشغل معظم حجم الخلية النباتية.'],
+  bwall:['الجدار الخلوي البكتيري','حماية الخلية والمحافظة على شكلها.','مكوّن من مادة الببتيدوغلايكان، وهو الجزء الذي يستهدفه البنسلين.'],
+  caps:['المحفظة','حماية البكتيريا من جهاز المناعة ومساعدتها على الالتصاق بالأسطح.','طبقة لزجة خارج الجدار الخلوي.'],
+  nucd:['المنطقة النووية (DNA الحلقي)','تحمل المعلومات الوراثية للخلية البكتيرية.','كروموسوم حلقي واحد غير محاط بغلاف نووي، ولذلك تُعد البكتيريا بدائية النواة.'],
+  plas:['البلازميد','يحمل جينات إضافية مثل جينات مقاومة المضادات الحيوية.','حلقة صغيرة من DNA يمكن أن تنتقل بين البكتيريا، وتُستخدم في الهندسة الوراثية.'],
+  flag:['السوط','حركة الخلية البكتيرية.','خيط بروتيني طويل يدور كالمروحة.'],
+  bribo:['الرايبوسومات (70S)','بناء البروتينات.','أصغر من رايبوسومات الخلايا حقيقية النواة، ولذلك تستهدفها بعض المضادات الحيوية دون أن تضر خلايانا.']},
+ LAY:{an:[['nucl',.04,-.03,.08],['nuc',0,0,.3],['mito',-.6,.3,.13],['mito',.55,-.45,.13],['mito',.45,.5,.13],['rer',-.42,-.38,.17],['gol',.62,.05,.15],['lyso',-.15,.65,.07],['lyso',.2,-.72,.07],['cent',-.68,-.02,.08],['ribo',.12,.6,.09]],
+  pl:[['nucl',-.6,-.47,.06],['nuc',-.6,-.45,.17],['vac',.1,.05,.42],['chl',-.68,.4,.11],['chl',.7,-.55,.11],['chl',.72,.5,.11],['chl',-.05,-.72,.11],['chl',.25,.74,.11],['mito',.72,0,.09],['mito',-.75,.02,.09],['gol',.42,-.75,.09],['rer',-.3,-.72,.09]],
+  ba:[['plas',.45,.25,.09],['plas',-.5,-.3,.09],['bribo',.3,-.4,.1],['bribo',-.32,.38,.1],['nucd',0,0,.3],['flag',1.22,0,.18]]},
+ dims(p){return p.type==='ba'?{rx:Math.min(W*.34,H*.7),ry:H*.22}:{rx:Math.min(W*.42,H*.62),ry:H*.4}},
+ reset(p){this.s={sel:p.type==='ba'?'nucd':'nuc',t:0}},onChange(p){this.reset(p)},step(dt){this.s.t+=dt},
+ pointer(x,y,p,type){if(type!=='pointerdown')return;const{rx,ry}=this.dims(p),u=(x-W/2)/rx,v=(y-H/2)/ry,R=Math.min(rx,ry);
+  for(const[k,ox,oy,r]of this.LAY[p.type])if(Math.hypot((u-ox)*rx,(v-oy)*ry)<r*R*1.3){this.s.sel=k;return}
+  if(p.type==='pl'){const m=Math.max(Math.abs(u),Math.abs(v));if(m>1.05)return;this.s.sel=m>.94?'wall':m>.87?'mem':'cyto';return}
+  const d=Math.hypot(u,v);if(p.type==='ba'){if(d>1.12)return;this.s.sel=d>1.0?'caps':d>.93?'bwall':d>.87?'mem':'cyto';return}if(d>1.08)return;this.s.sel=d>.9?'mem':'cyto'},
+ org(ctx,k,x,y,R,t){ctx.save();ctx.translate(x,y);
+  if(k==='nuc'){ctx.fillStyle=C.accent2;ctx.globalAlpha=.25;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.stroke();ctx.beginPath();ctx.arc(0,0,R-4,0,7);ctx.stroke();ctx.setLineDash([2,4]);ctx.beginPath();for(let i=0;i<30;i++){const a=i*.9,r=R*.6*hh(i,3);ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.stroke();ctx.setLineDash([])}
+  else if(k==='nucl'){ctx.fillStyle=C.sum;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fill()}
+  else if(k==='mito'){ctx.rotate(.6);ctx.fillStyle=C.accent;ctx.globalAlpha=.55;ctx.beginPath();ctx.ellipse(0,0,R*1.2,R*.62,0,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent;ctx.lineWidth=1.6;ctx.stroke();ctx.beginPath();for(let i=0;i<=8;i++){const xx=-R+i*R/4;ctx.lineTo(xx,(i%2?.35:-.35)*R)}ctx.stroke()}
+  else if(k==='chl'){ctx.rotate(-.4);ctx.fillStyle=C.accent3;ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(0,0,R*1.25,R*.7,0,0,7);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle='#1d6b3c';for(let i=-2;i<=2;i++)for(let j=0;j<3;j++)ctx.fillRect(i*R*.42-3,-R*.3+j*4,6,2.4)}
+  else if(k==='gol'){ctx.strokeStyle=C.warn;ctx.lineWidth=3;for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(0,R*1.3+i*5,R*1.3-i*1.5,-Math.PI*.8,-Math.PI*.2);ctx.stroke()}ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(R*.95,-R*.3,3,0,7);ctx.arc(R*1.15,0,2.5,0,7);ctx.fill()}
+  else if(k==='rer'){ctx.strokeStyle=C.accent2;ctx.lineWidth=2;for(let j=0;j<3;j++){ctx.beginPath();for(let i=0;i<=20;i++){const xx=-R*1.2+i*R*.12,yy=j*6-6+Math.sin(i*.8)*3;i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke()}ctx.fillStyle=C.ink;for(let i=0;i<14;i++)ctx.fillRect(-R*1.2+i*R*.17,-10+(i%3)*6,2,2)}
+  else if(k==='lyso'){ctx.fillStyle=C.sum;ctx.globalAlpha=.6;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.sum;ctx.stroke()}
+  else if(k==='cent'){ctx.fillStyle=C.ink;ctx.fillRect(-R,-3,R*1.2,6);ctx.fillRect(-3,-R,6,R*1.2)}
+  else if(k==='ribo'||k==='bribo'){ctx.fillStyle=C.ink;for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((hh(i,1)-.5)*R*2,(hh(i,2)-.5)*R*2,1.8,0,7);ctx.fill()}}
+  else if(k==='vac'){ctx.fillStyle=C.accent2;ctx.globalAlpha=.15;ctx.beginPath();ctx.ellipse(0,0,R*1.25,R,0,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent2;ctx.lineWidth=1.5;ctx.stroke()}
+  else if(k==='nucd'){ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=60;i++){const a=i/60*Math.PI*2,r=R*(.7+.3*Math.sin(a*5+1));i?ctx.lineTo(Math.cos(a)*r*1.4,Math.sin(a)*r*.8):ctx.moveTo(Math.cos(a)*r*1.4,Math.sin(a)*r*.8)}ctx.closePath();ctx.stroke()}
+  else if(k==='plas'){ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,R*.7,0,7);ctx.stroke()}
+  else if(k==='flag'){ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=30;i++){const xx=-R*1.4+i*R*.12,yy=Math.sin(i*.6-t*8)*R*.25;i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke()}
+  ctx.restore()},
+ draw(ctx,W,H,p){const{rx,ry}=this.dims(p),cx=W/2,cy=H/2,R=Math.min(rx,ry),s=this.s;
+  if(p.type==='an'){ctx.fillStyle=C.accent;ctx.globalAlpha=.07;ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent;ctx.lineWidth=3;ctx.stroke()}
+  else if(p.type==='pl'){ctx.fillStyle=C.accent3;ctx.globalAlpha=.25;rr(ctx,cx-rx,cy-ry,rx*2,ry*2,14);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent3;ctx.lineWidth=7;ctx.stroke();ctx.fillStyle=C.panel;rr(ctx,cx-rx*.92,cy-ry*.9,rx*1.84,ry*1.8,10);ctx.fill();ctx.fillStyle=C.accent3;ctx.globalAlpha=.08;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent3;ctx.lineWidth=1.5;ctx.stroke()}
+  else{ctx.fillStyle=C.warn;ctx.globalAlpha=.15;rr(ctx,cx-rx*1.1,cy-ry*1.12,rx*2.2,ry*2.24,ry*1.12);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle=C.accent;ctx.globalAlpha=.07;rr(ctx,cx-rx,cy-ry,rx*2,ry*2,ry);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent;ctx.lineWidth=4;ctx.stroke()}
+  this.LAY[p.type].forEach(([k,ox,oy,r])=>this.org(ctx,k,cx+ox*rx,cy+oy*ry,r*R,s.t));
+  const hit=this.LAY[p.type].find(l=>l[0]===s.sel);if(hit){const x=cx+hit[1]*rx,y=cy+hit[2]*ry,r=hit[3]*R*1.35;ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();ctx.setLineDash([])}
+  const nm=this.INF[s.sel][0];ctx.font='600 14px '+FONT;const w=ctx.measureText(nm).width+20;ctx.fillStyle=C.ink;rr(ctx,W-w-10,10,w,28,8);ctx.fill();text(ctx,nm,W-10-w/2,24,C.panel,14,'center',FONT,600)},
+ readouts(p){const i=this.INF[this.s.sel];return[['العضية',i[0],1],['نوع الخلية',{an:'حقيقية النواة (حيوانية)',pl:'حقيقية النواة (نباتية)',ba:'بدائية النواة'}[p.type],'ar'],['الوظيفة',i[1],'w'],['التركيب يخدم الوظيفة',i[2],'w']]}},
+
+/* ---------- Osmosis ---------- */
+{id:'osmo',short:'الخاصية الأسموزية',branch:'الخلية',name:'الانتشار والخاصية الأسموزية',law:'الماء ينتقل نحو التركيز الأعلى للمذاب',
+ tip:'ضعي خلية الدم الحمراء في ماء مقطر (0%): ماذا يحدث؟ ثم في محلول 2%. لماذا لا تنفجر الخلية النباتية في الماء المقطر؟ ولماذا يُعطى المريض محلولًا ملحيًا تركيزه 0.9% تحديدًا؟',
+ controls:[{id:'cell',type:'seg',label:'الخلية',options:[['rbc','خلية دم حمراء'],['pl','خلية نباتية']],val:'rbc'},{id:'c',label:'تركيز الملح في المحلول الخارجي',min:0,max:3,step:.05,val:.9,unit:'%'}],
+ actions:[['خلية جديدة','reset']],
+ reset(){this.s={V:1,burst:false,t:0,w:[],flux:0}},onChange(p,k){if(k==='cell')this.reset(p)},
+ step(dt,p){const s=this.s;s.t+=dt;s.w.forEach(q=>q.f+=dt*.7);s.w=s.w.filter(q=>q.f<1);if(s.burst)return;const cin=.9/s.V,cout=Math.max(.03,p.c);s.flux=cin-cout;let dV=.5*s.flux*dt;
+  if(p.cell==='pl'&&s.V>=1.08&&dV>0)dV=0;s.V=Math.max(.42,s.V+dV);if(p.cell==='pl')s.V=Math.min(1.08,s.V);if(p.cell==='rbc'&&s.V>1.5)s.burst=true;
+  if(Math.abs(s.flux)>.02&&!(p.cell==='pl'&&s.V>=1.08&&s.flux>0)&&Math.random()<Math.min(1,Math.abs(s.flux))*dt*30)s.w.push({a:Math.random()*7,f:0,in:s.flux>0})},
+ draw(ctx,W,H,p){const s=this.s,cx=W/2,cy=H*.48,R=Math.min(W,H)*.24;
+  ctx.fillStyle=C.accent2;ctx.globalAlpha=.06;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
+  const n=Math.round(p.c*40);ctx.fillStyle=C.warn;for(let i=0;i<n;i++){const x=hh(i,1)*W,y=hh(i,2)*H;if(Math.hypot(x-cx,y-cy)>R*1.5)ctx.fillRect(x-2,y-2,4,4)}
+  let rad=R*Math.sqrt(s.V);
+  if(p.cell==='rbc'){if(s.burst){ctx.strokeStyle=C.accent;ctx.lineWidth=3;for(let i=0;i<7;i++){const a=i*.9,d=rad*(1+Math.min(1,s.t*.3));ctx.beginPath();ctx.arc(cx+Math.cos(a)*d*.4,cy+Math.sin(a)*d*.4,rad*.35,a,a+.9);ctx.stroke()}text(ctx,'تحلل الخلية (انفجرت)',cx,cy,C.accent,15,'center',FONT,600)}
+   else{ctx.fillStyle=C.accent;ctx.beginPath();for(let i=0;i<=120;i++){const a=i/120*Math.PI*2,cr=s.V<.85?.09*Math.sin(a*16)*Math.min(1,(.85-s.V)/.3):0,r=rad*(1+cr);const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r*.82;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.fill();
+    ctx.fillStyle='#fff';ctx.globalAlpha=Math.max(0,.3-(s.V-1)*.6);ctx.beginPath();ctx.ellipse(cx,cy,rad*.45,rad*.37,0,0,7);ctx.fill();ctx.globalAlpha=1}}
+  else{const ww=R*1.6,wh=R*1.15;ctx.strokeStyle=C.accent3;ctx.lineWidth=7;rr(ctx,cx-ww,cy-wh,ww*2,wh*2,12);ctx.stroke();
+   const k=Math.min(1,s.V/1.08),pw=(ww-6)*Math.sqrt(k)**1.4,ph=(wh-6)*Math.sqrt(k)**1.4;ctx.fillStyle=C.accent3;ctx.globalAlpha=.25;rr(ctx,cx-pw,cy-ph,pw*2,ph*2,10);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent3;ctx.lineWidth=1.5;ctx.stroke();
+   ctx.fillStyle=C.accent2;ctx.globalAlpha=.2;ctx.beginPath();ctx.ellipse(cx,cy,pw*.7*k,ph*.65*k,0,0,7);ctx.fill();ctx.globalAlpha=1;
+   for(let i=0;i<8;i++){const a=i*.8;ctx.fillStyle='#2e8a4e';ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*pw*.82,cy+Math.sin(a)*ph*.8,5,3,a,0,7);ctx.fill()}
+   if(s.V<.93)text(ctx,'انفصل الغشاء عن الجدار',cx,cy+wh+18,C.accent,12,'center',FONT,600)}
+  s.w.forEach(q=>{const r0=q.in?rad*1.7:rad*.6,r1=q.in?rad*.6:rad*1.7,r=r0+(r1-r0)*q.f;ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(cx+Math.cos(q.a)*r,cy+Math.sin(q.a)*r*.85,3.2,0,7);ctx.fill()});
+  ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(16,H-16,4,0,7);ctx.fill();text(ctx,'جزيء ماء',26,H-16,C.ink,11,'left');ctx.fillStyle=C.warn;ctx.fillRect(100,H-20,8,8);text(ctx,'جسيم ملح',114,H-16,C.ink,11,'left')},
+ readouts(p){const s=this.s,c=p.c;const typ=c<.8?'منخفض التركيز (Hypotonic)':c<=1?'متساوي التركيز (Isotonic)':'مرتفع التركيز (Hypertonic)';
+  const dir=s.burst?'—':Math.abs(s.flux)<.03||(p.cell==='pl'&&s.V>=1.08&&s.flux>0)?'لا يوجد صافي حركة للماء':s.flux>0?'الماء يدخل الخلية':'الماء يخرج من الخلية';
+  const st=p.cell==='rbc'?(s.burst?'تحللت (انفجرت)':s.V>1.15?'منتفخة':s.V<.85?'منكمشة ومتجعدة':'طبيعية'):(s.V>=1.05?'ممتلئة (منتفخة)':s.V<.93?'بلزمة':'رخوة');
+  return[['نوع المحلول الخارجي',typ,'ar'],['حركة الماء',dir,'ar'],['حجم الخلية',fmt(s.V*100,0)+'%'],['حالة الخلية',st,1]]}},
+
+/* ---------- Surface area to volume ---------- */
+{id:'sav',short:'المساحة إلى الحجم',branch:'الخلية',name:'نسبة المساحة السطحية إلى الحجم',law:'SA / V = 6s² / s³ = 6 / s',
+ tip:'هذه تجربة مكعبات الأجار الملونة بالفينولفثالين في حمض. قارني مكعبًا طوله 1 cm بآخر طوله 4 cm بعد 10 دقائق: أيهما وصلت المادة إلى معظم حجمه؟ لماذا تكون الخلايا صغيرة؟ وكيف تزيد الخملات والحويصلات الهوائية المساحة السطحية؟',
+ controls:[{id:'s',label:'طول ضلع المكعب',min:.5,max:4,step:.1,val:2,unit:'cm'}],
+ actions:[['ابدئي الانتشار من جديد','reset']],
+ reset(){this.s={t:0}},onChange(){this.reset()},step(dt){if(this.s.t<10)this.s.t=Math.min(10,this.s.t+dt*1.2)},
+ d(){return .16*Math.sqrt(this.s.t)},
+ draw(ctx,W,H,p){const sc=Math.min(W*.2,H*.38)/4,s=p.s*sc,d=Math.min(p.s/2,this.d())*sc,PK='#e64f9b',cx=W*.22,cy=H*.32;
+  const o=s*.4;ctx.fillStyle=PK;ctx.globalAlpha=.8;ctx.fillRect(cx-s/2,cy-s/2+o/2,s,s);ctx.globalAlpha=.6;ctx.beginPath();ctx.moveTo(cx-s/2,cy-s/2+o/2);ctx.lineTo(cx-s/2+o,cy-s/2-o/2);ctx.lineTo(cx+s/2+o,cy-s/2-o/2);ctx.lineTo(cx+s/2,cy-s/2+o/2);ctx.fill();
+  ctx.globalAlpha=.45;ctx.beginPath();ctx.moveTo(cx+s/2,cy-s/2+o/2);ctx.lineTo(cx+s/2+o,cy-s/2-o/2);ctx.lineTo(cx+s/2+o,cy+s/2-o/2);ctx.lineTo(cx+s/2,cy+s/2+o/2);ctx.fill();ctx.globalAlpha=1;
+  const fade=Math.min(1,d/(s/2+1e-6));ctx.strokeStyle=C.ink;ctx.lineWidth=1.2;ctx.strokeRect(cx-s/2,cy-s/2+o/2,s,s);text(ctx,'المكعب',cx,cy+s/2+o/2+16,C.muted,11);
+  const sx=W*.6,sy=cy;ctx.fillStyle=C.panel;ctx.fillRect(sx-s/2,sy-s/2,s,s);ctx.strokeStyle=C.ink;ctx.strokeRect(sx-s/2,sy-s/2,s,s);
+  if(s-2*d>0){ctx.fillStyle=PK;ctx.fillRect(sx-s/2+d,sy-s/2+d,s-2*d,s-2*d)}ctx.fillStyle=C.warn;ctx.globalAlpha=.25;ctx.fillRect(sx-s/2,sy-s/2,s,d);ctx.fillRect(sx-s/2,sy+s/2-d,s,d);ctx.fillRect(sx-s/2,sy-s/2+d,d,s-2*d);ctx.fillRect(sx+s/2-d,sy-s/2+d,d,s-2*d);ctx.globalAlpha=1;
+  text(ctx,'مقطع عرضي: الجزء الباهت وصله الحمض',sx,sy+s/2+16,C.muted,11);
+  const x0=40,x1=W-14,y0=H*.66,y1=H-24;axes(ctx,x0,y0,x1,y1);const bw=(x1-x0)/8;
+  [.5,1,1.5,2,2.5,3,3.5,4].forEach((v,i)=>{const r=6/v,h=r/12*(y1-y0-16);ctx.fillStyle=Math.abs(v-p.s)<.26?C.accent:C.line;ctx.fillRect(x0+i*bw+bw*.2,y1-h,bw*.6,h);text(ctx,v+'',x0+i*bw+bw/2,y1+11,C.muted,10,'center',MONO,400);text(ctx,fmt(r,1),x0+i*bw+bw/2,y1-h-8,C.ink,10,'center',MONO,600)});
+  text(ctx,'SA/V مقابل طول الضلع (cm)',x0+6,y0+10,C.muted,10,'left')},
+ readouts(p){const s=p.s,d=this.d(),reach=1-Math.pow(Math.max(0,s-2*d),3)/Math.pow(s,3);
+  return[['المساحة السطحية',fmt(6*s*s,1)+' cm²'],['الحجم',fmt(s*s*s,2)+' cm³'],['النسبة SA/V',fmt(6/s,2)+' : 1',1],['الزمن',fmt(this.s.t,1)+' min'],['عمق انتشار الحمض',fmt(Math.min(d,s/2),2)+' cm'],['نسبة الحجم الذي وصله الحمض',fmt(reach*100,0)+'%']]}},
+
+/* ---------- Cell division ---------- */
+{id:'div',short:'الانقسام',branch:'الانقسام والوراثة',name:'الانقسام المتساوي والانقسام المنصف',law:'متساوٍ: 2n → 2n   |   منصّف: 2n → n',
+ tip:'شغّلي الانقسام المتساوي ثم المنصّف وقارني: كم خلية تنتج في كل منهما؟ وكم كروموسومًا في كل خلية؟ في الانقسام المنصف راقبي العبور في الطور التمهيدي الأول: لماذا تختلف الخلايا الأربع الناتجة وراثيًا؟',
+ controls:[{id:'type',type:'seg',label:'نوع الانقسام',options:[['mi','متساوٍ (Mitosis)'],['me','منصّف (Meiosis)']],val:'mi'},{id:'st',label:'تقدّم الانقسام',min:0,max:100,step:1,val:0,unit:'%'}],
+ actions:[['تشغيل تلقائي / إيقاف','toggle']],
+ MI:[['الطور البيني','تنمو الخلية وتتضاعف المادة الوراثية (DNA) استعدادًا للانقسام، وتكون الكروموسومات على شكل شبكة كروماتين غير مرئية.'],['الطور التمهيدي','تتكثف الكروموسومات ويظهر كل منها مكونًا من كروماتيدين شقيقين متصلين بالسنترومير، ويختفي الغلاف النووي وتتكون خيوط المغزل.'],['الطور الاستوائي','تصطف الكروموسومات على خط استواء الخلية وترتبط خيوط المغزل بالسنترومير.'],['الطور الانفصالي','ينفصل الكروماتيدان الشقيقان ويتحرك كل منهما نحو أحد قطبي الخلية.'],['الطور النهائي','تصل الكروماتيدات إلى القطبين ويتكون غلاف نووي حول كل مجموعة، ويبدأ انقسام السيتوبلازم.'],['انقسام السيتوبلازم','تنتج خليتان متماثلتان وراثيًا، في كل منهما العدد نفسه من الكروموسومات (2n).']],
+ ME:[['الطور البيني','تتضاعف المادة الوراثية مرة واحدة فقط قبل الانقسام المنصف.'],['التمهيدي الأول','تتقابل الكروموسومات المتماثلة في أزواج (رباعيات) ويحدث العبور، فتتبادل أجزاء بين الكروماتيدات غير الشقيقة.'],['الاستوائي الأول','تصطف أزواج الكروموسومات المتماثلة على خط الاستواء، واتجاه كل زوج عشوائي (التوزيع الحر).'],['الانفصالي الأول','تنفصل الكروموسومات المتماثلة، ويتحرك كل كروموسوم كاملًا بكروماتيديه نحو أحد القطبين.'],['النهائي الأول','تتكون خليتان في كل منهما نصف عدد الكروموسومات، وكل كروموسوم ما زال مكونًا من كروماتيدين.'],['التمهيدي الثاني','يبدأ الانقسام الثاني في الخليتين دون تضاعف جديد للمادة الوراثية.'],['الاستوائي الثاني','تصطف الكروموسومات على خط استواء كل خلية.'],['الانفصالي الثاني','ينفصل الكروماتيدان الشقيقان ويتحرك كل منهما نحو قطب.'],['النهائي الثاني والنتيجة','تتكون أربع خلايا أحادية المجموعة الكروموسومية (n) مختلفة وراثيًا عن بعضها.']],
+ reset(){this.s=this.s||{run:false,acc:0}},toggle(){this.s.run=!this.s.run},onChange(p,k){if(k==='type')setParam('st',0)},
+ step(dt,p){const s=this.s;if(!s.run)return;s.acc+=dt*7;while(s.acc>=1){s.acc--;setParam('st',p.st>=100?0:p.st+1)}},
+ stage(p){const L=p.type==='mi'?this.MI:this.ME,n=L.length,x=Math.min(n-1e-6,p.st/100*n);return{i:Math.floor(x),t:x-Math.floor(x),L}},
+ chr(ctx,x,y,len,col,dup,tip,tipB){ctx.save();ctx.translate(x,y);const w=5;const one=(dx,tc)=>{ctx.fillStyle=col;rr(ctx,dx-w/2,-len/2,w,len,w/2);ctx.fill();if(tc){ctx.fillStyle=tc;rr(ctx,dx-w/2,len/2-len*.32,w,len*.32,w/2);ctx.fill()}};
+  if(dup){one(-3,tipB);one(3,tip)}else one(0,tip);ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(0,0,2.2,0,7);ctx.fill();ctx.restore()},
+ cells(ctx,list){ctx.fillStyle=C.accent3;ctx.globalAlpha=.08;ctx.beginPath();list.forEach(([x,y,r])=>{ctx.moveTo(x+r,y);ctx.arc(x,y,r,0,7)});ctx.fill();ctx.globalAlpha=1;
+  list.forEach(([x,y,r],i)=>{ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);list.forEach(([x2,y2,r2],j)=>{if(j!==i){ctx.moveTo(x2+r2,y2);ctx.arc(x2,y2,r2,0,7,true)}});ctx.clip('evenodd');ctx.strokeStyle=C.accent3;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();ctx.restore()})},
+ nucl(ctx,x,y,r,a,chrom){ctx.globalAlpha=a;ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.setLineDash(a<1?[4,4]:[]);ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();ctx.setLineDash([]);
+  if(chrom){ctx.strokeStyle=C.sum;ctx.lineWidth=1;ctx.beginPath();for(let i=0;i<40;i++){const an=i*1.3,d=r*.75*hh(i,x|0);ctx.lineTo(x+Math.cos(an)*d,y+Math.sin(an)*d)}ctx.stroke()}ctx.globalAlpha=1},
+ spindle(ctx,px,py,tg){ctx.strokeStyle=C.muted;ctx.globalAlpha=.6;ctx.lineWidth=1;tg.forEach(([x,y])=>{ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(x,y);ctx.stroke()});ctx.globalAlpha=1;ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(px,py,3.5,0,7);ctx.fill()},
+ draw(ctx,W,H,p){const{i,t,L}=this.stage(p),cx=W/2,cy=H*.46;const mi=p.type==='mi';const R=mi?Math.min(W*.3,H*.4):Math.min(W*.21,H*.4),L1=R*.28,L2=R*.17;
+  const ch=this.chr.bind(this,ctx);
+  if(mi){
+   if(i===0){this.cells(ctx,[[cx,cy,R]]);this.nucl(ctx,cx,cy,R*.48,1,true)}
+   else if(i===1){this.cells(ctx,[[cx,cy,R]]);this.nucl(ctx,cx,cy,R*.48,1-t,false);[[-.18,-.15,L1,RED],[.2,-.12,L1,BLUE],[-.12,.22,L2,RED],[.17,.2,L2,BLUE]].forEach(([u,v,l,c])=>ch(cx+u*R,cy+v*R,l,c,true));[[-1],[1]].forEach(([sg])=>{ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(cx+sg*R*.85*t,cy-R*.6*(1-t),3.5,0,7);ctx.fill()})}
+   else if(i===2||i===3){this.cells(ctx,[[cx,cy,R]]);const P=[[L1,RED],[L1,BLUE],[L2,RED],[L2,BLUE]].map(([l,c],k)=>({l,c,y:cy+(k-1.5)*R*.36}));
+    if(i===2){P.forEach(q=>ch(cx,q.y,q.l,q.c,true));this.spindle(ctx,cx-R*.85,cy,P.map(q=>[cx-3,q.y]));this.spindle(ctx,cx+R*.85,cy,P.map(q=>[cx+3,q.y]))}
+    else{const dx=3+t*R*.55;P.forEach(q=>{const y=cy+(q.y-cy)*(1-.25*t);ch(cx-dx,y,q.l,q.c,false);ch(cx+dx,y,q.l,q.c,false)});this.spindle(ctx,cx-R*.85,cy,P.map(q=>[cx-dx,cy+(q.y-cy)*(1-.25*t)]));this.spindle(ctx,cx+R*.85,cy,P.map(q=>[cx+dx,cy+(q.y-cy)*(1-.25*t)]))}}
+   else if(i===4){const d=R*(.28+.22*t);this.cells(ctx,[[cx-d,cy,R*.75],[cx+d,cy,R*.75]]);[-1,1].forEach(sg=>{[[L1,RED],[L1,BLUE],[L2,RED],[L2,BLUE]].forEach(([l,c],k)=>ch(cx+sg*R*.6,cy+(k-1.5)*R*.2,l,c,false));this.nucl(ctx,cx+sg*R*.6,cy,R*.36,t,false)})}
+   else{const d=R*(.55+.25*t);this.cells(ctx,[[cx-d,cy,R*.62],[cx+d,cy,R*.62]]);[-1,1].forEach(sg=>this.nucl(ctx,cx+sg*d,cy,R*.3,1,true))}}
+  else{const AR=[RED,BLUE],cL=cx-R*1.1,cR=cx+R*1.1,r2=R*.6;
+   if(i===0){this.cells(ctx,[[cx,cy,R]]);this.nucl(ctx,cx,cy,R*.48,1,true)}
+   else if(i===1){this.cells(ctx,[[cx,cy,R]]);this.nucl(ctx,cx,cy,R*.5,1-t,false);const co=t>.5;ch(cx-R*.2-6,cy,L1,RED,true,co?BLUE:null);ch(cx-R*.2+6,cy,L1,BLUE,true,null,co?RED:null);ch(cx+R*.22-6,cy,L2,RED,true);ch(cx+R*.22+6,cy,L2,BLUE,true);if(co)text(ctx,'عبور',cx-R*.2,cy-L1/2-12,C.accent,12,'center',FONT,600)}
+   else if(i===2||i===3){this.cells(ctx,[[cx,cy,R]]);const dx=i===2?8:8+t*R*.52,yA=cy-R*.25,yB=cy+R*.25;
+    ch(cx-dx,yA,L1,RED,true,BLUE);ch(cx+dx,yA,L1,BLUE,true,null,RED);ch(cx-dx,yB,L2,BLUE,true);ch(cx+dx,yB,L2,RED,true);
+    this.spindle(ctx,cx-R*.85,cy,[[cx-dx,yA],[cx-dx,yB]]);this.spindle(ctx,cx+R*.85,cy,[[cx+dx,yA],[cx+dx,yB]])}
+   else if(i===4){const d=R*(.3+.3*t);this.cells(ctx,[[cx-d,cy,R*.75],[cx+d,cy,R*.75]]);ch(cx-R*.62,cy-R*.15,L1,RED,true,BLUE);ch(cx-R*.62,cy+R*.15,L2,BLUE,true);ch(cx+R*.62,cy-R*.15,L1,BLUE,true,null,RED);ch(cx+R*.62,cy+R*.15,L2,RED,true)}
+   else if(i===5||i===6||i===7){this.cells(ctx,[[cL,cy,r2],[cR,cy,r2]]);
+    const set=[[cL,[[L1,RED,BLUE,null],[L2,BLUE,null,null]]],[cR,[[L1,BLUE,null,RED],[L2,RED,null,null]]]];
+    set.forEach(([x,arr])=>{if(i===5){this.nucl(ctx,x,cy,r2*.5,1-t,false);arr.forEach(([l,c,tA,tB],k)=>ch(x+(k?.2:-.2)*r2,cy+(k?.15:-.15)*r2,l,c,true,tA,tB))}
+     else if(i===6){arr.forEach(([l,c,tA,tB],k)=>ch(x,cy+(k-.5)*r2*.6,l,c,true,tA,tB));this.spindle(ctx,x-r2*.82,cy,arr.map((q,k)=>[x-3,cy+(k-.5)*r2*.6]));this.spindle(ctx,x+r2*.82,cy,arr.map((q,k)=>[x+3,cy+(k-.5)*r2*.6]))}
+     else{const dx=3+t*r2*.5;arr.forEach(([l,c,tA,tB],k)=>{const y=cy+(k-.5)*r2*.6;ch(x-dx,y,l,c,false,tB);ch(x+dx,y,l,c,false,tA)})}})}
+   else{const g=[[[L1,RED,null],[L2,BLUE,null]],[[L1,RED,BLUE],[L2,BLUE,null]],[[L1,BLUE,RED],[L2,RED,null]],[[L1,BLUE,null],[L2,RED,null]]],rs=Math.min(R*.5,(W-40)/8.6);
+    this.cells(ctx,g.map((q,k)=>[cx+(k-1.5)*rs*2.15,cy,rs]));g.forEach((q,k)=>{const x=cx+(k-1.5)*rs*2.15;q.forEach(([l,c,tc],j)=>ch(x+(j?6:-6),cy,l*.85,c,false,tc));text(ctx,'n = 2',x,cy+rs+14,C.ink,11,'center',MONO,600)});text(ctx,'أربع خلايا مختلفة وراثيًا',cx,cy-R*.85,C.accent,13,'center',FONT,600)}}
+  text(ctx,L[i][0],W/2,H-18,C.ink,15,'center',FONT,600)},
+ readouts(p){const{i,L}=this.stage(p),mi=p.type==='mi';const cells=mi?(i>=5?2:1):(i>=8?4:i>=5?2:1),chrom=mi?'4 (2n)':(i>=5?'2 (n)':'4 (2n)');
+  return[['نوع الانقسام',mi?'متساوٍ':'منصّف','ar'],['المرحلة',L[i][0],1],['عدد الخلايا',cells+''],['الكروموسومات في كل خلية',chrom],['ماذا يحدث؟',L[i][1],'w'],['الأهمية',mi?'النمو وتعويض الخلايا التالفة والتكاثر اللاجنسي':'تكوين الجاميتات (الحيوانات المنوية والبويضات) وزيادة التنوع الوراثي','w']]}},
+
+/* ---------- Punnett square ---------- */
+{id:'pun',short:'مربع بانيت',branch:'الانقسام والوراثة',name:'الوراثة المندلية ومربع بانيت',law:'Y أصفر سائد على y أخضر  ·  R أملس سائد على r مجعد',
+ tip:'اعبري نباتي بازيلاء غير متماثلي الجينات (Yy × Yy): ما النسبة الشكلية المتوقعة؟ ازرعي 100 بذرة وقارني النتيجة الفعلية بالمتوقعة. ثم جرّبي صفتين (YyRr × YyRr) لتحصلي على نسبة مندل 9 : 3 : 3 : 1.',
+ controls:[{id:'m',type:'seg',label:'عدد الصفات',options:[['1','صفة واحدة: اللون'],['2','صفتان: اللون والشكل']],val:'1'},{id:'a1',type:'seg',label:'الأب الأول: لون البذرة',options:[['YY','YY'],['Yy','Yy'],['yy','yy']],val:'Yy'},{id:'a2',type:'seg',label:'الأب الثاني: لون البذرة',options:[['YY','YY'],['Yy','Yy'],['yy','yy']],val:'Yy'},{id:'b1',type:'seg',label:'الأب الأول: شكل البذرة (للصفتين)',options:[['RR','RR'],['Rr','Rr'],['rr','rr']],val:'Rr'},{id:'b2',type:'seg',label:'الأب الثاني: شكل البذرة (للصفتين)',options:[['RR','RR'],['Rr','Rr'],['rr','rr']],val:'Rr'}],
+ actions:[['ازرعي 100 بذرة','sow']],
+ cap:x=>x===x.toUpperCase()?0:1,
+ gam(p,k){const a=p['a'+k],b=p['b'+k];return p.m==='1'?[a[0],a[1]]:[a[0]+b[0],a[0]+b[1],a[1]+b[0],a[1]+b[1]]},
+ child(g1,g2,p){const srt=(x,y)=>[x,y].sort((u,v)=>this.cap(u)-this.cap(v)).join('');return p.m==='1'?srt(g1,g2):srt(g1[0],g2[0])+srt(g1[1],g2[1])},
+ ph(g,p){const y=g.includes('Y');if(p.m==='1')return y?'أصفر':'أخضر';return(y?'أصفر':'أخضر')+' '+(g.includes('R')?'أملس':'مجعد')},
+ reset(){this.s={sample:null}},onChange(){this.s.sample=null},step(){},
+ sow(p){const g1=this.gam(p,1),g2=this.gam(p,2),c={};for(let i=0;i<100;i++){const k=this.ph(this.child(g1[Math.random()*g1.length|0],g2[Math.random()*g2.length|0],p),p);c[k]=(c[k]||0)+1}this.s.sample=c},
+ grid(p){const g1=this.gam(p,1),g2=this.gam(p,2);return g1.map(a=>g2.map(b=>this.child(a,b,p)))},
+ pea(ctx,x,y,r,g,p){const y1=g.includes('Y'),rd=p.m==='1'||g.includes('R');ctx.fillStyle=y1?'#f2c94c':'#6fbf4a';ctx.beginPath();for(let i=0;i<=40;i++){const a=i/40*Math.PI*2,rr2=r*(rd?1:1+.12*Math.sin(a*7));i?ctx.lineTo(x+Math.cos(a)*rr2,y+Math.sin(a)*rr2):ctx.moveTo(x+Math.cos(a)*rr2,y+Math.sin(a)*rr2)}ctx.fill();ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;ctx.stroke()},
+ draw(ctx,W,H,p){const g1=this.gam(p,1),g2=this.gam(p,2),gr=this.grid(p),n=g1.length,cs=Math.min((W-40)/(n+1),(H*.64)/(n+1)),gx=(W-cs*(n+1))/2,gy=10;ctx.direction='ltr';
+  g2.forEach((g,j)=>{text(ctx,g,gx+(j+1.5)*cs,gy+cs/2,C.accent2,Math.min(16,cs*.32),'center',MONO,600)});g1.forEach((g,i)=>{text(ctx,g,gx+cs/2,gy+(i+1.5)*cs,C.accent,Math.min(16,cs*.32),'center',MONO,600)});
+  text(ctx,'♀ \\ ♂',gx+cs/2,gy+cs/2,C.muted,12,'center',MONO);
+  gr.forEach((row,i)=>row.forEach((g,j)=>{const x=gx+(j+1)*cs,y=gy+(i+1)*cs;ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,cs,cs);this.pea(ctx,x+cs/2,y+cs*.42,cs*.2,g,p);text(ctx,g,x+cs/2,y+cs*.82,C.ink,Math.min(13,cs*.22),'center',MONO,600)}));ctx.direction='inherit';
+  const cnt={};gr.flat().forEach(g=>{const k=this.ph(g,p);cnt[k]=(cnt[k]||0)+1});const tot=gr.flat().length,keys=Object.keys(cnt),y0=gy+(n+1)*cs+18,bh=Math.min(22,(H-y0-10)/Math.max(1,keys.length)-4);
+  keys.forEach((k,i)=>{const y=y0+i*(bh+6),bw=W-160;text(ctx,k,W-12,y+bh/2,C.ink,12,'right',FONT,600);ctx.fillStyle=C.line;ctx.fillRect(14,y,bw,bh);ctx.fillStyle=C.accent3;ctx.fillRect(14,y,bw*cnt[k]/tot,bh*.5);
+   if(this.s.sample){ctx.fillStyle=C.warn;ctx.fillRect(14,y+bh*.5,bw*(this.s.sample[k]||0)/100,bh*.5)}text(ctx,cnt[k]+'/'+tot+(this.s.sample?'   ·   '+(this.s.sample[k]||0)+'/100':''),18,y+bh/2,C.ink,10,'left',MONO,600)})},
+ readouts(p){const f=this.grid(p).flat(),gc={},pc={};f.forEach(g=>{gc[g]=(gc[g]||0)+1;const k=this.ph(g,p);pc[k]=(pc[k]||0)+1});
+  return[['الطرز الجينية',Object.entries(gc).map(([g,c])=>g+': '+c).join(' · '),'w'],['النسبة الطرزية الشكلية',Object.entries(pc).map(([k,c])=>c+' '+k).join(' : '),'w'],['نتيجة الزراعة الفعلية',this.s.sample?Object.entries(this.s.sample).map(([k,c])=>c+' '+k).join(' · '):'اضغطي «ازرعي 100 بذرة»','w']]}},
+
+/* ---------- Design your own genetics cross ---------- */
+{id:'gen',short:'صمّمي تجربتك الوراثية',branch:'الانقسام والوراثة',name:'صمّمي تجربتك الوراثية',law:'كل أب يعطي أحد أليليه لكل جاميت',
+ tip:'اختاري صفة من عندك واكتبي اسمها ورمز جينها والصفتين، وحددي نمط الوراثة والطرز الجينية للأبوين. توقّعي النسب في دفتر التجارب، ثم اضغطي «أنجبي الأفراد» وقارني المتوقع بالفعلي. جرّبي زيادة عدد الأفراد: هل تقترب النتيجة الفعلية من المتوقعة؟ جرّبي أيضًا السيادة غير التامة (أحمر × أبيض)، ووراثة عمى الألوان المرتبطة بالجنس.',
+ controls:[{id:'dom',type:'seg',label:'نمط الوراثة',options:[['c','سيادة تامة'],['i','سيادة غير تامة'],['x','مرتبطة بالجنس (X)']],val:'c'},{id:'N',label:'عدد الأفراد الناتجين',min:4,max:1000,step:1,val:100,unit:''}],
+ actions:[['أنجبي الأفراد','breed']],
+ A:{name:'لون الأزهار',L:'R',d:'أحمر',r:'أبيض',h:'وردي',p1:1,p2:1},
+ X:{name:'رؤية الألوان',L:'B',d:'رؤية طبيعية',r:'عمى الألوان',m:1,f:0},
+ reset(){this.s={obs:null}},
+ onChange(p,k){this.s.obs=null;if(k==='dom')renderPanel()},
+ step(){},
+ T(p){return p.dom==='x'?this.X:this.A},
+ al(p){const U=(this.T(p).L||'A').toUpperCase();return[U,U.toLowerCase()]},
+ gt(p){const[U,l]=this.al(p);return[U+U,U+l,l+l]},
+ gam(p){const[U,l]=this.al(p),G=[[U,U],[U,l],[l,l]];if(p.dom==='x'){const T=this.X;return[G[T.m].map(a=>'X'+a),[['X'+U,'Y'],['X'+l,'Y']][T.f]]}return[G[this.A.p1],G[this.A.p2]]},
+ kid(a,b,p){const[U,l]=this.al(p);
+  if(p.dom==='x'){const T=this.X,m=a.slice(1);if(b==='Y')return{g:'X'+m+'Y',ph:(m===U?T.d:T.r)+' (ذكر)',k:m===U?0:2,sex:'m'};
+   const f=b.slice(1),n=(m===U)+(f===U);return{g:n===1?'X'+U+'X'+l:'X'+m+'X'+f,ph:n===2?T.d+' (أنثى)':n===1?T.d+'، حاملة (أنثى)':T.r+' (أنثى)',k:n===2?0:n===1?1:2,sex:'f'}}
+  const T=this.A,n=(a===U)+(b===U);return{g:n===2?U+U:n===1?U+l:l+l,ph:n===2?T.d:n===1?(p.dom==='i'?T.h:T.d):T.r,k:n===2?0:n===1?(p.dom==='i'?1:0):2}},
+ grid(p){const[g1,g2]=this.gam(p);return g1.map(a=>g2.map(b=>this.kid(a,b,p)))},
+ breed(p){const[g1,g2]=this.gam(p),c={};for(let i=0;i<p.N;i++){const k=this.kid(g1[Math.random()*2|0],g2[Math.random()*2|0],p);c[k.ph]=(c[k.ph]||0)+1}this.s.obs=c},
+ pc(k){return[C.accent,C.sum,C.accent2][k]},
+ panel(el,p){const x=p.dom==='x',T=this.T(p),[U,l]=this.al(p);
+  const inp=(k,lab,v,sh)=>`<div class="prow"><label for="g-${k}">${lab}</label><input id="g-${k}" data-k="${k}" value="${escH(v)}" ${sh?'maxlength="1" class="short"':'maxlength="30"'}></div>`;
+  const sel=(k,lab,opts,v)=>`<div class="prow"><label for="g-${k}">${lab}</label><select id="g-${k}" data-k="${k}">${opts.map((o,i)=>`<option value="${i}" ${i===v?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  let h=inp('name','اسم الصفة',T.name)+inp('L','رمز الجين (حرف واحد)',U,1)+inp('d',x?'الصفة الطبيعية (السائدة '+U+')':'الصفة السائدة ('+U+')',T.d)+inp('r',x?'الصفة المرضية (المتنحية '+l+')':'الصفة المتنحية ('+l+')',T.r);
+  if(p.dom==='i')h+=inp('h','صفة الفرد '+U+l+' (صفة وسطية)',T.h);
+  if(x)h+=sel('m','الأم ♀',['X'+U+'X'+U,'X'+U+'X'+l,'X'+l+'X'+l],T.m)+sel('f','الأب ♂',['X'+U+'Y','X'+l+'Y'],T.f);
+  else{const G=this.gt(p);h+=sel('p1','الأب الأول',G,T.p1)+sel('p2','الأب الثاني',G,T.p2)}
+  el.innerHTML=h;
+  el.querySelectorAll('input').forEach(i=>i.onchange=()=>{const k=i.dataset.k;let v=i.value.trim();this.s.obs=null;
+   if(k==='L'){T.L=((v.match(/[A-Za-z]/)||[T.L])[0]).toUpperCase();renderPanel();return}if(v)T[k]=v.slice(0,30);else i.value=T[k]});
+  el.querySelectorAll('select').forEach(s=>s.onchange=()=>{T[s.dataset.k]=+s.value;this.s.obs=null})},
+ draw(ctx,W,H,p){const[g1,g2]=this.gam(p),gr=this.grid(p),cs=Math.min((W-40)/3,H*.52/3),gx=(W-cs*3)/2,gy=8,x=p.dom==='x';ctx.direction='ltr';
+  g2.forEach((g,j)=>text(ctx,g,gx+(j+1.5)*cs,gy+cs/2,C.accent2,Math.min(18,cs*.28),'center',MONO,600));g1.forEach((g,i)=>text(ctx,g,gx+cs/2,gy+(i+1.5)*cs,C.accent,Math.min(18,cs*.28),'center',MONO,600));
+  text(ctx,x?'♀ \\ ♂':'1 \\ 2',gx+cs/2,gy+cs/2,C.muted,12,'center',MONO);
+  gr.forEach((row,i)=>row.forEach((k,j)=>{const cx=gx+(j+1.5)*cs,cy=gy+(i+1.5)*cs;ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(gx+(j+1)*cs+.5,gy+(i+1)*cs+.5,cs,cs);
+   ctx.fillStyle=this.pc(k.k);ctx.beginPath();ctx.arc(cx,cy-cs*.1,cs*.2,0,7);ctx.fill();if(k.sex)text(ctx,k.sex==='m'?'♂':'♀',cx,cy-cs*.1,'#fff',Math.round(cs*.2),'center',FONT,600);
+   text(ctx,k.g,cx,cy+cs*.3,C.ink,Math.min(13,cs*.17),'center',MONO,600)}));ctx.direction='inherit';
+  const cnt={};gr.flat().forEach(k=>{if(!cnt[k.ph])cnt[k.ph]={n:0,k:k.k};cnt[k.ph].n++});const keys=Object.keys(cnt),y0=gy+cs*3+16,bh=Math.min(26,(H-y0-8)/Math.max(1,keys.length)-6),bw=Math.max(80,W-200);
+  keys.forEach((ph,i)=>{const y=y0+i*(bh+6),e=cnt[ph].n/4,o=this.s.obs;text(ctx,ph,W-12,y+bh/2,C.ink,12,'right',FONT,600);
+   ctx.fillStyle=C.grid;ctx.fillRect(14,y,bw,bh);ctx.fillStyle=this.pc(cnt[ph].k);ctx.fillRect(14,y,bw*e,bh*.5);if(o){ctx.fillStyle=C.warn;ctx.fillRect(14,y+bh*.5,bw*(o[ph]||0)/p.N,bh*.5)}
+   ctx.strokeStyle=C.line;ctx.strokeRect(14.5,y+.5,bw,bh);const lb='متوقع '+fmt(e*100,0)+'%'+(o?'  ·  فعلي '+fmt((o[ph]||0)/p.N*100,0)+'%':'');
+   ctx.font='600 10px '+FONT;const tw=ctx.measureText(lb).width;ctx.fillStyle=C.panel;ctx.globalAlpha=.85;ctx.fillRect(17,y+bh/2-7,tw+6,14);ctx.globalAlpha=1;text(ctx,lb,20,y+bh/2,C.ink,10,'left',FONT,600)})},
+ record(p){const[g1,g2]=this.gam(p);return[['الأبوان',g1.join('')+' × '+g2.join('')]]},
+ readouts(p){const f=this.grid(p).flat(),gc={},pc={};f.forEach(k=>{gc[k.g]=(gc[k.g]||0)+1;pc[k.ph]=(pc[k.ph]||0)+1});const T=this.T(p),o=this.s.obs,ks=Object.keys(pc);
+  return[['الصفة المدروسة',T.name,'ar'],['الطرز الجينية المتوقعة',Object.entries(gc).map(([g,c])=>g+' '+c+'/4').join(' · '),'w'],['النسبة الشكلية المتوقعة',Object.entries(pc).map(([k,c])=>c+' '+k).join(' : '),'w'],
+   ['النتيجة الفعلية من '+p.N+' فرد',o?Object.entries(o).map(([k,c])=>c+' '+k).join(' · '):'اضغطي «أنجبي الأفراد»','w'],
+   ...ks.map((k,i)=>['«'+k+'»: متوقع / فعلي',fmt(pc[k]/4*100,0)+'% / '+(o?fmt((o[k]||0)/p.N*100,1)+'%':'—')]),
+   ['الفرق بين المتوقع والفعلي',o?fmt(ks.reduce((a,k)=>a+Math.abs(pc[k]/4-(o[k]||0)/p.N),0)/2*100,1)+'%':'—',1]]}},
+
+/* ---------- Protein synthesis ---------- */
+{id:'prot',short:'البناء البروتيني',branch:'الانقسام والوراثة',name:'البناء البروتيني والطفرات',law:'DNA → mRNA → بروتين',
+ tip:'اختاري «حذف» وغيّري موقعه: لماذا تتغير جميع الأحماض الأمينية بعد موقع الحذف؟ قارني ذلك بالاستبدال: هل يغيّر الاستبدال البروتين دائمًا؟ ابحثي عن موقع يُنتج طفرة صامتة أو كودون توقف مبكر.',
+ controls:[{id:'q',type:'seg',label:'الجين',options:[['0','الجين 1'],['1','الجين 2'],['2','الجين 3']],val:'0'},{id:'mut',type:'seg',label:'نوع الطفرة',options:[['0','بدون'],['s','استبدال'],['i','إضافة'],['d','حذف']],val:'0'},{id:'pos',label:'موقع الطفرة (رقم القاعدة)',min:4,max:15,step:1,val:6,unit:''}],
+ actions:[['ابدئي الترجمة','go']],
+ CODE:'FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG',
+ AA:{F:'Phe',L:'Leu',S:'Ser',Y:'Tyr','*':'Stop',C:'Cys',W:'Trp',P:'Pro',H:'His',Q:'Gln',R:'Arg',I:'Ile',M:'Met',T:'Thr',N:'Asn',K:'Lys',V:'Val',A:'Ala',D:'Asp',E:'Glu',G:'Gly'},
+ SEQ:['ATGGCTTGGAAACGTTAA','ATGTTTGGCCATGAATAG','ATGCCGTACGATTGCTGA'],
+ BC:{A:'#e15759',T:'#e0a53a',U:'#b07aa1',C:'#4e79a7',G:'#59a14f'},
+ tr(c){const B='UCAG';return this.CODE[16*B.indexOf(c[0])+4*B.indexOf(c[1])+B.indexOf(c[2])]},
+ seq(p){let s=this.SEQ[+p.q];const i=p.pos-1;if(p.mut==='s'){const m={A:'G',G:'A',C:'T',T:'C'};s=s.slice(0,i)+m[s[i]]+s.slice(i+1)}if(p.mut==='i')s=s.slice(0,i)+'A'+s.slice(i);if(p.mut==='d')s=s.slice(0,i)+s.slice(i+1);return s},
+ prot(s){const m=s.replace(/T/g,'U'),r=[];for(let i=0;i+3<=m.length;i+=3){const a=this.tr(m.slice(i,i+3));r.push(a);if(a==='*')break}return r},
+ reset(){this.s={k:99,run:false,acc:0}},onChange(){this.reset()},go(){this.s.k=0;this.s.run=true;this.s.acc=0},
+ step(dt,p){const s=this.s;if(!s.run)return;s.acc+=dt;if(s.acc>.75){s.acc=0;s.k++;if(s.k>=this.prot(this.seq(p)).length)s.run=false}},
+ draw(ctx,W,H,p){const s=this.seq(p),n=s.length,bw=Math.min(30,(W-24)/19),x0=(W-n*bw)/2,comp={A:'T',T:'A',C:'G',G:'C'},mr=s.replace(/T/g,'U'),pr=this.prot(s),k=Math.min(this.s.k,pr.length);
+  const rows=[[H*.1,'DNA: السلسلة المشفرة',s],[H*.24,'DNA: السلسلة القالب',s.split('').map(c=>comp[c]).join('')],[H*.46,'mRNA',mr]];ctx.direction='ltr';
+  rows.forEach(([y,l,str],ri)=>{text(ctx,l,W-12,y-bw*.5-9,C.muted,11,'right',FONT,500);str.split('').forEach((c,i)=>{const x=x0+i*bw;ctx.fillStyle=this.BC[c];ctx.globalAlpha=ri===2&&Math.floor(i/3)>=k&&this.s.run?.35:1;rr(ctx,x+1,y-bw*.45,bw-2,bw*.9,4);ctx.fill();ctx.globalAlpha=1;text(ctx,c,x+bw/2,y,'#fff',Math.min(14,bw*.5),'center',MONO,600);
+   if(p.mut!=='0'&&i===p.pos-1&&ri<2){ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;rr(ctx,x,y-bw*.5,bw,bw,4);ctx.stroke()}})});
+  ctx.strokeStyle=C.muted;ctx.lineWidth=1;for(let i=1;i<n;i++){const x=x0+i*bw;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(x,H*.1+bw*.45);ctx.lineTo(x,H*.24-bw*.45);ctx.stroke()}ctx.setLineDash([]);
+  text(ctx,'↓ النسخ',x0-4,H*.35,C.muted,11,'right',FONT,600);
+  for(let c=0;c*3+3<=n;c++){const x=x0+c*3*bw,y=H*.46+bw*.55;ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+2,y);ctx.lineTo(x+2,y+5);ctx.lineTo(x+3*bw-2,y+5);ctx.lineTo(x+3*bw-2,y);ctx.stroke()}
+  if(this.s.run&&k<pr.length){const x=x0+k*3*bw+1.5*bw;ctx.fillStyle=C.sum;ctx.globalAlpha=.28;ctx.beginPath();ctx.ellipse(x,H*.46-bw*.9,bw*2,bw*.75,0,0,7);ctx.ellipse(x,H*.46+bw*.6,bw*2.2,bw*.9,0,0,7);ctx.fill();ctx.globalAlpha=1}
+  text(ctx,'↓ الترجمة',x0-4,H*.6,C.muted,11,'right',FONT,600);
+  const ay=H*.74,ar=Math.min(18,bw*1.1);for(let i=0;i<k;i++){const x=x0+i*3*bw+1.5*bw,a=pr[i],stop=a==='*';if(i>0&&!stop){ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-3*bw+ar,ay);ctx.lineTo(x-ar,ay);ctx.stroke()}
+   ctx.fillStyle=stop?C.muted:C.accent;ctx.beginPath();ctx.arc(x,ay,ar,0,7);ctx.fill();text(ctx,this.AA[a],x,ay,'#fff',Math.min(11,ar*.62),'center',MONO,600)}
+  ctx.direction='inherit';text(ctx,'سلسلة الأحماض الأمينية (البروتين)',W/2,ay+ar+16,C.muted,11)},
+ readouts(p){const s=this.seq(p),pr=this.prot(s),o=this.prot(this.SEQ[+p.q]),aa=x=>x.filter(a=>a!=='*').map(a=>this.AA[a]);
+  let eff='لا توجد طفرة';if(p.mut==='i'||p.mut==='d')eff='إزاحة في إطار القراءة: تتغير جميع الكودونات بعد موقع الطفرة، فيتغير البروتين كثيرًا.';
+  else if(p.mut==='s'){const a=aa(pr).join(),b=aa(o).join();eff=a===b?'طفرة صامتة: تغيّر الكودون لكنه ما زال يشفّر الحمض الأميني نفسه.':pr.indexOf('*')<o.length-1&&pr.includes('*')&&aa(pr).length<aa(o).length?'طفرة إيقاف: ظهر كودون توقف مبكر فقصرت سلسلة البروتين.':'طفرة خاطئة المعنى: تغيّر حمض أميني واحد في البروتين.'}
+  const m=s.replace(/T/g,'U');return[['كودونات mRNA',(m.match(/.{1,3}/g)||[]).join(' ')],['البروتين',aa(pr).join(' – ')||'—','w'],['عدد الأحماض الأمينية',aa(pr).length+'',1],['أثر الطفرة',eff,'w']]}},
+
+/* ---------- Enzymes ---------- */
+{id:'enz',short:'الإنزيمات',branch:'الطاقة في الخلية',name:'الإنزيمات والعوامل المؤثرة في نشاطها',law:'إنزيم + مادة متفاعلة ⇌ معقد ← إنزيم + نواتج',
+ tip:'ارفعي درجة الحرارة فوق 50°C وراقبي شكل الموقع النشط. لماذا لا يعمل الببسين في الفم؟ ولماذا يتوقف ارتفاع السرعة عند زيادة تركيز المادة المتفاعلة كثيرًا؟',
+ controls:[{id:'en',type:'seg',label:'الإنزيم',options:[['am','أميليز اللعاب'],['pe','ببسين المعدة'],['tr','تربسين الأمعاء']],val:'am'},{id:'T',label:'درجة الحرارة',min:0,max:80,step:1,val:37,unit:'°C'},{id:'pH',label:'الرقم الهيدروجيني pH',min:1,max:13,step:.5,val:7,unit:''},{id:'S',label:'تركيز المادة المتفاعلة',min:1,max:100,step:1,val:50,unit:'%'}],
+ EN:{am:['أميليز اللعاب',37,6.8,'يحلل النشا إلى سكر المالتوز في الفم'],pe:['ببسين المعدة',37,2,'يحلل البروتينات في الوسط الحمضي للمعدة'],tr:['تربسين الأمعاء',37,8,'يحلل البروتينات في الوسط القاعدي للأمعاء الدقيقة']},
+ fT(T,o){return T<=o?Math.pow(2,(T-o)/10):Math.exp(-(((T-o)/9)**2))},fP(ph,o){return Math.exp(-(((ph-o)/1.6)**2))},
+ rate(p,T=p.T,ph=p.pH,S=p.S){const e=this.EN[p.en];return this.fT(T,e[1])*this.fP(ph,e[2])*S/(S+25)*1.25},
+ reset(p){const s={e:[],sub:[],pr:[],made:0,r:0,t:0};for(let i=0;i<5;i++)s.e.push({x:W*(.15+i*.17),y:H*.2+(i%2)*H*.16,a:Math.random()*7,busy:0});this.s=s},
+ step(dt,p){const s=this.s,top=H*.48,r=this.rate(p),act=this.fT(p.T,this.EN[p.en][1])>.25&&this.fP(p.pH,this.EN[p.en][2])>.2;s.t+=dt;let made=0;
+  const want=Math.round(p.S/5)+3;while(s.sub.length<want)s.sub.push({x:Math.random()*W,y:8+Math.random()*(top-16),a:Math.random()*7});if(s.sub.length>want)s.sub.length=want;
+  const sp=20+p.T*.8,mv=o=>{o.x+=Math.cos(o.a)*sp*dt;o.y+=Math.sin(o.a)*sp*dt;o.a+=(Math.random()-.5)*dt*3;if(o.x<8||o.x>W-8)o.a=Math.PI-o.a;if(o.y<8||o.y>top-8)o.a=-o.a;o.x=Math.max(8,Math.min(W-8,o.x));o.y=Math.max(8,Math.min(top-8,o.y))};
+  s.e.forEach(e=>{e.a+=(Math.random()-.5)*dt;e.x+=Math.cos(e.a)*8*dt;e.y+=Math.sin(e.a)*8*dt;e.x=Math.max(20,Math.min(W-20,e.x));e.y=Math.max(20,Math.min(top-20,e.y));if(e.busy>0){e.busy-=dt;if(e.busy<=0){s.pr.push({x:e.x+14,y:e.y-4,a:-.5,l:2},{x:e.x+14,y:e.y+4,a:.5,l:2});made++}}});
+  s.sub.forEach(q=>{mv(q);s.e.forEach(e=>{if(e.busy<=0&&act&&Math.hypot(q.x-e.x,q.y-e.y)<20&&Math.random()<r*.9){e.busy=.5/Math.max(.2,r);q.dead=1}})});s.sub=s.sub.filter(q=>!q.dead);
+  s.pr.forEach(q=>{mv(q);q.l-=dt});s.pr=s.pr.filter(q=>q.l>0);s.made+=made;s.r+=(made/Math.max(dt,1e-3)-s.r)*Math.min(1,dt*.8)},
+ draw(ctx,W,H,p){const s=this.s,top=H*.48,o=this.EN[p.en],den=p.T>o[1]+14||this.fP(p.pH,o[2])<.2;ctx.strokeStyle=C.line;ctx.strokeRect(4.5,4.5,W-9,top-4);
+  s.e.forEach(e=>{ctx.fillStyle=C.accent2;ctx.beginPath();if(den){for(let i=0;i<=20;i++){const a=i/20*Math.PI*2,r=16*(1+.25*Math.sin(a*5+e.a));ctx.lineTo(e.x+Math.cos(a)*r,e.y+Math.sin(a)*r)}}else{ctx.moveTo(e.x,e.y);ctx.arc(e.x,e.y,17,.45,Math.PI*2-.45)}ctx.closePath();ctx.fill();
+   if(e.busy>0){ctx.fillStyle=C.warn;ctx.beginPath();ctx.moveTo(e.x+4,e.y);ctx.lineTo(e.x+16,e.y-7);ctx.lineTo(e.x+16,e.y+7);ctx.fill()}});
+  s.sub.forEach(q=>{ctx.fillStyle=C.warn;ctx.beginPath();ctx.moveTo(q.x-6,q.y);ctx.lineTo(q.x+6,q.y-6);ctx.lineTo(q.x+6,q.y+6);ctx.fill()});
+  s.pr.forEach(q=>{ctx.fillStyle=C.accent3;ctx.beginPath();ctx.arc(q.x,q.y,3.5,0,7);ctx.fill()});
+  if(den)text(ctx,'تمسّخ: تغيّر شكل الموقع النشط',W/2,top-14,C.accent,12,'center',FONT,600);
+  const gw=(W-40)/3,gy0=top+24,gy1=H-26,pan=[['T',0,80,'درجة الحرارة',v=>this.rate(p,v,p.pH,p.S),p.T],['pH',1,13,'pH',v=>this.rate(p,p.T,v,p.S),p.pH],['S',1,100,'التركيز',v=>this.rate(p,p.T,p.pH,v),p.S]];
+  pan.forEach(([k,a,b,l,f,cur],i)=>{const x0=14+i*(gw+6),x1=x0+gw,X=v=>x0+(x1-x0)*(v-a)/(b-a),Y=v=>gy1-v/1.25*(gy1-gy0-14);axes(ctx,x0,gy0,x1,gy1);text(ctx,l,x0+gw/2,gy0+9,C.muted,10);
+   ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();for(let j=0;j<=60;j++){const v=a+(b-a)*j/60;j?ctx.lineTo(X(v),Y(f(v))):ctx.moveTo(X(v),Y(f(v)))}ctx.stroke();ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(cur),Y(f(cur)),4.5,0,7);ctx.fill();
+   text(ctx,a+'',x0+6,gy1+10,C.muted,9,'center',MONO,400);text(ctx,b+'',x1-8,gy1+10,C.muted,9,'center',MONO,400)})},
+ readouts(p){const o=this.EN[p.en],r=this.rate(p),f=this.fT(p.T,o[1]),g=this.fP(p.pH,o[2]);const st=p.T>o[1]+14?'متمسّخ: تغيّر شكل الموقع النشط بالحرارة':g<.3?'pH غير مناسب: يتغير شكل الموقع النشط':p.T<o[1]-15?'بطيء: حركة الجزيئات قليلة في البرودة':'نشط';
+  return[['سرعة التفاعل (من القصوى)',fmt(Math.min(100,r*100),0)+'%',1],['حالة الإنزيم',st,'ar'],['الظروف المثلى',o[1]+' °C ، pH '+o[2]],['النواتج المتكونة',this.s.made+''],['وظيفة الإنزيم',o[3],'w']]}},
+
+/* ---------- Photosynthesis ---------- */
+{id:'photo',short:'البناء الضوئي',branch:'الطاقة في الخلية',name:'البناء الضوئي والعوامل المحددة',law:'6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂',
+ tip:'زيدي شدة الضوء تدريجيًا: لماذا يتوقف تزايد عدد الفقاعات عند حد معين؟ الآن ارفعي تركيز CO₂: ماذا يحدث للحد الأعلى؟ هذه فكرة العامل المحدد. وما الغاز الذي تحتويه الفقاعات؟',
+ controls:[{id:'L',label:'شدة الضوء',min:0,max:100,step:1,val:60,unit:'%'},{id:'co2',label:'تركيز ثاني أكسيد الكربون',min:.01,max:.15,step:.01,val:.04,unit:'%'},{id:'T',label:'درجة الحرارة',min:5,max:45,step:1,val:25,unit:'°C'}],
+ fT(T){return T<=30?Math.pow(2,(T-30)/10):Math.exp(-(((T-30)/8)**2))},rate(L,c,T){return Math.min(L*1.2,c*900,100)*this.fT(T)},
+ reset(){this.s={b:[],acc:0,t:0}},
+ step(dt,p){const s=this.s,r=this.rate(p.L,p.co2,p.T);s.t+=dt;s.acc+=dt*r/12;while(s.acc>1){s.acc--;s.b.push({x:(Math.random()-.5)*20,y:0,v:40+Math.random()*20})}s.b.forEach(q=>q.y+=q.v*dt);s.b=s.b.filter(q=>q.y<H*.6)},
+ draw(ctx,W,H,p){const s=this.s,bx=W*.24,by=H*.12,bw=Math.min(W*.22,130),bh=H*.72;
+  ctx.fillStyle=C.warn;ctx.globalAlpha=.2+p.L/130;ctx.beginPath();ctx.arc(22,by+bh*.4,16,0,7);ctx.fill();ctx.globalAlpha=p.L/220;ctx.beginPath();ctx.moveTo(30,by+bh*.4);ctx.lineTo(bx-bw/2,by+bh*.15);ctx.lineTo(bx-bw/2,by+bh*.75);ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=C.accent2;ctx.globalAlpha=.12;ctx.fillRect(bx-bw/2,by+bh*.1,bw,bh*.9);ctx.globalAlpha=1;ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx-bw/2,by);ctx.lineTo(bx-bw/2,by+bh);ctx.lineTo(bx+bw/2,by+bh);ctx.lineTo(bx+bw/2,by);ctx.stroke();
+  ctx.strokeStyle=C.muted;ctx.beginPath();ctx.moveTo(bx-14,by-20);ctx.lineTo(bx-14,by+bh*.55);ctx.lineTo(bx-bw*.38,by+bh*.75);ctx.moveTo(bx+14,by-20);ctx.lineTo(bx+14,by+bh*.55);ctx.lineTo(bx+bw*.38,by+bh*.75);ctx.stroke();
+  const py=by+bh*.85;ctx.strokeStyle=C.accent3;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(bx,by+bh);ctx.lineTo(bx,py-bh*.12);ctx.stroke();for(let i=0;i<7;i++){const y=by+bh-8-i*bh*.025,sg=i%2?1:-1;ctx.fillStyle=C.accent3;ctx.beginPath();ctx.ellipse(bx+sg*9,y,9,3,sg*.4,0,7);ctx.fill()}
+  ctx.strokeStyle=C.accent2;ctx.lineWidth=1.3;s.b.forEach(q=>{const y=py-bh*.12-q.y;if(y>by-18){ctx.beginPath();ctx.arc(bx+q.x*.4,y,3,0,7);ctx.stroke()}});text(ctx,'نبات الإيلوديا المائي',bx,by+bh+14,C.muted,11);
+  const x0=bx+bw/2+44,x1=W-12,y0=16,y1=H-30,X=v=>x0+(x1-x0)*v/100,Y=v=>y1-v/110*(y1-y0);axes(ctx,x0,y0,x1,y1);
+  [[.15,C.accent3,[4,4]],[p.co2,C.accent,[]]].forEach(([c,col,d])=>{ctx.setLineDash(d);ctx.strokeStyle=col;ctx.lineWidth=d.length?1.4:2.6;ctx.beginPath();for(let i=0;i<=100;i++){const y=Y(this.rate(i,c,p.T));i?ctx.lineTo(X(i),y):ctx.moveTo(X(i),y)}ctx.stroke();ctx.setLineDash([])});
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(p.L),Y(this.rate(p.L,p.co2,p.T)),6,0,7);ctx.fill();
+  text(ctx,'CO₂ 0.15%',X(96),Y(this.rate(100,.15,p.T))-10,C.accent3,10,'right',MONO,600);text(ctx,'شدة الضوء ←',x0+40,y1+12,C.muted,10);text(ctx,'سرعة البناء الضوئي',x0+6,y0+10,C.muted,10,'left')},
+ readouts(p){const r=this.rate(p.L,p.co2,p.T),a=p.L*1.2,b=p.co2*900,f=this.fT(p.T);const lim=f<.7?'درجة الحرارة':Math.min(a,b,100)===a?'شدة الضوء':Math.min(a,b,100)===b?'تركيز CO₂':'عوامل داخلية (الكلوروفيل والإنزيمات)';
+  return[['سرعة البناء الضوئي',fmt(r,0)+' %',1],['الفقاعات في الدقيقة',fmt(r*.6,0)],['العامل المحدد الآن',lim,'ar'],['الغاز في الفقاعات','الأكسجين O₂','ar'],['أين يحدث؟','في البلاستيدات الخضراء: التفاعلات الضوئية في الثايلاكويد، وتثبيت CO₂ (حلقة كالفن) في الحشوة','w']]}},
+
+/* ---------- Respiration ---------- */
+{id:'resp',short:'التنفس الخلوي',branch:'الطاقة في الخلية',name:'التنفس الخلوي الهوائي واللاهوائي',law:'C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP',
+ tip:'قللي الأكسجين إلى الصفر في الخلية العضلية: ماذا ينتج؟ ولماذا تشعرين بالتعب العضلي بعد الجري السريع؟ بدّلي إلى الخميرة: ما الغاز الذي ينفخ البالون؟ قارني عدد جزيئات ATP في الحالتين.',
+ controls:[{id:'org',type:'seg',label:'الخلية',options:[['mu','خلية عضلية'],['ye','خميرة']],val:'mu'},{id:'O2',label:'توافر الأكسجين',min:0,max:100,step:1,val:100,unit:'%'}],
+ actions:[['أعيدي العدّادات','reset']],
+ aer(p){return p.O2/(p.O2+6)},
+ reset(){this.s={g:[],py:[],out:[],atp:0,co2:0,ferm:0,acc:0,glu:0}},onChange(p,k){if(k==='org')this.reset(p)},
+ step(dt,p){const s=this.s,gx=W*.33,mx=W*.74,my=H*.3,fy=H*.78;s.acc+=dt;if(s.acc>.8){s.acc=0;s.g.push({x:-10,y:H*.5});s.glu++}
+  s.g.forEach(q=>{q.x+=dt*80;if(q.x>=gx){q.dead=1;s.atp+=2;[-1,1].forEach(sg=>s.py.push({x:gx,y:H*.5+sg*10,aer:Math.random()<this.aer(p),t:0}))}});s.g=s.g.filter(q=>!q.dead);
+  s.py.forEach(q=>{q.t+=dt;const tx=q.aer?mx:W*.62,ty=q.aer?my:fy,dx=tx-q.x,dy=ty-q.y,d=Math.hypot(dx,dy);if(d<6){q.dead=1;if(q.aer){s.atp+=17;s.co2+=3;for(let k=0;k<3;k++)s.out.push({x:mx,y:my,vx:(Math.random()-.5)*30,vy:-40-Math.random()*20,c:'co2',l:1.4})}else{s.ferm++;if(p.org==='ye'){s.co2++;s.out.push({x:W*.62,y:fy,vx:20,vy:-50,c:'co2',l:1.2})}}}else{q.x+=dx/d*70*dt;q.y+=dy/d*70*dt}});s.py=s.py.filter(q=>!q.dead);
+  s.out.forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt;q.l-=dt});s.out=s.out.filter(q=>q.l>0)},
+ draw(ctx,W,H,p){const s=this.s,gx=W*.33,mx=W*.74,my=H*.3,fy=H*.78;
+  ctx.fillStyle=C.warn;ctx.globalAlpha=.1;ctx.beginPath();ctx.arc(gx,H*.5,Math.min(W,H)*.14,0,7);ctx.fill();ctx.globalAlpha=1;text(ctx,'التحلل السكري (السيتوبلازم)',gx,H*.5+Math.min(W,H)*.14+12,C.ink,11,'center',FONT,600);
+  ctx.save();ctx.translate(mx,my);ctx.fillStyle=C.accent;ctx.globalAlpha=.25;ctx.beginPath();ctx.ellipse(0,0,W*.16,H*.14,0,0,7);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.accent;ctx.lineWidth=2;ctx.stroke();ctx.beginPath();for(let i=0;i<=10;i++){ctx.lineTo(-W*.13+i*W*.026,(i%2?.07:-.07)*H)}ctx.stroke();ctx.restore();
+  text(ctx,'الميتوكندريا (تنفس هوائي)',mx,my+H*.14+12,C.ink,11,'center',FONT,600);
+  ctx.fillStyle=C.sum;ctx.globalAlpha=.1;ctx.fillRect(W*.5,fy-22,W*.24,44);ctx.globalAlpha=1;text(ctx,p.org==='mu'?'تخمر لاكتيكي':'تخمر كحولي',W*.62,fy+32,C.ink,11,'center',FONT,600);
+  if(p.org==='ye'){const bs=Math.min(40,6+Math.sqrt(s.ferm)*3);ctx.fillStyle=C.accent2;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(W*.86,fy-bs,bs,0,7);ctx.fill();ctx.globalAlpha=1;text(ctx,'بالون CO₂',W*.86,fy+12,C.muted,10)}
+  s.g.forEach(q=>{ctx.fillStyle=C.warn;ctx.beginPath();for(let i=0;i<6;i++){const a=i*Math.PI/3;ctx.lineTo(q.x+Math.cos(a)*9,q.y+Math.sin(a)*9)}ctx.fill()});text(ctx,'غلوكوز',30,H*.5-18,C.warn,11,'center',FONT,600);
+  s.py.forEach(q=>{ctx.fillStyle=C.warn;ctx.beginPath();for(let i=0;i<3;i++){const a=i*2*Math.PI/3;ctx.lineTo(q.x+Math.cos(a)*6,q.y+Math.sin(a)*6)}ctx.fill()});
+  s.out.forEach(q=>{ctx.fillStyle=C.muted;ctx.globalAlpha=Math.min(1,q.l);ctx.beginPath();ctx.arc(q.x,q.y,3.5,0,7);ctx.fill();ctx.globalAlpha=1});
+  ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(22,22,11,0,7);ctx.fill();text(ctx,'ATP',22,22,'#1e1d33',8,'center',MONO,600);text(ctx,'× '+s.atp,40,22,C.ink,14,'left',MONO,600)},
+ readouts(p){const s=this.s,a=this.aer(p),per=a*38+(1-a)*2;const f=p.org==='mu'?'حمض اللاكتيك':'الإيثانول وثاني أكسيد الكربون';
+  return[['ATP لكل جزيء غلوكوز (متوسط)',fmt(per,1),1],['نوع التنفس السائد',a>.8?'هوائي':a<.2?'لاهوائي (تخمر)':'مختلط','ar'],['جزيئات CO₂ الناتجة',s.co2+''],['نواتج التخمر',s.ferm+' ('+f+')','ar'],['المعادلة',a>.5?'C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + طاقة (نحو 38 ATP)':p.org==='mu'?'C₆H₁₂O₆ → 2 حمض لاكتيك + طاقة (2 ATP)':'C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ + طاقة (2 ATP)','w']]}},
+
+/* ---------- Heart ---------- */
+{id:'heart',short:'القلب',branch:'أجهزة جسم الإنسان',name:'القلب والدورة الدموية',law:'النتاج القلبي = معدل النبض × حجم الضربة',
+ tip:'بدّلي من الراحة إلى الجري: ماذا يحدث لمعدل النبض والنتاج القلبي؟ لاحظي ترتيب انقباض الأذينين ثم البطينين في مخطط كهربائية القلب. لماذا يكون جدار البطين الأيسر أسمك؟',
+ controls:[{id:'act',type:'seg',label:'النشاط',options:[['r','راحة'],['w','مشي'],['run','جري']],val:'r'},{id:'HR',label:'معدل نبض القلب',min:45,max:190,step:1,val:72,unit:'نبضة/د'},{id:'SV',label:'حجم الضربة',min:50,max:130,step:1,val:70,unit:'mL'}],
+ onChange(p,k){if(k==='act'){setParam('HR',{r:72,w:105,run:160}[p.act]);setParam('SV',{r:70,w:85,run:110}[p.act])}},
+ reset(){this.s={ph:0,t:0,h:[]}},
+ ecg(f){const g=(m,s)=>Math.exp(-(((f-m)/s)**2));return .12*g(.08,.025)-.12*g(.19,.008)+g(.21,.01)-.22*g(.235,.01)+.25*g(.45,.04)},
+ step(dt,p){const s=this.s;s.ph=(s.ph+dt*p.HR/60)%1;s.t+=dt;for(let i=0;i<2;i++)s.h.push(this.ecg(s.ph));while(s.h.length>500)s.h.shift()},
+ draw(ctx,W,H,p){const s=this.s,f=s.ph,cx=W/2,cy=H*.38,hw=Math.min(W*.17,H*.2),aS=f<.15?1-.14*Math.sin(f/.15*Math.PI):1,vS=f>=.15&&f<.5?1-.18*Math.sin((f-.15)/.35*Math.PI):1,vsys=f>=.15&&f<.5;
+  const off=-s.t*p.HR*.6;const vessel=(pts,col)=>{ctx.strokeStyle=col;ctx.lineWidth=10;ctx.lineJoin='round';ctx.globalAlpha=.85;ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.globalAlpha=1;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([4,10]);ctx.lineDashOffset=off;ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.setLineDash([])};
+  const ra=[cx-hw-4,cy-hw*1.05],la=[cx+4,cy-hw*1.05],rv=[cx-hw-4,cy-hw*.15],lv=[cx+4,cy-hw*.15];
+  vessel([[cx-hw*2.2,cy-hw*1.6],[cx-hw*1.6,cy-hw*1.6],[ra[0]+hw*.2,ra[1]+hw*.2]],BLUE);vessel([[cx-hw*2.2,cy+hw*1.5],[cx-hw*1.6,cy+hw*1.5],[cx-hw*1.6,ra[1]+hw*.6],[ra[0]+hw*.2,ra[1]+hw*.6]],BLUE);
+  vessel([[rv[0]+hw*.7,rv[1]+hw*.2],[cx-hw*.3,cy-hw*1.6],[cx-hw*.9,cy-hw*2]],BLUE);vessel([[cx+hw*1.9,cy-hw*1.9],[cx+hw*1.3,cy-hw*1.9],[la[0]+hw*.8,la[1]+hw*.2]],RED);
+  vessel([[lv[0]+hw*.3,lv[1]+hw*.2],[cx+hw*.25,cy-hw*1.75],[cx+hw*.9,cy-hw*2.1],[cx+hw*2.2,cy-hw*2.1]],RED);
+  const ch=(x,y,w,h,sc,col,lw,l)=>{const ww=w*sc,hh2=h*sc,xx=x+(w-ww)/2,yy=y+(h-hh2)/2;ctx.fillStyle=col;ctx.globalAlpha=.85;rr(ctx,xx,yy,ww,hh2,10);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.ink;ctx.lineWidth=lw;rr(ctx,xx,yy,ww,hh2,10);ctx.stroke();textS(ctx,l,x+w/2,y+h/2,W<420?10:12)};
+  ch(ra[0],ra[1],hw,hw*.8,aS,BLUE,2.5,'أذين أيمن');ch(la[0],la[1],hw,hw*.8,aS,RED,2.5,'أذين أيسر');ch(rv[0],rv[1],hw,hw*1.3,vS,BLUE,3,'بطين أيمن');ch(lv[0],lv[1],hw,hw*1.35,vS,RED,6.5,'بطين أيسر');
+  [ra[0],la[0]].forEach(x=>{ctx.strokeStyle=C.panel;ctx.lineWidth=3;const y=cy-hw*.2;ctx.beginPath();if(vsys){ctx.moveTo(x+hw*.25,y);ctx.lineTo(x+hw*.75,y)}else{ctx.moveTo(x+hw*.25,y);ctx.lineTo(x+hw*.38,y+10);ctx.moveTo(x+hw*.75,y);ctx.lineTo(x+hw*.62,y+10)}ctx.stroke()});
+  text(ctx,'إلى الرئتين',cx-hw*.9,cy-hw*2-14,C.muted,10);text(ctx,'من الرئتين',cx+hw*1.9,cy-hw*1.9-14,C.muted,10);text(ctx,'إلى الجسم (الأبهر)',Math.min(W-40,cx+hw*2.2),cy-hw*2.1+16,C.muted,10);text(ctx,'من الجسم',cx-hw*2,cy+hw*1.5+14,C.muted,10);
+  const y0=H*.76,y1=H-10,ym=(y0+y1)/2+8;axes(ctx,10,y0,W-10,y1);text(ctx,'مخطط كهربائية القلب (ECG)',W-16,y0+10,C.muted,10,'right');ctx.strokeStyle=C.accent3;ctx.lineWidth=2;ctx.beginPath();s.h.forEach((v,i)=>{const x=10+(W-20)*i/499,y=ym-v*(y1-y0)*.45;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()},
+ readouts(p){const f=this.s.ph;return[['معدل نبض القلب',p.HR+' نبضة/دقيقة'],['حجم الضربة',p.SV+' mL'],['النتاج القلبي',fmt(p.HR*p.SV/1000,1)+' L/min',1],['زمن الدورة القلبية',fmt(60/p.HR,2)+' s'],['المرحلة الآن',f<.15?'انقباض الأذينين':f<.5?'انقباض البطينين':'انبساط القلب','ar'],['التركيب يخدم الوظيفة','جدار البطين الأيسر أسمك من الأيمن لأنه يضخ الدم بضغط مرتفع إلى جميع أنحاء الجسم، والصمامات تمنع رجوع الدم.','w']]}},
+
+/* ---------- Nerve impulse ---------- */
+{id:'nerve',short:'السيال العصبي',branch:'أجهزة جسم الإنسان',name:'السيال العصبي وجهد الفعل',law:'جهد الراحة −70 mV  ·  العتبة −55 mV',
+ tip:'أعطي منبهًا ضعيفًا (أقل من 15 mV) ثم قويًا: هل يكبر جهد الفعل مع زيادة قوة المنبه؟ هذا قانون «الكل أو لا شيء». قارني سرعة انتقال السيال في المحور المغلف بالمايلين وغير المغلف.',
+ controls:[{id:'st',label:'شدة المنبه',min:0,max:30,step:1,val:20,unit:'mV'},{id:'my',type:'seg',label:'المحور العصبي',options:[['0','غير مغلف بالمايلين'],['1','مغلف بالمايلين']],val:'1'}],
+ actions:[['أعطي منبهًا','stim']],
+ reset(){this.s={u:-1,f:false}},stim(p){this.s.u=0;this.s.f=-70+p.st>=-55},
+ V(u,p){const f=this.s.f;if(u<0)return-70;if(f){if(u<1)return-70+100*sm(u);if(u<2.5)return 30-110*sm((u-1)/1.5);if(u<6)return-80+10*sm((u-2.5)/3.5);return-70}return-70+p.st*Math.exp(-u/1.2)*Math.min(1,u*4)},
+ step(dt){const s=this.s;if(s.u>=0){s.u+=dt*2.2;if(s.u>12)s.u=-1}},
+ draw(ctx,W,H,p){const s=this.s,ay=H*.22,ah=34,x0=30,x1=W-20,my=p.my==='1';
+  ctx.fillStyle=C.warn;ctx.globalAlpha=.12;ctx.fillRect(x0,ay-ah/2,x1-x0,ah);ctx.globalAlpha=1;ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x0,ay-ah/2);ctx.lineTo(x1,ay-ah/2);ctx.moveTo(x0,ay+ah/2);ctx.lineTo(x1,ay+ah/2);ctx.stroke();
+  const ns=60;if(my){for(let x=x0+8;x<x1-30;x+=ns){ctx.fillStyle=C.panel;ctx.strokeStyle=C.sum;ctx.lineWidth=1.5;rr(ctx,x,ay-ah/2-8,ns-10,ah+16,8);ctx.fill();ctx.stroke()}}
+  let xf=-1;if(s.u>=0&&s.f){xf=my?x0+Math.floor(s.u/.35)*ns+4:x0+s.u*30;if(xf<x1){ctx.fillStyle=C.accent;ctx.globalAlpha=.3;ctx.fillRect(Math.max(x0,xf-22),ay-ah/2,40,ah);ctx.globalAlpha=1;text(ctx,'+',xf,ay,C.accent,16,'center',MONO,600);text(ctx,'−',xf,ay-ah/2-(my?14:8),C.accent,14,'center',MONO,600);
+   ctx.fillStyle=C.warn;for(let k=0;k<3;k++){ctx.beginPath();ctx.arc(xf-6+k*6,ay-ah/2-4+((s.u*30+k*7)%14),2.5,0,7);ctx.fill()}ctx.fillStyle=C.sum;for(let k=0;k<3;k++){ctx.beginPath();ctx.arc(xf-30+k*6,ay+ah/2-4+((s.u*30+k*5)%14),2.5,0,7);ctx.fill()}}}
+  text(ctx,'المحور العصبي',x1,ay+ah/2+(my?22:14),C.muted,10,'right');ctx.fillStyle=C.warn;ctx.beginPath();ctx.arc(x0,ay+ah/2+20,3,0,7);ctx.fill();text(ctx,'Na⁺ يدخل',x0+8,ay+ah/2+20,C.ink,10,'left');ctx.fillStyle=C.sum;ctx.beginPath();ctx.arc(x0+70,ay+ah/2+20,3,0,7);ctx.fill();text(ctx,'K⁺ يخرج',x0+78,ay+ah/2+20,C.ink,10,'left');
+  const gx0=46,gx1=W-14,gy0=H*.42,gy1=H-26,X=u=>gx0+(gx1-gx0)*u/10,Y=v=>gy1-(v+90)/130*(gy1-gy0);axes(ctx,gx0,gy0,gx1,gy1);
+  [[-70,'−70'],[-55,'−55'],[30,'+30'],[0,'0']].forEach(([v,l])=>{ctx.setLineDash(v===-55?[5,4]:[2,5]);ctx.strokeStyle=v===-55?C.accent:C.line;ctx.beginPath();ctx.moveTo(gx0,Y(v));ctx.lineTo(gx1,Y(v));ctx.stroke();ctx.setLineDash([]);text(ctx,l,gx0-4,Y(v),C.muted,10,'right',MONO,400)});
+  text(ctx,'العتبة',gx1-6,Y(-55)-9,C.accent,10,'right');text(ctx,'الزمن (ms)',gx1-6,gy1+12,C.muted,10,'right');
+  if(s.u>=0){ctx.strokeStyle=C.accent2;ctx.lineWidth=2.6;ctx.beginPath();for(let i=0;i<=200;i++){const u=Math.min(s.u,10)*i/200;i?ctx.lineTo(X(u),Y(this.V(u,p))):ctx.moveTo(X(u),Y(this.V(u,p)))}ctx.stroke();const u=Math.min(s.u,10);ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(X(u),Y(this.V(u,p)),5,0,7);ctx.fill()}
+  else{ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx0,Y(-70));ctx.lineTo(gx1,Y(-70));ctx.stroke()}},
+ readouts(p){const s=this.s,u=s.u,v=this.V(Math.max(u,0),p);const ph=u<0||!s.f?(u>=0&&u<3?'تنبيه دون العتبة: لا ينشأ جهد فعل':'جهد الراحة'):u<1?'إزالة الاستقطاب (دخول Na⁺)':u<2.5?'إعادة الاستقطاب (خروج K⁺)':u<6?'فرط الاستقطاب':'جهد الراحة';
+  return[['جهد الغشاء الآن',fmt(u<0?-70:v,0)+' mV',1],['جهد العتبة','−55 mV'],['هل ينشأ جهد فعل؟',-70+p.st>=-55?'نعم (الكل)':'لا (لا شيء)','ar'],['المرحلة',ph,'ar'],['سرعة السيال التقريبية',p.my==='1'?'≈ 100 m/s (انتقال قفزي)':'≈ 2 m/s']]}},
+
+/* ---------- Immunity ---------- */
+{id:'immune',short:'المناعة واللقاح',branch:'المناعة والأمراض',name:'الاستجابة المناعية واللقاحات',law:'الاستجابة الثانوية أسرع وأقوى من الأولية',
+ tip:'أصيبي الجسم بالعدوى وراقبي الاستجابة الأولية والمرض. ثم أعيدي التجربة: خذي اللقاح أولًا، وبعد شهر عرّضي الجسم للفيروس نفسه. لماذا لا يمرض الشخص في المرة الثانية؟ وما دور خلايا الذاكرة؟',
+ controls:[{id:'spd',label:'سرعة مرور الأيام',min:2,max:15,step:1,val:6,unit:'يوم/ث'}],
+ actions:[['تعرض للفيروس','infect'],['أخذ اللقاح','vax'],['من البداية','reset']],
+ reset(){this.s={d:0,ev:[]}},infect(){this.s.ev.push({d:this.s.d,t:'i'})},vax(){this.s.ev.push({d:this.s.d,t:'v'})},
+ resp(d){let a=0,v=0;const ev=this.s.ev;ev.forEach(e=>{const x=d-e.d,sec=ev.some(o=>o!==e&&o.d<e.d-7),lag=sec?2:6,pk=sec?5:9,A=sec?(e.t==='v'?5:10):(e.t==='v'?.8:1.2);
+  if(x>lag){const y=x-lag;a+=A*(y/pk)*Math.exp(1-y/pk)}if(e.t==='i'&&x>=0){const vp=sec?3:8,vh=sec?.15:1,w=sec?1.5:3.5;v+=vh*Math.exp(-(((x-vp)/w)**2))}});return{a,v,mem:ev.some(e=>d-e.d>7)}},
+ step(dt,p){if(this.s.d<120)this.s.d=Math.min(120,this.s.d+dt*p.spd)},
+ draw(ctx,W,H,p){const s=this.s,r=this.resp(s.d),fy=H*.36;ctx.fillStyle=C.accent;ctx.globalAlpha=.05;ctx.fillRect(6,6,W-12,fy-6);ctx.globalAlpha=1;
+  const nv=Math.round(r.v*30),na=Math.round(Math.min(r.a,12)*3);for(let i=0;i<nv;i++){const x=12+hh(i,1)*(W-24)+Math.sin(s.d+i)*3,y=12+hh(i,2)*(fy-24);ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();ctx.strokeStyle=C.accent;ctx.lineWidth=1.5;for(let k=0;k<6;k++){const a=k*Math.PI/3;ctx.beginPath();ctx.moveTo(x+Math.cos(a)*5,y+Math.sin(a)*5);ctx.lineTo(x+Math.cos(a)*8,y+Math.sin(a)*8);ctx.stroke()}}
+  for(let i=0;i<na;i++){const x=12+hh(i,5)*(W-24),y=12+hh(i,6)*(fy-24);ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+6);ctx.lineTo(x,y);ctx.lineTo(x-4,y-5);ctx.moveTo(x,y);ctx.lineTo(x+4,y-5);ctx.stroke()}
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(16,fy+14,4,0,7);ctx.fill();text(ctx,'فيروس',24,fy+14,C.ink,10,'left');ctx.strokeStyle=C.accent2;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(72,fy+18);ctx.lineTo(72,fy+12);ctx.lineTo(68,fy+8);ctx.moveTo(72,fy+12);ctx.lineTo(76,fy+8);ctx.stroke();text(ctx,'جسم مضاد',82,fy+14,C.ink,10,'left');
+  const x0=40,x1=W-12,y0=fy+32,y1=H-26,X=d=>x0+(x1-x0)*d/120,Ya=a=>y1-a/12*(y1-y0-10),Yv=v=>y1-v/1.2*(y1-y0-10);axes(ctx,x0,y0,x1,y1);
+  ctx.fillStyle=C.accent;ctx.globalAlpha=.2;ctx.beginPath();ctx.moveTo(X(0),y1);for(let d=0;d<=s.d;d+=.5)ctx.lineTo(X(d),Yv(this.resp(d).v));ctx.lineTo(X(s.d),y1);ctx.fill();ctx.globalAlpha=1;
+  ctx.strokeStyle=C.accent2;ctx.lineWidth=2.6;ctx.beginPath();for(let d=0;d<=s.d;d+=.5){const y=Ya(this.resp(d).a);d?ctx.lineTo(X(d),y):ctx.moveTo(X(d),y)}ctx.stroke();
+  s.ev.forEach(e=>{ctx.strokeStyle=e.t==='v'?C.accent3:C.accent;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(X(e.d),y0);ctx.lineTo(X(e.d),y1);ctx.stroke();ctx.setLineDash([]);text(ctx,e.t==='v'?'لقاح':'عدوى',X(e.d),y0+10,e.t==='v'?C.accent3:C.accent,10,'center',FONT,600)});
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(s.d),y0);ctx.lineTo(X(s.d),y1);ctx.stroke();[0,30,60,90,120].forEach(d=>text(ctx,d+'',X(d),y1+11,C.muted,10,'center',MONO,400));text(ctx,'اليوم',x0-14,y1+11,C.muted,10);
+  text(ctx,'الأجسام المضادة',x1-6,y0+24,C.accent2,10,'right',FONT,600);text(ctx,'الحمل الفيروسي',x1-6,y0+38,C.accent,10,'right',FONT,600)},
+ readouts(){const s=this.s,r=this.resp(s.d);return[['اليوم',fmt(s.d,0)],['مستوى الأجسام المضادة',fmt(r.a,1)+' (نسبي)'],['الحمل الفيروسي',fmt(r.v*100,0)+'%'],['حالة الشخص',r.v>.5?'مريض وتظهر الأعراض':r.v>.05?'عدوى خفيفة يقضي عليها الجسم بسرعة':'سليم',1],['خلايا الذاكرة',r.mem?'موجودة: الجسم يتذكر هذا المستضد':'غير موجودة','w']]}},
+
+/* ---------- Epidemic ---------- */
+{id:'epi',short:'انتشار الأوبئة',branch:'المناعة والأمراض',name:'انتشار الأمراض الفيروسية',law:'سليم ← مصاب ← متعافٍ',
+ tip:'شغّلي المحاكاة دون لقاح وراقبي ذروة الإصابات. ثم اجعلي نسبة التطعيم 70%: هل تحمي غير المطعّمين أيضًا؟ هذه مناعة القطيع. جرّبي التباعد الاجتماعي: كيف يتغير شكل المنحنى؟',
+ controls:[{id:'vac',label:'نسبة المطعّمين',min:0,max:90,step:5,val:0,unit:'%'},{id:'dist',label:'نسبة الملتزمين بالتباعد',min:0,max:80,step:5,val:0,unit:'%'},{id:'pi',label:'احتمال العدوى عند المخالطة',min:10,max:100,step:5,val:60,unit:'%'}],
+ actions:[['ابدئي الوباء من جديد','reset']],
+ reset(p){const a=[],N=200,top=H*.58;for(let i=0;i<N;i++){const v=Math.random()<p.vac/100;a.push({x:8+Math.random()*(W-16),y:8+Math.random()*(top-16),a:Math.random()*7,s:v?'V':'S',fix:Math.random()<p.dist/100,t:0})}
+  let k=0;for(const q of a){if(q.s==='S'&&k<3){q.s='I';k++}}this.s={a,h:[],t:0,acc:0,peak:k,ever:k}},onChange(p,k){if(k!=='pi')this.reset(p)},
+ step(dt,p){const s=this.s,top=H*.58;s.t+=dt;const I=s.a.filter(q=>q.s==='I');
+  s.a.forEach(q=>{if(!q.fix){q.x+=Math.cos(q.a)*30*dt;q.y+=Math.sin(q.a)*30*dt;if(q.x<6||q.x>W-6)q.a=Math.PI-q.a;if(q.y<6||q.y>top-6)q.a=-q.a;q.x=Math.max(6,Math.min(W-6,q.x));q.y=Math.max(6,Math.min(top-6,q.y))}if(q.s==='I'){q.t+=dt;if(q.t>7)q.s='R'}});
+  I.forEach(i=>s.a.forEach(q=>{if(q.s==='S'&&Math.abs(q.x-i.x)<8&&Math.abs(q.y-i.y)<8&&Math.random()<p.pi/100*dt*4){q.s='I';q.t=0;s.ever++}}));
+  const n=s.a.filter(q=>q.s==='I').length;s.peak=Math.max(s.peak,n);s.acc+=dt;if(s.acc>.2){s.acc=0;const c={S:0,I:0,R:0,V:0};s.a.forEach(q=>c[q.s]++);s.h.push(c);if(s.h.length>300)s.h.shift()}},
+ col(k){return{S:C.accent2,I:C.accent,R:C.accent3,V:C.sum}[k]},
+ draw(ctx,W,H,p){const s=this.s,top=H*.58;ctx.strokeStyle=C.line;ctx.strokeRect(2.5,2.5,W-5,top-2);s.a.forEach(q=>{ctx.fillStyle=this.col(q.s);ctx.beginPath();ctx.arc(q.x,q.y,q.fix?3:3.6,0,7);ctx.fill()});
+  const x0=12,x1=W-12,y0=top+28,y1=H-12;axes(ctx,x0,y0,x1,y1);const bw=(x1-x0)/300;
+  s.h.forEach((c,i)=>{let y=y1;['I','R','V','S'].forEach(k=>{const h=c[k]/200*(y1-y0);ctx.fillStyle=this.col(k);ctx.fillRect(x0+i*bw,y-h,bw+.5,h);y-=h})});
+  [['S','سليم'],['I','مصاب'],['R','متعافٍ'],['V','مطعّم']].forEach(([k,l],i)=>{const x=W-16-i*74;ctx.fillStyle=this.col(k);ctx.beginPath();ctx.arc(x,top+14,4,0,7);ctx.fill();text(ctx,l,x-8,top+14,C.ink,11,'right')})},
+ readouts(p){const s=this.s,c={S:0,I:0,R:0,V:0};s.a.forEach(q=>c[q.s]++);return[['اليوم',fmt(s.t*2,0)],['المصابون الآن',c.I+'',1],['ذروة الإصابات',s.peak+''],['مجموع من أصيبوا',s.ever+' / '+(200-c.V)],['المحصّنون باللقاح',c.V+''],['ملاحظة',p.vac>=60?'نسبة التطعيم مرتفعة، فيصعب على الفيروس الوصول إلى غير المطعّمين (مناعة القطيع).':c.I===0&&s.t>2?'انتهى الوباء: لم يبق مصابون ينقلون العدوى.':'كل مصاب يمكن أن ينقل العدوى إلى من يخالطهم قبل أن يتعافى.','w']]}},
+
+/* ---------- Natural selection ---------- */
+{id:'evo',short:'الانتخاب الطبيعي',branch:'التطور',name:'الانتخاب الطبيعي: فراشة العث المرقط',law:'البقاء للأكثر تكيفًا مع البيئة',
+ tip:'في بيئة اللحاء الداكن (التلوث الصناعي) راقبي نسبة الفراشات الداكنة عبر الأجيال. ثم بدّلي إلى لحاء فاتح (هواء نظيف): ماذا يحدث؟ ما دور الطيور هنا؟ وهل «اختارت» الفراشات لونها؟',
+ controls:[{id:'env',type:'seg',label:'البيئة',options:[['d','لحاء داكن (تلوث)'],['l','لحاء فاتح (هواء نظيف)']],val:'d'},{id:'pred',label:'شدة الافتراس من الطيور',min:0,max:100,step:5,val:60,unit:'%'}],
+ actions:[['تشغيل الأجيال / إيقاف','toggle'],['من البداية','reset']],
+ place(f){const m=[],nd=Math.round(60*f);for(let i=0;i<60;i++)m.push({x:16+Math.random()*(W-32),y:16+Math.random()*(H*.55-32),d:i<nd,eat:0,a:Math.random()*.6-.3});return m},
+ reset(){this.s={g:0,f:.1,h:[.1],m:this.place(.1),ph:0,run:true,ate:false}},toggle(){this.s.run=!this.s.run},
+ step(dt,p){const s=this.s;s.m.forEach(q=>{if(q.eat>0)q.eat=Math.min(1,q.eat+dt*2)});if(!s.run)return;s.ph+=dt;
+  if(s.ph>.9&&!s.ate){s.ate=true;s.m.forEach(q=>{const con=(q.d&&p.env==='l')||(!q.d&&p.env==='d');if(Math.random()<p.pred/100*(con?.7:.1))q.eat=.01})}
+  if(s.ph>1.9){const al=s.m.filter(q=>!q.eat);let f=al.length?al.filter(q=>q.d).length/al.length:s.f;f=f*.98+.01;s.f=f;s.g++;s.h.push(f);if(s.h.length>60)s.h.shift();s.m=this.place(f);s.ph=0;s.ate=false}},
+ draw(ctx,W,H,p){const s=this.s,bh=H*.55,dk=p.env==='d';ctx.fillStyle=dk?'#3b3430':'#d8d0c0';ctx.fillRect(6,6,W-12,bh);
+  for(let i=0;i<40;i++){ctx.strokeStyle=dk?'#2a2420':'#bdb3a1';ctx.lineWidth=2;const x=6+hh(i,9)*(W-12);ctx.beginPath();ctx.moveTo(x,6);ctx.bezierCurveTo(x+8,bh*.3,x-8,bh*.6,x+4,bh+6);ctx.stroke()}
+  if(!dk)for(let i=0;i<30;i++){ctx.fillStyle='#b9c39a';ctx.globalAlpha=.6;ctx.beginPath();ctx.arc(6+hh(i,4)*(W-12),6+hh(i,7)*bh,4+hh(i,8)*7,0,7);ctx.fill();ctx.globalAlpha=1}
+  s.m.forEach(q=>{ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.a);ctx.globalAlpha=q.eat?1-q.eat:1;ctx.fillStyle=q.d?'#25201c':'#efe9dc';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-11,-6);ctx.lineTo(-9,6);ctx.closePath();ctx.moveTo(0,0);ctx.lineTo(11,-6);ctx.lineTo(9,6);ctx.closePath();ctx.fill();ctx.fillStyle=q.d?'#4a3f37':'#8b8273';ctx.fillRect(-1,-4,2,9);ctx.restore()});
+  const x0=40,x1=W-12,y0=bh+24,y1=H-24,X=i=>x0+(x1-x0)*i/59,Y=v=>y1-v*(y1-y0);axes(ctx,x0,y0,x1,y1);[0,.5,1].forEach(v=>text(ctx,v*100+'%',x0-4,Y(v),C.muted,9,'right',MONO,400));
+  [[q=>q,C.ink,'الداكنة'],[q=>1-q,C.warn,'الفاتحة']].forEach(([f,c,l],k)=>{ctx.strokeStyle=c;ctx.lineWidth=2.4;ctx.beginPath();s.h.forEach((v,i)=>i?ctx.lineTo(X(i),Y(f(v))):ctx.moveTo(X(i),Y(f(v))));ctx.stroke();text(ctx,l,x1-6-k*60,y0+10,c,11,'right',FONT,600)});text(ctx,'الأجيال ←',x0+30,y1+12,C.muted,10)},
+ readouts(p){const s=this.s;return[['الجيل',s.g+''],['نسبة الفراشات الداكنة',fmt(s.f*100,0)+'%',1],['نسبة الفراشات الفاتحة',fmt((1-s.f)*100,0)+'%'],['البيئة',p.env==='d'?'لحاء داكن بسبب التلوث':'لحاء فاتح مغطى بالأشنات','ar'],['التفسير',p.env==='d'?'الفراشات الفاتحة واضحة للطيور على اللحاء الداكن فتؤكل أكثر، فتبقى الداكنة وتتكاثر وتورث صفتها.':'الفراشات الداكنة واضحة على اللحاء الفاتح فتؤكل أكثر، فتزداد نسبة الفاتحة جيلًا بعد جيل.','w']]}},
+
+/* ---------- Microscope ---------- */
+{id:'micro',short:'المجهر الضوئي',branch:'مهارات المختبر',name:'المجهر الضوئي المركب',law:'التكبير الكلي = تكبير العدسة العينية × تكبير الشيئية',
+ tip:'ابدئي دائمًا بالعدسة الشيئية الصغرى (4×) واضبطي الصورة، ثم انتقلي إلى عدسة أكبر واضبطي الضابط الدقيق. لاحظي أن مجال الرؤية يصغر كلما زاد التكبير. لماذا لا نرى خلايا الدم بوضوح إلا بالعدسة الزيتية؟',
+ controls:[{id:'sp',type:'seg',label:'الشريحة',options:[['on','بشرة البصل'],['ch','خلايا الخد'],['bl','مسحة دم']],val:'on'},{id:'obj',type:'seg',label:'العدسة الشيئية',options:[['4','4×'],['10','10×'],['40','40×'],['100','100× زيتية']],val:'10'},{id:'f',label:'الضابط (التركيز)',min:0,max:100,step:.5,val:40,unit:''},{id:'L',label:'شدة الإضاءة (الحاجز القزحي)',min:0,max:100,step:1,val:60,unit:'%'}],
+ FOV:{4:4500,10:1800,40:450,100:180},BEST:{4:42,10:52,40:60,100:66},TOL:{4:20,10:12,40:6,100:3},
+ reset(){this.s={key:'',img:null}},step(){},
+ build(p,D){const cv=document.createElement('canvas');cv.width=D;cv.height=D;const c=cv.getContext('2d'),F=this.FOV[p.obj],k=D/F,h2=F/2;c.fillStyle=p.sp==='bl'?'#f3dfe0':p.sp==='on'?'#f5ecd2':'#eef3f8';c.fillRect(0,0,D,D);c.translate(D/2,D/2);
+  if(p.sp==='on'){const rh=60;for(let r=Math.floor(-h2/rh)-1;r*rh<h2+rh;r++){let x=-h2-300+hh(r,1)*200;let j=0;while(x<h2+300){const w=200+hh(r,j,2)*140;c.fillStyle='#f0deb0';c.strokeStyle='#9a7440';c.lineWidth=Math.max(.6,k*4);c.fillRect(x*k,r*rh*k,w*k,rh*k);c.strokeRect(x*k,r*rh*k,w*k,rh*k);c.fillStyle='#8a5a2a';c.beginPath();c.arc((x+w*(.2+hh(r,j,3)*.6))*k,(r*rh+rh*.5)*k,Math.max(.8,9*k),0,7);c.fill();x+=w;j++}}}
+  else if(p.sp==='ch'){const g=90;for(let i=Math.floor(-h2/g)-1;i*g<h2+g;i++)for(let j=Math.floor(-h2/g)-1;j*g<h2+g;j++){if(hh(i,j)<.45)continue;const x=(i+hh(i,j,1))*g,y=(j+hh(i,j,2))*g,r=26+hh(i,j,3)*10;c.fillStyle='rgba(120,170,220,.35)';c.strokeStyle='rgba(60,110,170,.7)';c.lineWidth=Math.max(.5,k*1.5);c.beginPath();for(let a=0;a<7;a++){const an=a/7*Math.PI*2+hh(i,j,4),rr2=r*(.75+hh(i,j,a+5)*.4);a?c.lineTo((x+Math.cos(an)*rr2)*k,(y+Math.sin(an)*rr2)*k):c.moveTo((x+Math.cos(an)*rr2)*k,(y+Math.sin(an)*rr2)*k)}c.closePath();c.fill();c.stroke();c.fillStyle='#2d4f8f';c.beginPath();c.arc(x*k,y*k,Math.max(.7,5*k),0,7);c.fill()}}
+  else{if(7.5*k<2.5){for(let i=0;i<4000;i++){c.fillStyle=hh(i,1)<.003?'#7a4fb5':'#d9727e';c.fillRect((hh(i,2)-.5)*D,(hh(i,3)-.5)*D,1.5,1.5)}}
+   else{const g=9;for(let i=Math.floor(-h2/g)-1;i*g<h2+g;i++)for(let j=Math.floor(-h2/g)-1;j*g<h2+g;j++){if(hh(i,j)<.2)continue;const x=(i+hh(i,j,1)*.5)*g,y=(j+hh(i,j,2)*.5)*g;if(hh(i,j,7)<.006){c.fillStyle='#e9dff2';c.beginPath();c.arc(x*k,y*k,6.5*k,0,7);c.fill();c.fillStyle='#6b3fa6';for(let l=0;l<3;l++){c.beginPath();c.arc((x+Math.cos(l*2.1)*2.2)*k,(y+Math.sin(l*2.1)*2.2)*k,1.9*k,0,7);c.fill()}continue}
+    c.fillStyle='#d65e6c';c.beginPath();c.arc(x*k,y*k,3.75*k,0,7);c.fill();c.fillStyle='#eaa0a8';c.beginPath();c.arc(x*k,y*k,1.6*k,0,7);c.fill()}}}
+  return cv},
+ sharp(p){return Math.abs(p.f-this.BEST[p.obj])/this.TOL[p.obj]},
+ draw(ctx,W,H,p){const s=this.s,D=Math.round(Math.min(W*.64,H-30)),key=[p.sp,p.obj,D].join('|');if(s.key!==key){s.img=this.build(p,D);s.key=key}
+  const cx=Math.min(W*.36,D/2+16),cy=H/2,bl=Math.min(14,this.sharp(p)*3.2);ctx.fillStyle='#0b0b10';ctx.beginPath();ctx.arc(cx,cy,D/2+10,0,7);ctx.fill();
+  ctx.save();ctx.beginPath();ctx.arc(cx,cy,D/2,0,7);ctx.clip();ctx.drawImage(s.img,cx-D/2,cy-D/2);if(bl>.4){for(let i=0;i<10;i++){const a=i/10*Math.PI*2;ctx.globalAlpha=.3;ctx.drawImage(s.img,cx-D/2+Math.cos(a)*bl,cy-D/2+Math.sin(a)*bl)}ctx.globalAlpha=1}
+  ctx.fillStyle='#000';ctx.globalAlpha=(1-p.L/100)*.88;ctx.fillRect(cx-D/2,cy-D/2,D,D);ctx.globalAlpha=1;if(p.L>85){ctx.fillStyle='#fff';ctx.globalAlpha=(p.L-85)/15*.65;ctx.fillRect(cx-D/2,cy-D/2,D,D);ctx.globalAlpha=1}ctx.restore();
+  ctx.strokeStyle=C.ink;ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,D/2+10,0,7);ctx.stroke();
+  const sx=cx+D/2+24,F=this.FOV[p.obj];if(W-sx>90){text(ctx,'×'+(+p.obj*10),sx,cy-30,C.accent,26,'left',MONO,600);text(ctx,'التكبير الكلي',sx,cy-6,C.muted,11,'left');text(ctx,(F>=1000?fmt(F/1000,2)+' mm':F+' µm'),sx,cy+24,C.ink,15,'left',MONO,600);text(ctx,'قطر مجال الرؤية',sx,cy+44,C.muted,11,'left')}
+  else{text(ctx,'×'+(+p.obj*10),W-14,22,C.accent,18,'right',MONO,600)}},
+ readouts(p){const F=this.FOV[p.obj],sh=this.sharp(p);const size={on:'نحو 250 × 60 µm',ch:'نحو 60 µm',bl:'خلية الدم الحمراء نحو 7.5 µm'}[p.sp];
+  return[['التكبير الكلي','×'+(+p.obj*10)+' (10 × '+p.obj+')',1],['قطر مجال الرؤية',F>=1000?fmt(F/1000,2)+' mm':F+' µm'],['حجم الخلية الحقيقي',size,'ar'],['وضوح الصورة',sh<.25?'واضحة':sh<1?'ضبابية قليلًا: استخدمي الضابط الدقيق':'غير واضحة: حرّكي الضابط','ar'],['الإضاءة',p.L<35?'خافتة: افتحي الحاجز القزحي':p.L>85?'ساطعة جدًا: التفاصيل تختفي':'مناسبة','ar'],['ملاحظة',p.obj==='100'?'العدسة الزيتية تحتاج إلى قطرة من زيت الأرز بين الشريحة والعدسة.':p.sp==='on'?'تُصبغ بشرة البصل بمحلول اليود لإظهار النواة والجدار الخلوي.':p.sp==='ch'?'تُصبغ خلايا الخد بأزرق الميثيلين لإظهار النواة.':'تحتاج مسحة الدم إلى صبغة رايت لتمييز خلايا الدم البيضاء.','w']]}}
+];
+
+/* ================= ENGINE ================= */
+const cv=$('#cv'),ctx=cv.getContext('2d');let cur=null,P={},paused=false,last=0,lastRO=0,lastW=0;
+const KEEP=['div'];
+function resize(){const w=cv.parentElement.clientWidth;if(!w||w===lastW)return;lastW=w;W=w;H=Math.round(Math.max(290,Math.min(540,W*(W<600?.98:.62))));const r=window.devicePixelRatio||1;cv.width=W*r;cv.height=H*r;cv.style.height=H+'px';ctx.setTransform(r,0,0,r,0,0);if(cur&&!KEEP.includes(cur.id))cur.reset(P)}
+new ResizeObserver(resize).observe(cv.parentElement);
+const branches=[...new Set(SIMS.map(s=>s.branch))];
+const short=s=>s.short||s.name;
+$('#nav').innerHTML=branches.map(b=>`<div class="grp"><b>${b}</b><div>${SIMS.filter(s=>s.branch===b).map(s=>`<button class="chip" data-id="${s.id}" aria-pressed="false">${short(s)}</button>`).join('')}</div></div>`).join('');
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)select(b.dataset.id)});
+function fmtVal(c,v){return(c.step<1?(+v).toFixed(c.step<.1?(c.step<.01?3:2):1):v)+(c.unit?' '+c.unit:'')}
+function setParam(id,v){P[id]=v;const c=cur.controls.find(c=>c.id===id);if(!c)return;
+  if(c.type==='seg')document.querySelectorAll(`[data-seg="${id}"] button`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
+  else{const el=$('#c_'+id);if(el&&+el.value!==v)el.value=v;const o=$('#o_'+id);if(o)o.textContent=fmtVal(c,v)}
+  cur.onChange&&cur.onChange(P,id)}
+function select(id){cur=SIMS.find(s=>s.id===id)||SIMS[0];P={};cur.controls.forEach(c=>P[c.id]=c.val);
+  document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===cur.id));
+  $('#branch').textContent=cur.branch;$('#name').textContent=cur.name;$('#law').textContent=cur.law;$('#try').innerHTML='<b>جرّبي واكتشفي: </b>'+cur.tip;
+  $('#ctls').innerHTML=cur.controls.length?cur.controls.map(c=>c.type==='seg'
+    ?`<div class="ctl"><div class="top"><span>${c.label}</span></div><div class="seg" data-seg="${c.id}">${c.options.map(([v,l])=>`<button data-v="${v}" aria-pressed="${v===c.val}">${l}</button>`).join('')}</div></div>`
+    :`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><output id="o_${c.id}">${fmtVal(c,c.val)}</output></div><input type="range" id="c_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.val}"></div>`).join(''):`<p class="note">${cur.note||''}</p>`;
+  cur.controls.forEach(c=>{if(c.type==='seg')document.querySelectorAll(`[data-seg="${c.id}"] button`).forEach(b=>b.onclick=()=>setParam(c.id,b.dataset.v));else $('#c_'+c.id).oninput=e=>setParam(c.id,+e.target.value)});
+  const acts=$('#acts');acts.innerHTML='';const pb=document.createElement('button');pb.className='btn';
+  (cur.actions||[]).forEach(([l,fn])=>{const b=document.createElement('button');b.className='btn primary';b.textContent=l;b.onclick=()=>{cur[fn](P);paused=false;pb.textContent='إيقاف مؤقت'};acts.append(b)});
+  pb.textContent=paused?'تشغيل':'إيقاف مؤقت';pb.onclick=()=>{paused=!paused;pb.textContent=paused?'تشغيل':'إيقاف مؤقت'};acts.append(pb);
+  const rb=document.createElement('button');rb.className='btn';rb.textContent='القيم الافتراضية';rb.onclick=()=>select(cur.id);acts.append(rb);
+  cur.s=null;cur.reset(P);renderRO();try{localStorage.setItem('bio-tab',cur.id)}catch(e){}
+  if(location.hash!=='#'+cur.id)history.replaceState(null,'','#'+cur.id)}
+function renderRO(){$('#ro').innerHTML=cur.readouts(P).map(([l,v,h])=>h==='w'?`<dt class="wide">${l}</dt><dd class="wide">${v}</dd>`:`<dt>${l}</dt><dd class="${h===1?'hot':''} ${h==='ar'?'ar':''}">${v}</dd>`).join('')}
+function onPtr(e){if(!cur.pointer||(e.type==='pointermove'&&!e.buttons))return;if(e.type==='pointerdown'){try{cv.setPointerCapture(e.pointerId)}catch(_){}}const r=cv.getBoundingClientRect();cur.pointer(e.clientX-r.left,e.clientY-r.top,P,e.type)}
+cv.addEventListener('pointerdown',onPtr);cv.addEventListener('pointermove',onPtr);['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>cur.pointerUp&&cur.pointerUp()));
+function frame(ts){const dt=Math.min(.04,last?(ts-last)/1000:0);last=ts;
+  if(W){if(!paused)cur.step(dt,P);ctx.fillStyle=C.panel;ctx.fillRect(0,0,W,H);grid(ctx,W,H);cur.draw(ctx,W,H,P);if(ts-lastRO>150){renderRO();lastRO=ts}}
+  requestAnimationFrame(frame)}
+let start=location.hash.slice(1);if(!SIMS.some(s=>s.id===start)){try{start=localStorage.getItem('bio-tab')}catch(e){start=null}}
+resize();select(SIMS.some(s=>s.id===start)?start:'cell');requestAnimationFrame(frame);
+</script>
+<script>
+const LABKEY='bio';
+/* ===== أدوات التجريب الحر: إدخال القيم + دفتر التجارب + الرسم البياني ===== */
+window.escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+(function(){
+const NB={};try{Object.assign(NB,JSON.parse(localStorage.getItem('nb-'+LABKEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('nb-'+LABKEY,JSON.stringify(NB))}catch(e){}};
+const esc=window.escH,q=s=>document.querySelector(s);
+const nb=()=>NB[cur.id]||(NB[cur.id]={rows:[],pred:'',conc:'',x:'',y:'',hot:''});
+const dec=st=>{const s=String(st);return s.includes('.')?s.split('.')[1].length:0};
+const num=v=>{const s=String(v);if(/×10| \/ |∠/.test(s)||(s.match(/\d+(\.\d+)?/g)||[]).length>1)return NaN;const m=s.replace(/−/g,'-').replace(/,/g,'').match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):NaN};
+const pv=v=>{if(!Number.isFinite(v))return'';const a=Math.abs(v);return a>=1000||a===Math.round(a)?String(Math.round(v)):a>=10?v.toFixed(1):v.toFixed(2)};
+
+/* ---------- controls with typed values ---------- */
+function ctlHTML(c){
+  if(c.type==='seg')return`<div class="ctl"><div class="top"><span>${c.label}</span></div><div class="seg" data-seg="${c.id}">${c.options.map(([v,l])=>`<button data-v="${v}" aria-pressed="${String(v)===String(P[c.id])}">${l}</button>`).join('')}</div></div>`;
+  if(c.type==='sel')return`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><output id="o_${c.id}" hidden></output></div><select id="c_${c.id}" class="sel">${c.options.map(([v,l])=>`<option value="${v}" ${String(v)===String(P[c.id])?'selected':''}>${l}</option>`).join('')}</select></div>`;
+  return`<div class="ctl"><div class="top"><label for="c_${c.id}">${c.label}</label><span class="num"><input type="number" id="n_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${P[c.id]}" inputmode="decimal" aria-label="اكتبي قيمة: ${c.label}">${c.unit?`<small>${c.unit}</small>`:''}</span><output id="o_${c.id}" hidden></output></div><input type="range" id="c_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${P[c.id]}"></div>`}
+window.renderPanel=function(){const el=document.getElementById('cpanel');if(el&&cur.panel){el.innerHTML='';cur.panel(el,P)}};
+function renderCtls(){const box=q('#ctls');let h=cur.panel?'<div class="panel" id="cpanel"></div>':'';
+  h+=cur.controls.length?cur.controls.map(ctlHTML).join(''):(cur.panel?'':`<p class="note">${cur.note||''}</p>`);
+  box.innerHTML=h;renderPanel();
+  cur.controls.forEach(c=>{
+    if(c.type==='seg')box.querySelectorAll(`[data-seg="${c.id}"] button`).forEach(b=>b.onclick=()=>setParam(c.id,b.dataset.v));
+    else if(c.type==='sel')q('#c_'+c.id).onchange=e=>setParam(c.id,e.target.value);
+    else{const r=q('#c_'+c.id),n=q('#n_'+c.id);r.oninput=e=>setParam(c.id,+e.target.value);
+      const apply=()=>{let v=parseFloat(String(n.value).replace(/−/g,'-'));if(!Number.isFinite(v)){n.value=P[c.id];return}
+        v=Math.min(c.max,Math.max(c.min,v));v=+(Math.round(v/c.step)*c.step).toFixed(dec(c.step));n.value=v;setParam(c.id,v)};
+      n.onchange=apply;n.onkeydown=e=>{if(e.key==='Enter')apply()}}})}
+const _sp=setParam;
+setParam=function(id,v){const c=cur.controls.find(c=>c.id===id);
+  if(c&&c.type==='sel'){P[id]=v;const el=q('#c_'+id);if(el&&el.value!==String(v))el.value=v;cur.onChange&&cur.onChange(P,id);return}
+  _sp(id,v);const n=document.getElementById('n_'+id);if(n&&document.activeElement!==n)n.value=v};
+const _sel=select;select=function(id){_sel(id);renderCtls();nbShow()};
+
+/* ---------- notebook ---------- */
+const card=document.createElement('div');card.className='card nb';
+card.innerHTML=`<h3>دفتر التجارب</h3>
+<label class="nbl" for="nb-pred">توقّعي قبل أن تجرّبي</label>
+<textarea id="nb-pred" rows="2" placeholder="ماذا تتوقعين أن يحدث إذا غيّرتِ المتغير؟ ولماذا؟"></textarea>
+<div class="acts"><button class="btn primary" id="nb-rec">سجّلي هذه المحاولة</button><button class="btn" id="nb-undo">احذفي آخر محاولة</button><button class="btn" id="nb-clear">امسحي الدفتر</button></div>
+<div class="nbtw" id="nb-tw"></div>
+<div class="nbplot" id="nb-plotwrap" hidden>
+  <div class="nbaxes"><label for="nb-x">المحور الأفقي</label><select id="nb-x"></select><label for="nb-y">المحور الرأسي</label><select id="nb-y"></select></div>
+  <canvas id="nb-cv" aria-label="رسم بياني لمحاولاتك"></canvas>
+</div>
+<label class="nbl" for="nb-conc">استنتاجي</label>
+<textarea id="nb-conc" rows="3" placeholder="ما العلاقة التي لاحظتِها بين المتغيرات؟ هل تحقق توقعك؟"></textarea>`;
+q('.side').appendChild(card);
+const pred=q('#nb-pred'),conc=q('#nb-conc');
+pred.oninput=()=>{nb().pred=pred.value;save()};conc.oninput=()=>{nb().conc=conc.value;save()};
+q('#nb-rec').onclick=()=>{const n=nb(),r={};
+  cur.controls.forEach(c=>{if(c.type==='seg'||c.type==='sel'){const o=c.options.find(o=>String(o[0])===String(P[c.id]));r[c.label]=o?o[1]:P[c.id]}else r[c.label+(c.unit?' ('+c.unit+')':'')]=String(P[c.id])});
+  (cur.record?cur.record(P):[]).forEach(([k,v])=>r[k]=String(v));
+  let hot='';cur.readouts(P).forEach(([l,v,h])=>{if(h==='w')return;r[l]=String(v);if(h===1&&!hot)hot=l});
+  if(hot)n.hot=hot;n.rows.push(r);if(n.rows.length>40)n.rows.shift();save();nbTable();
+  const b=q('#nb-rec');b.textContent='سُجّلت المحاولة '+n.rows.length;setTimeout(()=>b.textContent='سجّلي هذه المحاولة',1200)};
+q('#nb-undo').onclick=()=>{nb().rows.pop();save();nbTable()};
+let clr=0;q('#nb-clear').onclick=e=>{const b=e.currentTarget;if(!clr){clr=1;b.textContent='اضغطي مرة أخرى للتأكيد';setTimeout(()=>{clr=0;b.textContent='امسحي الدفتر'},2500);return}
+  clr=0;b.textContent='امسحي الدفتر';const n=nb();n.rows=[];save();nbTable()};
+q('#nb-x').onchange=e=>{nb().x=e.target.value;save();nbTable()};q('#nb-y').onchange=e=>{nb().y=e.target.value;save();nbTable()};
+function cols(n){const k=[];n.rows.forEach(r=>Object.keys(r).forEach(x=>{if(!k.includes(x))k.push(x)}));return k}
+function nbTable(){const n=nb(),tw=q('#nb-tw'),pw=q('#nb-plotwrap');
+  if(!n.rows.length){tw.innerHTML='<p class="note">لم تسجّلي أي محاولة بعد. غيّري قيمة متغير واحد، ثم اضغطي «سجّلي هذه المحاولة»، وكرري ذلك عدة مرات.</p>';pw.hidden=true;return}
+  const k=cols(n);tw.innerHTML='<table><thead><tr><th>#</th>'+k.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr></thead><tbody>'+n.rows.map((r,i)=>'<tr><td>'+(i+1)+'</td>'+k.map(x=>`<td>${esc(r[x]??'')}</td>`).join('')+'</tr>').join('')+'</tbody></table>';
+  const nc=k.filter(x=>n.rows.every(r=>Number.isFinite(num(r[x]))));
+  if(n.rows.length<2||nc.length<2){pw.hidden=true;return}pw.hidden=false;
+  if(!nc.includes(n.x)){const varied=nc.find(x=>new Set(n.rows.map(r=>num(r[x]))).size>1);n.x=varied||nc[0]}
+  if(!nc.includes(n.y)||n.y===n.x)n.y=nc.includes(n.hot)&&n.hot!==n.x?n.hot:nc.find(x=>x!==n.x);
+  const opt=v=>nc.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('');q('#nb-x').innerHTML=opt(n.x);q('#nb-y').innerHTML=opt(n.y);nbPlot()}
+function nbPlot(){const n=nb(),cv=q('#nb-cv');if(!cv||q('#nb-plotwrap').hidden)return;const w=cv.clientWidth||300,h=190,dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  const pts=n.rows.map(r=>[num(r[n.x]),num(r[n.y])]).sort((a,b)=>a[0]-b[0]);
+  let x0=Math.min(...pts.map(p=>p[0])),x1=Math.max(...pts.map(p=>p[0])),y0=Math.min(...pts.map(p=>p[1])),y1=Math.max(...pts.map(p=>p[1]));
+  if(x1===x0){x0-=1;x1+=1}if(y1===y0){y0-=1;y1+=1}const px=(x1-x0)*.08,py=(y1-y0)*.1;x0-=px;x1+=px;y0-=py;y1+=py;
+  const L=48,R=w-10,T=10,B=h-34,X=v=>L+(R-L)*(v-x0)/(x1-x0),Y=v=>B-(B-T)*(v-y0)/(y1-y0);
+  c.fillStyle=C.panel;c.fillRect(0,0,w,h);c.strokeStyle=C.line;c.lineWidth=1;c.strokeRect(L+.5,T+.5,R-L,B-T);
+  c.font='400 10px '+'"JetBrains Mono",ui-monospace,monospace';c.fillStyle=C.muted;c.textBaseline='middle';
+  c.textAlign='right';[y0+py,y1-py].forEach(v=>c.fillText(pv(v),L-4,Y(v)));c.textAlign='center';[x0+px,x1-px].forEach(v=>c.fillText(pv(v),X(v),B+10));
+  c.font='600 11px "IBM Plex Sans Arabic",system-ui,sans-serif';c.fillStyle=C.ink;c.textAlign='center';c.fillText(n.x.length>40?n.x.slice(0,40)+'…':n.x,(L+R)/2,h-9);
+  c.save();c.translate(11,(T+B)/2);c.rotate(-Math.PI/2);c.fillText(n.y.length>28?n.y.slice(0,28)+'…':n.y,0,0);c.restore();
+  c.setLineDash([4,4]);c.strokeStyle=C.muted;c.lineWidth=1.3;c.beginPath();pts.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));c.stroke();c.setLineDash([]);
+  pts.forEach(p=>{c.fillStyle=C.accent;c.beginPath();c.arc(X(p[0]),Y(p[1]),4.5,0,7);c.fill()})}
+function nbShow(){const n=nb();pred.value=n.pred||'';conc.value=n.conc||'';nbTable()}
+try{new ResizeObserver(()=>nbPlot()).observe(card)}catch(e){}
+renderCtls();nbShow();
+})();
+</script>
+
+
+</body>
+</html>

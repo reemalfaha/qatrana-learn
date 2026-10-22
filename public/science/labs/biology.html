@@ -621,7 +621,46 @@ const SIMS=[
   const sx=cx+D/2+24,F=this.FOV[p.obj];if(W-sx>90){text(ctx,'×'+(+p.obj*10),sx,cy-30,C.accent,26,'left',MONO,600);text(ctx,'التكبير الكلي',sx,cy-6,C.muted,11,'left');text(ctx,(F>=1000?fmt(F/1000,2)+' mm':F+' µm'),sx,cy+24,C.ink,15,'left',MONO,600);text(ctx,'قطر مجال الرؤية',sx,cy+44,C.muted,11,'left')}
   else{text(ctx,'×'+(+p.obj*10),W-14,22,C.accent,18,'right',MONO,600)}},
  readouts(p){const F=this.FOV[p.obj],sh=this.sharp(p);const size={on:'نحو 250 × 60 µm',ch:'نحو 60 µm',bl:'خلية الدم الحمراء نحو 7.5 µm'}[p.sp];
-  return[['التكبير الكلي','×'+(+p.obj*10)+' (10 × '+p.obj+')',1],['قطر مجال الرؤية',F>=1000?fmt(F/1000,2)+' mm':F+' µm'],['حجم الخلية الحقيقي',size,'ar'],['وضوح الصورة',sh<.25?'واضحة':sh<1?'ضبابية قليلًا: استخدمي الضابط الدقيق':'غير واضحة: حرّكي الضابط','ar'],['الإضاءة',p.L<35?'خافتة: افتحي الحاجز القزحي':p.L>85?'ساطعة جدًا: التفاصيل تختفي':'مناسبة','ar'],['ملاحظة',p.obj==='100'?'العدسة الزيتية تحتاج إلى قطرة من زيت الأرز بين الشريحة والعدسة.':p.sp==='on'?'تُصبغ بشرة البصل بمحلول اليود لإظهار النواة والجدار الخلوي.':p.sp==='ch'?'تُصبغ خلايا الخد بأزرق الميثيلين لإظهار النواة.':'تحتاج مسحة الدم إلى صبغة رايت لتمييز خلايا الدم البيضاء.','w']]}}
+  return[['التكبير الكلي','×'+(+p.obj*10)+' (10 × '+p.obj+')',1],['قطر مجال الرؤية',F>=1000?fmt(F/1000,2)+' mm':F+' µm'],['حجم الخلية الحقيقي',size,'ar'],['وضوح الصورة',sh<.25?'واضحة':sh<1?'ضبابية قليلًا: استخدمي الضابط الدقيق':'غير واضحة: حرّكي الضابط','ar'],['الإضاءة',p.L<35?'خافتة: افتحي الحاجز القزحي':p.L>85?'ساطعة جدًا: التفاصيل تختفي':'مناسبة','ar'],['ملاحظة',p.obj==='100'?'العدسة الزيتية تحتاج إلى قطرة من زيت الأرز بين الشريحة والعدسة.':p.sp==='on'?'تُصبغ بشرة البصل بمحلول اليود لإظهار النواة والجدار الخلوي.':p.sp==='ch'?'تُصبغ خلايا الخد بأزرق الميثيلين لإظهار النواة.':'تحتاج مسحة الدم إلى صبغة رايت لتمييز خلايا الدم البيضاء.','w']]}},
+/* ---------- النظم البيئية (منقولة من مختبر علوم الأرض) ---------- */
+{id:'eco',branch:'البيئة والنظم البيئية',name:'العلاقة بين الفريسة والمفترس',law:'dx/dt = αx − βxy ,  dy/dt = δxy − γy',
+ tip:'لاحظي أن ذروة أعداد الثعالب تأتي دائمًا بعد ذروة الأرانب. ماذا يحدث للثعالب إذا قضى الجفاف على نصف الأرانب؟ وماذا يحدث للأرانب عند الصيد الجائر للثعالب؟ هل يعود النظام إلى التوازن؟',
+ controls:[{id:'al',label:'معدل تكاثر الأرانب α',min:.2,max:1.5,step:.05,val:.8,unit:''},{id:'be',label:'معدل افتراس الثعالب β',min:.01,max:.08,step:.005,val:.04,unit:''},{id:'ga',label:'معدل موت الثعالب γ',min:.2,max:1.2,step:.05,val:.6,unit:''}],
+ de:.01,actions:[['جفاف: يهلك نصف الأرانب','drought'],['صيد جائر لنصف الثعالب','hunt'],['ابدئي من جديد','reset']],
+ reset(){this.s={x:40,y:10,t:0,h:[],r:[],f:[],dx:0,dy:0}},drought(){this.s.x/=2},hunt(){this.s.y/=2},
+ step(dt,p){const s=this.s,n=8,h=dt*1.5/n,F=(x,y)=>[p.al*x-p.be*x*y,this.de*x*y-p.ga*y];
+  for(let i=0;i<n;i++){const k1=F(s.x,s.y),k2=F(s.x+h/2*k1[0],s.y+h/2*k1[1]),k3=F(s.x+h/2*k2[0],s.y+h/2*k2[1]),k4=F(s.x+h*k3[0],s.y+h*k3[1]);s.x=Math.max(.05,s.x+h/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]));s.y=Math.max(.05,s.y+h/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]))}
+  [s.dx,s.dy]=F(s.x,s.y);s.t+=dt*1.5;s.h.push([s.x,s.y]);if(s.h.length>700)s.h.shift();
+  const Ht=H*.4,sync=(arr,n)=>{while(arr.length<n)arr.push({x:Math.random()*W,y:14+Math.random()*(Ht-28),a:Math.random()*7});arr.length=n};
+  sync(s.r,Math.min(80,Math.round(s.x/2.5)));sync(s.f,Math.min(40,Math.round(s.y/1.2)));
+  [...s.r,...s.f].forEach(o=>{o.a+=(Math.random()-.5)*dt*4;o.x+=Math.cos(o.a)*dt*18;o.y+=Math.sin(o.a)*dt*18;if(o.x<6||o.x>W-6)o.a=Math.PI-o.a;if(o.y<12||o.y>Ht-12)o.a=-o.a;o.x=Math.max(6,Math.min(W-6,o.x));o.y=Math.max(12,Math.min(Ht-12,o.y))})},
+ draw(ctx,W,H,p){const s=this.s,Ht=H*.4;ctx.fillStyle=C.accent3;ctx.globalAlpha=.1;ctx.fillRect(0,0,W,Ht);ctx.globalAlpha=1;
+  s.r.forEach(o=>{ctx.fillStyle=C.accent2;ctx.beginPath();ctx.arc(o.x,o.y,4,0,7);ctx.fill();ctx.strokeStyle=C.accent2;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(o.x-1.5,o.y-3);ctx.lineTo(o.x-2.5,o.y-9);ctx.moveTo(o.x+1.5,o.y-3);ctx.lineTo(o.x+2.5,o.y-9);ctx.stroke()});
+  s.f.forEach(o=>{ctx.fillStyle=C.accent;ctx.beginPath();ctx.moveTo(o.x-7,o.y-5);ctx.lineTo(o.x-3,o.y-2);ctx.lineTo(o.x+3,o.y-2);ctx.lineTo(o.x+7,o.y-5);ctx.lineTo(o.x+5,o.y+2);ctx.lineTo(o.x,o.y+7);ctx.lineTo(o.x-5,o.y+2);ctx.closePath();ctx.fill()});
+  const gx0=40,gx1=W-14,gy0=Ht+14,gy1=H-22,mx=Math.max(120,...s.h.map(q=>q[0]))*1.05,X=i=>gx0+(gx1-gx0)*i/699,Y=v=>gy1-v/mx*(gy1-gy0);
+  ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(gx0+.5,gy0+.5,gx1-gx0,gy1-gy0);text(ctx,fmt(mx,0),gx0-4,gy0+8,C.muted,10,'right',MONO,400);text(ctx,'0',gx0-4,gy1-4,C.muted,10,'right',MONO,400);
+  ctx.setLineDash([4,5]);ctx.strokeStyle=C.accent2;ctx.beginPath();ctx.moveTo(gx0,Y(p.ga/this.de));ctx.lineTo(gx1,Y(p.ga/this.de));ctx.stroke();ctx.strokeStyle=C.accent;ctx.beginPath();ctx.moveTo(gx0,Y(p.al/p.be));ctx.lineTo(gx1,Y(p.al/p.be));ctx.stroke();ctx.setLineDash([]);
+  [[0,C.accent2],[1,C.accent]].forEach(([j,c])=>{ctx.strokeStyle=c;ctx.lineWidth=2.2;ctx.beginPath();s.h.forEach((q,i)=>{i?ctx.lineTo(X(i),Y(q[j])):ctx.moveTo(X(i),Y(q[j]))});ctx.stroke()});
+  text(ctx,'الأرانب',gx1-6,gy0+11,C.accent2,11,'right',FONT,600);text(ctx,'الثعالب',gx1-56,gy0+11,C.accent,11,'right',FONT,600);text(ctx,'الزمن ←',gx0+30,gy1+11,C.muted,10)},
+ readouts(p){const s=this.s;return[['عدد الأرانب',fmt(s.x,0),1],['عدد الثعالب',fmt(s.y,0),1],['توازن الأرانب γ/δ',fmt(p.ga/this.de,0)],['توازن الثعالب α/β',fmt(p.al/p.be,0)],['الزمن',fmt(s.t,1)+' سنة'],['الحالة',(s.dx>0?'الأرانب تتزايد':'الأرانب تتناقص')+' و'+(s.dy>0?'الثعالب تتزايد':'الثعالب تتناقص'),'w']]}},
+
+/* ---------- Energy pyramid ---------- */
+{id:'pyramid',branch:'البيئة والنظم البيئية',name:'هرم الطاقة في السلسلة الغذائية',law:'E(n+1) ≈ 10% × E(n)',
+ tip:'لماذا تكون أعداد الصقور في الصحراء الأردنية قليلة جدًا مقارنة بالأعشاب؟ غيّري كفاءة انتقال الطاقة ولاحظي كم يصل إلى قمة الهرم. أين تذهب الطاقة المفقودة؟',
+ controls:[{id:'E',label:'الطاقة المخزنة في المنتجات',min:1000,max:100000,step:1000,val:10000,unit:'kJ'},{id:'eff',label:'كفاءة انتقال الطاقة',min:5,max:20,step:1,val:10,unit:'%'},{id:'n',label:'عدد المستويات الغذائية',min:2,max:5,step:1,val:4,unit:''}],
+ LV:[['المنتجات','أعشاب صحراوية','#4f9a3f'],['مستهلك أول','جرادة','#97ad35'],['مستهلك ثانٍ','سحلية','#cf962a'],['مستهلك ثالث','أفعى','#c25f2c'],['مستهلك رابع','صقر','#963a29']],
+ reset(){this.s={pt:[],acc:0}},
+ geo(p){const n=p.n,lh=Math.min(64,(H-40)/n),bot=H-20,r=Math.pow(p.eff/100,.3),wmax=W-40;return{lh,bot,w:i=>130+(wmax-130)*r**i}},
+ step(dt,p){const s=this.s,g=this.geo(p);s.acc+=dt*26;while(s.acc>1){s.acc--;s.pt.push({lv:0,u:Math.random()-.5,y:g.bot-2,h:0})}
+  s.pt.forEach(q=>{if(q.h){q.x+=q.vx*dt;q.y-=dt*12;q.h-=dt;return}q.y-=dt*55;const top=g.bot-(q.lv+1)*g.lh;
+   if(q.y<top){if(q.lv+1<p.n&&Math.random()<p.eff/100)q.lv++;else{q.h=1.4;q.x=W/2+q.u*g.w(q.lv);q.vx=(q.u>0?1:-1)*70}}});
+  s.pt=s.pt.filter(q=>q.h===0||q.h>0)},
+ draw(ctx,W,H,p){const g=this.geo(p);for(let i=0;i<p.n;i++){const w=g.w(i),y=g.bot-(i+1)*g.lh,E=p.E*(p.eff/100)**i,[a,b,c]=this.LV[i];
+   ctx.fillStyle=c;ctx.fillRect(W/2-w/2,y+1,w,g.lh-2);textS(ctx,a+' · '+b,W/2,y+g.lh*.36,W<420?11:12);textS(ctx,(E>=10?Math.round(E).toLocaleString('en'):fmt(E,2))+' kJ',W/2,y+g.lh*.7,11)}
+  this.s.pt.forEach(q=>{if(q.h){ctx.fillStyle=C.accent;ctx.globalAlpha=Math.max(0,q.h/1.4);ctx.beginPath();ctx.arc(q.x,q.y,2.5,0,7);ctx.fill();ctx.globalAlpha=1}else{ctx.fillStyle=C.warn;ctx.strokeStyle=C.ink;ctx.lineWidth=.6;ctx.beginPath();ctx.arc(W/2+q.u*g.w(q.lv)*.9,q.y,2.8,0,7);ctx.fill();ctx.stroke()}});
+  text(ctx,'● طاقة تنتقل للمستوى التالي',W-14,14,C.warn,11,'right',FONT,600);text(ctx,'● حرارة مفقودة (تنفس، حركة، فضلات)',W-14,30,C.accent,11,'right',FONT,600)},
+ readouts(p){const r=[];for(let i=0;i<p.n;i++){const E=p.E*(p.eff/100)**i;r.push([this.LV[i][0]+' ('+this.LV[i][1]+')',(E>=10?Math.round(E).toLocaleString('en'):fmt(E,2))+' kJ',i===p.n-1?1:0])}
+  const top=p.E*(p.eff/100)**(p.n-1);r.push(['ما يصل إلى القمة',fmt(top/p.E*100,top/p.E<.001?4:2)+'%']);return r}}
 ];
 
 /* ================= ENGINE ================= */

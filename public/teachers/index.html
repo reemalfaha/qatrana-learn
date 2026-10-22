@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بوابة المعلّمات</title>
+<meta name="description" content="بوابة معلّمات مدرسة القطرانة الثانوية للبنات: كل أدوات المبحث برمز واحد لكل معلّمة.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.top{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;border-bottom:4px solid var(--g)}
+.top .in{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top b{font:700 22px var(--fd);display:block}.top small{color:var(--g2)}
+main{max-width:1100px;margin:0 auto;padding:18px 16px 40px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(60,20,30,.07)}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:9px 16px;min-height:44px;background:var(--w);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.g{background:transparent;color:inherit;border:1.5px solid currentColor}.btn.gold{background:var(--g);color:#2b1a00}
+.in2{font:600 16px var(--f);border:1.5px solid var(--ln);border-radius:12px;padding:9px 12px;min-height:46px;background:var(--card);color:var(--ink);width:100%}
+.login{max-width:440px;margin:30px auto;display:flex;flex-direction:column;gap:12px;text-align:center}
+.login h1{font:700 26px var(--fd);margin:0}.login label{text-align:right;font-weight:700;display:flex;flex-direction:column;gap:4px}
+.err{color:#c2410c;font-weight:700;min-height:1.5em}
+.hello{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.hello h1{font:700 26px var(--fd);margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.subj{border-top:6px solid var(--c)}.subj h2{font:700 21px var(--fd);margin:0 0 4px;color:var(--c)}
+.subj .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.act{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--bg);border:1.5px solid var(--ln);border-radius:14px;padding:10px;cursor:pointer;font:inherit;text-align:right}
+.act b{font-size:15px}.act span{font-size:12px;color:var(--mut)}.act:hover{border-color:var(--c)}
+.common{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.muted{color:var(--mut)}.small{font-size:13px}
+#cls{margin-top:18px}
+footer{text-align:center;color:var(--mut);font-size:13px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><div><b>👩‍🏫 بوابة المعلّمات</b><small>مدرسة القطرانة الثانوية للبنات</small></div><div id="tb"></div></div></div>
+<main id="app"><div class="card" style="text-align:center">⏳ جارٍ التحميل…</div></main>
+<script src="qclass.js"></script>
+<script>
+(()=>{
+const ROSTER="roster.enc.json",LUG="https://lughati.reemalfahad-an.workers.dev/",RIY="https://riyadiyati.reemalfahad-an.workers.dev/",SCI="../science/";
+const app=document.getElementById("app"),tb=document.getElementById("tb");
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,y]of Object.entries(a)){if(y==null||y===false)continue;if(x==="class")e.className=y;else if(x==="style"&&typeof y==="object"){for(const[p,v]of Object.entries(y))e.style.setProperty(p,v);}else if(x.startsWith("on"))e.addEventListener(x.slice(2),y);else e.setAttribute(x,y);}for(const c of k.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e;};
+let LES={};fetch("lessons.json").then(r=>r.json()).then(j=>LES=j).catch(()=>{});
+const SUBJ=[
+ {k:"ar",name:"اللغة العربية",color:"#0E8C8C",grades:["الثامن","التاسع","العاشر"],plat:"lug"},
+ {k:"math",name:"الرياضيات",color:"#1d4f8a",grades:["الثامن","التاسع","العاشر"],plat:"riy"},
+ {k:"sci",name:"العلوم (الصف الثامن)",color:"#1d7f8c",grades:["الثامن"],plat:"sci"},
+ {k:"bio",name:"العلوم الحياتية",color:"#2f8f5b",grades:["التاسع","العاشر"],plat:"sci"},
+ {k:"chem",name:"الكيمياء",color:"#c2297a",grades:["التاسع","العاشر"],plat:"sci"},
+ {k:"phys",name:"الفيزياء",color:"#c98408",grades:["التاسع","العاشر"],plat:"sci"},
+ {k:"earth",name:"علوم الأرض والبيئة",color:"#7a4fb5",grades:["التاسع","العاشر"],plat:"sci"}];
+let S=null;
+function plink(s,what){const k=S&&S.data.ppin?encodeURIComponent(S.data.ppin):"";
+  if(s.plat==="sci"){const q=k?"?k="+k:"";return SCI+q+({tools:"#/t",books:"#/books",results:"#/t/results",plan:"#/t/plan",student:"#/"}[what]||"#/t");}
+  const base=s.plat==="lug"?LUG:RIY;if(what==="student")return base;return base+"?teacher"+(k?"&k="+k:"");}
+async function start(){try{S=await QClass.resume(ROSTER);}catch(e){app.innerHTML='<div class="card">تعذّر التحميل. تأكّدي من الاتصال بالإنترنت.</div>';return;}S?dash():login();}
+async function login(){tb.innerHTML="";const keys=await QClass.keys(ROSTER);const sel=h("select",{class:"in2"},...Object.entries(keys).map(([id,k])=>h("option",{value:id},k.label)));
+  try{const l=localStorage.getItem("qclass.last");if(l&&keys[l])sel.value=l;}catch(e){}
+  const pin=h("input",{class:"in2",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمزكِ السرّي"}),err=h("div",{class:"err","aria-live":"polite"});
+  const go=async()=>{if(!pin.value.trim())return;err.textContent="⏳ جارٍ الدخول…";try{S=await QClass.signIn(ROSTER,sel.value,pin.value.trim());dash();}catch(e){err.textContent="الرمز غير صحيح.";pin.value="";}};
+  pin.addEventListener("keydown",e=>{if(e.key==="Enter")go();});
+  app.innerHTML="";app.append(h("div",{class:"card login"},h("div",{style:{"font-size":"48px"}},"👩‍🏫"),h("h1",{},"أهلًا بكِ في بوابة المعلّمات"),h("p",{class:"muted"},"اختاري اسمكِ واكتبي رمزكِ السرّي لتصلي إلى كل أدوات مبحثكِ."),
+    h("label",{},"المعلّمة",sel),h("label",{},"الرمز السرّي",pin),h("button",{class:"btn",onclick:go},"🔓 دخول"),err));}
+function dash(){const T=S.teacher;tb.innerHTML="";tb.append(h("button",{class:"btn g",onclick:()=>{QClass.signOut();S=null;login();}},"🔒 خروج"));
+  const mine=SUBJ.filter(s=>T.subj.includes("*")||T.subj.includes(s.k));
+  app.innerHTML="";app.append(h("div",{class:"hello"},h("div",{},h("h1",{},"أهلًا "+T.label.replace(/\s*\(.*\)/,"")+" 🌷"),h("div",{class:"muted"},"كل أدوات مبحثكِ في مكان واحد."))));
+  const A=(ic,t,d,href,on)=>href?h("a",{class:"act",href,target:"_blank",rel:"noopener"},h("b",{},ic+" "+t),h("span",{},d)):h("button",{class:"act",onclick:on},h("b",{},ic+" "+t),h("span",{},d));
+  const gr=h("div",{class:"grid"});
+  mine.forEach(s=>{const sci=s.plat==="sci";gr.append(h("section",{class:"card subj",style:{"--c":s.color}},h("h2",{},s.name),h("div",{class:"small muted"},"الصفوف: "+s.grades.join("، ")),
+    h("div",{class:"acts"},A("👥","صفّي","الفرق وتقييم الحصة والسجلّ",null,()=>openClass(s.k)),A("🧰","أدوات المعلّمة",sci?"خطط وتحليل واستراتيجيات وبنك أسئلة":"مسابقة، حلّ التدريبات، أوراق العمل",plink(s,"tools")),
+      A("📖","الكتاب على السبّورة","صفحات الكتاب بفراغات للشرح",plink(s,sci?"books":"tools")),A("📈","نتائج الطالبات","متابعة الإنجاز والاختبارات",plink(s,sci?"results":"tools")),
+      sci?A("📝","خطة الدرس","تحضير جاهز للطباعة",plink(s,"plan")):null,A("🎓","منصّة الطالبات","كما تراها الطالبة",plink(s,"student")))));});
+  app.append(gr,h("div",{class:"common"},h("a",{class:"btn gold",href:"https://lab-booking.reemalfahad-an.workers.dev",target:"_blank",rel:"noopener"},"🔬 حجز المختبر"),h("a",{class:"btn g",href:"../",target:"_blank",rel:"noopener"},"📱 بوابة الطالبات")));
+  const cls=h("div",{id:"cls"});app.append(cls,h("footer",{},"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"));
+  if(location.hash==="#class")openClass();}
+function openClass(k){const box=document.getElementById("cls");
+  QClass.mount(box,{school:"مدرسة القطرانة الثانوية للبنات",scriptUrl:"https://script.google.com/macros/s/AKfycby_MosnfxzYeiveIWwN61c_Rx5HYc-lTMRPeRueHiAyFnRdeafhSIWuUxPnPEI1imSK/exec",rosterUrl:ROSTER,
+    onLogout:()=>{S=null;login();},subjects:SUBJ.map(s=>Object.assign({},s,{lessons:g=>(LES[s.k]&&LES[s.k][g])||[]}))}).then(()=>box.scrollIntoView({behavior:"smooth",block:"start"}));}
+start();
+})();
+</script>
+</body>
+</html>

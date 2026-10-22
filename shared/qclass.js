@@ -18,8 +18,8 @@ const first=n=>n.split(" ").slice(0,2).join(" ");
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function derive(code,salt,it){const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
   return crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(salt),iterations:it,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);}
-let FILE=null;async function file(){if(!FILE){const r=await fetch(OPT.rosterUrl,{cache:"no-store"});FILE=await r.json();}return FILE;}
-async function unlock(tid,code){const F=await file();const k=F.keys[tid];if(!k)throw 0;const kek=await derive(code,k.salt,F.it);
+let FILE=null;async function file(url){if(!FILE){const r=await fetch(url||OPT.rosterUrl,{cache:"no-store"});FILE=await r.json();}return FILE;}
+async function unlock(tid,code){if(!OPT)OPT={};const F=await file();const k=F.keys[tid];if(!k)throw 0;const kek=await derive(code,k.salt,F.it);
   const raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(k.iv)},kek,b64(k.ct));const mk=await crypto.subtle.importKey("raw",raw,"AES-GCM",false,["decrypt"]);
   const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(F.data.iv)},mk,b64(F.data.ct));const D=JSON.parse(new TextDecoder().decode(pt));
   TEA=Object.assign({id:tid},D.teachers[tid]);R=D;}
@@ -47,7 +47,7 @@ function login(){const F=FILE;const sel=h("select",{class:"qc-in","aria-label":"
   pin.addEventListener("keydown",e=>{if(e.key==="Enter")enter();});
   ROOT.append(h("div",{class:"qc-card qc-login"},h("div",{class:"qc-big"},"👥"),h("h2",{},"صفّي: الفرق وتقييم الحصة"),h("p",{class:"qc-mut"},"لكل معلّمة رمز سرّي خاص يفتح شعب مبحثها فقط. أسماء الطالبات محفوظة مشفّرة."),
     h("label",{class:"qc-lbl"},"المعلّمة",sel),h("label",{class:"qc-lbl"},"الرمز السرّي",pin),h("button",{class:"qc-btn",onclick:enter},"🔓 فتح"),err));}
-function logout(){TEA=null;R=null;try{sessionStorage.removeItem(SS);}catch(e){}view={v:"home"};draw();}
+function logout(){TEA=null;R=null;try{sessionStorage.removeItem(SS);}catch(e){}view={v:"home"};if(OPT&&OPT.onLogout)OPT.onLogout();else draw();}
 function home(){const S=mySubj();if(!S.length){ROOT.append(h("div",{class:"qc-card qc-mut"},"لا يوجد لهذا الرمز مبحث في هذه المنصّة."));return;}
   S.forEach(s=>{const gr=h("div",{class:"qc-grid"});classesFor(s.k).forEach(ck=>{const [g,sc]=ck.split("|"),ev=Object.keys(C.evals[s.k+"#"+ck]||{}).length;
       gr.append(h("button",{class:"qc-card qc-cls",style:{"--c":s.color||"#7A1F2E"},onclick:()=>go({v:"class",s:s.k,c:ck,t:"eval"})},h("b",{},"الصف "+g+" · الشعبة "+sc),h("small",{},names(ck).length+" طالبة · "+ev+" حصة مقيّمة")));});
@@ -164,4 +164,9 @@ async function mount(el,opt){OPT=opt;ROOT=el;load();style();document.body.classL
   if(!TEA){try{const s=JSON.parse(sessionStorage.getItem(SS)||"null");if(s)await unlock(s[0],s[1]);}catch(e){}}
   if(view.v==="class"&&!(TEA&&mySubj().find(x=>x.k===view.s)))view={v:"home"};draw();flush();}
 addEventListener("online",()=>{if(C)flush();});
-return {mount};})();
+/* واجهة للبوابة الموحّدة */
+async function signIn(url,tid,code){await file(url);await unlock(tid,code);try{localStorage.setItem("qclass.last",tid);sessionStorage.setItem(SS,JSON.stringify([tid,code]));}catch(e){}return {teacher:TEA,data:R};}
+async function resume(url){await file(url);if(!TEA){try{const s=JSON.parse(sessionStorage.getItem(SS)||"null");if(s)await unlock(s[0],s[1]);}catch(e){}}return TEA?{teacher:TEA,data:R}:null;}
+function signOut(){TEA=null;R=null;try{sessionStorage.removeItem(SS);}catch(e){}}
+async function keys(url){return (await file(url)).keys;}
+return {mount,signIn,resume,signOut,keys,openClass:(s,c)=>{view={v:"class",s,c,t:"eval"};}};})();

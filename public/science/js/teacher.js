@@ -1,6 +1,7 @@
 /* منصّة العلوم — ركن المعلّمة */
 let T_OK=lsGet("qatrana.sci.tok",null)===CONFIG.T_HASH;let PIN="";try{PIN=sessionStorage.getItem("qatrana.sci.pin")||"";}catch(e){}
 function pinHash(s){let a=5381,b=52711;for(const c of s){const k=c.codePointAt(0);a=((a*33)^k)>>>0;b=((b*31)+k*7)>>>0;}return a.toString(36)+b.toString(36);}
+(()=>{try{const k=new URLSearchParams(location.search).get("k");if(k&&pinHash(k)===CONFIG.T_HASH){T_OK=true;PIN=k;lsSet("qatrana.sci.tok",CONFIG.T_HASH);sessionStorage.setItem("qatrana.sci.pin",k);}if(k)history.replaceState(null,"",location.pathname+location.hash);}catch(e){}})();
 function tGate(V,next){const pin=el("input",{class:"inp",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"الرمز السرّي للمعلّمة"});const err=el("p",{class:"muted","aria-live":"polite"});
   const ok=()=>{const v=pin.value.trim();if(pinHash(v)!==CONFIG.T_HASH){err.textContent="الرمز غير صحيح.";pin.value="";return;}T_OK=true;PIN=v;lsSet("qatrana.sci.tok",CONFIG.T_HASH);try{sessionStorage.setItem("qatrana.sci.pin",v);}catch(e){}render();};
   pin.onkeydown=e=>{if(e.key==="Enter")ok();};

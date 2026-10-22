@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة القطرانة للتعلّم الرقمي</title>
+<meta name="description" content="منصة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي: اللغة العربية والرياضيات والعلوم واللغة الإنجليزية في مكان واحد.">
+<meta name="theme-color" content="#7A1F2E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=El+Messiri:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf}
+@media (prefers-color-scheme:dark){:root{--bg:#1a1114;--card:#251a1e;--ink:#f5e9ec;--muted:#c3aab2;--line:#3a2a30}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Cairo',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:var(--wine);color:#fff;text-align:center;padding:34px 16px 46px;position:relative}
+header:after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--gold)}
+.sch{color:var(--gold2);font-weight:700;font-size:16px}
+h1{font-family:'El Messiri','Cairo',serif;font-size:clamp(28px,7vw,44px);line-height:1.25;margin:6px 0 4px}
+.sub{color:var(--gold2);font-size:15px}
+main{width:100%;max-width:640px;margin:-22px auto 0;padding:0 16px 24px;position:relative}
+.ask{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-weight:700;color:var(--wine);box-shadow:0 6px 18px rgba(92,22,34,.08)}
+@media (prefers-color-scheme:dark){.ask{color:var(--gold2)}}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+@media (max-width:420px){.grid{gap:10px}}
+.sbj{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:22px 10px 18px;text-decoration:none;color:inherit;position:relative;overflow:hidden;transition:transform .15s,border-color .15s,box-shadow .15s;min-height:168px}
+.sbj:before{content:"";position:absolute;inset:0 0 auto 0;height:7px;background:var(--gold)}
+a.sbj:hover,a.sbj:focus-visible{transform:translateY(-3px);border-color:var(--wine);box-shadow:0 10px 24px rgba(92,22,34,.15);outline:none}
+.ic{width:62px;height:62px;border-radius:50%;background:color-mix(in srgb,var(--wine) 10%,transparent);display:grid;place-items:center}
+.ic svg{width:34px;height:34px;stroke:var(--wine);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-color-scheme:dark){.ic svg{stroke:var(--gold2)}}
+.sbj b{font-family:'El Messiri','Cairo',serif;font-size:22px;color:var(--wine)}
+@media (prefers-color-scheme:dark){.sbj b{color:var(--gold2)}}
+.sbj span{font-size:14px;color:var(--muted)}
+.soon{opacity:.6}.soon em{font-style:normal;font-size:12px;font-weight:700;background:var(--gold);color:#fff;border-radius:20px;padding:1px 10px}
+.more{margin-top:18px;display:flex;justify-content:center}
+.more a{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--gold);border-radius:30px;padding:8px 18px;color:var(--wine);font-weight:700;text-decoration:none;background:var(--card)}
+@media (prefers-color-scheme:dark){.more a{color:var(--gold2)}}
+.step{display:flex;flex-direction:column;gap:14px}.step[hidden]{display:none}
+.ask{display:flex;align-items:center;justify-content:center;gap:10px}
+.ask .n{background:var(--wine);color:#fff;border-radius:50%;width:30px;height:30px;display:inline-grid;place-items:center;font-size:16px;flex:none}
+@media (prefers-color-scheme:dark){.ask .n{background:var(--gold);color:#1a1114}}
+.opts{display:grid;gap:10px}.opts.two{grid-template-columns:1fr 1fr}
+.opt{font:inherit;font-family:'El Messiri','Cairo',serif;font-size:22px;font-weight:700;color:var(--wine);background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px;cursor:pointer;transition:border-color .15s,transform .15s}
+.opts.two .opt{font-size:26px;padding:26px 10px}
+.opt:hover,.opt:focus-visible{border-color:var(--wine);transform:translateY(-2px);outline:none}.opt[aria-pressed=true]{border-color:var(--gold);box-shadow:inset 0 0 0 2px var(--gold)}
+@media (prefers-color-scheme:dark){.opt{color:var(--gold2)}}
+.crumb{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 14px;box-shadow:0 6px 18px rgba(92,22,34,.08)}
+.back{font:inherit;font-size:14px;background:none;border:0;color:var(--wine);text-decoration:underline;cursor:pointer;padding:4px 0}
+@media (prefers-color-scheme:dark){.back{color:var(--gold2)}}
+.grid{margin-top:0}
+footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;padding:18px 16px 22px}
+</style>
+</head>
+<body>
+<header>
+  <div class="sch">مدرسة القطرانة الثانوية للبنات</div>
+  <h1>منصة القطرانة<br>للتعلّم الرقمي</h1>
+  <div class="sub">كل موادّك في مكان واحد</div>
+</header>
+<main>
+  <section id="st1" class="step">
+    <div class="ask"><span class="n">1</span> اختاري صفّك</div>
+    <div class="opts" id="grades"></div>
+  </section>
+  <section id="st2" class="step" hidden>
+    <div class="crumb"><button type="button" class="back" data-to="1">→ رجوع</button><span id="c2"></span></div>
+    <div class="ask"><span class="n">2</span> اختاري شعبتك</div>
+    <div class="opts two" id="sections"></div>
+  </section>
+  <section id="st3" class="step" hidden>
+    <div class="crumb"><button type="button" class="back" data-to="1">تغيير الصف أو الشعبة</button><span id="c3"></span></div>
+    <div class="ask"><span class="n">3</span> اختاري المبحث الذي تريدين دراسته 👇</div>
+    <div class="grid" id="subjects"></div>
+    <div class="more"><a href="https://lab-without-limtss.netlify.app">🔬 مختبر بلا حدود</a></div>
+  </section>
+</main>
+<script>
+const GRADES=[["الثامن","الصف الثامن"],["التاسع","الصف التاسع"],["العاشر","الصف العاشر"],["الحادي عشر","الصف الحادي عشر"],["الثاني عشر","الصف الثاني عشر"]];
+const SECTIONS=g=>g==="الثامن"?["أ"]:["أ","ب"];
+const IC={ar:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 22H20v-4"/><path d="M9 8h7M9 11.5h5"/>',
+ math:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7.5h8M8.5 12h1M12 12h1M15.5 12h1M8.5 16h1M12 16h1M15.5 16h1"/>',
+ sci:'<path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21.5h11.6a2 2 0 0 0 1.7-3L14 9V3"/><path d="M7.5 15h9"/>',
+ en:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/>'};
+/* لكل مبحث: الرابط والصفوف المتاحة فيه الآن */
+const SUBJ=[
+ {k:"ar",t:"لغتي",d:"اللغة العربية",url:"https://lughati.reemalfahad-an.workers.dev",grades:["الثامن","التاسع","العاشر"]},
+ {k:"math",t:"رياضيّاتي",d:"الرياضيات",url:"https://riyadiyati.reemalfahad-an.workers.dev",grades:["الثامن","التاسع","العاشر"]},
+ {k:"sci",t:"العلوم",d:"كيمياء · فيزياء · أحياء · علوم الأرض",url:"",grades:[]},
+ {k:"en",t:"English",d:"اللغة الإنجليزية",url:"",grades:[]}];
+const $=id=>document.getElementById(id);
+let st={g:"",s:""};try{st=Object.assign(st,JSON.parse(localStorage.getItem("qatrana.learn")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("qatrana.learn",JSON.stringify(st))}catch(e){}};
+function show(n){[1,2,3].forEach(k=>$("st"+k).hidden=k!==n);window.scrollTo({top:0,behavior:"smooth"})}
+function btn(label,on,pressed){const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=label;if(pressed)b.setAttribute("aria-pressed","true");b.onclick=on;return b}
+function step1(){const box=$("grades");box.innerHTML="";GRADES.forEach(([g,l])=>box.append(btn(l,()=>{st.g=g;st.s="";const secs=SECTIONS(g);if(secs.length===1){st.s=secs[0];save();step3()}else{save();step2()}},st.g===g)));show(1)}
+function step2(){$("c2").textContent="الصف "+st.g;const box=$("sections");box.innerHTML="";SECTIONS(st.g).forEach(s=>box.append(btn("الشعبة "+s,()=>{st.s=s;save();step3()},st.s===s)));show(2)}
+function step3(){$("c3").textContent="الصف "+st.g+(SECTIONS(st.g).length>1?" · الشعبة "+st.s:"");const box=$("subjects");box.innerHTML="";
+ SUBJ.forEach(x=>{const on=x.url&&x.grades.includes(st.g);const el=document.createElement(on?"a":"div");el.className="sbj"+(on?"":" soon");
+  if(on)el.href=x.url+"/?g="+encodeURIComponent(st.g)+"&s="+encodeURIComponent(st.s);else el.setAttribute("aria-disabled","true");
+  el.innerHTML='<div class="ic"><svg viewBox="0 0 24 24">'+IC[x.k]+'</svg></div><b>'+x.t+'</b><span>'+x.d+'</span>'+(on?'':'<em>قريبًا</em>');box.append(el)});show(3)}
+document.querySelectorAll(".back").forEach(b=>b.onclick=()=>step1());
+if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else step1();
+</script>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+</body>
+</html>

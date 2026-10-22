@@ -50,10 +50,11 @@ html.embed .lh{display:none}html.embed .view{height:62vh}
 <script src="exp-bio.js"></script>
 <script src="exp-phys.js"></script>
 <script src="exp-earth.js"></script>
+<script src="exp-g8.js"></script>
 <script>
 (function(){const id=location.hash.slice(1);
  if(id){Lab3D.run(id);return;}
- const app=document.getElementById("app");const COL={"الكيمياء":"#c2297a","العلوم الحياتية":"#2f8f5b","الفيزياء":"#c98408","علوم الأرض والبيئة":"#7a4fb5"};
+ const app=document.getElementById("app");const COL={"الكيمياء":"#c2297a","العلوم الحياتية":"#2f8f5b","العلوم":"#1d7f8c","الفيزياء":"#c98408","علوم الأرض والبيئة":"#7a4fb5"};
  app.innerHTML='<header class="lh"><div><small>منصّة العلوم · مدرسة القطرانة الثانوية للبنات</small><h1>🔬 المختبر ثلاثي الأبعاد</h1></div><a class="back" href="../#/labs">→ منصّة العلوم</a></header><div class="list"><p class="muted">تجارب الكتاب في مختبر ثلاثي الأبعاد: توقّعي، جرّبي بيدكِ، سجّلي البيانات، استنتجي، واكتبي تقريرك.</p><div class="grid" id="g"></div></div>';
  Lab3D.list().forEach(x=>{const a=document.createElement("a");a.className="xc";a.href="#"+x.id;a.style.setProperty("--c",COL[x.subject]||"#7A1F2E");a.onclick=()=>setTimeout(()=>location.reload(),10);
    a.innerHTML='<div class="ic">'+x.icon+'</div><b>'+x.title+'</b><small>'+x.subject+' · الصف '+x.grade+'</small><p class="muted" style="margin:6px 0 0">'+x.desc+'</p>';document.getElementById("g").append(a);});

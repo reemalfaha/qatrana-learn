@@ -11,7 +11,7 @@ Lab3D.register("surface",{title:"القوّة والحركة: أثر نوع ال
   {q:"عند زيادة عدد الكتب (ارتفاع المنحدر):",o:["تقلّ سرعة السيارة","تزداد سرعتها أسفل المنحدر فتقطع مسافة أكبر","لا يتغيّر شيء","تتوقّف فورًا"],a:1,why:"يزداد فرق الارتفاع فتزداد طاقة الوضع المتحوّلة إلى طاقة حركية."},
   {q:"لو لم توجد قوّة احتكاك إطلاقًا على سطح أفقي، فإن السيارة:",o:["تتوقّف فورًا","تستمر في الحركة بسرعة ثابتة","تتسارع","ترجع للخلف"],a:1,why:"وفق القانون الأول لنيوتن يستمر الجسم في حركته ما لم تؤثّر فيه قوّة محصّلة."},
   {q:"المتغيّر المستقل في التجربة عند مقارنة الأسطح هو:",o:["المسافة","نوع السطح","السيارة","الزمن"],a:1,why:"نغيّر نوع السطح عمدًا ونقيس أثره في المسافة (المتغيّر التابع)."}],
- scene:{yaw:-.55,pitch:.32,dist:10,ty:.5,tx:0,sky1:"#fff4e0",sky2:"#e0f0ff"},
+ scene:{yaw:-.3,pitch:.42,dist:10,ty:.5,tx:0,sky1:"#fff4e0",sky2:"#e0f0ff"},
  setup(L,A){const T=L.T;const SURF={wood:["خشب أملس","#c8a46b",.12],card:["كرتون","#b98d5a",.22],sand:["رمل","#e6c98a",.5]};let surf=null,books=2,busy=false;const triedH={};
   const bookCols=["#7A1F2E","#1d7f8c","#B8902A","#2f8f5b"];const stack=new T.Group();stack.position.set(-5.2,0,0);L.root.add(stack);
   const ramp=new T.Group();L.root.add(ramp);const rampLen=3.2;
@@ -35,7 +35,7 @@ Lab3D.register("surface",{title:"القوّة والحركة: أثر نوع ال
   layout();
   function setSurf(k){surf=k;const s=SURF[k];track.material.color.set(s[1]);board.material.color.set(k==="wood"?"#d7b98e":s[1]);sandBumps.visible=k==="sand";A.step("s");}
   L.click(car,async()=>{if(busy||!A.can())return;if(!surf){A.toast("اختاري نوع السطح من اللوحة أولًا");return;}busy=true;ring.off();const {ang,dx,h}=ramp.userData;const mu=SURF[surf][2],g=9.8,hm=books*.05;
-    const vb=Math.sqrt(Math.max(.05,2*g*hm*(1-mu*.35/Math.tan(ang))));const d=Math.min(3.9,vb*vb/(2*mu*g));const dcm=Math.round(d*100*(.97+Math.random()*.06));
+    const d=Math.min(3.9,.1*books/mu*(1+(.06*(ang-.3))));const vb=Math.sqrt(2*mu*g*d);const dcm=Math.round(d*100*(.97+Math.random()*.06));
     const p0=car.position.clone(),pb=new T.Vector3(-3.2+.3,.05,0);await L.anim(Math.max(.6,1.4-books*.15),v=>{car.position.lerpVectors(p0,pb,v*v);wheels.forEach(w=>w.rotation.y-=.4);});car.rotation.z=0;
     const sc=8/4;const pe=new T.Vector3(-3.2+.3+dcm/100*sc,.05,0);await L.anim(Math.max(.7,dcm/90),v=>{const k=1-(1-v)*(1-v);car.position.lerpVectors(pb,pe,k);wheels.forEach(w=>w.rotation.y-=.3*(1-v));});
     marker.position.set(pe.x-.3,.3,.68);marker.visible=true;const mk=new T.Mesh(new T.CylinderGeometry(.04,.04,.02,12),new T.MeshBasicMaterial({color:new T.Color(SURF[surf][1]).offsetHSL(0,0,-.3)}));mk.position.set(pe.x-.3,.07,.68);marks.add(mk);

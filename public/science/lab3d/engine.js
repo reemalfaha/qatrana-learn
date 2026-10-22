@@ -54,7 +54,7 @@ function watchGlass(color="#ffffff"){const g=new T.Group();const d=new T.Mesh(ne
   const pile=new T.Mesh(new T.ConeGeometry(.2,.12,24),M.std(color,{roughness:.95}));pile.position.y=.08;pile.castShadow=true;g.add(pile);return {g,pile};}
 
 /* ---------- المشهد ---------- */
-function stage(host,cfg){const R=new T.WebGLRenderer({antialias:true,alpha:false});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.shadowMap.enabled=true;R.shadowMap.type=T.PCFSoftShadowMap;
+function stage(host,cfg){const TEST=/[?&]test/.test(location.search);const R=new T.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:TEST});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.shadowMap.enabled=true;R.shadowMap.type=T.PCFSoftShadowMap;
   if(T.SRGBColorSpace)R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.toneMappingExposure=1.05;host.append(R.domElement);
   const sc=new T.Scene();const bg=canvasTex(8,256,(x,w,hh)=>{const g=x.createLinearGradient(0,0,0,hh);g.addColorStop(0,cfg.sky1||"#fdf2e9");g.addColorStop(1,cfg.sky2||"#e8d9f1");x.fillStyle=g;x.fillRect(0,0,w,hh);});sc.background=bg.tex;
   const cam=new T.PerspectiveCamera(40,1,.05,200);
@@ -89,7 +89,7 @@ function stage(host,cfg){const R=new T.WebGLRenderer({antialias:true,alpha:false
     st.anims=st.anims.filter(a=>{a.e+=dt;const k=Math.min(1,a.e/a.d),v=ease(k);a.f(v);if(k>=1){a.done&&a.done();return false;}return true;});
     st.ticks.forEach(f=>f(dt,st.t));
     cam.position.set(st.tx+st.dist*Math.cos(st.pitch)*Math.sin(st.yaw),st.ty+st.dist*Math.sin(st.pitch),st.tz+st.dist*Math.cos(st.pitch)*Math.cos(st.yaw));cam.lookAt(st.tx,st.ty,st.tz);R.render(sc,cam);requestAnimationFrame(loop);})(last);
-  const L={T,sc,root,cam,st,R,M,beaker:o=>beaker(L,o),testTube,burner,balance:()=>balance(L),watchGlass,sprite,canvasTex,
+  const L={T,sc,root,cam,st,R,M,render(){cam.position.set(st.tx+st.dist*Math.cos(st.pitch)*Math.sin(st.yaw),st.ty+st.dist*Math.sin(st.pitch),st.tz+st.dist*Math.cos(st.pitch)*Math.cos(st.yaw));cam.lookAt(st.tx,st.ty,st.tz);R.render(sc,cam);},beaker:o=>beaker(L,o),testTube,burner,balance:()=>balance(L),watchGlass,sprite,canvasTex,
     add(o){root.add(o.g||o);return o;},
     acts:{},click(obj,fn,name){if(name)L.acts[name]=fn;obj.traverse(m=>{if(m.isMesh){m.userData.act=fn;st.picks.push(m);}});},
     tick(f){st.ticks.push(f);},
@@ -98,7 +98,7 @@ function stage(host,cfg){const R=new T.WebGLRenderer({antialias:true,alpha:false
     arc(o,to,d=1,hgt=1){const fr=o.position.clone();return L.anim(d,v=>{o.position.lerpVectors(fr,to,v);o.position.y+=Math.sin(v*Math.PI)*hgt;});},
     wait:s=>L.anim(s,()=>{}),
     fit(extra=1.08){const b=new T.Box3().setFromObject(root);if(b.isEmpty())return;const sz=b.getSize(new T.Vector3()),c=b.getCenter(new T.Vector3());const vf=cam.fov*Math.PI/180,hf=2*Math.atan(Math.tan(vf/2)*cam.aspect);
-      const d=Math.max((sz.x/2)/Math.tan(hf/2),(sz.y/2+.6)/Math.tan(vf/2))*extra+sz.z/2;st.dist=Math.max(cfg.dist||6,Math.min(18,d));st.tx=c.x;st.tz=c.z*.5;st.home={dist:st.dist,tx:st.tx,ty:st.ty,tz:st.tz};},
+      const d=Math.max((sz.x/2)/Math.tan(hf/2),(sz.y/2+.6)/Math.tan(vf/2))*extra+sz.z/2;const ex2=cam.aspect<1?.72:1;st.dist=Math.max(4.5,Math.min(18,d*ex2));st.tx=c.x;st.tz=c.z*.5;st.ty=Math.max(.4,Math.min(1.4,c.y+.15));st.home={dist:st.dist,tx:st.tx,ty:st.ty,tz:st.tz};},
     home(d=1){const H=st.home;if(H)return L.focus(H.tx,H.ty,H.tz,H.dist,d);},
     focus(x,y,z,dist,d=1){const a={tx:st.tx,ty:st.ty,tz:st.tz,dist:st.dist};return L.anim(d,v=>{st.tx=a.tx+(x-a.tx)*v;st.ty=a.ty+(y-a.ty)*v;st.tz=a.tz+(z-a.tz)*v;if(dist)st.dist=a.dist+(dist-a.dist)*v;});},
     ring(obj,y=1.6){const r=new T.Mesh(new T.TorusGeometry(.17,.03,10,40),new T.MeshBasicMaterial({color:0xffc928,toneMapped:false}));r.rotation.x=Math.PI/2;const ar=new T.Mesh(new T.ConeGeometry(.1,.24,16),new T.MeshBasicMaterial({color:0xffb300,toneMapped:false}));ar.rotation.x=Math.PI;
@@ -164,5 +164,5 @@ function run(id){const X=REG[id];if(!X){document.body.innerHTML="<p style='paddi
      <h3>البيانات</h3><table><tr>${X.cols.map(c=>"<th>"+c[1]+"</th>").join("")}</tr>${rows}</table>${c?`<h3>${X.chart.title}</h3><img src="${c.toDataURL()}">`:""}
      <h3>الاستنتاج</h3><ol>${X.conclude.map((q,i)=>"<li>"+q.q+"<br><b>"+(state.concl[i]!=null?q.o[state.concl[i]]:"—")+"</b> "+(state.concl[i]===q.a?"✔":"")+"</li>").join("")}</ol>
      <h3>تأمّلي</h3><p>${(refl||"").replace(/</g,"&lt;")||"........................................................"}</p><p style="text-align:center;color:#888;font-size:12px">المختبر ثلاثي الأبعاد · منصّة العلوم · تصميمُ المنصّة وتنفيذُها: نوال بني عطية</p><script>setTimeout(()=>print(),500)<\/script></body></html>`);w.document.close();}
-  X.setup(L,API);L.fit(X.fit||.92);new ResizeObserver(()=>{if(!L.st.busyCam)L.fit(X.fit||.92);}).observe(view);draw();API.hud("");window.__lab={L,A:API,X};}
+  X.setup(L,API);L.fit(X.fit||.85);new ResizeObserver(()=>{if(!L.st.busyCam)L.fit(X.fit||.85);}).observe(view);draw();API.hud("");window.__lab={L,A:API,X};}
 return {register:(id,x)=>REG[id]=x,run,list:()=>Object.entries(REG).map(([k,x])=>({id:k,title:x.title,subject:x.subject,grade:x.grade,icon:x.icon||"🧪",desc:x.desc||""}))};})();

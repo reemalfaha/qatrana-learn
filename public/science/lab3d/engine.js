@@ -85,7 +85,7 @@ function stage(host,cfg){const TEST=/[?&]test/.test(location.search);const R=new
     if(!drag)return;const dx=e.clientX-drag[0],dy=e.clientY-drag[1];moved+=Math.abs(dx)+Math.abs(dy);st.yaw-=dx*.006;st.pitch=Math.max(.12,Math.min(1.25,st.pitch+dy*.005));drag=[e.clientX,e.clientY];});
   const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=0;if(drag&&moved<7){const a=hit(e);if(a)a();}drag=null;};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",e=>{pts.delete(e.pointerId);drag=null;});
   cv.addEventListener("wheel",e=>{e.preventDefault();st.dist=Math.max(4,Math.min(16,st.dist*(e.deltaY>0?1.08:.92)));},{passive:false});
-  let last=performance.now();(function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;st.t+=dt;
+  let last=performance.now();(function loop(now){const dt=Math.min(.05,(now-last)/1000)*(st.speed==null?1:st.speed);last=now;st.t+=dt;
     st.anims=st.anims.filter(a=>{a.e+=dt;const k=Math.min(1,a.e/a.d),v=ease(k);a.f(v);if(k>=1){a.done&&a.done();return false;}return true;});
     st.ticks.forEach(f=>f(dt,st.t));
     cam.position.set(st.tx+st.dist*Math.cos(st.pitch)*Math.sin(st.yaw),st.ty+st.dist*Math.sin(st.pitch),st.tz+st.dist*Math.cos(st.pitch)*Math.cos(st.yaw));cam.lookAt(st.tx,st.ty,st.tz);R.render(sc,cam);requestAnimationFrame(loop);})(last);

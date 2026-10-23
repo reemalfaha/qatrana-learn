@@ -77,7 +77,7 @@ function rubricExtra(l){return el("div",{class:"box",style:{marginTop:"10px"}},e
 
 
 /* ===================== المادة: كل درس في صفحة واحدة ===================== */
-const MT=[["book","📖 الكتاب"],["exps","🧪 التجارب"],["plan","📝 الخطة"],["end","✅ تقويم الدرس"],["exit","🎫 تذكرة الخروج"],["rubric","📏 سلّم التقدير"]];
+const MT=[["book","📖 الكتاب"],["exps","🧪 التجارب"],["plan","📝 الخطة"],["end","✅ تقويم الدرس"],["class","👥 الفرق وتقييم الطالبات"],["exit","🎫 تذكرة الخروج"],["rubric","📏 سلّم التقدير"]];
 route(/^#\/t\/m$/,needT(V=>{V.append(crumbs(["الرئيسية","#/"],["ركن المعلّمة","#/t"],"المادة"));
   V.append(el("div",{class:"hero"},el("div",{class:"orb"}),el("h1",{},"📚 المادة"),el("p",{},"اختاري الدرس: الكتاب للشرح بالقلم، والتجارب بروابطها، والخطة، وتقويم الدرس، وتذكرة الخروج، في صفحة واحدة")));
   const gs=el("div",{class:"chips",style:{margin:"14px 0"}});Object.keys(SCI.data).forEach(g=>gs.append(el("button",{class:"chip","aria-pressed":String(g===TG),onclick:()=>{TG=g;lsSet("qatrana.sci.tg",g);render();}},"الصف "+g)));V.append(gs);
@@ -95,6 +95,7 @@ route(/^#\/t\/m\/([\w-]+)\/(\w+)$/,needT(async(V,id,tab)=>{const l=findLesson(id
   const idx=u.lessons.indexOf(l),pv=u.lessons[idx-1],nx=u.lessons[idx+1];const navR=el("div",{class:"row noprint",style:{justifyContent:"space-between",marginTop:"16px"}},pv?el("a",{class:"btn ghost sm",href:"#/t/m/"+pv.id+"/"+tab},"→ "+pv.title):el("span"),nx?el("a",{class:"btn ghost sm",href:"#/t/m/"+nx.id+"/"+tab},nx.title+" ←"):el("span"));
   if(tab==="book"){const r=bookRange(l);if(!r){V.append(el("div",{class:"card empty"},"كتاب هذا الدرس غير متوفّر بعد."));}else{const box=el("div",{style:{marginTop:"10px"}});V.append(el("p",{class:"muted small noprint"},"صفحات الدرس "+l.pages+" مقسّمة فقرات بينها فراغات للشرح. اختاري ✏️ القلم أو 🖍️ التظليل للكتابة، و⛶ للشاشة الكاملة."),box);await SCIBOOK.mount(box,r.key,r.lo,{lo:r.lo,hi:r.hi});}}
   else if(tab==="exps"){V.append(expsPanel(l));}
+  else if(tab==="class"){const box=el("div",{style:{marginTop:"10px"}});V.append(el("p",{class:"muted small noprint"},"قسّمي الفرق بالدولاب أو تلقائيًّا، وقيّمي مشاركة الطالبات في هذا الدرس. يُحفظ التقييم باسم الدرس في «سجلّ التقييم»."),box);QClass.mount(box,classOpt({only:{s:l.subj,g:l.grade,lid:l.id}}));}
   else{V.append(ptools());let p;if(tab==="plan")p=planPaper(l);else if(tab==="end")p=endPaper(l);else if(tab==="exit")p=exitPaper(l);else{const info=ATOOLS.find(a=>a[0]==="rubric");p=assessPaper("rubric",info,l);p.append(rubricExtra(l));}V.append(p);
     if(tab==="end"||tab==="exit")V.append(el("div",{class:"card noprint",style:{marginTop:"12px"}},el("b",{},"📱 النسخة الإلكترونية للطالبات: "),el("a",{href:"#/l/"+l.id+"/"+tab},"افتحي كما تراها الطالبة"),el("span",{class:"small muted"}," · تجده الطالبة في صفحة الدرس، وتصل النتائج إلى «نتائج الطالبات».")));}
   V.append(navR,credit());}));

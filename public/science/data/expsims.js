@@ -26,8 +26,8 @@ const MAP={
 /* مختبر القياس لدروس القياس */
 const MS={"p9-1-1":[S("measure","ruler","المسطرة وخطأ اختلاف المنظر")],"p9-1-2":[S("measure","vernier","الورنية"),S("measure","micro","الميكروميتر")],"p9-1-3":[S("measure","micro","الميكروميتر وتكرار القياس"),S("measure","vernier","الورنية")]};
 /* التجارب التي لها محاكاة مطابقة سابقة نُبقيها */
-const KEEP={"e10-1-1-1":S("lab3d","crystals","معدّل التبريد وحجم البلّورات (مختبر ثلاثي الأبعاد)")};
-const BXDONE=/^(s8|b9|c9|p9|e9|b10|c10|p10)-/;
+const KEEP={};
+const BXDONE=/^(s8|b9|c9|p9|e9|b10|c10|p10|e10)-/;
 const XE={"s8-2-1":1,"s8-2-2":1,"c9-1-1":1,"c9-1-2":1,"c10-1-1":1,"c10-2-1":1},XP={"s8-2-2":1,"s8-2-1":1,"c9-1-2":1,"c10-2-1":1,"c10-2-2":1};
 const X3={"b9-2-1":["osmosis","الخاصية الأسموزية في البطاطا 🔬"],"c9-1-1":["flame","كشف اللهب 🔬"],"c10-1-1":["flame","كشف اللهب 🔬"],"c9-2-1":["indicator","الكواشف والحموض والقواعد 🔬"],"p9-2-1":["surface","أثر نوع السطح في الحركة 🔬"],"e10-1-1":["crystals","معدّل التبريد وحجم البلّورات 🔬"],"s8-3-2":["density","حساب الكثافة بالإزاحة 🔬"]};
 for(const g in SCI.data)for(const k in SCI.data[g])SCI.data[g][k].units.forEach(u=>u.lessons.forEach(l=>{if(X3[l.id]&&!l.sims.some(s=>s.lab==="lab3d"))l.sims.unshift(S("lab3d",X3[l.id][0],X3[l.id][1]));if(XP[l.id]&&!l.sims.some(s=>s.lab==="chem3d"&&s.id==="ptable"))l.sims.unshift(S("chem3d","ptable","الجدول الدوري التفاعلي"));if(XE[l.id]&&!l.sims.some(s=>s.lab==="electrons"))l.sims.unshift(S("electrons","z","ابني الذرّة: عبّئي الإلكترونات ⚛️"));

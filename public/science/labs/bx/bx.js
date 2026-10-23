@@ -139,14 +139,14 @@ function chart(box,rows,c){box.innerHTML="";if(!rows.length)return;const xs=rows
 /* ================= تشغيل التجربة ================= */
 async function boot(){const key=(location.hash||"").slice(1);const m=key.match(/^((s8|b9|c9|p9|e9|b10|c10|p10|e10)-\d+-\d+)-(\d+)$/);const app=$("#app");
   if(!m){app.innerHTML='<div class="card">لم تُحدَّد التجربة.</div>';return;}
-  const [_,lid,pre,idx]=m;try{await load("../../data/"+FILES[pre]+".js");await load("m-"+pre+".js?v=1");}catch(e){}
+  const [_,lid,pre,idx]=m;try{await load("../../data/"+FILES[pre]+".js");await load("../../data/bookexps.js");await load("m-"+pre+".js?v=1");}catch(e){}
   let L=null;for(const g in SCI.data)for(const k in SCI.data[g])SCI.data[g][k].units.forEach(u=>u.lessons.forEach(l=>{if(l.id===lid){L=l;L._s=SCI.data[g][k];L._u=u;L._g=g;}}));
   const X=L&&L.exps[+idx];if(!X){app.innerHTML='<div class="card">التجربة غير موجودة.</div>';return;}
   run(app,key,L,X,REG[key]);}
 function run(app,key,L,X,M){app.innerHTML="";document.title=X.t+" · تجارب الكتاب";
   const sub=L._s;app.append(h("div",{class:"top noprint"},h("a",{href:"../../#/l/"+L.id+"/exp",class:"btn g"},"→ الدرس"),h("span",{class:"credit"},"🔬 مختبر تجارب الكتاب")));
-  app.append(h("header",{class:"hd"},h("div",{class:"meta"},h("span",{class:"tag"},X.kind||"تجربة")," ",sub.name+" · الصف "+L._g+" · "+L.title+" · "+(X.src||"")),h("h1",{},X.t),h("div",{class:"goal"},"🎯 "+X.goal)));
-  const mats=h("div",{class:"card noprint"},h("h2",{},"🧰 المواد والأدوات"),h("div",{class:"mats"},...String(X.mats||"").replace(/\.$/,"").split(/،|,/).map(s=>s.trim()).filter(Boolean).map(s=>h("span",{},s))),X.safety?h("div",{class:"safe"},"⚠️ "+X.safety):null);
+  app.append(h("header",{class:"hd"},h("div",{class:"meta"},h("span",{class:"tag"},X.kind||"تجربة")," ",sub.name+" · الصف "+L._g+" · "+L.title+" · "+(X.src||"")),h("h1",{},X.t),h("div",{class:"goal"},"🎯 "+((M&&M.goal)||X.goal))));
+  const mats=h("div",{class:"card noprint"},h("h2",{},"🧰 المواد والأدوات"),h("div",{class:"mats"},...String((M&&M.mats)||X.mats||"").replace(/\.$/,"").split(/،|,/).map(s=>s.trim()).filter(Boolean).map(s=>h("span",{},s))),((M&&M.safety)||X.safety)?h("div",{class:"safe"},"⚠️ "+((M&&M.safety)||X.safety)):null);
   const say=h("div",{class:"say","aria-live":"polite"},h("span",{class:"n"},"1"),h("span",{class:"t"},""));
   const svg=document.createElementNS(NS,"svg");svg.setAttribute("viewBox","0 0 800 500");svg.setAttribute("class","sc");svg.setAttribute("role","img");svg.setAttribute("aria-label",X.t);
   const ctl=h("div",{class:"ctl"});const stage=h("div",{class:"card stage"},say,svg,ctl);
@@ -157,7 +157,7 @@ function run(app,key,L,X,M){app.innerHTML="";document.title=X.t+" · تجارب 
   if(M&&M.cols){tb=h("tbody");cbox=h("div",{class:"chart"});dcard=h("div",{class:"card"},h("h2",{},"📊 جدول البيانات"),h("div",{style:{overflowX:"auto"}},h("table",{class:"dt"},h("thead",{},h("tr",{},...M.cols.map(c=>h("th",{},c[1])))),tb)),M.chart?cbox:null);app.append(dcard);}
   const obs=h("ol",{class:"obs"});const ocard=h("div",{class:"card",style:{display:"none"}},h("h2",{},"📝 ملاحظاتي"),obs);app.append(ocard);
   const fin=h("div");app.append(fin);
-  const qs=X.qs||[];const ans=(M&&M.ans)||[];let qa={};try{qa=JSON.parse(localStorage.getItem("bx.qa."+key))||{};}catch(e){}
+  const qs=(M&&M.qs)||X.qs||[];const ans=(M&&M.ans)||[];let qa={};try{qa=JSON.parse(localStorage.getItem("bx.qa."+key))||{};}catch(e){}
   if(qs.length){const qc=h("div",{class:"card"},h("h2",{},"❓ أسئلة التحليل والاستنتاج (من الكتاب)"));qs.forEach((q,i)=>{const ta=h("textarea",{placeholder:"اكتبي إجابتكِ…"});ta.value=qa[i]||"";ta.oninput=()=>{qa[i]=ta.value;try{localStorage.setItem("bx.qa."+key,JSON.stringify(qa));}catch(e){}};
       qc.append(h("div",{class:"q"},h("b",{},(i+1)+") "+q),ta,ans[i]?h("details",{class:"noprint"},h("summary",{},"💡 الإجابة النموذجية"),h("div",{},ans[i])):null));});app.append(qc);}
   app.append(h("div",{class:"credit"},"منصّة العلوم · مدرسة القطرانة الثانوية للبنات · تصميمُ المنصّة وتنفيذُها: نوال بني عطية"));
@@ -186,5 +186,13 @@ function confetti(svg){const g=document.createElementNS(NS,"g");svg.append(g);co
   let n=0;const f=()=>{n++;ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.06;p.a+=6;p.r.setAttribute("transform","translate("+p.x+" "+p.y+") rotate("+p.a+")");});if(n<180)requestAnimationFrame(f);else g.remove();};requestAnimationFrame(f);}
 addEventListener("hashchange",()=>location.reload());
 addEventListener("DOMContentLoaded",boot);
+/* أسئلة متتابعة بأزرار: [[سؤال,[[قيمة,نص]...],الصحيح أو null,تعليق]] */
+function quiz(A,list,done){let k=0;const ask=()=>{A.ui.clear();if(k>=list.length){done&&done();return;}const [q,opts,ok,fb]=list[k];A.say(q);
+  A.ui.choice(q,opts,v=>{if(ok!=null&&v!==ok&&!(Array.isArray(ok)&&ok.includes(v))){A.toast(fb||"فكّري مرّة أخرى…");return;}const t=opts.find(o=>o[0]===v)[1];A.obs(q.replace(/[:؟?]\s*$/,"")+": "+t);k++;ask();});};ask();}
+/* اختيار متعدّد: يجب اختيار كل الصحيح دون الخطأ */
+function pickMany(A,label,items,good,done){A.ui.clear();A.say(label);const sel=new Set();const g=A.ui.group(label);
+  items.forEach(t=>{const b=A.ui.btn(t,()=>{sel.has(t)?sel.delete(t):sel.add(t);b.classList.toggle("on");},"g");g.append(b);});
+  g.append(A.ui.btn("✔ تحقّقي",()=>{const ok=good.every(x=>sel.has(x))&&[...sel].every(x=>good.includes(x));if(!ok){const miss=good.filter(x=>!sel.has(x)).length,bad=[...sel].filter(x=>!good.includes(x)).length;A.toast((miss?"ينقص "+miss+" ":"")+(bad?(miss?"، و":"")+bad+" غير مناسب":"")+" — راجعي اختياركِ");return;}A.obs(label.replace(/[:؟]\s*$/,"")+": "+good.join("، "));A.ui.clear();done&&done();},"gold"));}
+
 function mix(a,b,t){const p=c=>{c=c.replace("#","");if(c.length===3)c=c.split("").map(x=>x+x).join("");return [0,2,4].map(i=>parseInt(c.slice(i,i+2),16));};const A=p(a),B=p(b);t=clamp(t,0,1);return "rgb("+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(",")+")";}
-return {reg:(k,m)=>{REG[k]=m;},sleep,lerp,clamp,mix};})();
+return {reg:(k,m)=>{REG[k]=m;},sleep,lerp,clamp,mix,quiz,pickMany};})();

@@ -1,239 +1,278 @@
-/* تجارب العلوم الحياتية — الصف التاسع (كتاب الأنشطة والتجارب العملية) */
+/* تجارب العلوم الحياتية — الصف التاسع (كتاب الأنشطة والتجارب العملية) — مطابقة لخطوات الكتاب */
 (function(){const {sleep,lerp,clamp,mix}=BX;
 const R=(a,b)=>a+Math.random()*(b-a);
+const {quiz,pickMany}=BX;
 
 /* ---------- 1) أثر درجة الحرارة في نموّ عفن الخبز ---------- */
-BX.reg("b9-1-1-0",{cols:[["day","اليوم"],["f","الثلّاجة"],["c","الخزانة المظلمة"],["w","المكان الدافئ المظلم"]],
- chart:{x:"day",y:["f","c","w"],xl:"الزمن (يوم)",yl:"عدد المربّعات المغطّاة بالعفن",names:{f:"الثلّاجة 4°C",c:"الخزانة 20°C",w:"الدافئ 30°C"}},
- conclude:"كلما ارتفعت درجة الحرارة (ضمن مدى مناسب) زاد نموّ عفن الخبز؛ والتبريد يبطئ نموّ العفن ولذلك نحفظ الطعام في الثلّاجة.",
- ans:["المتغيّر المستقل: درجة الحرارة. المتغيّر التابع: نموّ العفن (عدد المربّعات التي غطّاها العفن).","في المكان الدافئ المظلم؛ لأن الحرارة المعتدلة والرطوبة تناسب نشاط فطر العفن وتكاثره.","لضبط المتغيّرات؛ حتى يكون الاختلاف في النتائج ناتجًا عن درجة الحرارة وحدها (اختبار عادل)."],
- build(S,A){const P=[["f","الثلّاجة",4,"#90caf9"],["c","خزانة مظلمة",20,"#8d6e63"],["w","مكان دافئ مظلم",30,"#ff8a65"]];
-  /* المرحلة 1: التوقّع */
-  A.ui.choice("توقّعكِ: أين ينمو العفن أكثر؟",P.map(p=>[p[0],p[1]]),v=>{A.obs("توقّعي: ينمو العفن أكثر في «"+P.find(p=>p[0]===v)[1]+"».");A.ui.clear();A.step(0);phase1();});
+BX.reg("b9-1-1-0",{cols:[["env","البيئة"],["t","درجة الحرارة (°C)"],["n","عدد المربّعات"]],chart:{x:"env",y:"n",type:"bar",xl:"البيئة",yl:"عدد المربّعات المغطّاة بالفطر"},
+ conclude:"كلما ارتفعت درجة الحرارة (ضمن المدى المناسب) زاد نموّ فطر عفن الخبز؛ ويُبطئ التبريد نموّه، ولذلك نحفظ الخبز في الثلّاجة.",
+ ans:["الأنسب: رسم بياني بالأعمدة؛ لأن المتغيّر المستقل (البيئة/درجة الحرارة) فئات منفصلة، والمحور الرأسي عدد المربّعات المغطّاة بالفطر.","المكان الدافئ المظلم (نحو 30°C) كان الأنسب لنموّ عفن الخبز.","كلما ارتفعت درجة الحرارة زاد نموّ العفن؛ فقد كان النموّ قليلًا جدًّا في الثلّاجة، ومتوسّطًا في الخزانة، وكبيرًا في المكان الدافئ. (قارني بتوقّعكِ)"],
+ build(S,A){const P=[["f","الثلّاجة",4,"#1565c0"],["c","الخزانة المظلمة",20,"#5d4037"],["w","المكان الدافئ المظلم",30,"#d84315"]];
+  A.ui.choice("توقّعكِ: أين ينمو فطر العفن أكثر؟",P.map(p=>[p[0],p[1]]),v=>{A.obs("توقّعي: ينمو العفن أكثر في «"+P.find(p=>p[0]===v)[1]+"».");A.ui.clear();A.step(0);phase1();});
   const bags=[],breads=[];
   for(let i=0;i<3;i++){const x=170+i*230;const b=S.bag(x,385);bags.push(b);S.text(x,412,"كيس "+(i+1),{"font-size":14,fill:"#4e342e"});
     const br=S.g();S.rect(-38,-30,76,56,{rx:14,fill:S.lg(["#e9b872","#d4954a"],1),stroke:"#a8692c","stroke-width":3},br);S.rect(-30,-22,60,40,{rx:10,fill:"#f6deb0"},br);for(let k=0;k<6;k++)S.circ(R(-24,24),R(-14,12),1.8,{fill:"#d7b27a"},br);
     S.tr(br,x,456);br.drops=0;br.lab=S.label(0,-44,"💧 0/5",br,"#1d7f8c");br.lab.style.display="none";breads.push(br);}
-  S.text(400,30,"بيئات مختلفة الحرارة لنموّ عفن الخبز",{"font-size":18,fill:"#5C1622"});
-  function phase1(){A.say("ارسمي شبكة مربّعات (1 cm) على كل كيس: اضغطي على الأكياس الثلاثة.");let n=0;
+  S.text(400,30,"قطع خبز متساوية الحجم وأكياس شفّافة قابلة للغلق",{"font-size":17,fill:"#5C1622"});
+  function phase1(){A.say("ارسمي على كل كيس شبكة مربّعات طول ضلع كل منها 1cm: اضغطي على الأكياس الثلاثة.");let n=0;
     bags.forEach(b=>{S.glow(b.g,true);S.tap(b.g,async()=>{if(b.grid)return;b.grid=1;S.glow(b.g,false);const gg=S.g(b.g);for(let k=0;k<=8;k++){const l=S.line(-44+k*11,-100,-44+k*11,-100,{stroke:"#1565c0","stroke-width":1,opacity:.7},gg);S.tween(300,t=>l.setAttribute("y2",lerp(-100,-12,t)));}for(let k=0;k<=8;k++){const l=S.line(-44,-100+k*11,-44,-100+k*11,{stroke:"#1565c0","stroke-width":1,opacity:.7},gg);S.tween(300,t=>l.setAttribute("x2",lerp(-44,44,t)));}
       if(++n===3){A.step(1);phase2();}});});}
-  function phase2(){A.say("اسحبي القطّارة إلى كل قطعة خبز 5 مرّات (5 قطرات)، فتدخل القطعة كيسها ويُغلق.");breads.forEach(b=>b.lab.style.display="");
+  function phase2(){A.say("بلّلي كل قطعة خبز بـ 5 قطرات: اسحبي القطّارة إلى القطعة 5 مرّات، فتدخل كيسها ويُفرَّغ من الهواء ويُغلق.");breads.forEach(b=>b.lab.style.display="");
     const dr=S.dropper(720,330,"#64b5f6",{label:"ماء"});let closed=0;
-    S.drag(dr,{back:true,oy:10,targets:()=>breads.filter(b=>b.drops<5).map(b=>({g:b,pad:10,fn:async()=>{b.drops++;b.lab.querySelector("text").textContent="💧 "+b.drops+"/5";const d=S.circ(b._x,b._y-60,5,{fill:"#42a5f5"},S.fx);await S.tween(250,t=>d.setAttribute("cy",lerp(b._y-60,b._y-10,t)));d.remove();S.circ(R(-20,20),R(-12,10),4,{fill:"#c9a06a",opacity:.7},b);
-      if(b.drops===5){b.lab.style.display="none";const i=breads.indexOf(b);await S.moveTo(b,bags[i].g._x,330,500);S.tr(b,b._x,b._y,0,.8);bags[i].g.append(b);S.tr(b,0,-55,0,.8);const z=S.rect(-52,-118,104,8,{fill:"#1565c0",rx:3},bags[i].g);
+    S.drag(dr,{back:true,oy:10,targets:()=>breads.filter(b=>b.drops<5).map(b=>({g:b,pad:10,fn:async()=>{b.drops++;b.lab.set("💧 "+b.drops+"/5");const d=S.circ(b._x,b._y-60,5,{fill:"#42a5f5"},S.fx);await S.tween(250,t=>d.setAttribute("cy",lerp(b._y-60,b._y-10,t)));d.remove();S.circ(R(-20,20),R(-12,10),4,{fill:"#c9a06a",opacity:.7},b);
+      if(b.drops===5){b.lab.style.display="none";const i=breads.indexOf(b);await S.moveTo(b,bags[i].g._x,330,500);bags[i].g.append(b);S.tr(b,0,-55,0,.8);
+        const bp=bags[i].g.querySelector("path");await S.tween(500,t=>bp.setAttribute("d","M"+lerp(-50,-42,t)+" -110 L"+lerp(50,42,t)+" -110 L"+lerp(56,46,t)+" 0 Q0 10 "+lerp(-56,-46,t)+" 0Z"));S.rect(-46,-118,92,8,{fill:"#1565c0",rx:3},bags[i].g);
         if(++closed===3){S.off(dr,true);A.step(2);await sleep(500);phase3();}}}}))});}
-  function phase3(){S.clear();S.room({table:false,wall1:"#eef2f5",wall2:"#dfe7ec"});A.say("اسحبي كل كيس إلى مكانه: الثلّاجة، والخزانة المظلمة، والمكان الدافئ المظلم.");
-    const spots=P.map((p,i)=>{const x=140+i*260,g=S.g();S.tr(g,x,250);
-      if(p[0]==="f"){S.rect(-95,-190,190,330,{rx:16,fill:S.lg(["#f5f9fc","#cfdde6"]),stroke:"#90a4ae","stroke-width":3},g);S.rect(-80,-170,160,290,{rx:8,fill:"#e3f2fd"},g);S.line(-80,-60,80,-60,{stroke:"#b0bec5","stroke-width":4},g);S.emo(60,-140,"❄️",26,g);}
+  let spots;function phase3(){S.clear();S.room({table:false,wall1:"#eef2f5",wall2:"#dfe7ec"});A.say("اضبطي المتغيّرات: اسحبي كل كيس إلى مكانه — خلف الدرج الأخير من الثلّاجة، والخزانة المظلمة، والمكان الدافئ المظلم.");
+    spots=P.map((p,i)=>{const x=140+i*260,g=S.g();S.tr(g,x,250);
+      if(p[0]==="f"){S.rect(-95,-190,190,330,{rx:16,fill:S.lg(["#f5f9fc","#cfdde6"]),stroke:"#90a4ae","stroke-width":3},g);S.rect(-80,-170,160,290,{rx:8,fill:"#e3f2fd"},g);S.line(-80,-60,80,-60,{stroke:"#b0bec5","stroke-width":4},g);S.rect(-80,40,160,80,{fill:"#cfd8dc",opacity:.6},g);S.text(0,135,"الدرج الأخير",{"font-size":11,fill:"#546e7a"},g);S.emo(60,-140,"❄️",26,g);}
       else if(p[0]==="c"){S.rect(-95,-190,190,330,{rx:8,fill:S.lg(["#6d4c41","#4e342e"],1)},g);S.rect(-80,-170,160,290,{rx:4,fill:"#2b1d18"},g);S.circ(70,-20,6,{fill:"#d7a86e"},g);}
       else{S.rect(-95,-190,190,330,{rx:8,fill:S.lg(["#5d4037","#3e2723"],1)},g);S.rect(-80,-170,160,290,{rx:4,fill:S.rg([["#ff7043",0,.55],["#3e2723",1]],.5,.95,.8)},g);S.path("M-60 110 q 10 -30 20 0 q 10 -30 20 0 q 10 -30 20 0 q 10 -30 20 0 q 10 -30 20 0 q 10 -30 20 0",{stroke:"#ff7043","stroke-width":4,fill:"none"},g);}
-      S.label(0,-205,p[1],g,p[3]==="#90caf9"?"#1565c0":p[0]==="c"?"#5d4037":"#d84315");g.sp0={x,y:330};return g;});
-    const bg=[];let placed=0;
-    for(let i=0;i<3;i++){const b=S.g();S.tr(b,300+i*110,470,0,.55);S.path("M-50 -110 L50 -110 L56 0 Q0 10 -56 0Z",{fill:"#e3f2fd",stroke:"#90a4ae","stroke-width":3,opacity:.95},b);S.rect(-52,-118,104,8,{fill:"#1565c0"},b);S.rect(-38,-90,76,56,{rx:14,fill:"#e0a85f"},b);S.text(0,-40,"كيس "+(i+1),{"font-size":22,fill:"#3e2723"},b);bg.push(b);
-      S.drag(b,{oy:-30,targets:()=>spots.filter(s=>!s.bag).map(s=>({g:s,pad:0,fn:async()=>{s.bag=b;S.off(b,true);b._off=true;b.style.opacity=1;await S.moveTo(b,s.sp0.x,s.sp0.y,300);
-        if(++placed===3){A.step(3);phase4(spots);}}}))});}}
-  function phase4(spots){A.say("اسحبي مقياس الحرارة إلى كل مكان لقياس درجة حرارته.");const th=S.g();S.tr(th,400,470);const T=S.thermo(0,-20,120,{min:-10,max:40,val:22,par:th});th.setAttribute("transform","translate(400 470) scale(.7)");th._s=.7;let m=0;
-    S.drag(th,{back:true,oy:-60,targets:()=>spots.filter(s=>!s.temp).map(s=>({g:s,pad:0,fn:async()=>{const p=P[spots.indexOf(s)];await S.tween(700,t=>T.set(lerp(22,p[2],t)));s.temp=p[2];S.label(0,160,"🌡️ "+p[2]+" °C",s,"#c62828");A.obs("درجة حرارة "+p[1]+": "+p[2]+" °C");T.set(22);
-      if(++m===3){th.style.display="none";days(spots);}}}))});}
-  function days(spots){A.say("تفحّصي الأكياس كل 3 أيام مدّة 9 أيام: اضغطي «⏩ مرور 3 أيام» وعُدّي المربّعات التي غطّاها العفن.");
-    const MOLD={f:[0,0,1,2],c:[0,4,11,19],w:[0,9,23,37]};const zoom=spots.map((s,i)=>{const g=S.g();S.tr(g,s._x,175);S.rect(-66,-50,132,104,{rx:8,fill:"#fff",stroke:"#90a4ae","stroke-width":2},g);S.rect(-48,-36,96,72,{fill:"#e0a85f"},g);
+      S.label(0,-205,p[1],g,p[3]);g.sp0={x,y:330};return g;});
+    let placed=0;
+    for(let i=0;i<3;i++){const b=S.g();S.tr(b,300+i*110,470,0,.55);S.path("M-46 -110 L46 -110 L50 0 Q0 10 -50 0Z",{fill:"#e3f2fd",stroke:"#90a4ae","stroke-width":3,opacity:.95},b);S.rect(-48,-118,96,8,{fill:"#1565c0"},b);S.rect(-38,-90,76,56,{rx:14,fill:"#e0a85f"},b);S.text(0,-40,"كيس "+(i+1),{"font-size":22,fill:"#3e2723"},b);
+      S.drag(b,{oy:-30,targets:()=>spots.filter(s=>!s.bag).map(s=>({g:s,pad:0,fn:async()=>{s.bag=b;b._off=true;await S.moveTo(b,s.sp0.x,s.sp0.y,300);if(++placed===3){A.step(3);phase4();}return "stay";}}))});}}
+  function phase4(){A.say("دوّني درجة الحرارة في كل مكان: اسحبي مقياس الحرارة إلى كل مكان.");const th=S.g();S.tr(th,400,470);const T=S.thermo(0,-20,120,{min:-10,max:40,val:22,par:th});th.setAttribute("transform","translate(400 470) scale(.7)");th._s=.7;let m=0;
+    S.drag(th,{back:true,oy:-60,targets:()=>spots.filter(s=>s.temp==null).map(s=>({g:s,pad:0,fn:async()=>{const p=P[spots.indexOf(s)];await S.tween(700,t=>T.set(lerp(22,p[2],t)));s.temp=p[2];S.label(0,160,"🌡️ "+p[2]+" °C",s,"#c62828");A.obs("درجة الحرارة في "+p[1]+": "+p[2]+" °C");T.set(22);
+      if(++m===3){th.style.display="none";A.step(4);days();}}}))});}
+  function days(){A.say("تفحّصي الأكياس كل 3 أيام مدّة 9 أيام: اضغطي «⏩ مرور 3 أيام» ودوّني ملاحظاتك.");
+    const MOLD={f:[0,0,1,2],c:[0,4,11,19],w:[0,9,23,37]};const OBS=[null,"الأيام الثلاثة الأولى: بقع صغيرة خضراء رمادية على خبز المكان الدافئ، وبقع قليلة في الخزانة، ولا تغيّر يُذكر في الثلّاجة.","الأيام الثلاثة الثانية: انتشر الفطر في المكان الدافئ والخزانة، وظهرت بقعة صغيرة في الثلّاجة.","الأيام الثلاثة الثالثة: غطّى الفطر معظم خبز المكان الدافئ، ونحو نصف خبز الخزانة، وبقي خبز الثلّاجة شبه سليم."];
+    const zoom=spots.map((s,i)=>{const g=S.g();S.tr(g,s._x,175);S.rect(-66,-50,132,104,{rx:8,fill:"#fff",stroke:"#90a4ae","stroke-width":2},g);S.rect(-48,-36,96,72,{fill:"#e0a85f"},g);
       for(let r=0;r<=6;r++)S.line(-48,-36+r*12,48,-36+r*12,{stroke:"#1565c0","stroke-width":.7},g);for(let c=0;c<=8;c++)S.line(-48+c*12,-36,-48+c*12,36,{stroke:"#1565c0","stroke-width":.7},g);
-      const mg=S.g(g);const cells=[];for(let r=0;r<6;r++)for(let c=0;c<8;c++)cells.push([c,r]);cells.sort((a,b)=>Math.hypot(a[0]-3.5+i,a[1]-2.5)-Math.hypot(b[0]-3.5+i,b[1]-2.5));const cnt=S.label(0,72,"0 مربّع",g,"#2f8f5b");return {g,mg,cells,cnt,n:0};});
-    A.rec({day:0,f:0,c:0,w:0});let d=0;const b=A.ui.btn("⏩ مرور 3 أيام",async()=>{d++;b.disabled=true;
-      for(let i=0;i<3;i++){const z=zoom[i],k=P[i][0],to=MOLD[k][d];for(let j=z.n;j<to;j++){const [c,r]=z.cells[j];const cx=-42+c*12,cy=-30+r*12;const cl=["#558b2f","#33691e","#9e9d24","#607d8b","#263238"][j%5];for(let q=0;q<4;q++)S.circ(cx+R(-4,4),cy+R(-4,4),R(2,4.5),{fill:cl,opacity:.85},z.mg);await sleep(25);}z.n=to;z.cnt.querySelector("text").textContent=to+" مربّع";}
-      A.rec({day:d*3,f:MOLD.f[d],c:MOLD.c[d],w:MOLD.w[d]});if(d<3)b.disabled=false;else{b.textContent="✔ انتهت 9 أيام";A.obs("بعد 9 أيام: الثلّاجة "+MOLD.f[3]+" مربّع، الخزانة "+MOLD.c[3]+" مربّعًا، المكان الدافئ "+MOLD.w[3]+" مربّعًا.");A.step(4);}},"gold");A.ui.add(b);}
+      const mg=S.g(g);const cells=[];for(let r=0;r<6;r++)for(let c=0;c<8;c++)cells.push([c,r]);cells.sort((a,b)=>Math.hypot(a[0]-3.5+i,a[1]-2.5)-Math.hypot(b[0]-3.5+i,b[1]-2.5));return {g,mg,cells,n:0,s};});
+    let d=0;const b=A.ui.btn("⏩ مرور 3 أيام",async()=>{d++;b.disabled=true;
+      for(let i=0;i<3;i++){const z=zoom[i],k=P[i][0],to=MOLD[k][d];for(let j=z.n;j<to;j++){const [c,r]=z.cells[j];const cx=-42+c*12,cy=-30+r*12;const cl=["#558b2f","#33691e","#9e9d24","#607d8b","#263238"][j%5];for(let q=0;q<4;q++)S.circ(cx+R(-4,4),cy+R(-4,4),R(2,4.5),{fill:cl,opacity:.85},z.mg);await sleep(20);}z.n=to;}
+      A.obs(OBS[d]);if(d<3)b.disabled=false;else{b.textContent="✔ انتهت 9 أيام";A.step(5);count();}},"gold");A.ui.add(b);
+    function count(){A.ui.clear();A.say("ارتدي القفّازين، ثم عُدّي في كل كيس المربّعات التي يملأ الفطر نصفها على الأقل: اضغطي على كل كيس.");
+      A.ui.add(A.ui.btn("🧤 ارتديتُ القفّازين",gb=>{gb.disabled=true;gb.textContent="🧤 القفّازان عليكِ";let c=0;
+        zoom.forEach((z,i)=>{S.glow(z.g,true);S.tap(z.g,async()=>{if(z.cnt)return;z.cnt=1;S.glow(z.g,false);const lab=S.label(0,72,"0",z.g,"#2f8f5b");for(let j=1;j<=z.n;j++){lab.set(j+" مربّعًا");await sleep(40);}if(!z.n)lab.set("0 مربّع");
+          if(++c===3){A.step(6);P.forEach((p,k)=>A.rec({env:p[1],t:p[2],n:zoom[k].n}));A.step(7);}});});},"gold"));}}
  }});
 
-/* ---------- 2) أثر الضوء في اتجاه نموّ النباتات ---------- */
-BX.reg("b9-1-2-0",{cols:[["day","اليوم"],["a","النبات داخل الصندوق"],["b","النبات في المكان المضاء"]],
- conclude:"تنمو ساق النبات باتجاه مصدر الضوء (انتحاء ضوئي موجب)؛ فتحصل الأوراق على ضوء أكثر للبناء الضوئي.",
- ans:["نمت نحو الفتحة الجانبية، أي باتجاه مصدر الضوء.","اتجاه الضوء الساقط على النبات.","تحصل أوراق النبات على أكبر كمية من الضوء اللازم لعملية البناء الضوئي."],
- build(S,A){S.emo(745,60,"☀️",70);const sun=S.g();for(let i=0;i<5;i++)S.line(700,90+i*14,560,150+i*30,{stroke:"#ffd54f","stroke-width":5,opacity:.5},sun);
+/* ---------- 2) أثر الضوء في اتجاه نموّ النباتات (تصميم تجربة) ---------- */
+BX.reg("b9-1-2-0",{cols:[["day","اليوم"],["a","العيّنة التجريبية (داخل الصندوق)"],["b","العيّنة الضابطة (ضوء من الجهات جميعها)"]],
+ conclude:"تنمو ساق النبات باتجاه مصدر الضوء (انتحاء ضوئي)؛ فتتعرّض أوراقه لأكبر قدر من الضوء اللازم لعملية البناء الضوئي.",
+ ans:["تنمو ساق النبات وتنحني باتجاه مصدر الضوء، أما النبات المضاء من الجهات جميعها فينمو مستقيمًا إلى الأعلى.","—"],
+ build(S,A){S.emo(745,60,"☀️",70);for(let i=0;i<5;i++)S.line(700,90+i*14,560,150+i*30,{stroke:"#ffd54f","stroke-width":5,opacity:.4});
   const box=S.g();S.tr(box,230,392);S.path("M-130 0 L-130 -230 L130 -230 L130 0Z",{fill:S.lg(["#d7a86e","#c08a4f"],1),stroke:"#8d5a2b","stroke-width":4},box);S.rect(-115,-215,230,212,{fill:"#3a2a1d"},box);
   S.rect(110,-150,30,60,{fill:"#fff59d"},box);S.path("M140 -150 L-100 -170 L-100 -40 L140 -90Z",{fill:"#fff59d",opacity:.18},box);S.label(0,-245,"صندوق مغلق له فتحة جانبية",box,"#8d5a2b");
-  const lit=S.g();S.tr(lit,560,392);S.ell(0,-5,110,16,{fill:"#fff59d",opacity:.5},lit);S.label(0,-260,"مكان مضاء من الجهات جميعها",lit,"#f9a825");[[-120,-220],[120,-220],[0,-250]].forEach(([x,y])=>S.emo(x,y,"💡",30,lit));
-  const pots=[0,1].map(i=>{const p=S.pot(390+i*90-45,470,{label:"أصيص "+(i?"ب":"أ")});p.h=34;p.draw();p.g.setAttribute("transform","translate("+(345+i*90)+" 470) scale(.75)");p.g._s=.75;p.g._x=345+i*90;p.g._y=470;return p;});
-  let put=0;A.say("اسحبي أصيصًا إلى داخل الصندوق، والآخر إلى المكان المضاء.");
-  pots.forEach(p=>S.drag(p.g,{oy:-40,targets:()=>[box,lit].filter(t=>!t.pot).map(t=>({g:t,pad:0,fn:async()=>{t.pot=p;p.where=t===box?"box":"lit";p.g._off=true;await S.moveTo(p.g,t._x,385,400);if(++put===2){A.step(0);water();}}}))}));
-  function water(){A.say("اسقي النباتين بالكمية نفسها من الماء: اسحبي المخبار (50 mL) إلى كل أصيص.");const cyl=S.cylinder(680,470,90,{w:30,col:"#64b5f6",lvl:.5,label:"50 mL"});let n=0;
-    S.drag(cyl.g,{back:true,oy:-45,targets:()=>pots.filter(p=>!p.w).map(p=>({g:p.g,pad:20,fn:async()=>{p.w=1;await S.pour(cyl.g,p.g._x+40,p.g._y-140,-70,()=>S.stream(p.g._x+5,p.g._y-120,p.g._y-60,"#64b5f6",400));cyl.set(.5);A.toast("سُقي الأصيص بـ 50 mL");if(++n===2){S.off(cyl.g,true);A.step(1);grow();}}}))});}
-  function grow(){A.say("حرّكي شريط الأيام ولاحظي اتجاه نموّ الساقين، ثم سجّلي ملاحظتكِ.");const inB=pots.find(p=>p.where==="box"),inL=pots.find(p=>p.where==="lit");let last=-1;
+  const lit=S.g();S.tr(lit,560,392);S.ell(0,-5,110,16,{fill:"#fff59d",opacity:.5},lit);S.label(0,-275,"مكان مضاء من الجهات جميعها",lit,"#f9a825");[[-130,-200],[130,-200],[0,-235]].forEach(([x,y])=>S.emo(x,y,"💡",30,lit));
+  const pots=[0,1].map(i=>{const p=S.pot(0,0,{label:"أصيص "+(i?"ب":"أ")});p.h=34;p.draw();S.tr(p.g,345+i*90,470,0,.75);return p;});
+  quiz(A,[["صوغي فرضية عن أثر الضوء في اتجاه نموّ النبات:",[["h1","إذا تعرّض النبات للضوء من جهة واحدة، فإن ساقه تنمو باتجاه الضوء"],["h2","ينمو النبات في الاتجاه نفسه مهما كان اتجاه الضوء"]],null],
+    ["تنبّؤ قابل للاختبار:",[["p1","سينحني نبات الصندوق نحو الفتحة الجانبية"],["p2","سيذبل نبات الصندوق فورًا"]],"p1","التنبّؤ يجب أن يُختبر بالملاحظة ويتّفق مع الفرضية"]],()=>{A.step(0);place();});
+  function place(){A.say("حدّدي العيّنتين: اسحبي أصيصًا إلى الصندوق (العيّنة التجريبية)، والآخر إلى المكان المضاء (العيّنة الضابطة).");let put=0;
+    pots.forEach(p=>S.drag(p.g,{oy:-40,targets:()=>[box,lit].filter(t=>!t.pot).map(t=>({g:t,pad:0,fn:async()=>{t.pot=p;p.where=t===box?"box":"lit";p.g._off=true;await S.moveTo(p.g,t._x,385,400);S.label(0,-150,t===box?"تجريبية":"ضابطة",p.g,t===box?"#7A1F2E":"#2f8f5b");if(++put===2){A.step(1);vars();}return "stay";}}))}));}
+  function vars(){quiz(A,[["المتغيّر المستقل:",[["a","اتجاه الضوء الساقط على النبات"],["b","طول النبات"],["c","كمية الماء"]],"a"],["المتغيّر التابع:",[["a","نوع التربة"],["b","اتجاه نموّ الساق"],["c","حجم الصندوق"]],"b"],
+    ["العوامل التي يتعيّن تثبيتها:",[["a","نوع النبات وعمره، كمية الماء، نوع التربة، درجة الحرارة"],["b","اتجاه الضوء فقط"]],"a"]],()=>{A.step(2);water();});}
+  function water(){A.say("اضبطي المتغيّرات: اسقي الأصيصين بالكمية نفسها — اسحبي المخبار (50 mL) إلى كل أصيص.");const cyl=S.cylinder(700,470,90,{w:30,col:"#64b5f6",lvl:.5,label:"50 mL"});let n=0;
+    S.drag(cyl.g,{back:true,oy:-45,targets:()=>pots.filter(p=>!p.w).map(p=>({g:p.g,pad:20,fn:async()=>{p.w=1;await S.pour(cyl.g,p.g._x+40,p.g._y-140,-70,()=>S.stream(p.g._x+5,p.g._y-120,p.g._y-60,"#64b5f6",400));cyl.set(.5);if(++n===2){S.off(cyl.g,true);A.step(3);mats();}}}))});}
+  function mats(){pickMany(A,"حدّدي الأدوات والمواد اللازمة (اختاري كل ما يلزم):",["أصيصان فيهما بادرات متماثلة","صندوق كرتوني له فتحة جانبية","ماء","مخبار مدرّج","مسطرة","مجهر ضوئي","حمض الهيدروكلوريك"],["أصيصان فيهما بادرات متماثلة","صندوق كرتوني له فتحة جانبية","ماء","مخبار مدرّج","مسطرة"],()=>{A.step(4);
+    pickMany(A,"إرشادات السلامة العامّة:",["غسل اليدين بعد التعامل مع التربة","الحذر عند استعمال الأدوات","تذوّق التربة","ترك الماء منسكبًا على الأرض"],["غسل اليدين بعد التعامل مع التربة","الحذر عند استعمال الأدوات"],()=>{A.step(5);grow();});});}
+  function grow(){A.say("نفّذي التجربة: حرّكي شريط الأيام مدّة أسبوع ولاحظي اتجاه نموّ الساقين.");const inB=pots.find(p=>p.where==="box"),inL=pots.find(p=>p.where==="lit");let last=-1;
     A.rec({day:0,a:"قائمة",b:"قائمة"});
     A.ui.slider("📅 اليوم",0,7,1,0,d=>{inB.h=34+d*12;inB.bend=d*.14;inB.draw();inL.h=34+d*13;inL.bend=0;inL.draw();
       if(d>last&&(d===3||d===7)){last=d;A.rec({day:d,a:d===7?"منحنية بشدّة نحو الفتحة ↗":"تبدأ بالانحناء نحو الفتحة",b:"قائمة نحو الأعلى ↑"});}
-      if(d===7&&!A.is(2)){A.obs("انحنت ساق النبات داخل الصندوق نحو الفتحة (مصدر الضوء)، ونمت ساق النبات في المكان المضاء مستقيمة.");A.step(2);}});}
+      if(d===7&&!A.is(6)){A.obs("انحنت ساق النبات داخل الصندوق نحو الفتحة (مصدر الضوء)، ونمت ساق النبات المضاء من الجهات جميعها مستقيمة.");A.step(6);
+        quiz(A,[["أداة جمع البيانات المناسبة:",[["a","جدول لاتجاه النموّ كل يوم، ورسم للنبات"],["b","لا حاجة إلى تسجيل"]],"a"],["الاستنتاج العلمي الصحيح:",[["a","تنمو ساق النبات باتجاه مصدر الضوء"],["b","الضوء لا يؤثّر في اتجاه النموّ"]],"a"]],()=>{A.step(7);A.step(8);});}});}
  }});
 
-/* ---------- 3) أثر المطر الحمضي في نموّ الرشاد ---------- */
-BX.reg("b9-1-2-1",{cols:[["dish","الطبق"],["liq","سائل الري"],["ph","pH"],["len","متوسّط طول البادرات (cm)"]],chart:{x:"liq",y:"len",type:"bar",xl:"سائل الري",yl:"متوسّط الطول (cm)"},
- conclude:"كلما زادت حموضة ماء الري قلّ نموّ بادرات الرشاد؛ فالمطر الحمضي يضرّ بالنباتات.",
- ans:["كلما زادت الحموضة قلّ طول البادرات وضعف نموّها، وقد لا تنبت البذور.","الطبق الأول (الماء المقطّر)؛ لأنه لا يحتوي على المتغيّر المستقل (الحموضة) ونقارن به النتائج.","تقليل حرق الوقود الأحفوري، استخدام مصادر الطاقة المتجدّدة، تركيب مرشّحات في مداخن المصانع، استعمال وسائل النقل العام."],
- build(S,A){const D=[["ماء مقطّر","#bbdefb",7,4.3],["خلّ مخفّف","#fff59d",4,2.2],["خلّ مركّز","#ffcc80",3,.7]];
-  const dishes=D.map((d,i)=>{const o=S.dish(180+i*220,330,80,{label:"الطبق "+(i+1)});o.cot=0;o.seeds=0;o.d=d;o.g.dish=o;return o;});
-  const cot=S.g();S.tr(cot,90,455);for(let i=0;i<6;i++)S.circ(R(-20,20),R(-12,8),14,{fill:"#fafafa",stroke:"#ddd"},cot);S.text(0,32,"قطن",{"font-size":13},cot);
-  const pack=S.g();S.tr(pack,190,455);S.rect(-26,-34,52,60,{rx:6,fill:S.lg(["#66bb6a","#2e7d32"],1)},pack);S.emo(0,-10,"🌱",26,pack);S.text(0,16,"بذور",{"font-size":12,fill:"#fff"},pack);
-  A.say("اسحبي القطن إلى الأطباق الثلاثة، ثم اسحبي كيس البذور إلى كل طبق (10 بذور).");
-  S.drag(cot,{back:true,targets:()=>dishes.filter(o=>!o.cot).map(o=>({g:o.g,pad:0,fn:async()=>{o.cot=1;for(let k=0;k<14;k++)S.ell(R(-60,60),R(-14,10),R(12,18),R(6,9),{fill:"#fff",stroke:"#e0e0e0"},o.inner);chk();}}))});
-  S.drag(pack,{back:true,targets:()=>dishes.filter(o=>o.cot&&!o.seeds).map(o=>({g:o.g,pad:0,fn:async()=>{o.seeds=10;o.sd=[];for(let k=0;k<10;k++){const x=-50+k*11,y=R(-10,6);o.sd.push([x,y]);S.ell(x,y,3,2,{fill:"#6d4c41"},o.inner);await sleep(50);}chk();}}))});
-  function chk(){if(dishes.every(o=>o.cot&&o.seeds)){S.off(cot,true);S.off(pack,true);A.step(0);irrigate();}}
-  function irrigate(){A.say("اسحبي كل زجاجة إلى طبقها: الماء المقطّر للطبق 1، والخلّ المخفّف للطبق 2، والخلّ المركّز للطبق 3.");let n=0;
-    D.forEach((d,i)=>{const b=S.bottle(330+i*120,470,d[1],d[0]+" pH="+d[2]);S.tr(b,330+i*120,470,0,.8);S.drag(b,{back:true,oy:-40,targets:()=>[{g:dishes[i].g,pad:10,fn:async()=>{await S.pour(b,dishes[i].g._x+40,250,-80,()=>S.stream(dishes[i].g._x+10,262,322,d[1],400));S.ell(0,0,74,24,{fill:d[1],opacity:.35},dishes[i].inner);S.off(b,true);if(++n===3){A.step(1);days();}}}],miss:()=>A.toast("انتبهي: لكل طبق سائله المحدّد")});});}
-  function days(){A.say("اضغطي «⏩ مرور 5 أيام»، ثم اسحبي المسطرة إلى كل طبق لقياس أطوال البادرات.");const b=A.ui.btn("⏩ مرور 5 أيام",async()=>{b.disabled=true;
-      await S.tween(1600,t=>{dishes.forEach(o=>{if(!o.pl){o.pl=S.g(o.inner);}o.pl.innerHTML="";o.sd.forEach(([x,y],k)=>{const L=o.d[3]*R(.85,1.15)*14*t*(k%3?1:.9);if(L<1)return;S.path("M"+x+" "+y+" q 3 "+(-L/2)+" 0 "+(-L),{stroke:"#7cb342","stroke-width":2,fill:"none"},o.pl);if(L>10){S.ell(x-4,y-L,4,2,{fill:"#8bc34a"},o.pl);S.ell(x+4,y-L,4,2,{fill:"#8bc34a"},o.pl);}});});});
-      b.textContent="✔ مرّت 5 أيام";measure();},"gold");A.ui.add(b);}
-  function measure(){const r=S.ruler(560,470,200,{n:5,sub:5});let n=0;S.drag(r,{back:true,ox:100,oy:-12,targets:()=>dishes.filter(o=>!o.m).map(o=>({g:o.g,pad:0,fn:async()=>{o.m=1;const i=dishes.indexOf(o),d=o.d;S.label(0,-50,"≈ "+d[3]+" cm",o.g,"#2f8f5b");A.rec({dish:i+1,liq:d[0],ph:d[2],len:d[3]});if(++n===3){S.off(r,true);A.obs("كلما زادت حموضة سائل الري قلّ طول بادرات الرشاد.");A.step(2);}}}))});}
+/* ---------- 3) تأثير المطر الحمضي في نموّ الرشاد ---------- */
+const AC=[["أ","ماء نقي","#e3f2fd",[3.1,6.4]],["ب","عصير ليمون صافٍ","#fff176",[0,0]],["ج","ليمون:ماء 1:1","#fff59d",[.4,.9]],["د","ليمون:ماء 1:10","#fffde7",[1.6,3.5]]];
+BX.reg("b9-1-2-1",{cols:[["d","الطبق"],["s","المحلول"],["w1","متوسّط الطول بعد أسبوع (cm)"],["w2","متوسّط الطول بعد أسبوعين (cm)"]],chart:{x:"s",y:["w1","w2"],type:"bar",xl:"نوع المحلول (بحسب درجة حموضته)",yl:"طول النبات (cm)",names:{w1:"بعد أسبوع",w2:"بعد أسبوعين"}},
+ conclude:"كلما زادت حموضة محلول الري قلّ نموّ نبات الرشاد، وقد لا تنبت البذور في المحلول شديد الحموضة؛ فالمطر الحمضي يضرّ بالنباتات.",
+ ans:["(تقرير) نمت بادرات الماء النقي أكثر من غيرها، وقلّ النموّ كلما زاد تركيز عصير الليمون، ولم تنبت البذور في عصير الليمون الصافي.","تذكر المصادر أن المطر الحمضي يُتلف أوراق النباتات ويُذيب العناصر الغذائية من التربة ويُضعف نموّ الجذور، وهذا يتّفق مع نتائجنا."],
+ build(S,A){const dishes=AC.map((d,i)=>{const o=S.dish(120+i*185,300,72,{label:"الطبق "+(i+1)});o.d=d;o.i=i;o.paper=0;o.seeds=0;o.drops=0;return o;});
+  const fp=S.g();S.tr(fp,80,455);for(let i=0;i<3;i++)S.circ(i*4,-i*4,26,{fill:"#fafafa",stroke:"#bdbdbd"},fp);S.text(4,40,"ورق ترشيح",{"font-size":12},fp);
+  A.say("ضعي ورقة ترشيح في كل طبق بتري: اسحبي ورق الترشيح إلى الأطباق الأربعة.");let n=0;
+  S.drag(fp,{back:true,targets:()=>dishes.filter(o=>!o.paper).map(o=>({g:o.g,pad:0,fn:async()=>{o.paper=1;S.ell(0,0,64,20,{fill:"#fff",stroke:"#e0e0e0"},o.inner);if(++n===4){S.off(fp,true);A.step(0);sol();}}}))});
+  let bks;function sol(){A.say("حضّري المحاليل الأربعة: اضغطي على كل كأس لتحضير محلولها.");const lem=S.bottle(0,0,"#fff176","عصير ليمون");S.tr(lem,40,470,0,.7);const wat=S.bottle(0,0,"#bbdefb","ماء");S.tr(wat,100,470,0,.7);
+    bks=AC.map((d,i)=>{const b=S.beaker(230+i*120,470,70,70,{lvl:0,label:"("+d[0]+") "+d[1]});b.d=d;return b;});let c=0;
+    bks.forEach(b=>S.tap(b.g,async()=>{if(b.ok)return;b.ok=1;await b.to(.7,600,b.d[2]);if(++c===4){A.step(1);seeds();}}));}
+  function seeds(){A.say("ضعي (10) بذور رشاد فوق ورقة الترشيح في كل طبق: اسحبي كيس البذور إلى كل طبق.");const pk=S.g();S.tr(pk,730,455);S.rect(-26,-34,52,60,{rx:6,fill:S.lg(["#66bb6a","#2e7d32"],1)},pk);S.emo(0,-10,"🌱",26,pk);S.text(0,16,"بذور رشاد",{"font-size":10,fill:"#fff"},pk);let k=0;
+    S.drag(pk,{back:true,targets:()=>dishes.filter(o=>!o.seeds).map(o=>({g:o.g,pad:0,fn:async()=>{o.seeds=10;o.sd=[];for(let j=0;j<10;j++){const x=-50+j*11,y=R(-8,6);o.sd.push([x,y]);S.ell(x,y,3,2,{fill:"#6d4c41"},o.inner);await sleep(40);}if(++k===4){S.off(pk,true);A.step(2);drops();}}}))});}
+  function drops(){A.say("أضيفي (10) قطرات من كل محلول إلى طبقه: (أ) للطبق 1، (ب) للطبق 2، (ج) للطبق 3، (د) للطبق 4 — اسحبي كل كأس إلى طبقها.");let k=0;
+    bks.forEach((b,i)=>S.drag(b.g,{back:true,oy:-35,targets:()=>[{g:dishes[i].g,pad:6,fn:async()=>{await S.pour(b.g,dishes[i].g._x+40,220,-70,()=>S.stream(dishes[i].g._x+8,232,292,b.d[2],350));S.ell(0,0,60,18,{fill:b.d[2],opacity:.35},dishes[i].inner);dishes[i].drops=1;if(++k===4){A.step(3);win();}}}],miss:()=>A.toast("لكل طبق محلوله المحدّد")}));}
+  function win(){A.say("ضعي الأطباق على حافة نافذة دافئة: اضغطي على زرّ النافذة.");A.ui.add(A.ui.btn("🪟 ضعي الأطباق على النافذة",async b=>{b.disabled=true;const w=S.g(S.bg);S.rect(150,40,500,150,{fill:S.lg(["#bbdefb","#e3f2fd"],1),stroke:"#8d6e63","stroke-width":8},w);S.line(400,40,400,190,{stroke:"#8d6e63","stroke-width":6},w);S.emo(560,90,"☀️",40,w);S.rect(140,188,520,14,{fill:"#a1887f"},w);
+    await Promise.all(dishes.map((o,i)=>S.moveTo(o.g,215+i*125,190,600)));dishes.forEach(o=>S.tr(o.g,o.g._x,o.g._y,0,.75));bks.forEach(b=>b.g.style.display="none");A.ui.clear();A.step(4);grow();},"gold"));}
+  let day=0;const meas=[0,0];function grow(){A.say("أضيفي (10) قطرات من المحلول المخصّص لكل طبق يوميًّا: اضغطي «يوم جديد» حتى يمرّ أسبوع، ثم قيسي الأطوال.");
+    const lab=S.label(400,240,"اليوم 0",null,"#2f8f5b");
+    dishes.forEach(o=>o.len0=o.sd.map(()=>o.i===1?0:R(.75,1.25)));
+    const draw=()=>dishes.forEach(o=>{if(!o.pl)o.pl=S.g(o.inner);o.pl.innerHTML="";const L=day<=7?o.d[3][0]*day/7:o.d[3][0]+(o.d[3][1]-o.d[3][0])*(day-7)/7;o.sd.forEach(([x,y],k)=>{const l=L*o.len0[k]*10;if(l<1)return;S.path("M"+x+" "+y+" q 3 "+(-l/2)+" 0 "+(-l),{stroke:"#7cb342","stroke-width":2,fill:"none"},o.pl);if(l>10){S.ell(x-4,y-l,4,2,{fill:"#8bc34a"},o.pl);S.ell(x+4,y-l,4,2,{fill:"#8bc34a"},o.pl);}});});
+    const b=A.ui.btn("☀️ يوم جديد: أضيفي 10 قطرات لكل طبق",async()=>{if(day===7&&!meas[0]){A.toast("قيسي أطوال النباتات بعد أسبوع أولًا");return;}if(day>=14)return;day++;dishes.forEach(o=>{const d=S.circ(o.g._x,o.g._y-40,4,{fill:"#42a5f5"},S.fx);S.tween(300,t=>d.setAttribute("cy",o.g._y-40+30*t)).then(()=>d.remove());});lab.set("اليوم "+day);draw();
+      if(day===1)A.step(5);if(day===7||day===14){A.say("اسحبي المسطرة إلى كل طبق لقياس طول كل نبتة ("+(day===7?"بعد أسبوع":"بعد أسبوعين")+").");ruler();}},"gold");A.ui.add(b);}
+  let rl=null;function ruler(){if(!rl){rl=S.ruler(560,470,200,{n:10,sub:5});}const wk=day===7?0:1;let c=0;
+    if(!rl.dr){rl.dr=1;S.drag(rl,{back:true,ox:100,oy:-12,targets:()=>{const w=day===7?0:day===14?1:-1;return w<0?[]:dishes.filter(o=>!(o.m&&o.m[w]!=null)).map(o=>({g:o.g,pad:0,fn:async()=>{o.m=o.m||[];const L=o.d[3][w];const vals=o.len0.map(f=>+(L*f).toFixed(1));const avg=+(vals.reduce((a,b)=>a+b,0)/10).toFixed(1);o.m[w]=avg;
+      A.obs("الطبق "+(o.i+1)+" ("+o.d[1]+") "+(w?"بعد أسبوعين":"بعد أسبوع")+": "+vals.join("، ")+" cm");if(dishes.every(x=>x.m&&x.m[w]!=null)){meas[w]=1;if(w===0){A.step(6);A.say("تابعي: اضغطي «يوم جديد» حتى ينتهي الأسبوع الثاني.");}else{A.step(7);avgBtn();}}}}));}});}}
+  function avgBtn(){A.ui.clear();A.say("احسبي متوسّط طول نبتة الرشاد في كل محلول، ثم مثّليها بالأعمدة.");A.ui.add(A.ui.btn("🧮 احسبي المتوسّطات وارسمي الأعمدة",b=>{b.disabled=true;dishes.forEach(o=>A.rec({d:o.i+1,s:"("+o.d[0]+") "+o.d[1],w1:o.m[0],w2:o.m[1]}));A.obs("لم تنبت بذور عصير الليمون الصافي، وكان النموّ الأكبر في الماء النقي.");A.step(8);A.step(9);},"gold"));}
  }});
 
-/* ---------- 4) ملاحظة الخصائص الأساسية للكائنات الحية (الخميرة والحصى) ---------- */
-BX.reg("b9-1-3-0",{cols:[["c","خاصية الحياة"],["y","الخميرة"],["p","الحصى"]],
- conclude:"الخميرة كائن حي: تتغذّى على السكّر وتتنفّس فتُطلق غاز CO₂ الذي ينفخ البالون، أما الحصى فلا تظهر عليه خصائص الحياة.",
- ans:["انتفخ بالون قارورة الخميرة؛ لأن الخميرة تتنفّس وتحلّل السكّر فينتج غاز ثاني أكسيد الكربون.","التغذية (استهلاك السكّر)، التنفّس وإنتاج الغاز، والنموّ والتكاثر (التبرعم).","لا يتغذّى ولا يتنفّس ولا يُنتج غازًا ولا ينمو أو يتكاثر؛ فلم يتغيّر البالون."],
- build(S,A){const bot=[0,1].map(i=>{const f=S.flask(250+i*300,392,1,{label:i?"قارورة الحصى":"قارورة الخميرة",col:"#e3f2fd"});f.add=new Set();f.bal=null;return f;});
-  const items=[["yeast","خميرة","#d7ccc8",0],["sugar","سكّر","#fafafa",-1],["water","ماء دافئ","#90caf9",-1],["peb","حصى","#9e9e9e",1],["bal","بالون","#e53935",-1],["bal2","بالون","#43a047",-1]];
-  const need=[["yeast","sugar","water","bal"],["peb","sugar","water","bal2"]];
-  A.say("القارورة الأولى: اسحبي الخميرة ثم السكّر ثم الماء الدافئ، وثبّتي البالون على فوهتها.");
-  items.forEach(([k,t,c,who],i)=>{const g=S.g();S.tr(g,60+i*58+(i>3?20:0),470);
-    if(k.startsWith("bal")){S.path("M0 -10 C -18 -10 -20 -50 0 -52 C 20 -50 18 -10 0 -10Z",{fill:c},g);S.rect(-4,-10,8,8,{fill:c},g);}
-    else if(k==="water"){S.beaker(0,0,40,48,{col:c,lvl:.8,par:g});}
-    else if(k==="peb"){for(let q=0;q<5;q++)S.ell(R(-14,14),-R(6,20),R(6,9),R(5,7),{fill:["#9e9e9e","#757575","#bdbdbd"][q%3]},g);}
-    else{S.rect(-20,-40,40,40,{rx:6,fill:c,stroke:"#8d6e63","stroke-width":2},g);for(let q=0;q<8;q++)S.circ(R(-14,14),R(-34,-6),2,{fill:k==="yeast"?"#8d6e63":"#ddd"},g);}
-    S.text(0,22,t,{"font-size":12},g);g.k=k;
-    S.drag(g,{oy:-20,targets:()=>bot.map((f,j)=>({g:f.g,pad:10,fn:async()=>{const n=need[j];const nx=n.find(x=>!f.add.has(x));if(k!==nx){A.toast(nx?"أضيفي أولًا: "+items.find(x=>x[0]===nx)[1]:"اكتملت هذه القارورة");return false;}
-      f.add.add(k);if(k==="bal"||k==="bal2"){S.off(g,true);g._off=true;g.style.opacity=1;const lt=g.querySelector("text");if(lt)lt.remove();await S.moveTo(g,f.g._x,f.g._y-110,350);f.bal=g;}
-      else{await S.moveTo(g,f.g._x+30,f.g._y-170,400);await S.moveTo(g,f.g._x+30,f.g._y-170,250,-60);if(k==="water")f.to(.45,500,"#bbdefb");else if(k==="sugar")for(let q=0;q<10;q++)S.circ(R(-30,30),-R(4,30),2,{fill:"#fff"},f.inner);else if(k==="yeast")for(let q=0;q<14;q++)S.circ(R(-34,34),-R(2,12),2.5,{fill:"#a1887f"},f.inner);else for(let q=0;q<6;q++)S.ell(R(-34,34),-R(4,10),8,6,{fill:"#9e9e9e"},f.inner);await S.moveTo(g,g._x,g._y,200,0);if(k==="yeast"||k==="peb")g.style.display="none";}
-      const fin=f.add.size===4;if(!k.startsWith("bal")&&k!=="yeast"&&k!=="peb"){/* يعود إلى مكانه لاستعماله مرّة أخرى */}
-      if(fin){if(j===0){A.step(0);A.say("القارورة الثانية: اسحبي الحصى ثم السكّر ثم الماء الدافئ، وثبّتي البالون الآخر.");}else{A.step(1);wait();}}if(k==="sugar"||k==="water")return false;}}))});});
-  /* السكّر والماء يُستعملان مرّتين */
-  function wait(){A.say("حرّكي شريط الزمن حتى 30 دقيقة ولاحظي البالونين.");const yb=bot[0];let shown=0;const bub=S.bubbles(yb.g._x,yb.g._y-10,60,12,{h:40,col:"#fff"});bub.style.display="none";
-    A.ui.slider("⏱️ الزمن (دقيقة)",0,30,1,0,m=>{bub.style.display=m>2?"":"none";const s=1+m/30*1.6;const b=yb.bal;b.setAttribute("transform","translate("+b._x+" "+b._y+") scale("+s+")");
-      if(m===30&&!shown){shown=1;A.obs("بعد 30 دقيقة: انتفخ بالون قارورة الخميرة وظهرت فقاعات، ولم يتغيّر بالون قارورة الحصى.");classify();}});}
-  function classify(){A.say("صنّفي: أيّ خصائص الحياة ظهرت؟ اختاري لكل خاصية.");const C=[["إنتاج غاز (التنفّس)","y"],["استهلاك الغذاء (السكّر)","y"],["النموّ والتكاثر (التبرعم)","y"],["لا خصائص حياة","p"]];let k=0;
-    const ask=()=>{A.ui.clear();if(k>=C.length){A.step(2);return;}const [c,ok]=C[k];A.ui.choice(c+":",[["y","الخميرة"],["p","الحصى"]],v=>{if(v!==ok){A.toast("فكّري مرّة أخرى…");return;}A.rec({c,y:ok==="y"?"✔":"✖",p:ok==="p"?"✔":"✖"});k++;ask();});};ask();}
+/* ---------- 4) ملاحظة الخصائص الأساسية للكائنات الحية (مقاطع فيديو) ---------- */
+const CLIPS=[["عملية الإخصاب لحيوان نجم البحر","fert",["التكاثر"],"استمرار النوع وإنتاج أفراد جدد","ينقرض النوع"],
+ ["انقسام خلايا نجم البحر","div",["النموّ والتطوّر"],"زيادة عدد الخلايا ونموّ الجنين وتعويض الخلايا التالفة","يتوقّف النموّ ولا تُعوَّض الخلايا"],
+ ["تركيب الخلية ووظائفها: خلايا أوراق نبات الإيلوديا","cell",["التركيب الخلوي (التنظيم)"],"الخلية وحدة البناء والوظيفة في الكائن الحي","لا يمكن أن يعيش"],
+ ["حركة الأميبا","amoeba",["الحركة"],"الحصول على الغذاء والابتعاد عن الخطر","لا يحصل على غذائه فيموت"],
+ ["نموّ سمك الدانيو المخطّط","fish",["النموّ والتطوّر"],"الوصول إلى مرحلة البلوغ والتكاثر","يبقى صغيرًا ولا يتكاثر"]];
+BX.reg("b9-1-3-0",{cols:[["v","عنوان مقطع الفيديو"],["c","خصيصة (خصائص) الحياة"],["i","أهميتها"],["p","توقّعي عند فقدانها"]],room:{table:false,wall1:"#263238",wall2:"#37474f"},
+ conclude:"تشترك الكائنات الحية في خصائص الحياة: التركيب الخلوي، والتكاثر، والنموّ والتطوّر، والحركة، والاستجابة، والحاجة إلى الطاقة.",
+ ans:["التكاثر يضمن استمرار النوع ونقل الصفات الوراثية للأجيال اللاحقة.","لأنها لا تتكوّن من خلايا، ولا تتكاثر وحدها خارج الخلايا الحية، ولا تقوم بعمليات حيوية مستقلّة.","لا يستطيع الحصول على غذائه أو الهرب من الخطر، فقد يموت أو يُفترس."],
+ build(S,A){const scr=S.g();S.rect(100,30,600,340,{rx:16,fill:"#111",stroke:"#90a4ae","stroke-width":6},scr);const vw=S.g(scr);vw.setAttribute("clip-path",S.clip(S.mk("rect",{x:106,y:36,width:588,height:328,rx:12})));
+  const ttl=S.text(400,398,"اضغطي على مقطع لمشاهدته",{"font-size":17,fill:"#fff"});let anim=0;
+  const btns=CLIPS.map((c,i)=>{const g=S.g();S.tr(g,90+i*155,455);S.rect(-70,-28,140,56,{rx:12,fill:"#455a64",stroke:"#B8902A","stroke-width":2},g);S.text(0,-4,"▶ مقطع "+(i+1),{"font-size":15,fill:"#fff"},g);S.text(0,16,c[0].split(":")[0].slice(0,20),{"font-size":9,fill:"#ffecb3"},g);return g;});
+  A.say("شاهدي مقاطع الفيديو: اضغطي على أحد المقاطع.");let done=0,busy=false;
+  btns.forEach((b,i)=>S.tap(b,()=>{if(b.done||busy)return;busy=true;play(i);}));
+  function play(i){A.step(0);const c=CLIPS[i];ttl.textContent="🎬 "+c[0];vw.innerHTML="";S.rect(106,36,588,328,{fill:i===2?"#1b5e20":i===4?"#0d47a1":"#0b3d5c"},vw);const my=++anim;const G=S.g(vw);const t0=performance.now();
+    const loop=now=>{if(my!==anim)return;const t=(now-t0)/1000;G.innerHTML="";draw(c[1],t,G);requestAnimationFrame(loop);};requestAnimationFrame(loop);
+    setTimeout(()=>{if(my!==anim)return;ask(i);},2500);}
+  function draw(k,t,G){const cx=400,cy=200;
+    if(k==="fert"){S.circ(cx,cy,70,{fill:"#ffe0b2",stroke:"#ffb74d","stroke-width":3},G);S.circ(cx,cy,14,{fill:"#ff8a65"},G);const p=Math.min(1,t/3);for(let j=0;j<10;j++){const a=j*.63,r=lerp(250,74,j===0?p:Math.min(.9,p*1.1)),x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;S.circ(x,y,5,{fill:"#e3f2fd"},G);S.path("M"+x+" "+y+" q "+Math.cos(a)*14+" "+(Math.sin(a)*14+Math.sin(t*10+j)*6)+" "+Math.cos(a)*26+" "+Math.sin(a)*26,{stroke:"#e3f2fd","stroke-width":2,fill:"none"},G);}if(p>=1)S.circ(cx,cy,80,{fill:"none",stroke:"#fff","stroke-width":3,opacity:.8},G);}
+    else if(k==="div"){const n=Math.min(3,Math.floor(t/1.2));const m=1<<n;const s=70/Math.sqrt(m);for(let j=0;j<m;j++){const a=j/m*Math.PI*2,r=m>1?s*1.1:0;S.circ(cx+Math.cos(a)*r,cy+Math.sin(a)*r,s,{fill:"#ffcc80",stroke:"#ef6c00","stroke-width":2},G);S.circ(cx+Math.cos(a)*r,cy+Math.sin(a)*r,s*.25,{fill:"#8d6e63"},G);}S.text(cx,330,m+" خلية",{"font-size":16,fill:"#fff"},G);}
+    else if(k==="cell"){for(let r=0;r<4;r++)for(let c=0;c<6;c++){const x=150+c*85,y=60+r*75;S.rect(x,y,80,70,{fill:"#aed581",stroke:"#33691e","stroke-width":4},G);for(let q=0;q<9;q++){const a=t*1.2+q*.7,px=x+40+Math.cos(a)*30,py=y+35+Math.sin(a)*25;S.ell(px,py,6,4,{fill:"#2e7d32"},G);}}}
+    else if(k==="amoeba"){const x=200+((t*40)%400),y=200;let d="";for(let a=0;a<=Math.PI*2+.01;a+=.3){const r=55+14*Math.sin(a*3+t*3)+(Math.cos(a)>.7?20*Math.sin(t*2)+20:0);d+=(d?"L":"M")+(x+Math.cos(a)*r)+" "+(y+Math.sin(a)*r);}S.path(d+"Z",{fill:"#b3e5fc",stroke:"#0288d1","stroke-width":3,opacity:.85},G);S.circ(x-5,y,12,{fill:"#0277bd"},G);S.circ(x+90,y+20,6,{fill:"#a5d6a7"},G);}
+    else{const st=Math.min(3,Math.floor(t/1));const L=[20,45,80,130][st];S.ell(cx,cy,L,L*(st?0.3:1),{fill:st?"#e0e0e0":"#fff8e1",stroke:"#90a4ae","stroke-width":3},G);if(st){S.path("M"+(cx+L)+" "+cy+" l 30 -18 l 0 36Z",{fill:"#e0e0e0"},G);for(let q=0;q<4;q++)S.line(cx-L*.6+q*L*.4,cy-L*.25,cx-L*.6+q*L*.4,cy+L*.25,{stroke:"#1565c0","stroke-width":4},G);S.circ(cx-L*.7,cy-4,4,{fill:"#000"},G);}S.text(cx,340,["بيضة","جنين","يرقة","سمكة بالغة"][st],{"font-size":16,fill:"#fff"},G);}}
+  function ask(i){const c=CLIPS[i];const all=["التكاثر","النموّ والتطوّر","التركيب الخلوي (التنظيم)","الحركة","الحاجة إلى الطاقة (التغذية)"];
+    pickMany(A,"«"+c[0]+"»: اختاري الخصيصة التي لاحظتِها:",all,c[2],()=>{quiz(A,[["أهمية هذه الخصيصة:",[["a",c[3]],["b","لا أهمية لها للكائن الحي"]],"a"],["توقّعي ما سيحدث للكائن الحي عند فقدانها:",[["a",c[4]],["b","لا يتأثّر"]],"a"]],()=>{
+      A.rec({v:c[0],c:c[2].join("، "),i:c[3],p:c[4]});btns[i].done=1;btns[i].querySelector("rect").setAttribute("fill","#2f8f5b");anim++;busy=false;if(++done===5){A.step(1);}else A.say("أحسنتِ! اختاري مقطعًا آخر ("+done+"/5).");});});}
  }});
 
 /* ---------- 5) أشكال الحياة في نظام بيئي (المربّع 1m×1m) ---------- */
-BX.reg("b9-1-3-1",{cols:[["t","الكائن الحي"],["n","العدد"],["k","التصنيف"]],chart:{x:"t",y:"n",type:"bar",xl:"الكائن",yl:"العدد"},
- room:{table:false,wall1:"#c8e6c9",wall2:"#a5d6a7"},
- conclude:"يضمّ النظام البيئي منتجات ومستهلكات ومحلّلات، وكلما زاد التنوّع الحيوي زاد توازن النظام البيئي واستقراره.",
- ans:["الأعشاب (المنتجات) هي الأكثر عددًا عادةً، ثم النمل.","كلما زاد التنوّع زادت السلاسل والشبكات الغذائية، فإذا اختفى نوع وُجد بديل له، فيبقى النظام البيئي متوازنًا."],
- build(S,A){S.rect(0,0,800,500,{fill:S.lg(["#a5d6a7","#66bb6a"],1)},S.bg);for(let i=0;i<120;i++)S.path("M"+R(0,800)+" "+R(40,500)+" l 3 -12 l 3 12",{stroke:"#2e7d32","stroke-width":2,fill:"none",opacity:.6},S.bg);
-  const T=[["عشب","🌿","منتج",14],["زهرة برّية","🌼","منتج",4],["نملة","🐜","مستهلك",7],["حلزون","🐌","مستهلك",2],["خنفساء","🐞","مستهلك",2],["دودة أرض","🪱","محلّل",2],["فطر (عيش الغراب)","🍄","محلّل",3]];
-  const orgs=[];T.forEach(([t,e,k,n],ti)=>{for(let i=0;i<n+3;i++){const g=S.emo(R(30,770),R(60,470),e,ti===0?30:24);g.t=ti;orgs.push(g);}});
-  const fr=S.g();S.tr(fr,120,130);S.rect(-110,-110,220,220,{fill:"none",stroke:"#fff",["stroke-width"]:10},fr);S.rect(-110,-110,220,220,{fill:"rgba(255,255,255,.08)",stroke:"#B8902A","stroke-width":5,"stroke-dasharray":"12 6"},fr);S.label(0,-125,"إطار 1m × 1m",fr,"#B8902A");
-  const ar=S.rect(0,0,0,0,{});A.say("اسحبي الإطار المربّع وضعيه في أيّ مكان من الحديقة.");let set=false;
-  S.drag(fr,{free:true,start:()=>{},targets:()=>[{box:[0,0,800,500],pad:0,fn:()=>{if(set)return;set=true;fr._off=true;fr.parentNode.insertBefore(fr,fr.parentNode.firstChild);A.step(0);count();}}]});
-  function count(){const x0=fr._x-110,y0=fr._y-110;const inside=orgs.filter(o=>{const b=o.getBBox();const cx=b.x+b.width/2,cy=b.y+b.height/2;return cx>x0&&cx<x0+220&&cy>y0&&cy<y0+220;});
-    orgs.filter(o=>!inside.includes(o)).forEach(o=>o.setAttribute("opacity",.35));
-    if(inside.length<4){T.forEach((t,ti)=>{for(let i=0;i<(ti<3?3:1);i++){const g=S.emo(R(x0+20,x0+200),R(y0+20,y0+200),t[1],24);g.t=ti;inside.push(g);}});}
-    const nC=Math.ceil(Math.sqrt(inside.length));inside.forEach((o,k)=>{const b=o.getBBox();const tx=x0+20+(k%nC+.5)*180/nC+R(-6,6),ty=y0+20+(Math.floor(k/nC)+.5)*180/nC+R(-6,6);o.setAttribute("x",+o.getAttribute("x")+(tx-(b.x+b.width/2)));o.setAttribute("y",+o.getAttribute("y")+(ty-(b.y+b.height/2)));});
-    const cnt=T.map(()=>0);A.say("عُدّي الكائنات داخل الإطار: اضغطي على كل كائن مرّة واحدة.");let left=inside.length;
-    inside.forEach(o=>{S.tap(o,()=>{if(o._c)return;o._c=1;cnt[o.t]++;const b=o.getBBox();S.circ(b.x+b.width/2,b.y+b.height/2,16,{fill:"none",stroke:"#fff","stroke-width":3},S.fx);if(--left===0){A.step(1);sort(cnt);}else A.say("باقي "+left+" كائنًا داخل الإطار…");});});}
-  function sort(cnt){const found=T.map((t,i)=>[t,cnt[i]]).filter(x=>x[1]>0);let k=0;const ask=()=>{A.ui.clear();if(k>=found.length){A.obs("قارني نتائجكِ بزميلاتكِ: تختلف الأعداد من مربّع لآخر، لكن الأعشاب (المنتجات) هي الأكثر غالبًا.");A.step(2);return;}
-      const [[t,e,kind],n]=found[k];A.say("صنّفي: "+e+" "+t+" ("+n+")");A.ui.choice(e+" "+t+":",[["منتج","🌱 منتج"],["مستهلك","🐾 مستهلك"],["محلّل","🍂 محلّل"]],v=>{if(v!==kind){A.toast("ليس صحيحًا، فكّري: من أين يحصل على غذائه؟");return;}A.rec({t:e+" "+t,n,k:kind});k++;ask();});};ask();}
+BX.reg("b9-1-3-1",{cols:[["q","المجتمع الحيوي"],["t","النوع"],["n","العدد"],["tot","عدد الأفراد الكلي"]],room:{table:false,wall1:"#c8e6c9",wall2:"#a5d6a7"},
+ conclude:"تختلف أنواع الكائنات الحية وأعدادها من مكان إلى آخر حتى في المساحة الصغيرة، ويساعد حصرها على تقييم سلامة النظام البيئي وتنوّعه الحيوي.",
+ ans:["تختلف النتائج بين المجموعات لاختلاف المواقع والظروف (الضوء، الرطوبة، نوع التربة)، لكن الأعشاب تكون غالبًا الأكثر عددًا."],
+ build(S,A){const T=[["أ","عشب","🌿"],["ب","زهرة برّية","🌼"],["ج","نبات البابونج","🌾"]];
+  const sticks=[];for(let i=0;i<4;i++){const g=S.g();S.tr(g,100+i*45,445,90,.9);S.rect(-60,-5,120,10,{rx:3,fill:"#8d6e63"},g);sticks.push(g);}S.text(170,490,"4 قطع خشب (100cm)",{"font-size":12});
+  const fr=S.g();S.tr(fr,450,220);const sides=[[0,-100,0],[100,0,90],[0,100,0],[-100,0,90]];const slots=sides.map(([x,y,r])=>S.rect(r?x-6:x-100,r?y-100:y-6,r?12:200,r?200:12,{fill:"#fff",opacity:.35,stroke:"#B8902A","stroke-width":2,"stroke-dasharray":"6 4"},fr));
+  S.label(0,-130,"المربّع 100cm × 100cm",fr,"#5d4037");let placed=0;
+  A.say("اصنعي المربّع مع مجموعتك: اسحبي قطع الخشب الأربع إلى أضلاع المربّع.");
+  sticks.forEach(s=>S.drag(s,{targets:()=>slots.filter(x=>!x.f).map(sl=>({g:sl,pad:14,fn:async()=>{sl.f=1;const [x,y,r]=sides[slots.indexOf(sl)];s._off=true;await S.moveTo(s,450+x,220+y,250,r);S.tr(s,450+x,220+y,r,1.67);if(++placed===4)tape();return "stay";}}))}));
+  function tape(){A.say("ثبّتي نقاط التقاء الزوايا بالشريط اللاصق: اضغطي على الزوايا الأربع.");let t=0;[[-100,-100],[100,-100],[100,100],[-100,100]].forEach(([x,y])=>{const c=S.circ(450+x,220+y,14,{fill:"#fff59d",stroke:"#B8902A","stroke-width":3,class:"glow"});S.tap(c,()=>{if(c.ok)return;c.ok=1;c.removeAttribute("class");c.setAttribute("fill","#bdbdbd");if(++t===4){A.say("قسّمي المربّع إلى أربعة أقسام متساوية بالخيط.");A.ui.add(A.ui.btn("🧵 قسّمي المربّع بالخيط",b=>{b.disabled=true;S.line(450,120,450,320,{stroke:"#fff","stroke-width":3});S.line(350,220,550,220,{stroke:"#fff","stroke-width":3});A.ui.clear();A.step(0);area();},"gold"));}});});}
+  function area(){quiz(A,[["حدّدي مساحة العمل وهدفكِ:",[["s","حديقة المدرسة — البحث عن أنواع النباتات الصغيرة"],["n","البيئة القريبة — البحث عن أنواع النباتات الصغيرة"]],null]],()=>{A.step(1);field();});}
+  function field(){S.clear();S.rect(0,0,800,500,{fill:S.lg(["#a5d6a7","#66bb6a"],1)},S.bg);for(let i=0;i<120;i++)S.path("M"+R(0,800)+" "+R(40,500)+" l 3 -12 l 3 12",{stroke:"#2e7d32","stroke-width":2,fill:"none",opacity:.5},S.bg);
+    const pl=[];const W=[[7,2,1],[4,3,1],[5,1,3],[3,4,2]];
+    for(let k=0;k<70;k++){const ti=k%3;const e=S.emo(R(30,560),R(60,470),T[ti][2],ti?22:26);pl.push(e);}
+    const q=S.g();S.tr(q,680,400,0,.5);S.rect(-100,-100,200,200,{fill:"rgba(255,255,255,.08)",stroke:"#8d6e63","stroke-width":10},q);S.line(0,-100,0,100,{stroke:"#fff","stroke-width":3},q);S.line(-100,0,100,0,{stroke:"#fff","stroke-width":3},q);
+    A.say("ضعي المربّع على قطعة من الأرض توجد فيها نباتات مختلفة: اسحبيه إلى الأرض.");let set=false;
+    S.drag(q,{free:true,targets:()=>[{box:[0,0,800,500],pad:0,fn:async()=>{if(set)return;set=true;q._off=true;S.tr(q,clamp(q._x,130,560),clamp(q._y,130,380),0,1);q.parentNode.insertBefore(q,q.parentNode.firstChild);A.step(2);count(q,pl,W);return "stay";}}]});}
+  function count(q,pl,W){const x0=q._x-100,y0=q._y-100;pl.forEach(o=>{const b=o.getBBox(),cx=b.x+b.width/2,cy=b.y+b.height/2;if(cx>x0-10&&cx<x0+210&&cy>y0-10&&cy<y0+210)o.remove();else o.setAttribute("opacity",.3);});
+    const QS=[[1,0],[0,0],[1,1],[0,1]];const items=[];QS.forEach(([qx,qy],qi)=>{const n=W[qi];let k=0;T.forEach((t,ti)=>{for(let j=0;j<n[ti];j++){const cx=x0+qx*100+14+(k%4)*24+R(-2,2),cy=y0+qy*100+18+Math.floor(k/4)*24+R(-2,2);const e=S.emo(cx,cy,t[2],17);e.t=ti;e.q=qi;items.push(e);k++;}});S.label(x0+qx*100+50,y0+qy*100+92,String(qi+1),null,"#5d4037");});
+    const cnt=QS.map(()=>[0,0,0]);let left=items.length;A.say("عُدّي أفراد كل نوع داخل كل من المربّعات الأربعة: اضغطي على كل نبتة مرّة واحدة.");
+    items.forEach(o=>S.tap(o,()=>{if(o._c)return;o._c=1;cnt[o.q][o.t]++;o.setAttribute("opacity",.4);if(--left===0){QS.forEach((_,qi)=>{const tot=cnt[qi].reduce((a,b)=>a+b,0);T.forEach((t,ti)=>A.rec({q:qi+1,t:t[0]+": "+t[1],n:cnt[qi][ti],tot:ti===0?tot:""}));});A.step(3);others(q);}else A.say("باقي "+left+" نبتة…");}));}
+  function others(q){A.say("دوّني أعداد كائنات أخرى، مثل دودة الأرض والنمل: اضغطي عليها.");const O=[["🪱","دودة الأرض",2],["🐜","النمل",5]];let left=7;const c={};
+    O.forEach(([e,t,n])=>{for(let j=0;j<n;j++){const o=S.emo(q._x-85+R(5,170),q._y-85+R(5,170),e,20);S.tap(o,()=>{if(o._c)return;o._c=1;c[t]=(c[t]||0)+1;o.setAttribute("opacity",.4);if(--left===0){O.forEach(([e,t])=>A.rec({q:"المربّع كاملًا",t:e+" "+t,n:c[t],tot:""}));A.obs("مجموعة أخرى سجّلت مثلًا: عشب 25، زهرة برّية 21، بابونج 9 — تختلف الأعداد باختلاف الموقع.");A.step(4);}});}});}
  }});
 
 /* ---------- 6) خلايا نباتية وحيوانية بالمجهر الضوئي المركّب ---------- */
-BX.reg("b9-2-1-0",{cols:[["s","الشريحة"],["obj","العدسة الشيئية"],["tot","التكبير الكلي"],["see","ما شاهدته"]],
- conclude:"تحتوي الخلية النباتية (البصل) على جدار خلوي وشكل منتظم، والخلية الحيوانية (الخدّ) غير منتظمة وليس لها جدار خلوي، وكلتاهما فيها نواة وغشاء بلازمي وسيتوبلازم.",
- ans:["الجدار الخلوي (والشكل المنتظم المستطيل)، وفي الخلايا الخضراء تظهر البلاستيدات الخضراء أيضًا.","لإظهار تراكيب الخلية الشفّافة كالنواة والجدار؛ فالصبغة تلوّنها فتصبح واضحة.","التكبير الكلي = تكبير العدسة العينية × تكبير العدسة الشيئية؛ مثلًا 10 × 40 = 400 مرّة."],
- build(S,A){const sl=[0,1].map(i=>{const g=S.g();S.tr(g,300+i*190,440);S.rect(-60,-14,120,28,{rx:3,fill:"#e1f5fe",stroke:"#81d4fa","stroke-width":2,opacity:.9},g);S.text(0,40,i?"شريحة الخدّ":"شريحة البصل",{"font-size":13},g);g.st=0;g.i=i;g.sp=S.g(g);return g;});
-  const on=S.g();S.tr(on,90,440);S.ell(0,-20,46,40,{fill:S.rg(["#f3e5f5","#ce93d8"])},on);S.path("M0 -60 q 6 -30 18 -40",{stroke:"#7cb342","stroke-width":4,fill:"none"},on);S.text(0,40,"بصلة",{"font-size":13},on);
-  const io=S.dropper(700,430,"#8d6e00",{label:"يود",bulb:"#6d4c41"}),mb=S.dropper(750,430,"#1565c0",{label:"أزرق الميثيلين",bulb:"#0d47a1"});
-  const cv=S.g();S.tr(cv,610,445);for(let k=0;k<2;k++)S.rect(-24+k*6,-24+k*6,40,40,{fill:"#e1f5fe",stroke:"#81d4fa","stroke-width":2,opacity:.8},cv);S.text(0,40,"أغطية",{"font-size":12},cv);
-  const sw=S.g();S.tr(sw,170,450);S.line(-40,0,40,0,{stroke:"#fff","stroke-width":4},sw);S.ell(-44,0,8,5,{fill:"#fafafa",stroke:"#ccc"},sw);S.text(0,22,"عود قطن",{"font-size":12},sw);
-  const face=S.g();S.tr(face,90,230);S.circ(0,0,60,{fill:"#ffcc80"},face);S.circ(-20,-12,6,{fill:"#3e2723"},face);S.circ(20,-12,6,{fill:"#3e2723"},face);S.path("M-22 22 q 22 18 44 0",{stroke:"#c62828","stroke-width":4,fill:"none"},face);S.circ(30,14,10,{fill:"#ef9a9a",opacity:.6},face);S.text(0,85,"باطن الخدّ",{"font-size":13},face);
-  A.say("اضغطي على البصلة لنزع غشاء رقيق من بشرتها.");let mem=null;
-  S.tap(on,async()=>{if(mem)return;mem=S.g();S.tr(mem,90,380);S.path("M-20 0 q 20 -10 40 0 q -20 8 -40 0",{fill:"#f8bbd0",opacity:.8,stroke:"#ec407a"},mem);S.text(0,22,"غشاء البصل",{"font-size":12},mem);
-    A.say("اسحبي غشاء البصل إلى شريحة البصل.");S.drag(mem,{targets:()=>[{g:sl[0],pad:10,fn:async()=>{mem.style.display="none";S.path("M-30 0 q 30 -10 60 0 q -30 8 -60 0",{fill:"#f8bbd0",opacity:.8},sl[0].sp);sl[0].st=1;A.say("أضيفي قطرة يود إلى شريحة البصل، ثم غطّيها بغطاء الشريحة.");}}]});});
-  S.drag(io,{back:true,oy:10,targets:()=>sl[0].st===1?[{g:sl[0],fn:async()=>{S.ell(0,0,26,7,{fill:"#a1887f",opacity:.6},sl[0].sp);sl[0].st=2;}}]:[]});
-  S.drag(mb,{back:true,oy:10,targets:()=>sl[1].st===1?[{g:sl[1],fn:async()=>{S.ell(0,0,26,7,{fill:"#42a5f5",opacity:.6},sl[1].sp);sl[1].st=2;}}]:[]});
-  S.drag(cv,{back:true,targets:()=>sl.filter(s=>s.st===2).map(s=>({g:s,fn:async()=>{S.rect(-22,-12,44,24,{fill:"#e1f5fe",opacity:.6,stroke:"#4fc3f7"},s.sp);s.st=3;if(s.i===0){A.step(0);if(sl[1].st<3)A.say("اسحبي عود القطن إلى باطن الخدّ برفق، ثم إلى شريحة الخدّ.");}else{A.step(1);}if(sl.every(x=>x.st===3))scope();}}))});
-  let swab=0;S.drag(sw,{back:true,ox:-44,targets:()=>swab===0?[{g:face,fn:()=>{swab=1;S.ell(-44,0,8,5,{fill:"#ffe0b2"},sw);A.toast("أُخذت عيّنة من باطن الخدّ");}}]:swab===1?[{g:sl[1],fn:()=>{swab=2;S.path("M-30 0 q 30 -6 60 0",{stroke:"#ffe0b2","stroke-width":6,fill:"none"},sl[1].sp);sl[1].st=1;A.say("أضيفي قطرة أزرق الميثيلين، ثم غطّيها بغطاء الشريحة.");}}]:[]});
-  /* المجهر */
-  let M=null;const CK=Array.from({length:20},()=>[R(-100,100),R(-100,100)]);function scope(){if(M)return;[on,face,sw,io,mb,cv].forEach(x=>{x.style.transition="opacity .5s";x.style.opacity=0;x.style.pointerEvents="none";});const g=S.g();S.tr(g,560,390);M=g;
-    S.path("M-70 0 L70 0 L60 -20 L-60 -20Z",{fill:"#37474f"},g);S.path("M30 -20 C 60 -80 60 -180 20 -250",{stroke:"#455a64","stroke-width":26,fill:"none","stroke-linecap":"round"},g);S.rect(-60,-120,110,12,{fill:"#263238",rx:3},g);
-    S.rect(-14,-300,26,110,{fill:"#455a64",rx:5,transform:"rotate(-15)"},g);S.rect(-30,-195,30,40,{fill:"#607d8b",rx:4},g);S.circ(50,-110,16,{fill:"#546e7a"},g);S.circ(-10,-60,10,{fill:"#fff59d"},g);
-    const spot=S.rect(-40,-128,80,10,{fill:"none",stroke:"#B8902A","stroke-width":3,"stroke-dasharray":"6 4",class:"glow"},g);
-    const view=S.g();S.tr(view,180,170);const vc=S.circ(0,0,130,{fill:"#111"},view);const cl=S.clip(S.mk("circle",{r:122}));const cells=S.g(view);cells.setAttribute("clip-path",cl);S.circ(0,0,124,{fill:"none",stroke:"#263238","stroke-width":10},view);
-    const lab=S.label(0,150,"ضعي شريحة على المنصّة",view,"#263238");let cur=null,obj=4,focus=0;const seen={};
-    sl.forEach(s=>S.drag(s,{back:true,targets:()=>s.st===3?[{g:g,pad:0,fn:()=>{cur=s.i;draw();return false;}}]:[]}));
-    function draw(){cells.innerHTML="";if(cur==null)return;const mag=obj*10,z=obj/10,blur=Math.abs(focus-50)/12;S.circ(0,0,122,{fill:cur?"#e3f2fd":"#fff8e1"},cells);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");
-      if(cur===0){const w=26*Math.sqrt(obj),hh=w*.38;for(let r=-8;r<=8;r++)for(let c=-6;c<=6;c++){const x=c*w+(r%2?w/2:0),y=r*hh;if(Math.abs(x)>180||Math.abs(y)>180)continue;S.rect(x-w/2,y-hh/2,w-3,hh-3,{fill:"#ffe0b2",stroke:"#8d6e63","stroke-width":Math.max(1.5,z*3),rx:2},grp);S.ell(x+w*.15,y,hh*.2,hh*.18,{fill:"#6d4c41"},grp);}}
-      else{for(let k=0;k<Math.round(40/obj)+3;k++){const [x,y]=CK[k%CK.length],r=9*Math.sqrt(obj);S.path("M"+(x-r)+" "+y+" q "+r*.3+" "+(-r)+" "+r+" "+(-r*.8)+" q "+r+" "+r*.1+" "+r*.9+" "+r*.9+" q "+(-r*.2)+" "+r+" "+(-r)+" "+r*.8+" q "+(-r)+" "+(-r*.2)+" "+(-r*.9)+" "+(-r*.9)+"Z",{fill:"#bbdefb",stroke:"#1e88e5","stroke-width":1.5,opacity:.9},grp);S.circ(x+r*.1,y,r*.18,{fill:"#1565c0"},grp);}}
-      lab.querySelector("text").textContent=(cur?"خلايا باطن الخدّ":"خلايا بشرة البصل")+" · ×"+mag+(blur>.6?" · حرّكي الضابط":"");
-      if(blur<=.6&&obj>=10){const k=cur+"-"+obj;if(!seen[k]){seen[k]=1;A.rec({s:cur?"باطن الخدّ":"بشرة البصل",obj:"×"+obj,tot:"×"+mag,see:cur?"خلايا غير منتظمة، نواة زرقاء، لا جدار خلوي":"خلايا مستطيلة منتظمة، جدار خلوي، نواة"});}
-        if(seen["0-40"]&&seen["1-40"]&&!A.is(2)){A.step(2);}}}
-    A.ui.clear();A.ui.choice("العدسة الشيئية",[[4,"×4"],[10,"×10"],[40,"×40"]],v=>{obj=v;draw();},4);A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});
-    A.say("اسحبي الشريحة إلى المنصّة، وابدئي بالعدسة الصغرى ×4 ثم الكبرى ×40، وحرّكي الضابط حتى تتّضح الصورة. افحصي الشريحتين.");}
+const SLD=[["خلايا كبد","liver","حيوانية"],["خلايا بصل","onion","نباتية"],["خلايا عصبية","nerve","حيوانية"],["خلايا ورقة نبات","leaf","نباتية"]];
+BX.reg("b9-2-1-0",{cols:[["n","رقم الشريحة"],["see","العضيّات والتراكيب التي شاهدتُها"],["nm","اسم الشريحة"],["k","نوع الخلايا"]],
+ conclude:"تتميّز الخلايا النباتية بالجدار الخلوي (والبلاستيدات الخضراء في الخلايا الخضراء) وشكلها المنتظم، أما الخلايا الحيوانية فليس لها جدار خلوي وأشكالها متنوّعة.",
+ ans:["نباتية: خلايا البصل وخلايا ورقة النبات (لوجود الجدار الخلوي والشكل المنتظم، والبلاستيدات الخضراء في الورقة). حيوانية: خلايا الكبد والخلايا العصبية (لا جدار خلوي ولا بلاستيدات، وأشكال غير منتظمة)."],
+ build(S,A){const order=[2,0,3,1];
+  const sl=order.map((si,i)=>{const g=S.g();S.tr(g,90+i*130,460);S.rect(-58,-14,116,28,{rx:3,fill:"#e1f5fe",stroke:"#81d4fa","stroke-width":2,opacity:.95},g);S.ell(-18,0,16,7,{fill:["#f48fb1","#d7ccc8","#b39ddb","#a5d6a7"][si],opacity:.8},g);g.nm=S.text(30,4,SLD[si][0],{"font-size":10,fill:"#37474f"},g);g.si=si;return g;});
+  A.say("غطّي الاسم المكتوب على كل شريحة بقصاصة ورقية بيضاء: اضغطي على الشرائح الأربع.");let c=0;
+  sl.forEach(g=>S.tap(g,()=>{if(g.cov)return;g.cov=S.rect(4,-10,52,20,{fill:"#fff",stroke:"#ccc"},g);if(++c===4){A.step(0);A.say("رقّمي الشرائح بالأرقام (1–4): اضغطي على كل شريحة بالترتيب.");let k=0;sl.forEach(h=>S.tap(h,()=>{if(h.num||!h.cov)return;h.num=++k;S.text(30,5,String(k),{"font-size":14,fill:"#c62828"},h);if(k===4){A.step(1);scope();}}));}}));
+  let cur=null,obj=4,focus=0;const seen={};
+  function scope(){const view=S.g();S.tr(view,190,185);const g=S.g();S.tr(g,620,400);S.path("M-70 0 L70 0 L60 -20 L-60 -20Z",{fill:"#37474f"},g);S.path("M30 -20 C 60 -80 60 -180 20 -250",{stroke:"#455a64","stroke-width":26,fill:"none","stroke-linecap":"round"},g);S.rect(-60,-120,110,12,{fill:"#263238",rx:3},g);
+    S.rect(-14,-300,26,110,{fill:"#455a64",rx:5,transform:"rotate(-15)"},g);S.rect(-30,-195,30,40,{fill:"#607d8b",rx:4},g);S.circ(50,-110,16,{fill:"#546e7a"},g);S.circ(-10,-60,10,{fill:"#fff59d"},g);S.label(0,-320,"مجهر ضوئي مركّب",g,"#37474f");
+    S.circ(0,0,150,{fill:"#111"},view);const cells=S.g(view);cells.setAttribute("clip-path",S.clip(S.mk("circle",{r:140})));S.circ(0,0,142,{fill:"none",stroke:"#263238","stroke-width":10},view);const lab=S.label(0,168,"اسحبي شريحة إلى منصّة المجهر",view,"#263238");
+    A.say("افحصي الشرائح: اسحبي كل شريحة إلى منصّة المجهر، واختاري قوّة التكبير المناسبة وحرّكي الضابط.");
+    sl.forEach(s=>S.drag(s,{back:true,targets:()=>[{g,pad:0,fn:()=>{cur=s;A.step(2);draw();return false;}}]}));
+    A.ui.choice("العدسة الشيئية",[[4,"×4"],[10,"×10"],[40,"×40"]],v=>{obj=v;draw();},4);A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});
+    const CP=Array.from({length:30},()=>[R(-120,120),R(-120,120),R(.8,1.2)]);
+    function draw(){cells.innerHTML="";if(!cur)return;const k=SLD[cur.si][1],blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");
+      S.circ(0,0,140,{fill:{liver:"#fce4ec",onion:"#fff8e1",nerve:"#ede7f6",leaf:"#f1f8e9"}[k]},grp);
+      if(k==="onion"||k==="leaf"){const w=24*z,hh=k==="onion"?w*.4:w*.7;for(let r=-9;r<=9;r++)for(let c=-7;c<=7;c++){const x=c*w+(r%2?w/2:0),y=r*hh;if(Math.abs(x)>170||Math.abs(y)>170)continue;S.rect(x-w/2,y-hh/2,w-2,hh-2,{fill:k==="onion"?"#ffe0b2":"#c5e1a5",stroke:k==="onion"?"#8d6e63":"#33691e","stroke-width":Math.max(1.5,z*.9),rx:2},grp);
+        if(k==="onion")S.ell(x+w*.15,y,hh*.2,hh*.18,{fill:"#6d4c41"},grp);else{for(let q=0;q<5;q++)S.ell(x-w*.3+q*w*.15,y+(q%2?hh*.2:-hh*.2),w*.05,w*.035,{fill:"#2e7d32"},grp);S.ell(x,y,w*.08,w*.07,{fill:"#5d4037",opacity:.7},grp);}}}
+      else if(k==="liver"){const w=22*z;for(let r=-8;r<=8;r++)for(let c=-8;c<=8;c++){const x=c*w*.9+(r%2?w*.45:0),y=r*w*.78;if(Math.abs(x)>170||Math.abs(y)>170)continue;let d="";for(let a=0;a<6;a++){const an=a*Math.PI/3+.5;d+=(a?"L":"M")+(x+Math.cos(an)*w*.5)+" "+(y+Math.sin(an)*w*.5);}S.path(d+"Z",{fill:"#f8bbd0",stroke:"#ad1457","stroke-width":1},grp);S.circ(x,y,w*.12,{fill:"#6a1b9a"},grp);}}
+      else{CP.slice(0,Math.round(8/z)+1).forEach(([x,y,s])=>{const r=10*z*s;for(let q=0;q<6;q++){const a=q*1.05+s;S.path("M"+x+" "+y+" q "+Math.cos(a)*r*2+" "+Math.sin(a)*r*2+" "+Math.cos(a+.3)*r*4+" "+Math.sin(a+.3)*r*4,{stroke:"#7e57c2","stroke-width":Math.max(1,z*.6),fill:"none"},grp);}S.circ(x,y,r,{fill:"#b39ddb",stroke:"#5e35b1","stroke-width":1.5},grp);S.circ(x,y,r*.35,{fill:"#4527a0"},grp);});}
+      lab.set("الشريحة "+cur.num+" · التكبير ×"+(obj*10)+(blur>.6?" · حرّكي الضابط":""));
+      if(blur<=.6&&obj>=10&&!seen[cur.si]){seen[cur.si]=1;cur.see={liver:"خلايا متعدّدة الأضلاع، نواة واضحة، غشاء خلوي، لا جدار",onion:"خلايا مستطيلة منتظمة، جدار خلوي، نواة",nerve:"جسم خلية ونواة وزوائد متفرّعة طويلة، لا جدار",leaf:"خلايا منتظمة، جدار خلوي، بلاستيدات خضراء، نواة"}[k];
+        A.obs("الشريحة "+cur.num+": "+cur.see);A.toast("📝 سُجّلت ملاحظاتكِ ورسمكِ للشريحة "+cur.num);if(Object.keys(seen).length===4){A.step(3);A.step(4);compare();}}}}
+  function compare(){A.ui.clear();let k=0;const S2=sl.slice().sort((a,b)=>a.num-b.num);
+    const ask=()=>{if(k>=4){A.step(5);A.ui.clear();A.ui.add(A.ui.btn("💬 شاركتُ زميلاتي النتائج",b=>{b.disabled=true;A.step(6);},"gold"));return;}const s=S2[k];A.say("قارني الشريحة "+s.num+" بالأشكال المرفقة في الكتاب: ما اسمها؟");A.ui.clear();
+      A.ui.choice("الشريحة "+s.num+":",SLD.map((d,i)=>[i,d[0]]),v=>{if(v!==s.si){A.toast("قارني الشكل جيدًا…");return;}A.rec({n:s.num,see:s.see,nm:SLD[s.si][0],k:SLD[s.si][2]});k++;ask();});};ask();}
  }});
 
-/* ---------- 7) أثر درجة الحرارة في الانتشار ---------- */
-BX.reg("b9-2-1-1",{cols:[["b","الكأس"],["t","درجة حرارة الماء (°C)"],["s","زمن تجانس اللون (s)"]],chart:{x:"b",y:"s",type:"bar",xl:"الكأس",yl:"الزمن (s)"},
- conclude:"يزداد معدّل الانتشار بارتفاع درجة الحرارة؛ لأن الطاقة الحركية للجزيئات تزداد فتتحرّك أسرع.",
- ans:["في كأس الماء الساخن؛ لأن جزيئات الماء الساخن تمتلك طاقة حركية أكبر فتتحرّك بسرعة وتنقل جزيئات الملوّن.","كلما زادت درجة الحرارة زادت سرعة حركة الجزيئات فيزداد معدّل الانتشار."],
- build(S,A){const bk=[0,1].map(i=>{const b=S.beaker(250+i*300,392,150,190,{lvl:0,label:i?"الكأس 2":"الكأس 1"});b.i=i;b.t=i?70:8;return b;});
-  const jug=S.g();S.tr(jug,80,470);S.beaker(0,0,70,90,{col:"#81d4fa",lvl:.8,par:jug});S.emo(0,-110,"🧊",26,jug);S.text(0,20,"ماء بارد 8°C",{"font-size":12},jug);
-  const ket=S.g();S.tr(ket,720,470);S.path("M-40 0 L40 0 L34 -80 L-34 -80Z",{fill:S.lg(["#b0bec5","#eceff1","#90a4ae"])},ket);S.path("M34 -60 l 30 -10",{stroke:"#90a4ae","stroke-width":8},ket);S.path("M-34 -70 q -30 10 -20 40",{stroke:"#546e7a","stroke-width":6,fill:"none"},ket);S.text(0,20,"ماء ساخن 70°C",{"font-size":12},ket);
-  const steam=S.bubbles(720,380,30,6,{h:60,col:"#eceff1"});
-  A.say("املئي الكأس 1 بالماء البارد والكأس 2 بالماء الساخن بالحجم نفسه (200 mL): اسحبي كل إبريق إلى كأسه.");let n=0;
-  [[jug,0,"#e1f5fe"],[ket,1,"#fffde7"]].forEach(([j,i,c])=>S.drag(j,{back:true,oy:-40,targets:()=>[{g:bk[i].g,fn:async()=>{await S.pour(j,bk[i].g._x+100,220,-70,()=>bk[i].to(.75,900,c));S.off(j,true);S.label(0,-215,(i?"70":"8")+" °C · 200 mL",bk[i].g,i?"#d84315":"#1565c0");if(++n===2){A.step(0);go();}}}],miss:()=>A.toast(i?"الماء الساخن للكأس 2":"الماء البارد للكأس 1")}));
-  function go(){A.say("أضيفي قطرة الملوّن إلى الكأسين في اللحظة نفسها.");const w=S.watch(400,120);const b=A.ui.btn("💧 أضيفي القطرتين معًا",async()=>{b.disabled=true;A.step(1);
-      const cl=bk.map(B=>{const g=S.g(B.g);g.setAttribute("clip-path",B.cl);const c=S.circ(0,-120,4,{fill:"#7b1fa2",opacity:.9,filter:"url(#bl)"},g);return c;});
-      await Promise.all(bk.map((B,i)=>S.tween(400,t=>cl[i].setAttribute("cy",lerp(-190,-120,t)))));
-      const T={0:150,1:35};const t0=performance.now();const sp=8;const stop=[null,null];let p=[0,0];
-      A.say("راقبي انتشار اللون، واضغطي على الكأس عندما يتجانس لونها تمامًا (الساعة مسرَّعة ×8).");
-      bk.forEach((B,i)=>S.tap(B.g,()=>{if(stop[i]!=null)return;if(p[i]<.93){A.toast("لم يتجانس اللون بعد في الكأس "+(i+1));return;}stop[i]=Math.round(T[i]*R(.97,1.04));A.rec({b:"الكأس "+(i+1),t:B.t,s:stop[i]});S.label(0,30,"⏱️ "+stop[i]+" s",B.g,"#2f8f5b");if(stop[0]!=null&&stop[1]!=null){A.obs("تجانس اللون في الماء الساخن أسرع ("+stop[1]+" s) منه في الماء البارد ("+stop[0]+" s).");A.step(2);}}));
-      const f=()=>{const s=(performance.now()-t0)/1000*sp;w.set(Math.min(s,200));bk.forEach((B,i)=>{p[i]=clamp(s/T[i],0,1);const r=4+p[i]*110;cl[i].setAttribute("r",r);cl[i].setAttribute("opacity",lerp(.9,.25,p[i]));B.set(null,mix(i?"#fffde7":"#e1f5fe","#9c27b0",p[i]*.6));});if(stop[0]==null||stop[1]==null)requestAnimationFrame(f);};requestAnimationFrame(f);});A.ui.add(b);}
+/* ---------- 7) أثر درجة الحرارة في الانتشار (الشمندر) ---------- */
+BX.reg("b9-2-1-1",{cols:[["n","الأنبوب"],["t","درجة الحرارة"],["c","لون الماء بعد 5min"]],
+ conclude:"يزداد معدّل الانتشار بارتفاع درجة الحرارة؛ فتنتشر صبغة الشمندر في الماء الأسخن أسرع وأكثر.",
+ ans:["الأنبوب (1) لونه وردي فاتح جدًّا، والأنبوب (2) وردي، والأنبوب (3) أحمر داكن.","كلما ارتفعت درجة الحرارة زاد معدّل الانتشار؛ لزيادة الطاقة الحركية للجزيئات (وتأثّر أغشية الخلايا بالحرارة).","—"],
+ build(S,A){const TT=[25,40,90];const tubes=[0,1,2].map(i=>{const t=S.tube(90+i*60,440,130,{w:36,lvl:0,col:"#f5fbff"});t.i=i;return t;});S.rect(60,350,160,10,{fill:"#8d6e63"});S.text(150,472,"حامل الأنابيب",{"font-size":12});
+  const cyl=S.cylinder(290,470,110,{w:34,col:"#e3f2fd",lvl:.9,label:"15 mL"});let n=0;
+  A.say("ضعي 15mL من الماء المقطّر في كل من الأنابيب الثلاثة: اسحبي المخبار إلى كل أنبوب.");
+  S.drag(cyl.g,{back:true,oy:-55,targets:()=>tubes.filter(t=>!t.fw).map(t=>({g:t.g,pad:10,fn:async()=>{t.fw=1;await S.pour(cyl.g,t.g._x+40,230,-75,()=>t.to(.55,500,"#f5fbff"));if(++n===3){A.ui.add(A.ui.btn("🔢 رقّمي الأنابيب (1–3)",b=>{b.disabled=true;tubes.forEach((t,i)=>S.label(0,-150,String(i+1),t.g,"#7A1F2E"));A.ui.clear();A.step(0);baths();},"gold"));}}}))});
+  let B;function baths(){A.say("ضعي الأنبوب (1) في درجة حرارة الغرفة، والأنبوب (2) في حمّام مائي 40°C، والأنبوب (3) في حمّام مائي 90°C: اسحبي الأنبوبين 2 و3.");
+    B=[null,S.beaker(470,392,130,120,{col:"#ffe0b2",lvl:.65,label:"حمّام مائي 40°C"}),S.beaker(650,392,130,120,{col:"#ffab91",lvl:.65,label:"حمّام مائي 90°C"})];S.bubbles(650,330,100,8,{h:50});S.label(90,290,"25°C",null,"#1565c0");let k=0;
+    [1,2].forEach(i=>S.drag(tubes[i].g,{targets:()=>[{g:B[i].g,pad:6,fn:async()=>{tubes[i].g._off=true;await S.moveTo(tubes[i].g,B[i].g._x,385,350);if(++k===2){A.step(1);beet();}return "stay";}}],miss:()=>A.toast(i===1?"الأنبوب 2 في حمّام 40°C":"الأنبوب 3 في حمّام 90°C"),back:true}));}
+  function beet(){A.say("ضعي قطعة من الشمندر في كل أنبوب: اسحبي القطع.");let k=0;[0,1,2].forEach(j=>{const p=S.g();S.tr(p,330+j*30,470);S.rect(-8,-16,16,32,{rx:3,fill:"#880e4f"},p);
+    S.drag(p,{targets:()=>tubes.filter(t=>!t.b).map(t=>({g:t.g,pad:8,fn:async()=>{t.b=1;p.remove();S.rect(-7,-50,14,26,{rx:3,fill:"#880e4f"},t.inner);if(++k===3){A.step(2);watch();}}})),back:true});});}
+  function watch(){A.say("راقبي لون الماء في كل أنبوب مدّة 5min: حرّكي شريط الزمن.");const w=S.watch(330,130);let r1=0;const K=[.08,.3,.9];
+    A.ui.slider("⏱️ الزمن (دقيقة)",0,5,.5,0,m=>{w.set(m*60);tubes.forEach((t,i)=>t.set(null,mix("#f5fbff","#ad1457",clamp(K[i]*m/5*1.05,0,.95))));
+      if(m>=5&&!r1){r1=1;const C5=["وردي فاتح جدًّا","وردي","أحمر داكن"];tubes.forEach((t,i)=>A.rec({n:i+1,t:TT[i]+" °C",c:C5[i]}));A.obs("كلما ارتفعت درجة الحرارة أصبح لون الماء أحمر أغمق (انتشار أكبر لصبغة الشمندر).");A.step(3);}});}
  }});
 
-/* ---------- 8) أثر تراكيز محلول الغلوكوز في كتلة البطاطا ---------- */
-BX.reg("b9-2-1-2",{cols:[["c","تركيز الغلوكوز (M)"],["m1","الكتلة الابتدائية (g)"],["m2","الكتلة النهائية (g)"],["p","نسبة التغيّر %"]],chart:{x:"c",y:"p",xl:"تركيز الغلوكوز (M)",yl:"نسبة التغيّر في الكتلة %"},
- conclude:"تكتسب خلايا البطاطا الماء في المحاليل المخفّفة (منخفضة التركيز) وتفقده في المحاليل المركّزة بالخاصية الأسموزية، وعند التركيز المماثل لعصارتها لا تتغيّر الكتلة.",
- ans:["في الماء المقطّر والمحلول المخفّف؛ لأن تركيز الماء خارج الخلايا أعلى فيدخل الماء إليها بالخاصية الأسموزية.","التركيز الذي يقطع عنده الخطّ البياني محور السينات (نسبة تغيّر = صفر)، وهو تقريبًا 0.3 M."],
- build(S,A){const C=[0,.2,.4,.6,.8],P=[14.5,4.2,-3.6,-9.8,-15.1];const bal=S.balance(130,392);const pcs=[],tubes=[];
-  C.forEach((c,i)=>{const t=S.tube(330+i*95,392,170,{w:46,lvl:.75,col:mix("#e3f2fd","#ffe082",c),label:c?c+" M":"ماء مقطّر"});tubes.push(t);
-    const p=S.g();S.tr(p,90+i*50,470);S.rect(-8,-34,16,34,{rx:4,fill:S.lg(["#fff3c4","#f5d98b"]),stroke:"#c9a227","stroke-width":2},p);S.text(0,18,String(i+1),{"font-size":12},p);p.i=i;p.m1=+(R(2.4,2.6)).toFixed(2);pcs.push(p);});
-  A.say("قيسي كتلة كل أسطوانة بطاطا: اسحبيها إلى الميزان.");let w=0;
-  const toBal=p=>({g:bal.g,pad:10,fn:async()=>{await S.moveTo(p,130,342,300);if(!p.w){p.w=1;bal.set(p.m1);A.toast("الكتلة: "+p.m1+" g");S.label(0,-50-(p.i%2)*26,p.m1+" g",p,"#1d7f8c");if(++w===5){A.step(0);A.say("ضعي كل أسطوانة في أنبوب: الأسطوانة 1 في الماء المقطّر… والأسطوانة 5 في 0.8 M.");}}await sleep(500);bal.set(0);return false;}});
-  pcs.forEach(p=>S.drag(p,{back:true,oy:-17,targets:()=>!p.w?[toBal(p)]:(!p.in&&w===5)?[{g:tubes[p.i].g,pad:5,fn:async()=>{p.in=1;p._off=true;await S.moveTo(p,tubes[p.i].g._x,tubes[p.i].g._y-40,300);p.querySelectorAll("rect")[0]&&0;tubes[p.i].g.append(p);S.tr(p,0,-40);if(pcs.every(q=>q.in)){A.ui.add(A.ui.btn("⏩ مرور 24 ساعة",async b=>{b.disabled=true;await S.tween(1500,t=>pcs.forEach((q,k)=>{const s=1+P[k]/100*t;q.setAttribute("transform","translate(0 -40) scale("+s+")");}));A.step(1);weigh2();},"gold"));}}}]:p.in&&p.out?[toBal2(p)]:[]}));
-  function weigh2(){A.say("أخرجي الأسطوانات (اضغطي على كل أنبوب) وجفّفيها، ثم قيسي كتلتها بالميزان.");pcs.forEach(p=>S.tap(tubes[p.i].g,()=>{if(p.out)return;p.out=1;S.g().append(p);S.tr(p,90+p.i*50,470,0,1+P[p.i]/100);p._off=false;}));}
-  let w2=0;const toBal2=p=>({g:bal.g,pad:10,fn:async()=>{await S.moveTo(p,130,342,300);if(!p.w2){p.w2=1;const m2=+(p.m1*(1+P[p.i]/100)).toFixed(2);bal.set(m2);A.rec({c:C[p.i],m1:p.m1,m2,p:+((m2-p.m1)/p.m1*100).toFixed(1)});if(++w2===5){A.obs("زادت كتلة البطاطا في الماء المقطّر و0.2 M، ونقصت في 0.4 M فما فوق.");A.step(2);}}await sleep(500);bal.set(0);return false;}});
+/* ---------- 8) أثر تراكيز الغلوكوز في كتلة البطاطا ---------- */
+BX.reg("b9-2-1-2",{cols:[["c","تركيز الغلوكوز (mol/dm³)"],["m2","الكتلة النهائية (g)"],["p","النسبة المئوية للتغيّر في الكتلة %"]],chart:{x:"c",y:"p",xl:"تركيز الغلوكوز",yl:"النسبة المئوية للتغيّر في الكتلة %"},
+ conclude:"تكتسب قطع البطاطا الماء في الماء المقطّر والمحاليل المخفّفة فتزداد كتلتها، وتفقده في المحاليل المركّزة فتقلّ كتلتها، بالخاصية الأسموزية.",
+ ans:["كلما زاد تركيز محلول الغلوكوز قلّت كتلة قطعة البطاطا؛ فقد زادت في الماء المقطّر و0.2، ونقصت في التراكيز الأعلى.","تنتقل جزيئات الماء من الوسط الأقل تركيزًا بالمادة المذابة إلى الأكثر تركيزًا بها؛ فتزداد الكتلة النسبية أو تقلّ حسب اتجاه حركة الماء.","القيمة السالبة تعني نقصان الكتلة؛ أي أن قطعة البطاطا فقدت الماء لأن المحلول أكثر تركيزًا من عصارة خلاياها.","—","—"],
+ build(S,A){const C=[0,.2,.4,.6,.8,1.0],P=[12.4,3.1,-4.2,-9.6,-14.8,-19.5],m1=5.00;const bal=S.balance(110,392);const tubes=[];
+  S.rect(250,350,520,12,{fill:"#8d6e63"});
+  C.forEach((c,i)=>{const t=S.tube(290+i*88,440,150,{w:44,lvl:0,col:mix("#e3f2fd","#ffe082",c)});tubes.push(t);});
+  A.say("ضعي أنابيب الاختبار في الحامل ورقّميها (1–6): اضغطي على الأنابيب.");let k=0;
+  tubes.forEach((t,i)=>S.tap(t.g,()=>{if(t.num)return;t.num=1;S.label(0,-165,String(i+1),t.g,"#7A1F2E");if(++k===6){A.step(0);fill();}}));
+  function fill(){A.say("ضعي 5mL ماء مقطّر في الأنبوب (1)، ومحاليل الغلوكوز مرتّبة في بقية الأنابيب: اسحبي كل زجاجة إلى أنبوبها.");let n=0;
+    C.forEach((c,i)=>{const b=S.bottle(0,0,mix("#e3f2fd","#ffe082",c),c?c.toFixed(1):"ماء مقطّر");S.tr(b,40+i*40,470,0,.5);
+      S.drag(b,{back:true,oy:-30,targets:()=>[{g:tubes[i].g,pad:6,fn:async()=>{await S.pour(b,tubes[i].g._x+40,230,-75,()=>tubes[i].to(.5,400));S.label(0,26,c.toFixed(1),tubes[i].g,"#455a64");S.off(b,true);if(++n===6){A.step(1);pieces();}}}],miss:()=>A.toast("بالترتيب: الماء المقطّر للأنبوب 1، ثم 0.2… حتى 1.0 للأنبوب 6")});});}
+  const pcs=[];function pieces(){A.say("ضعي قطعة بطاطا (5.00g) في كل أنبوب: اسحبي القطع إلى الأنابيب.");let n=0;
+    for(let i=0;i<6;i++){const p=S.g();S.tr(p,40+i*36,470);S.rect(-9,-34,18,34,{rx:4,fill:S.lg(["#fff3c4","#f5d98b"]),stroke:"#c9a227","stroke-width":2},p);pcs.push(p);
+      S.drag(p,{back:true,oy:-17,targets:()=>tubes.filter(t=>!t.p).map(t=>({g:t.g,pad:4,fn:async()=>{t.p=p;p.ti=tubes.indexOf(t);p._off=true;await S.moveTo(p,t.g._x,t.g._y-40,250);t.g.append(p);S.tr(p,0,-40);if(++n===6){A.ui.add(A.ui.btn("⏩ اتركيها مدّة 3 ساعات",async b=>{b.disabled=true;await S.tween(1500,tt=>pcs.forEach(q=>q.setAttribute("transform","translate(0 -40) scale("+(1+P[q.ti]/100*tt)+")")));A.ui.clear();A.step(2);out();},"gold"));}return "stay";}}))});}}
+  function out(){A.say("أخرجي القطع وجفّفيها بورق التجفيف، ثم زنيها: اسحبي كل قطعة إلى الميزان.");S.rect(170,410,70,24,{fill:"#fafafa",stroke:"#ccc"});S.text(205,450,"ورق تجفيف",{"font-size":11});let n=0;
+    pcs.forEach(p=>{p._off=false;const t=tubes[p.ti];S.layer.append(p);S.tr(p,t.g._x,t.g._y-40,0,1+P[p.ti]/100);
+      S.drag(p,{back:true,oy:-17,targets:()=>p.w?[]:[{g:bal.g,pad:10,fn:async()=>{p.w=1;await S.moveTo(p,205,415,250);await sleep(300);await S.moveTo(p,110,342,300);const m2=+(m1*(1+P[p.ti]/100)).toFixed(2);bal.set(m2);
+        p.m2=m2;S.label(0,-50-(p.ti%2)*24,m2+" g",p,"#1d7f8c");await sleep(700);bal.set(0);if(++n===6){A.step(3);calc();}return false;}}]});});}
+  function calc(){A.say("لاحظي التغيّر واحسبي النسبة المئوية للتغيّر في كتلة كل قطعة، ثم دوّني النتائج في الجدول.");A.ui.add(A.ui.btn("🧮 احسبي: (الكتلة النهائية − 5.00) ÷ 5.00 × 100%",b=>{b.disabled=true;pcs.slice().sort((a,b)=>a.ti-b.ti).forEach(p=>A.rec({c:C[p.ti].toFixed(1),m2:p.m2,p:+((p.m2-m1)/m1*100).toFixed(1)}));A.step(4);A.step(5);},"gold"));}
  }});
 
-/* ---------- 9) الكشف عن CO₂ الناتج من التنفّس الخلوي ---------- */
-BX.reg("b9-2-2-0",{cols:[["t","الزمن (دقيقة)"],["a","ماء الجير (البذور المنبتة)"],["b","ماء الجير (البذور المغليّة)"]],
- conclude:"البذور المنبتة حيّة تتنفّس وتُطلق غاز CO₂ الذي يعكّر ماء الجير، أما البذور المغليّة فميّتة لا تتنفّس.",
- ans:["لأن البذور المنبتة تتنفّس وتُطلق غاز ثاني أكسيد الكربون الذي يتفاعل مع ماء الجير فيعكّره (يُكوّن كربونات الكالسيوم).","هو الدورق الضابط؛ لنثبت أن تعكّر ماء الجير ناتج عن تنفّس البذور الحيّة وليس من عامل آخر."],
- build(S,A){const fl=[0,1].map(i=>{const f=S.flask(200+i*330,392,1,{label:i?"الدورق ب":"الدورق أ",col:"#fff"});return f;});
-  const tb=[0,1].map(i=>{const t=S.tube(330+i*330,392,150,{w:40,lvl:.7,col:"#f1f8e9",label:"ماء الجير"});return t;});
-  const seeds=[["منبتة","#c5e1a5",0],["مغليّة","#d7ccc8",1]].map(([t,c,i])=>{const g=S.g();S.tr(g,60+i*0,470-i*0);S.tr(g,i?720:60,470);S.rect(-30,-46,60,46,{rx:8,fill:"#fff",stroke:"#90a4ae","stroke-width":2},g);for(let k=0;k<9;k++){S.ell(R(-20,20),-R(8,36),7,5,{fill:c,stroke:"#8d6e63"},g);if(!i)S.path("M"+R(-18,18)+" "+(-R(10,30))+" q 4 -8 8 -6",{stroke:"#7cb342","stroke-width":2,fill:"none"},g);}S.text(0,20,"بذور "+t,{"font-size":12},g);return g;});
-  A.say("ضعي البذور المنبتة في الدورق أ، والبذور المغليّة في الدورق ب.");let n=0;
-  seeds.forEach((s,i)=>S.drag(s,{back:true,oy:-20,targets:()=>[{g:fl[i].g,fn:async()=>{s.style.display="none";for(let k=0;k<12;k++){S.ell(R(-40,40),-R(6,22),7,5,{fill:i?"#d7ccc8":"#c5e1a5",stroke:"#8d6e63"},fl[i].inner);if(!i&&k%2)S.path("M"+R(-30,30)+" "+(-R(8,20))+" q 4 -8 8 -6",{stroke:"#7cb342","stroke-width":2,fill:"none"},fl[i].inner);}
-    S.rect(-18,-130,36,14,{fill:"#6d4c41",rx:3},fl[i].g);if(++n===2){A.step(0);connect();}}}],miss:()=>A.toast(i?"البذور المغليّة للدورق ب":"البذور المنبتة للدورق أ")}));
-  function connect(){A.say("صِلي كل دورق بأنبوب ماء الجير: اضغطي على كل دورق لتركيب أنبوب التوصيل.");let c=0;
-    fl.forEach((f,i)=>S.tap(f.g,()=>{if(f.con)return;f.con=1;const x1=f.g._x,x2=tb[i].g._x;S.path("M"+x1+" 262 L"+x1+" 210 L"+x2+" 210 L"+x2+" 370",{stroke:"#90a4ae","stroke-width":7,fill:"none","stroke-linejoin":"round",opacity:.9});S.path("M"+x1+" 262 L"+x1+" 210 L"+x2+" 210 L"+x2+" 370",{stroke:"#e3f2fd","stroke-width":3,fill:"none"});
-      if(++c===2){A.step(1);time();}}));}
-  function time(){A.say("حرّكي شريط الزمن حتى 60 دقيقة وراقبي لون ماء الجير في الأنبوبين.");const bub=S.bubbles(tb[0].g._x,375,14,8,{h:80});let rec=new Set([0]);A.rec({t:0,a:"رائق",b:"رائق"});
-    A.ui.slider("⏱️ الزمن (دقيقة)",0,60,5,0,m=>{const k=m/60;tb[0].set(null,mix("#f1f8e9","#ffffff",k));tb[0].liq.setAttribute("opacity",lerp(.6,1,k));
-      [20,40,60].forEach(t=>{if(m>=t&&!rec.has(t)){rec.add(t);A.rec({t,a:t===20?"يبدأ بالتعكّر":t===40?"متعكّر":"حليبي (متعكّر جدًا)",b:"رائق"});}});
-      if(m===60&&!A.is(2)){A.obs("تعكّر ماء الجير المتّصل بدورق البذور المنبتة، وبقي رائقًا في أنبوب البذور المغليّة.");A.step(2);}});}
+/* ---------- 9) معدّل التنفّس الخلوي وأزرق الميثيلين ---------- */
+const TEMPS=[25,30,35,40,45,50],TIME={25:320,30:235,35:165,40:110,45:140,50:260};
+BX.reg("b9-2-2-0",{cols:[["T","درجة الحرارة (°C)"],["t","الزمن اللازم لاختفاء لون المحلول (s)"],["r","معدّل التنفّس الخلوي (s⁻¹)"]],chart:{x:"T",y:"r",xl:"درجة الحرارة (°C)",yl:"معدّل التنفّس الخلوي (s⁻¹)"},
+ conclude:"يزداد معدّل التنفّس الخلوي في الخميرة بارتفاع درجة الحرارة حتى درجة مثلى (نحو 40°C)، ثم يقلّ عند ارتفاعها أكثر.",
+ ans:["الأنبوب (1) بلا سكّر: يبيّن أن الخميرة تحتاج إلى السكّر (الغذاء) لتتنفّس. الأنبوب (2): نقيس فيه زمن اختفاء اللون. كاشف أزرق الميثيلين: يختفي لونه عند استهلاك الأكسجين، فيدلّ على حدوث التنفّس. (والأنبوب 3 بالماء المغلي ضابط).","(رسم بياني: المحور السيني درجة الحرارة، والصادي معدّل التنفّس الخلوي)","يزداد المعدّل بزيادة درجة الحرارة حتى نحو 40°C ثم يقلّ."],
+ build(S,A){const tubes=[0,1,2].map(i=>{const t=S.tube(120+i*80,440,140,{w:40,lvl:0,col:"#e3f2fd"});t.c={};return t;});S.rect(80,345,200,10,{fill:"#8d6e63"});
+  A.say("رقّمي الأنابيب (1–3): اضغطي على الأنابيب.");let k=0;tubes.forEach((t,i)=>S.tap(t.g,()=>{if(t.num)return;t.num=1;S.label(0,-155,String(i+1),t.g,"#7A1F2E");if(++k===3){A.step(0);fill();}}));
+  const NEED=[["w","y","mb"],["w","s","y","mb"],["bw","s","y","mb"]];
+  function fill(){A.say("ضعي المواد كما في الجدول: (1) ماء + خميرة، (2) ماء + سكّر + خميرة، (3) ماء مغلي + سكّر + خميرة، ونقطتين من أزرق الميثيلين في كل أنبوب.");
+    const R0=[["w","ماء 20mL","#bbdefb"],["bw","ماء مغلي 20mL","#ffccbc"],["s","سكّر 0.5g","#fafafa"],["y","خميرة 1g","#d7ccc8"],["mb","أزرق الميثيلين","#1565c0"]];
+    R0.forEach(([id,t,c],i)=>{const g=S.g();S.tr(g,370+i*88,470);if(id==="mb")S.dropper(0,-10,"#1565c0",{par:g,bulb:"#0d47a1"});else{S.rect(-28,-46,56,46,{rx:8,fill:c,stroke:"#8d6e63","stroke-width":2},g);}S.text(0,20,t,{"font-size":11},g);
+      S.drag(g,{back:true,oy:-25,targets:()=>tubes.map((tb,j)=>({g:tb.g,pad:8,fn:async()=>{if(!NEED[j].includes(id)){A.toast("الأنبوب "+(j+1)+" لا يحتاج إلى "+t);return false;}if(tb.c[id]){A.toast("أُضيف سابقًا");return false;}tb.c[id]=1;
+        if(id==="w"||id==="bw")await tb.to(.5,400,"#e3f2fd");else if(id==="y")for(let q=0;q<8;q++)S.circ(R(-12,12),-R(4,40),2.5,{fill:"#a1887f"},tb.inner);else if(id==="s")for(let q=0;q<8;q++)S.circ(R(-12,12),-R(4,40),1.8,{fill:"#fff"},tb.inner);else tb.set(null,"#1e88e5");
+        if(tubes.every((x,jj)=>NEED[jj].every(n=>x.c[n]))){A.step(1);bath();}}}))});});}
+  let T=null,done={},th;function bath(){A.say("ضعي الأنابيب في حمّام مائي ضُبطت درجة حرارته على 25°C: اختاري درجة الحرارة.");const wb=S.beaker(650,392,200,150,{col:"#ffe0b2",lvl:.35,label:"حمّام مائي"});S.layer.insertBefore(wb.g,S.layer.firstChild);th=S.label(520,240,"",null,"#c62828");
+    A.ui.clear();A.ui.choice("🌡️ درجة حرارة الحمّام المائي",TEMPS.map(t=>[t,t+"°C"]),v=>{if(v!==25&&!done[25]){A.toast("ابدئي بـ 25°C كما في الخطوة (3)");return;}if(done[v]){A.toast("سُجّلت هذه الدرجة");return;}if(run){A.toast("أكملي القياس الحالي أولًا");return;}T=v;th.set(v+" °C");start();});}
+  let run=null,hook=null;S.tap(tubes[1].g,()=>hook&&hook());
+  function start(){tubes.forEach((t,i)=>{t.set(null,"#1e88e5");S.tr(t.g,600+i*50,385);});if(!A.is(2))A.step(2);const w=S.watch(450,130);const sp=20,t0=performance.now();const tt=TIME[T];A.say("احسبي الزمن اللازم لاختفاء اللون الأزرق من الأنبوب (2): اضغطي على الأنبوب (2) لحظة اختفاء اللون (الساعة مسرَّعة ×20).");
+    const bub=S.bubbles(650,380,40,6,{h:60});const me={stop:false};run=me;
+    const f=()=>{if(me.stop)return;const s=(performance.now()-t0)/1000*sp;w.set(s);const p=clamp(s/tt,0,1);tubes[1].set(null,mix("#1e88e5","#fff3e0",p));tubes[1].p=p;requestAnimationFrame(f);};requestAnimationFrame(f);
+    hook=()=>{if(run!==me)return;if(tubes[1].p<.95){A.toast("ما زال اللون أزرق…");return;}me.stop=true;run=null;hook=null;bub.remove();w.g.remove();const t=Math.round(tt*R(.97,1.03));done[T]=t;A.rec({T,t,r:(1/t).toFixed(4)});A.obs("عند "+T+"°C: اختفى اللون الأزرق من الأنبوب (2) بعد "+t+" s، وبقي الأنبوبان (1) و(3) أزرقين.");
+      if(T===25)A.step(3);const left=TEMPS.filter(x=>!done[x]);if(!left.length){A.step(4);A.ui.clear();A.ui.add(A.ui.btn("🧮 احسبي معدّل التنفّس الخلوي = 1 ÷ الزمن",b=>{b.disabled=true;A.step(5);},"gold"));}else A.say("كرّري الخطوات بحمّام مائي درجة حرارته "+left[0]+"°C: اختاري الدرجة.");};}
  }});
 
-/* ---------- 10) الكشف عن النشا في الأوراق ---------- */
-BX.reg("b9-2-2-1",{cols:[["l","الورقة"],["c","اللون بعد إضافة اليود"],["r","النتيجة"]],
- conclude:"الورقة المعرّضة للضوء تحتوي على النشا الناتج من البناء الضوئي (تتلوّن بالأزرق الداكن مع اليود)، أما ورقة الظلام فلا تحتوي عليه.",
- ans:["الورقة المعرّضة للضوء؛ لأنها قامت بالبناء الضوئي وكوّنت الغلوكوز الذي خُزّن على شكل نشا، واليود يكشف النشا بلون أزرق داكن.","إذابة الكلوروفيل (إزالة اللون الأخضر) حتى يظهر لون اليود بوضوح."],
- build(S,A){const bur=S.burner(220,392,{on:true});const hot=S.beaker(220,240,140,110,{col:"#e3f2fd",lvl:.7,label:"ماء ساخن"});S.rect(140,236,160,8,{fill:"#78909c"});const st=S.bubbles(220,232,110,10,{h:70});
-  const al=S.tube(220,215,110,{w:44,lvl:.6,col:"#fffde7",label:""});al.g.style.display="none";
-  const leaf=(i)=>{const g=S.g();S.tr(g,520+i*110,460);S.path("M0 0 C -40 -20 -40 -70 0 -90 C 40 -70 40 -20 0 0Z",{fill:"#43a047",stroke:"#1b5e20","stroke-width":2},g);S.line(0,0,0,-86,{stroke:"#1b5e20","stroke-width":2},g);S.text(0,22,i?"🌑 ورقة الظلام":"☀️ ورقة الضوء",{"font-size":13},g);g.i=i;g.st=0;return g;};
-  const lv=[leaf(0),leaf(1)];
-  A.say("اغمري الورقتين في الماء الساخن دقيقة: اسحبي كل ورقة إلى الكأس.");let n=0;
-  const setCol=(g,c)=>g.querySelector("path").setAttribute("fill",c);
-  lv.forEach(g=>S.drag(g,{back:true,oy:-45,targets:()=>g.st===0?[{g:hot.g,fn:async()=>{g.st=1;setCol(g,"#689f38");if(++n===2){A.step(0);bath();}}}]:g.st===1&&al.g.style.display===""?[{g:al.g,fn:async()=>{g.st=2;await S.tween(1500,t=>{setCol(g,mix("#f1f8e9","#43a047",(1-t)*.8));al.set(null,mix("#fffde7","#66bb6a",t*.7));});if(lv.every(x=>x.st===2)){A.obs("تلوّن الكحول بالأخضر وأصبحت الورقتان باهتتين (أُزيل الكلوروفيل).");A.step(1);iodine();}}}]:g.st===2&&dishes?[{g:dishes[g.i].g,fn:async()=>{g.st=3;const lt=g.querySelector("text");if(lt)lt.remove();await S.moveTo(g,dishes[g.i].g._x,dishes[g.i].g._y+40,300);return "stay";}}]:[]}));
-  function bath(){A.say("ضعي الورقتين في أنبوب الكحول داخل الحمّام المائي (لا تسخّني الكحول على اللهب مباشرة).");al.g.style.display="";S.label(0,-125,"كحول",al.g,"#6d4c41");}
-  let dishes=null;function iodine(){A.say("اغسلي الورقتين وضعيهما في طبقَي بتري، ثم أضيفي قطرات اليود إلى كل ورقة.");dishes=[0,1].map(i=>S.dish(520+i*140,320,62,{label:i?"طبق ورقة الظلام":"طبق ورقة الضوء"}));
-    const io=S.dropper(740,440,"#8d6e00",{label:"يود",bulb:"#6d4c41"});let k=0;
-    S.drag(io,{back:true,oy:10,targets:()=>lv.filter(g=>g.st===3).map(g=>({g,fn:async()=>{g.st=4;const c=g.i?"#c79a3c":"#1a237e";await S.tween(900,t=>setCol(g,mix("#f1f8e9",c,t)));A.rec({l:g.i?"ورقة الظلام":"ورقة الضوء",c:g.i?"بنّي مصفرّ (لون اليود)":"أزرق داكن",r:g.i?"لا يوجد نشا":"يوجد نشا"});if(++k===2){A.step(2);}}}))});}
+/* ---------- 10) الكشف عن النشا ---------- */
+BX.reg("b9-2-2-1",{cols:[["l","أوراق النبات"],["c","اللون بعد إضافة محلول لوغول"],["r","النتيجة"]],
+ conclude:"أوراق النبات المعرّضة للضوء تحتوي على النشا (تتلوّن بالأزرق الداكن مع محلول لوغول)، أما المغطّاة بورق الألمنيوم فلا تحتوي عليه؛ فالضوء ضروري لعملية البناء الضوئي.",
+ ans:["لقتل الخلايا وإيقاف التفاعلات الحيوية فيها، وتليين الورقة وإتلاف أغشية الخلايا ليسهل خروج الكلوروفيل ودخول المحلول.","لإذابة الكلوروفيل وإزالة اللون الأخضر من الأوراق حتى يظهر لون محلول لوغول بوضوح.","تلوّنت الأوراق المعرّضة للضوء باللون الأزرق الداكن؛ لاحتوائها على النشا.","الضوء ضروري لعملية البناء الضوئي؛ فالأوراق المغطّاة لم تُنتج النشا."],
+ build(S,A){S.burner(230,392,{on:true});const hot=S.beaker(230,240,150,110,{col:"#e3f2fd",lvl:.7,label:"ماء يغلي"});S.rect(145,236,170,8,{fill:"#78909c"});S.bubbles(230,232,120,12,{h:70});
+  const al=S.tube(230,215,110,{w:44,lvl:.6,col:"#fffde7"});al.g.style.display="none";S.label(0,-125,"كحول إيثيلي",al.g,"#6d4c41");
+  const mk=(i)=>{const g=S.g();S.tr(g,500+i*150,460);for(let q=0;q<2;q++)S.path("M"+(q*14-7)+" 0 C "+(q*14-47)+" -20 "+(q*14-47)+" -70 "+(q*14-7)+" -90 C "+(q*14+33)+" -70 "+(q*14+33)+" -20 "+(q*14-7)+" 0Z",{fill:"#43a047",stroke:"#1b5e20","stroke-width":2},g);
+    if(i){g.foil=S.path("M-50 -95 L40 -95 L46 4 L-46 4Z",{fill:S.lg(["#eceff1","#b0bec5","#eceff1"]),stroke:"#90a4ae"},g);}S.text(0,24,i?"مغطّاة بالألمنيوم 24h":"☀️ تعرّضت للضوء",{"font-size":11},g);g.i=i;g.st=0;return g;};
+  const lv=[mk(0),mk(1)];const setCol=(g,c)=>g.querySelectorAll("path").forEach(p=>{if(p!==g.foil)p.setAttribute("fill",c);});
+  let cur=0;const nap=S.g();S.tr(nap,600,330);S.rect(-90,-20,180,40,{rx:4,fill:"#fafafa",stroke:"#ccc"},nap);S.text(0,40,"ورق نشّاف",{"font-size":11},nap);
+  const watch=S.watch(90,150);
+  A.say("ضعي أوراق النبات التي تعرّضت للضوء في ماء يغلي مدّة 30s: اسحبيها إلى الكأس.");
+  lv.forEach(g=>S.drag(g,{back:true,oy:-45,targets:()=>{if(g.i!==cur)return [];if(g.st===0)return [{g:hot.g,fn:async()=>{g.st=1;await S.moveTo(g,230,230,300);for(let s=0;s<=30;s+=2){watch.set(s);await sleep(35);}setCol(g,"#689f38");A.toast("مرّت 30s");if(cur===0)A.step(0);al.g.style.display="";A.say("أخرجي الأوراق وضعيها في أنبوب الكحول الإيثيلي، وضعي الأنبوب في الماء المغلي حتى يختفي اللون الأخضر: اسحبيها إلى الأنبوب.");return false;}}];
+    if(g.st===1)return [{g:al.g,fn:async()=>{g.st=2;await S.moveTo(g,230,200,300);await S.tween(1600,t=>{setCol(g,mix("#689f38","#f1f8e9",t));al.set(null,mix("#fffde7","#66bb6a",t*.7));});if(cur===0)A.step(1);A.say("أخرجي الأوراق بالملقط واغسليها، ثم ضعيها على ورقة النشّاف: اسحبيها.");return false;}}];
+    if(g.st===2)return [{g:nap,fn:async()=>{g.st=3;g._off=true;await S.moveTo(g,600+(g.i?45:-45),360,300);S.tr(g,g._x,g._y,0,.7);const tx=g.querySelector("text");if(tx)tx.style.display="none";if(cur===0)A.step(2);A.say("أضيفي بضع قطرات من محلول لوغول إلى الأوراق: اسحبي القطّارة.");return "stay";}}];return [];}}));
+  const lg=S.dropper(760,440,"#8d6e00",{label:"لوغول",bulb:"#6d4c41"});
+  S.drag(lg,{back:true,oy:10,targets:()=>lv.filter(g=>g.st===3).map(g=>({g,fn:async()=>{g.st=4;const c=g.i?"#c79a3c":"#1a237e";await S.tween(900,t=>setCol(g,mix("#f1f8e9",c,t)));
+    A.rec({l:g.i?"مغطّاة بورق الألمنيوم":"معرّضة للضوء",c:g.i?"بنّي مصفرّ (لون محلول لوغول)":"أزرق داكن",r:g.i?"لا تحتوي على النشا":"تحتوي على النشا"});
+    if(g.i===0){A.step(3);cur=1;lv[1].foil.remove();lv[1].foil=null;al.set(null,"#fffde7");A.say("كرّري الخطوات باستخدام الأوراق المغطّاة بورق الألمنيوم (بعد نزع الورق): ابدئي بالماء الذي يغلي.");}else{A.obs("تلوّنت الأوراق المعرّضة للضوء بالأزرق الداكن، وبقيت المغطّاة بلون محلول لوغول البنّي.");A.step(4);}}}))});
  }});
 })();

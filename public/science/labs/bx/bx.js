@@ -31,7 +31,9 @@ function Scene(svg){
   S.text=(x,y,s,at,par)=>{const t=mk("text",{x,y,"text-anchor":"middle","font-size":16,"font-weight":700,fill:"#2B1218","font-family":"Noto Naskh Arabic,Tahoma,sans-serif",...(/[\u0600-\u06FF]/.test(s)?{}:{direction:"ltr","unicode-bidi":"plaintext"}),...at},par||S.layer);t.textContent=s;return t;};
   S.emo=(x,y,ch,size,par)=>{const t=mk("text",{x,y,"text-anchor":"middle","dominant-baseline":"central","font-size":size||40},par||S.layer);t.textContent=ch;return t;};
   S.tr=(g,x,y,r,s)=>{g._x=x;g._y=y;g._r=r||0;g._s=s??1;g.setAttribute("transform","translate("+x+" "+y+")"+(r?" rotate("+r+")":"")+(s!=null&&s!==1?" scale("+s+")":""));return g;};
-  S.label=(x,y,s,par,col)=>{const g=S.g(par);const t=S.text(0,0,s,{"font-size":14,fill:"#fff"},g);g.set=v=>{t.textContent=v;t.setAttribute("direction",/[\u0600-\u06FF]/.test(v)?"rtl":"ltr");};const w=Math.max(40,s.length*8+18);const r=S.rect(-w/2,-17,w,24,{rx:12,fill:col||"#7A1F2E",opacity:.92},g);g.insertBefore(r,t);S.tr(g,x,y);return g;};
+  S.label=(x,y,s,par,col)=>{const g=S.g(par);const r=S.rect(-20,-17,40,24,{rx:12,fill:col||"#7A1F2E",opacity:.92},g);const t=S.text(0,0,s,{"font-size":14,fill:"#fff"},g);
+    const fit=()=>{let w;try{w=t.getComputedTextLength();}catch(e){w=0;}if(!w)w=String(t.textContent).length*8;w=Math.max(40,w+20);r.setAttribute("x",-w/2);r.setAttribute("width",w);};
+    g.set=v=>{t.textContent=v;t.setAttribute("direction",/[\u0600-\u06FF]/.test(v)?"rtl":"ltr");fit();};S.tr(g,x,y);requestAnimationFrame(fit);fit();return g;};
   /* المسرح: جدار ومنضدة */
   S.room=(opt={})=>{const b=S.g(S.bg);S.rect(0,0,800,500,{fill:S.lg([opt.wall1||"#e8f1f6",opt.wall2||"#d4e3ec"],1)},b);
     for(let i=0;i<6;i++)S.rect(40+i*130,30,90,4,{fill:"#c8d9e3",rx:2},b);

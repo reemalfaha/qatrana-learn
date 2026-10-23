@@ -25,10 +25,13 @@ route(/^#\/books$/,V=>{V.append(crumbs(["الرئيسية","#/"],"الكتب"));
     box.append(gr);V.append(box);});V.append(credit());});
 
 /* ---- عارض الكتاب ---- */
+let EMB=null;
 route(/^#\/book\/([\w]+)(?:\/(\d+))?$/,async(V,key,p)=>{
   const found=allBooks().find(([b])=>b.key===key);if(!found){go("#/books");return;}
+  V.append(crumbs(["الرئيسية","#/"],["الكتب","#/books"],found[1].name+" · الصف "+found[1].grade+" · "+bookTitle(found[0])));EMB=null;await mountBook(V,key,p);});
+async function mountBook(V,key,p,opt){
+  const found=allBooks().find(([b])=>b.key===key);if(!found)return;
   const[b,s]=found;K=key;SUB=s;KIND=b;
-  V.append(crumbs(["الرئيسية","#/"],["الكتب","#/books"],s.name+" · الصف "+s.grade+" · "+bookTitle(b)));
   const wait=el("div",{class:"card empty"},"جارٍ تحميل الكتاب…");V.append(wait);
   try{B=await meta(key);}catch(e){wait.textContent="تعذّر تحميل الكتاب. تأكّدي من الاتصال.";return;}
   wait.remove();B.dir="book/"+key+"/";
@@ -42,13 +45,15 @@ route(/^#\/book\/([\w]+)(?:\/(\d+))?$/,async(V,key,p)=>{
     if(e.key==="ArrowLeft"||e.key==="PageDown")go2(1);else if(e.key==="ArrowRight"||e.key==="PageUp")go2(-1);};
   document.addEventListener("keydown",keyH);
   if(resizeH)removeEventListener("resize",resizeH);resizeH=()=>{if(cv&&document.body.contains(cv))fit();};addEventListener("resize",resizeH);
+  if(EMB&&(page<EMB.lo||page>EMB.hi))page=EMB.lo;
   draw();
-});
-addEventListener("hashchange",()=>{if(!location.hash.startsWith("#/book/"))document.body.classList.remove("bookmode","bkfull");});
+}
+window.SCIBOOK.mount=(V,key,p,range)=>{EMB=range||null;return mountBook(V,key,p);};
+addEventListener("hashchange",()=>{if(!location.hash.startsWith("#/book/")&&!location.hash.startsWith("#/t/m/"))document.body.classList.remove("bookmode","bkfull");});
 
 function navBtn(t,d){return el("button",{class:"btn ghost sm",onclick:()=>go2(d)},t);}
 function go2(d){setPage(page+d);}
-function setPage(p){p=Math.max(1,Math.min(B.n,p));if(p===page&&pageEl.childElementCount)return;page=p;history.replaceState(null,"","#/book/"+K+"/"+page);draw();scrollTo({top:0});}
+function setPage(p){p=Math.max(EMB?EMB.lo:1,Math.min(EMB?EMB.hi:B.n,p));if(p===page&&pageEl.childElementCount)return;page=p;if(!EMB)history.replaceState(null,"","#/book/"+K+"/"+page);draw();if(!EMB)scrollTo({top:0});else pageEl.scrollIntoView({block:"start"});}
 function lessonAt(p){/* أي درس تقع فيه الصفحة */let cur=null;SUB.units.forEach(u=>u.lessons.forEach(l=>{const st=pdfPage(KIND,firstNum(l.pages));if(KIND.kind==="s"&&p>=st)cur=l;}));return cur;}
 function expsOn(p){const out=[];SUB.units.forEach(u=>u.lessons.forEach(l=>l.exps.forEach((x,i)=>{const r=expRef(x);if(!r||r.kind!==KIND.kind)return;const b=findBook(SUB,r.kind,r.p);if(b!==KIND)return;const st=pdfPage(b,r.p);if(p>=st&&p<=st+2)out.push({l,x,i});})));return out;}
 function toolbar(){

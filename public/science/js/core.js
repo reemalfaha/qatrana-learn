@@ -87,7 +87,7 @@ function refreshTop(){const r=$("#tright");if(!r)return;r.innerHTML="";
 const ROUTES=[];function route(re,fn){ROUTES.push([re,fn]);}
 function go(h){if(location.hash===h)render();else location.hash=h;}
 function render(){const h=location.hash||"#/";const V=$("#view");V.innerHTML="";window.scrollTo(0,0);
-  const sec=h.startsWith("#/t")?"t":h.startsWith("#/glossary")?"g":"s";document.querySelectorAll(".maintabs a").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.sec===sec)));
+  const sec=h.startsWith("#/t/m")?"m":h.startsWith("#/t")?"t":h.startsWith("#/glossary")?"g":"s";document.querySelectorAll(".maintabs a").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.sec===sec)));
   for(const[re,fn]of ROUTES){const m=h.match(re);if(m){try{fn(V,...m.slice(1).map(decodeURIComponent));}catch(e){console.error(e);V.append(el("div",{class:"empty"},"حدث خطأ في عرض الصفحة."));}refreshTop();return;}}
   go("#/");}
 addEventListener("hashchange",render);

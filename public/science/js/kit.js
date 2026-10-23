@@ -75,6 +75,41 @@ function exitPaper(l){const s=subjOf(l),q=pickQ(l).exit,p=el("div",{class:"paper
 function rubricExtra(l){return el("div",{class:"box",style:{marginTop:"10px"}},el("b",{},"طريقة الاستخدام: "),"تُقدَّر الطالبة على كل معيار من 1 إلى 4، والمجموع من "+Math.min(5,l.outcomes.length)*4+". ",
   el("b",{},"التقدير: "),"90% فأكثر ممتاز · 80–89% جيد جدًّا · 65–79% جيد · أقل من 65% يحتاج إلى خطة علاجية.");}
 
+
+/* ===================== المادة: كل درس في صفحة واحدة ===================== */
+const MT=[["book","📖 الكتاب"],["exps","🧪 التجارب"],["plan","📝 الخطة"],["end","✅ تقويم الدرس"],["exit","🎫 تذكرة الخروج"],["rubric","📏 سلّم التقدير"]];
+route(/^#\/t\/m$/,needT(V=>{V.append(crumbs(["الرئيسية","#/"],["ركن المعلّمة","#/t"],"المادة"));
+  V.append(el("div",{class:"hero"},el("div",{class:"orb"}),el("h1",{},"📚 المادة"),el("p",{},"اختاري الدرس: الكتاب للشرح بالقلم، والتجارب بروابطها، والخطة، وتقويم الدرس، وتذكرة الخروج، في صفحة واحدة")));
+  const gs=el("div",{class:"chips",style:{margin:"14px 0"}});Object.keys(SCI.data).forEach(g=>gs.append(el("button",{class:"chip","aria-pressed":String(g===TG),onclick:()=>{TG=g;lsSet("qatrana.sci.tg",g);render();}},"الصف "+g)));V.append(gs);
+  if(!SCI.data[TG])TG=Object.keys(SCI.data)[0];
+  SUBJ_ORDER.forEach(k=>{const s=SCI.data[TG][k];if(!s)return;const box=el("section",{class:"card",style:{marginTop:"12px"}});box.append(el("h2",{style:{color:s.color,margin:"0 0 6px"}},s.name));
+    if(k==="sci"||k==="chem")box.append(el("div",{class:"row",style:{margin:"4px 0 8px"}},el("a",{class:"btn sm gold",href:"chem3d/#ptable",target:"_blank",rel:"noopener"},"🧪 الجدول الدوري التفاعلي"),el("a",{class:"btn sm",href:"labs/electrons.html",target:"_blank",rel:"noopener"},"⚛️ نشاط تعبئة الإلكترونات")));
+    s.units.forEach(u=>{box.append(el("h4",{style:{margin:"10px 0 6px"}},"الوحدة "+u.n+": "+u.title));const g=el("div",{class:"grid g2"});
+      u.lessons.forEach((l,i)=>g.append(el("a",{class:"les",href:"#/t/m/"+l.id+"/book",style:{"--c":s.color}},el("span",{class:"st"},i+1),el("div",{},el("b",{},l.title),el("small",{},"ص "+l.pages+" · "+(l.exps.length?l.exps.length+" تجارب · ":"")+"كتاب · خطة · تقويم · تذكرة")))));box.append(g);});V.append(box);});
+  V.append(credit());}));
+function bookRange(l){const link=window.SCIBOOK&&SCIBOOK.lessonLink(l);if(!link)return null;const m=link.match(/#\/book\/(\w+)\/(\d+)/);const pg=String(l.pages).match(/(\d+)\D+(\d+)/);const st=+m[2],off=st-(pg?+pg[1]:st);return {key:m[1],lo:st,hi:pg?+pg[2]+off:st+8};}
+route(/^#\/t\/m\/([\w-]+)\/(\w+)$/,needT(async(V,id,tab)=>{const l=findLesson(id);if(!l){go("#/t/m");return;}TG=l.grade;const s=subjOf(l),u=l.unit;
+  V.append(crumbs(["الرئيسية","#/"],["ركن المعلّمة","#/t"],["المادة","#/t/m"],l.title));
+  V.append(el("div",{class:"lhead noprint",style:{"--c":s.color}},el("div",{class:"en"},s.name+" · الصف "+l.grade+" · الوحدة "+u.n+": "+u.title+" · ص "+l.pages),el("h1",{},l.title),el("div",{class:"idea"},"💡 "+l.idea)));
+  const tb=el("div",{class:"tabs noprint",role:"tablist"});MT.forEach(([k,t])=>tb.append(el("button",{role:"tab","aria-selected":String(k===tab),onclick:()=>go("#/t/m/"+l.id+"/"+k)},t+(k==="exps"&&l.exps.length?" ("+l.exps.length+")":""))));V.append(tb);
+  const idx=u.lessons.indexOf(l),pv=u.lessons[idx-1],nx=u.lessons[idx+1];const navR=el("div",{class:"row noprint",style:{justifyContent:"space-between",marginTop:"16px"}},pv?el("a",{class:"btn ghost sm",href:"#/t/m/"+pv.id+"/"+tab},"→ "+pv.title):el("span"),nx?el("a",{class:"btn ghost sm",href:"#/t/m/"+nx.id+"/"+tab},nx.title+" ←"):el("span"));
+  if(tab==="book"){const r=bookRange(l);if(!r){V.append(el("div",{class:"card empty"},"كتاب هذا الدرس غير متوفّر بعد."));}else{const box=el("div",{style:{marginTop:"10px"}});V.append(el("p",{class:"muted small noprint"},"صفحات الدرس "+l.pages+" مقسّمة فقرات بينها فراغات للشرح. اختاري ✏️ القلم أو 🖍️ التظليل للكتابة، و⛶ للشاشة الكاملة."),box);await SCIBOOK.mount(box,r.key,r.lo,{lo:r.lo,hi:r.hi});}}
+  else if(tab==="exps"){V.append(expsPanel(l));}
+  else{V.append(ptools());let p;if(tab==="plan")p=planPaper(l);else if(tab==="end")p=endPaper(l);else if(tab==="exit")p=exitPaper(l);else{const info=ATOOLS.find(a=>a[0]==="rubric");p=assessPaper("rubric",info,l);p.append(rubricExtra(l));}V.append(p);
+    if(tab==="end"||tab==="exit")V.append(el("div",{class:"card noprint",style:{marginTop:"12px"}},el("b",{},"📱 النسخة الإلكترونية للطالبات: "),el("a",{href:"#/l/"+l.id+"/"+tab},"افتحي كما تراها الطالبة"),el("span",{class:"small muted"}," · تجده الطالبة في صفحة الدرس، وتصل النتائج إلى «نتائج الطالبات».")));}
+  V.append(navR,credit());}));
+function expsPanel(l){const w=el("div",{style:{marginTop:"12px"}});
+  if(!l.exps.length&&!l.sims.length){w.append(el("div",{class:"card empty"},"لا توجد تجارب لهذا الدرس."));return w;}
+  const frame=el("div");
+  const open=(x,t)=>{frame.innerHTML="";frame.append(el("div",{class:"simbox",style:{marginTop:"12px"}},el("div",{class:"simbar"},el("b",{},"⚗️ "+t),el("a",{class:"btn sm ghost",href:simHref(x),target:"_blank",rel:"noopener"},"⛶ ملء الشاشة")),el("iframe",{src:simHref(x),title:t,allow:"fullscreen"})));frame.scrollIntoView({behavior:"smooth"});};
+  l.exps.forEach((x,i)=>{const sim=x.sim||l.sims[0];const bl=window.SCIBOOK&&SCIBOOK.expLink(l,x);
+    w.append(el("article",{class:"card",style:{marginBottom:"10px"}},el("div",{class:"row",style:{justifyContent:"space-between"}},el("div",{},el("span",{class:"tag"},x.kind),el("h3",{style:{margin:"4px 0"}},x.t),el("small",{class:"muted"},x.src+" · 🎯 "+x.goal))),
+      el("div",{class:"row",style:{marginTop:"8px"}},sim?el("button",{class:"btn sm",onclick:()=>open(sim,x.t)},"⚗️ افتحي التجربة في "+(sim.lab==="lab3d"?"المختبر ثلاثي الأبعاد":sim.lab==="chem3d"?"مختبر الكيمياء ثلاثي الأبعاد":["biology","chemistry","physics","earth"].includes(sim.lab)?"مختبر بلا حدود":"المختبر التفاعلي")):null,
+        sim?el("a",{class:"btn sm ghost",href:simHref(sim),target:"_blank",rel:"noopener"},"↗ في صفحة مستقلّة"):null,bl?el("a",{class:"btn sm ghost",href:bl},"📖 موقعها في الكتاب"):null,el("a",{class:"btn sm ghost",href:"#/ws/"+l.id+"/"+i},"🖨️ ورقة العمل"))));});
+  const other=l.sims.filter(sm=>!l.exps.some(x=>x.sim&&x.sim.lab===sm.lab&&x.sim.id===sm.id));
+  if(other.length)w.append(el("div",{class:"card"},el("b",{},"🔬 محاكاة أخرى للدرس: "),el("div",{class:"row",style:{marginTop:"6px"}},...other.map(sm=>el("button",{class:"btn sm ghost",onclick:()=>open(sm,sm.t)},sm.t)))));
+  w.append(frame);return w;}
+
 /* بطاقة في ركن المعلّمة وفي صفحة الدرس */
 addEventListener("DOMContentLoaded",()=>{});
 })();

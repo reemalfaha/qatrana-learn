@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ابني الذرّة</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--ok:#1f8f5b;--bad:#c2410c;--soft:#f6ece6;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--gold2:#f3dfa8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+header.hd{background:linear-gradient(135deg,var(--wine2),var(--wine));color:#fff;border-radius:18px;padding:16px 18px;border-bottom:4px solid var(--gold)}
+header.hd h1{font-family:var(--fd);margin:0;font-size:clamp(24px,4.5vw,36px)}
+header.hd p{margin:4px 0 0;color:var(--gold2)}
+header.hd a{color:#fff}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:700 15px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--wine);border-color:var(--wine);color:#fff}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgba(60,20,30,.07)}
+canvas{display:block;width:100%;touch-action:none;border-radius:12px;background:#f3eee6;cursor:grab}
+.ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bench>*{min-width:0}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:8px 14px;background:var(--wine);color:#fff;cursor:pointer;min-height:42px}
+.btn.g{background:var(--soft);color:var(--ink);border:1.5px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1a00}
+.btn:active{transform:scale(.97)}
+label.l{font-weight:700;font-size:14px;color:var(--muted)}
+select,input{min-width:0;max-width:100%;font:600 16px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--card);color:var(--ink);min-height:42px}
+.read{font:700 28px/1.3 ui-monospace,Menlo,monospace;direction:ltr;text-align:center;background:var(--soft);border-radius:12px;padding:8px}
+.calc{background:#fffaf0;border:1.5px dashed var(--gold);border-radius:12px;padding:10px;font-size:15px}
+@media (prefers-color-scheme:dark){.calc{background:#2a2114}}
+.calc b{color:var(--wine)}
+@media (prefers-color-scheme:dark){.calc b{color:var(--gold2)}}
+.msg{font-weight:700;border-radius:10px;padding:8px 10px}
+.msg.ok{background:#e3f6ec;color:var(--ok)}.msg.no{background:#fdeee6;color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+th{background:var(--soft)}
+.tip{font-size:14px;color:var(--muted)}
+.sw{display:inline-flex;gap:6px;align-items:center;font-weight:600;cursor:pointer}
+.sw input{width:20px;height:20px;min-height:0}
+footer{text-align:center;color:var(--muted);font-size:13px}
+html.embed header.hd,html.embed footer{display:none!important}
+html.embed .wrap{padding-top:6px}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hd"><h1>⚛️ ابني الذرّة: عبّئي الإلكترونات في المدارات</h1><p>اسحبي البروتونات والنيوترونات إلى النواة، ثم الإلكترونات من الكأس إلى المدارات حسب العدد الذرّي</p>
+<p><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
+<div class="bench">
+ <div class="card stagecard"><svg id="sv" viewBox="0 0 700 560" aria-label="نموذج الذرّة"></svg><div id="msg" class="amsg" aria-live="polite"></div></div>
+ <div class="ctl">
+  <div class="card ctl">
+   <label class="l" for="el">العنصر</label>
+   <select id="el"></select>
+   <div class="row"><button class="btn g" id="prev">→ السابق</button><button class="btn g" id="next">التالي ←</button><button class="btn gold" id="rnd">🎲 عنصر عشوائي</button></div>
+   <div id="card" class="ecard"></div>
+  </div>
+  <div class="card ctl"><b>🧭 الخطوات</b><ol id="steps" class="steps"></ol></div>
+  <div class="card ctl"><b>📝 أجيبي</b><div id="qa"></div></div>
+  <div class="card ctl"><div class="row" style="justify-content:space-between"><b>🏅 ذرّات أكملتِها</b><span id="score" class="tag"></span></div><div id="doneList" class="tip"></div>
+   <button class="btn g" id="reset">↺ ابدئي هذا العنصر من جديد</button></div>
+ </div>
+</div>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+</div>
+<style>
+.stagecard{padding:8px;position:relative}
+#sv{width:100%;height:auto;display:block;touch-action:none;user-select:none;background:radial-gradient(circle at 50% 45%,#fff 0,#fbf3ea 55%,#f1e6f6 100%);border-radius:14px}
+.amsg{position:absolute;top:14px;left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:999px;font-weight:800;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.amsg.on{opacity:1}.amsg.ok{background:#e3f6ec;color:#1f8f5b;border:2px solid #1f8f5b}.amsg.no{background:#fdeee6;color:#c2410c;border:2px solid #c2410c}
+.ecard{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;background:var(--soft);border-radius:14px;padding:10px}
+.sym{width:86px;height:86px;border-radius:14px;background:linear-gradient(135deg,#7A1F2E,#9b2c3f);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 34px/1 sans-serif;position:relative}
+.sym small{font:700 12px sans-serif;position:absolute;top:6px;left:8px}.sym i{font:600 12px sans-serif;font-style:normal;position:absolute;bottom:6px}
+.steps{padding-inline-start:20px;margin:6px 0}.steps li{padding:4px 6px;border-radius:8px}.steps li.ok{color:#1f8f5b}.steps li.ok::marker{content:"✔ "}.steps li.cur{background:#fbf1d6;font-weight:700}
+.qrow{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}.qrow input{width:80px;text-align:center}.qrow .r{font-weight:800}
+.tag{background:var(--soft);border-radius:999px;padding:2px 10px;font-weight:800}
+</style>
+<script>
+(()=>{
+const EL=[["H","الهيدروجين",1],["He","الهيليوم",4],["Li","الليثيوم",7],["Be","البيريليوم",9],["B","البورون",11],["C","الكربون",12],["N","النيتروجين",14],["O","الأكسجين",16],["F","الفلور",19],["Ne","النيون",20],["Na","الصوديوم",23],["Mg","المغنيسيوم",24],["Al","الألمنيوم",27],["Si","السيليكون",28],["P","الفسفور",31],["S","الكبريت",32],["Cl","الكلور",35],["Ar","الأرغون",40],["K","البوتاسيوم",39],["Ca","الكالسيوم",40]];
+const CAP=[2,8,8,2],R=[95,150,205,255],CX=330,CY=280,NS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id),sv=$("sv");
+const S=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||sv).append(e);return e;};
+let Z=+(localStorage.getItem("atom.z")||11),st,done=JSON.parse(localStorage.getItem("atom.done")||"[]"),drag=null,rot=0;
+function cfg(z){const c=[];let l=z;CAP.forEach(k=>{if(l>0){c.push(Math.min(k,l));l-=k;}});return c;}
+function reset(){const [sym,name,A]=EL[Z-1];st={p:0,n:0,e:[0,0,0,0],Z,A,N:A-Z,qa:{},complete:false};localStorage.setItem("atom.z",Z);$("el").value=Z;
+ $("card").innerHTML=`<div class="sym"><small>${Z}</small>${sym}<i>${A}</i></div><div><b style="font-size:20px">${name}</b><br>العدد الذرّي Z = <b>${Z}</b><br>العدد الكتلي A = <b>${A}</b></div>`;
+ $("qa").innerHTML="";[["p","عدد البروتونات"],["n","عدد النيوترونات"],["e","عدد الإلكترونات"],["v","عدد إلكترونات التكافؤ"]].forEach(([k,t])=>{const r=document.createElement("div");r.className="qrow";r.innerHTML=`<span>${t}:</span><input inputmode="numeric" data-k="${k}"><button class="btn g">تحقّقي</button><span class="r"></span>`;
+  r.querySelector("button").onclick=()=>{const v=+r.querySelector("input").value;const c=cfg(Z);const right={p:Z,n:A-Z,e:Z,v:c[c.length-1]}[k];const ok=v===right;st.qa[k]=ok;r.querySelector(".r").textContent=ok?"✅":"❌ حاولي ("+(k==="n"?"A − Z":k==="v"?"إلكترونات المدار الأخير":"= العدد الذرّي")+")";r.querySelector(".r").style.color=ok?"#1f8f5b":"#c2410c";steps();};$("qa").append(r);});
+ draw();steps();}
+function say(t,ok){const m=$("msg");m.textContent=t;m.className="amsg on "+(ok?"ok":"no");clearTimeout(m._t);m._t=setTimeout(()=>m.className="amsg",2300);if(!ok&&navigator.vibrate)navigator.vibrate(80);}
+function steps(){const c=cfg(Z);const tot=st.e.reduce((a,b)=>a+b,0);const L=[["ضعي "+Z+" بروتونًا في النواة (= العدد الذرّي)",st.p===Z],["ضعي "+(st.A-Z)+" نيوترونًا في النواة (= A − Z)",st.n===st.A-Z],["عبّئي "+Z+" إلكترونًا في المدارات من الداخل إلى الخارج",tot===Z],["أجيبي عن الأسئلة",Object.values(st.qa).filter(Boolean).length>=4]];
+ const ol=$("steps");ol.innerHTML="";let cur=false;L.forEach(([t,ok])=>{const li=document.createElement("li");li.textContent=t;if(ok)li.className="ok";else if(!cur){li.className="cur";cur=true;}ol.append(li);});
+ if(L.every(x=>x[1])&&!st.complete){st.complete=true;if(!done.includes(Z)){done.push(Z);localStorage.setItem("atom.done",JSON.stringify(done));}say("🎉 أحسنتِ! اكتملت ذرّة "+EL[Z-1][1],true);}
+ $("score").textContent=done.length+" / 20";$("doneList").textContent=done.sort((a,b)=>a-b).map(z=>EL[z-1][0]).join("  ");}
+function slots(s,n){const out=[];for(let i=0;i<n;i++){const a=2*Math.PI*i/CAP[s]-Math.PI/2+rot/(s+1);out.push([CX+R[s]*Math.cos(a),CY+R[s]*Math.sin(a)]);}return out;}
+function nucPos(i,tot){const r=6+Math.sqrt(i)*7.5,a=i*2.4;return [CX+r*Math.cos(a),CY+r*Math.sin(a)];}
+const CUPS={e:[600,430,"#2563c9","إلكترونات e⁻"],p:[80,430,"#e53935","بروتونات p⁺"],n:[80,170,"#7f8c8d","نيوترونات n"]};
+function draw(){sv.innerHTML="";const c=cfg(Z);
+ const defs=S("defs");defs.innerHTML='<radialGradient id="gp" cx="35%" cy="35%"><stop offset="0" stop-color="#ff8a80"/><stop offset="1" stop-color="#c62828"/></radialGradient><radialGradient id="gn" cx="35%" cy="35%"><stop offset="0" stop-color="#e0e0e0"/><stop offset="1" stop-color="#616161"/></radialGradient><radialGradient id="ge" cx="35%" cy="35%"><stop offset="0" stop-color="#90caf9"/><stop offset="1" stop-color="#1565c0"/></radialGradient><filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".3"/></filter>';
+ c.forEach((_,s)=>{const full=st.e[s]>=CAP[s];S("circle",{cx:CX,cy:CY,r:R[s],fill:"none",stroke:full?"#1f8f5b":"#7A1F2E","stroke-width":full?5:3,"stroke-dasharray":full?"":"8 7",opacity:.8,"data-shell":s,class:"shell"});
+  const t=S("text",{x:CX,y:CY-R[s]-8,"text-anchor":"middle","font-size":19,"font-weight":800,fill:full?"#1f8f5b":"#7A1F2E",stroke:"#fffaf3","stroke-width":5,"paint-order":"stroke"});t.textContent="المدار "+(s+1)+": "+st.e[s]+"/"+CAP[s]+(full?" ✔":"");
+  slots(s,st.e[s]).forEach(([x,y])=>{S("circle",{cx:x,cy:y,r:11,fill:"url(#ge)",filter:"url(#sh)"});const m=S("text",{x,y:y+4,"font-size":12,"text-anchor":"middle",fill:"#fff","font-weight":800});m.textContent="−";});});
+ // مناطق إسقاط شفّافة على المدارات
+ c.forEach((_,s)=>S("circle",{cx:CX,cy:CY,r:R[s],fill:"none",stroke:"transparent","stroke-width":44,"data-drop":"s"+s,style:"cursor:pointer"}));
+ S("circle",{cx:CX,cy:CY,r:52,fill:"#fff3e0",stroke:"#B8902A","stroke-width":3,"stroke-dasharray":"5 4","data-drop":"nuc"});
+ const nuc=[];for(let i=0;i<st.p;i++)nuc.push("p");for(let i=0;i<st.n;i++)nuc.push("n");nuc.sort((a,b)=>0).forEach((k,i)=>{const [x,y]=nucPos(i,nuc.length);S("circle",{cx:x,cy:y,r:9,fill:k==="p"?"url(#gp)":"url(#gn)",filter:"url(#sh)"});});
+ const lt=S("text",{x:CX,y:CY+78,"text-anchor":"middle","font-size":18,stroke:"#fffaf3","stroke-width":4,"paint-order":"stroke","font-weight":800,fill:"#B8902A"});lt.textContent="النواة: "+st.p+"p⁺ · "+st.n+"n";
+ Object.entries(CUPS).forEach(([k,[x,y,col,lab]])=>{const g=S("g",{"data-cup":k,style:"cursor:grab"});
+  S("path",{d:`M${x-46} ${y-34} L${x+46} ${y-34} L${x+36} ${y+40} L${x-36} ${y+40} Z`,fill:"rgba(255,255,255,.8)",stroke:"#9fb3c8","stroke-width":3},g);
+  for(let i=0;i<9;i++)S("circle",{cx:x-26+(i%3)*26,cy:y-12+Math.floor(i/3)*18,r:9,fill:k==="e"?"url(#ge)":k==="p"?"url(#gp)":"url(#gn)"},g);
+  const t=S("text",{x,y:y+62,"text-anchor":"middle","font-size":19,"font-weight":800,fill:col},g);t.textContent=lab;
+  const left={e:Z-st.e.reduce((a,b)=>a+b,0),p:Z-st.p,n:st.A-Z-st.n}[k];const t2=S("text",{x,y:y-44,"text-anchor":"middle","font-size":16,fill:"#555"},g);t2.textContent="اسحبي أو اضغطي";});
+ if(drag){S("circle",{cx:drag.x,cy:drag.y,r:12,fill:drag.k==="e"?"url(#ge)":drag.k==="p"?"url(#gp)":"url(#gn)",filter:"url(#sh)",opacity:.95});}
+ const tot=st.e.reduce((a,b)=>a+b,0);if(tot===Z){const tx=S("text",{x:CX,y:540,"text-anchor":"middle","font-size":22,"font-weight":800,fill:"#1f8f5b"});tx.textContent="التوزيع الإلكتروني: "+cfg(Z).join(" ، ")+" ✔";}}
+/* قواعد الإضافة */
+function addE(s){const tot=st.e.reduce((a,b)=>a+b,0);if(tot>=Z){say("⛔ اكتمل عدد الإلكترونات ("+Z+" = العدد الذرّي)",false);return false;}
+ if(st.e[s]>=CAP[s]){say("⛔ المدار "+(s+1)+" ممتلئ: يتّسع لـ "+CAP[s]+" إلكترونات فقط",false);return false;}
+ for(let i=0;i<s;i++)if(st.e[i]<CAP[i]){say("⛔ عبّئي المدار "+(i+1)+" أولًا (الأقرب إلى النواة)",false);return false;}
+ st.e[s]++;if(st.e[s]===CAP[s])say("✅ المدار "+(s+1)+" امتلأ",true);if(st.e.reduce((a,b)=>a+b,0)===Z)say("✅ وصلتِ إلى "+Z+" إلكترونًا",true);return true;}
+function addN(k){if(k==="p"){if(st.p>=Z){say("⛔ عدد البروتونات = العدد الذرّي = "+Z,false);return false;}st.p++;if(st.p===Z)say("✅ "+Z+" بروتونًا",true);}
+ else{if(st.n>=st.A-Z){say("⛔ عدد النيوترونات = "+st.A+" − "+Z+" = "+(st.A-Z),false);return false;}st.n++;if(st.n===st.A-Z)say("✅ "+(st.A-Z)+" نيوترونًا",true);}return true;}
+function nextShell(){for(let s=0;s<4;s++){if(st.e[s]<CAP[s])return s;}return 3;}
+const pt=e=>{const r=sv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*700,y:(e.clientY-r.top)/r.height*560};};
+function target(p){const d=Math.hypot(p.x-CX,p.y-CY);if(d<60)return "nuc";const c=cfg(Z);for(let s=0;s<c.length;s++)if(Math.abs(d-R[s])<26)return "s"+s;
+ // مدار غير موجود (أبعد من اللازم)
+ for(let s=c.length;s<4;s++)if(Math.abs(d-R[s])<26)return "x"+s;return null;}
+sv.addEventListener("pointerdown",e=>{const p=pt(e);const cup=Object.entries(CUPS).find(([k,[x,y]])=>Math.abs(p.x-x)<55&&Math.abs(p.y-y)<50);
+ if(cup){drag={k:cup[0],x:p.x,y:p.y,sx:p.x,sy:p.y};sv.setPointerCapture(e.pointerId);draw();return;}
+ const t=target(p);if(t&&t[0]==="s"){addE(+t.slice(1));draw();steps();}});
+sv.addEventListener("pointermove",e=>{if(!drag)return;const p=pt(e);drag.x=p.x;drag.y=p.y;draw();});
+sv.addEventListener("pointerup",e=>{if(!drag)return;const p=pt(e),k=drag.k,moved=Math.hypot(p.x-drag.sx,p.y-drag.sy)>15;drag=null;
+ if(!moved){if(k==="e")addE(nextShell());else addN(k);draw();steps();return;}
+ const t=target(p);if(k==="e"){if(t&&t[0]==="s")addE(+t.slice(1));else if(t==="nuc")say("⛔ الإلكترونات لا توجد في النواة، ضعيها في المدارات",false);else if(t&&t[0]==="x")say("⛔ هذا المدار لا يلزم لهذا العنصر",false);}
+ else{if(t==="nuc")addN(k);else say("⛔ البروتونات والنيوترونات توضع في النواة",false);}draw();steps();});
+setInterval(()=>{rot+=.02;if(!drag)draw();},120);
+EL.forEach((x,i)=>$("el").append(new Option((i+1)+" · "+x[1]+" ("+x[0]+")",i+1)));
+$("el").onchange=e=>{Z=+e.target.value;reset();};$("prev").onclick=()=>{Z=Math.max(1,Z-1);reset();};$("next").onclick=()=>{Z=Math.min(20,Z+1);reset();};
+$("rnd").onclick=()=>{Z=1+Math.floor(Math.random()*20);reset();};$("reset").onclick=reset;
+const q=new URLSearchParams(location.search).get("z");if(q)Z=Math.max(1,Math.min(20,+q));reset();
+})();
+</script>
+</body>
+</html>

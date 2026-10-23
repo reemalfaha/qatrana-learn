@@ -86,14 +86,15 @@ function lLearn(P,l){
   if(!S.seen["l:"+l.id]){S.seen["l:"+l.id]=1;save();addPts(5,"قرأتِ خلاصة الدرس");}
 }
 function lLab(P,l){
-  if(l.m3d&&l.m3d.length&&window.M3D)l.m3d.forEach(k=>{if(M3D.has(k)){const box=el("section",{style:{marginBottom:"14px"}});P.append(box);M3D.mount(box,k);}});
+  const ci=l.sims.findIndex(x=>x.lab==="cell"),simFirst=ci>=0;const m3dHost=el("div");P.append(m3dHost);
+  if(l.m3d&&l.m3d.length&&window.M3D)l.m3d.forEach(k=>{if(M3D.has(k)){const box=el("section",{style:{marginBottom:"14px"}});m3dHost.append(box);M3D.mount(box,k);}});
   if(!l.sims.length&&!(l.m3d||[]).length){P.append(el("div",{class:"card empty"},"لا توجد محاكاة لهذا الدرس بعد. جرّبي ",el("a",{href:"#/labs"},"المختبرات التفاعلية"),"."));return;}
-  let cur=0;const chips=el("div",{class:"chips",style:{marginBottom:"10px"}}),box=el("div");
+  let cur=Math.max(0,ci);const chips=el("div",{class:"chips",style:{marginBottom:"10px"}}),box=el("div");
   const show=()=>{chips.innerHTML="";l.sims.forEach((x,i)=>chips.append(el("button",{class:"chip","aria-pressed":String(i===cur),onclick:()=>{cur=i;show();}},x.t)));
     const x=l.sims[cur];if(!x)return;const src=simHref(x);
     box.innerHTML="";box.append(el("div",{class:"simbox"},el("div",{class:"simbar"},el("b",{},"⚗️ "+x.t),el("a",{class:"btn sm ghost",href:src,target:"_blank",rel:"noopener"},"⛶ ملء الشاشة")),el("iframe",{src,title:x.t,loading:"lazy",allow:"fullscreen"})));
     const k="sim:"+x.lab+":"+x.id;if(!S.seen[k]){S.seen[k]=1;save();addPts(10,"جرّبتِ المحاكاة");}};
-  if(l.sims.length){P.append(chips,box);show();}
+  if(l.sims.length){if(simFirst){P.insertBefore(chips,m3dHost);P.insertBefore(box,m3dHost);m3dHost.style.marginTop="14px";}else P.append(chips,box);show();}
   P.append(el("div",{class:"card",style:{marginTop:"14px"}},el("b",{},"🔎 جرّبي واكتشفي: "),"غيّري قيمة واحدة في كل مرّة، وسجّلي توقّعكِ قبل التغيير، ثم قارني النتيجة بتوقّعكِ. هكذا يعمل العلماء!"));
 }
 function lExp(P,l){

@@ -248,3 +248,4 @@ body.bigteams .teams h3{font-size:30px}
 .chip.feel[aria-pressed="true"]{background:var(--wine);color:#fff;border-color:var(--wine)}
 .tabs{overflow-x:auto;scrollbar-width:thin}
 .tabs button{white-space:nowrap}
+.bk-live{z-index:3;pointer-events:none!important}

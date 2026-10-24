@@ -22,7 +22,30 @@ main{max-width:1100px;margin:0 auto;padding:18px 16px 40px}
 .in2{font:600 16px var(--f);border:1.5px solid var(--ln);border-radius:12px;padding:9px 12px;min-height:46px;background:var(--card);color:var(--ink);width:100%}
 .login{max-width:440px;margin:30px auto;display:flex;flex-direction:column;gap:12px;text-align:center}
 .login h1{font:700 26px var(--fd);margin:0}.login label{text-align:right;font-weight:700;display:flex;flex-direction:column;gap:4px}
-.err{color:#c2410c;font-weight:700;min-height:1.5em}
+.err{color:#c2410c;font-weight:700;min-height:0}.err:empty{display:none}
+/* صفحة الدخول */
+.gate{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center;max-width:1040px;margin:18px auto 0}
+@media (max-width:820px){.gate{grid-template-columns:1fr;gap:18px}.lcard{order:-1}.hero{padding:26px 22px}}
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:34px 30px;color:#fff;background:radial-gradient(120% 90% at 85% 10%,#a3324a 0%,var(--w) 45%,var(--w2) 100%);box-shadow:0 18px 40px rgba(92,22,34,.25)}
+.hero:after{content:"";position:absolute;inset:auto -60px -80px auto;width:260px;height:260px;border-radius:50%;border:34px solid rgba(243,223,168,.12)}
+.hero .eye{display:inline-block;background:rgba(243,223,168,.16);color:var(--g2);border:1px solid rgba(243,223,168,.35);border-radius:999px;padding:3px 14px;font-weight:700;font-size:14px}
+.hero h1{font:700 clamp(30px,5vw,44px)/1.25 var(--fd);margin:14px 0 10px}
+.hero h1 span{color:var(--g2)}
+.hero p{margin:0;color:#f6e3e6;font-size:17px;max-width:30em}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0 18px;position:relative;z-index:1}
+.feat{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 12px;font-weight:700;font-size:14px}
+.feat i{font-style:normal;font-size:22px}
+.org{display:flex;flex-direction:column;gap:2px;border-top:1px solid rgba(243,223,168,.3);padding-top:14px;font-size:14px;color:var(--g2);position:relative;z-index:1}
+.org b{color:#fff;font:700 16px var(--fd)}
+.lcard{background:var(--card);border:1px solid var(--ln);border-radius:26px;padding:28px 26px;box-shadow:0 18px 40px rgba(60,20,30,.10);display:flex;flex-direction:column;gap:14px}
+.lcard .ic{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;font-size:32px;background:linear-gradient(135deg,var(--g2),#fff6dd);border:1px solid #ecd59a}
+.lcard h2{font:700 26px var(--fd);margin:0;color:var(--w)}
+.lcard label{font-weight:700;display:flex;flex-direction:column;gap:6px}
+.pinw{position:relative}.pinw .in2{padding-left:52px;letter-spacing:4px}
+.eyeb{position:absolute;left:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;font-size:20px;cursor:pointer;min-width:44px;min-height:44px}
+.lcard .btn{justify-content:center;font-size:17px;min-height:52px;border-radius:14px;background:linear-gradient(135deg,var(--w),#9b2c3f)}
+.safe{display:flex;gap:8px;align-items:center;background:var(--bg);border:1px dashed var(--ln);border-radius:12px;padding:8px 12px;font-size:13px;color:var(--mut)}
+.hint{font-size:13px;color:var(--mut);font-weight:400}
 .hello{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
 .hello h1{font:700 26px var(--fd);margin:0}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
@@ -64,8 +87,17 @@ async function login(){tb.innerHTML="";const keys=await QClass.keys(ROSTER);cons
   const pin=h("input",{class:"in2",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمزكِ السرّي"}),err=h("div",{class:"err","aria-live":"polite"});
   const go=async()=>{if(!pin.value.trim())return;err.textContent="⏳ جارٍ الدخول…";try{S=await QClass.signIn(ROSTER,sel.value,pin.value.trim());dash();}catch(e){err.textContent="الرمز غير صحيح.";pin.value="";}};
   pin.addEventListener("keydown",e=>{if(e.key==="Enter")go();});
-  app.innerHTML="";app.append(h("div",{class:"card login"},h("div",{style:{"font-size":"48px"}},"👩‍🏫"),h("h1",{},"أهلًا بكِ في بوابة المعلّمات"),h("p",{class:"muted"},"اختاري اسمكِ واكتبي رمزكِ السرّي لتصلي إلى كل أدوات مبحثكِ."),
-    h("label",{},"المعلّمة",sel),h("label",{},"الرمز السرّي",pin),h("button",{class:"btn",onclick:go},"🔓 دخول"),err));}
+  const eye=h("button",{class:"eyeb",type:"button","aria-label":"إظهار الرمز",onclick:()=>{const v=pin.type==="password";pin.type=v?"text":"password";eye.textContent=v?"🙈":"👁️";}},"👁️");
+  const F=(i,t)=>h("div",{class:"feat"},h("i",{},i),t);
+  app.innerHTML="";app.append(h("div",{class:"gate"},
+    h("section",{class:"hero"},h("span",{class:"eye"},"بوابتكِ إلى يومٍ دراسيّ منظّم"),h("h1",{},"مساحة عملكِ،",h("br"),h("span",{},"في مكانٍ واحد")),
+      h("p",{},"ادخلي برمزكِ إلى أدوات مبحثكِ وصفوفكِ: تقسيم الفرق، وتقييم الحصة، وكتاب الطالب على السبّورة، وحقيبة الدرس، ونتائج الطالبات."),
+      h("div",{class:"feats"},F("🎡","دولاب الفرق"),F("✅","تقييم الحصة والسجلّ"),F("📖","الكتاب على السبّورة"),F("🎒","حقيبة الدرس"),F("🧪","مختبر تجارب الكتاب"),F("📈","نتائج الطالبات")),
+      h("div",{class:"org"},h("b",{},"مدرسة القطرانة الثانوية للبنات"),"مديرية التربية والتعليم للواء القطرانة")),
+    h("section",{class:"lcard"},h("div",{class:"ic"},"👩‍🏫"),h("div",{},h("h2",{},"الدخول إلى البوابة"),h("div",{class:"hint"},"اختاري اسمكِ واكتبي رمزكِ السرّي؛ تُفتح لكِ أدوات مبحثكِ فقط.")),
+      h("label",{},"المعلّمة",sel),h("label",{},h("span",{},"الرمز السرّي ",h("span",{class:"hint"},"· لا تشاركيه مع أحد")),h("div",{class:"pinw"},pin,eye)),
+      h("button",{class:"btn",onclick:go},"🔓 الدخول الآمن"),err,
+      h("div",{class:"safe"},"🔒","أسماء الطالبات محفوظة في سجلّ مشفّر، ولا تُحفظ أي أرقام وطنية."))));}
 function dash(){const T=S.teacher;tb.innerHTML="";tb.append(h("button",{class:"btn g",onclick:()=>{QClass.signOut();S=null;login();}},"🔒 خروج"));
   const mine=SUBJ.filter(s=>T.subj.includes("*")||T.subj.includes(s.k));
   app.innerHTML="";app.append(h("div",{class:"hello"},h("div",{},h("h1",{},"أهلًا "+T.label.replace(/\s*\(.*\)/,"")+" 🌷"),h("div",{class:"muted"},"كل أدوات مبحثكِ في مكان واحد."))));

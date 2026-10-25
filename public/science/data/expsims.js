@@ -34,6 +34,8 @@ for(const g in SCI.data)for(const k in SCI.data[g])SCI.data[g][k].units.forEach(
   const m=MAP[l.id];if(m)l.exps.forEach((x,i)=>{if(!x.sim)x.sim=m[Math.min(i,m.length-1)];});
   if(MS[l.id])l.sims=MS[l.id].concat(l.sims.filter(s=>s.lab!=="measure"));
   /* محاكاة لكل تجربة كما في الكتاب (مختبر تجارب الكتاب) */
+  /* نصوص التجربة من الكتاب نفسه (المواد، والخطوات، والأسئلة) لتطابق بطاقة الدرس وورقة العمل الكتاب */
+  if(window.BOOKX)l.exps.forEach((x,i)=>{const b=BOOKX[l.id+"-"+i];if(!b)return;["kind","src","goal","mats","safety"].forEach(k=>{if(b[k])x[k]=b[k];});if(b.steps&&b.steps.length)x.steps=b.steps.slice();if(b.qs&&b.qs.length)x.qs=b.qs.slice();});
   const bx=[];l.exps.forEach((x,i)=>{const key=l.id+"-"+i;if(KEEP[key]){x.sim=KEEP[key];return;}if(BXDONE.test(l.id)){x.sim=S("bx",key,"🧪 "+x.t);bx.push(x.sim);}});
   if(bx.length)l.sims=bx.concat(l.sims.filter(s=>s.lab!=="bx"));}));
 })();

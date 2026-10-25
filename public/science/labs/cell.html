@@ -59,6 +59,13 @@ td:first-child{text-align:right;font-weight:700}
 .foot{text-align:center;color:var(--muted);font-size:13px;margin-top:24px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);text-align:center;background:var(--ink);color:#fff;border-radius:14px;padding:10px 18px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.show{opacity:1}
+.gsec{margin:4px 0 14px}.gsec h2{font-size:20px;margin:6px 0 10px;color:var(--wine,#7A1F2E)}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.gcard{background:var(--card,#fff);border:1px solid var(--line,#ead9cf);border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(60,20,30,.07);cursor:zoom-in;display:flex;flex-direction:column}
+.gcard img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block}.gcard .gt{padding:8px 12px}.gcard b{display:block;font-size:17px}.gcard i{font-style:normal;font-size:12.5px;color:var(--muted,#76606A);direction:ltr;display:block;text-align:right}.gcard p{margin:4px 0 0;font-size:14.5px;line-height:1.6}
+.gcard .two{display:grid;grid-template-columns:1fr 1fr}.gcard .two img{aspect-ratio:1}.gcard .two span{font-size:11.5px;text-align:center;color:var(--muted,#76606A);padding:2px}
+.lbx{position:fixed;inset:0;background:rgba(10,5,8,.85);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:8px;color:#fff;text-align:center}.lbx img{max-width:100%;max-height:78vh;border-radius:12px}.lbx b{font-size:20px}
+
 </style>
 </head>
 <body>
@@ -72,6 +79,8 @@ td:first-child{text-align:right;font-weight:700}
     <button class="tab" data-v="an" aria-pressed="true">🐾 الخلية الحيوانية</button>
     <button class="tab" data-v="pl" aria-pressed="false">🌿 الخلية النباتية</button>
     <button class="tab" data-v="cmp" aria-pressed="false">⚖️ مقارنة</button>
+    <button class="tab" data-v="pc" aria-pressed="false">🔬 أنواع الخلايا النباتية</button>
+    <button class="tab" data-v="bc" aria-pressed="false">🦠 أشكال البكتيريا</button>
     <span style="flex:1"></span>
     <button class="btn" id="bQuiz">🎯 اختبري نفسك</button>
   </div>
@@ -80,6 +89,7 @@ td:first-child{text-align:right;font-weight:700}
     <div class="card info" id="info"></div>
   </div>
   <div id="cmp" style="display:none"></div>
+  <div id="gal" style="display:none"></div>
   <p class="foot">منصّة القطرانة للتعلّم الرقمي · تصميمُ المنصّة وتنفيذُها: نوال بني عطية</p>
 </div>
 <div class="toast" id="toast"></div>
@@ -154,15 +164,29 @@ sv.addEventListener("click",()=>{if(sel&&!quiz){sel=null;paint();showInfo();}});
 function cmp(){const d=document.getElementById("cmp");d.innerHTML="";const im=document.createElement("img");im.src="img/cell-compare.webp";im.alt="مقارنة بين الخلية الحيوانية والخلية النباتية";im.className="cmpimg";
  const t=document.createElement("table");t.innerHTML="<tr><th>الجزء</th><th>🐾 الخلية الحيوانية</th><th>🌿 الخلية النباتية</th></tr>"+Object.keys(INF).filter(k=>k!=="vacs").map(k=>`<tr><td>${INF[k][0]}</td><td class="${INF[k][4]?"y":"n"}">${INF[k][4]?"✓ موجود":"✗ غير موجود"}</td><td class="${INF[k][5]?"y":"n"}">${INF[k][5]?"✓ موجود":"✗ غير موجود"}</td></tr>`).join("");
  const p=document.createElement("p");p.className="card";p.style.marginTop="12px";p.innerHTML="📌 <b>تنفرد الخلية النباتية</b> بالجدار الخلوي والبلاستيدات الخضراء والفجوة العصارية المركزية الكبيرة، و<b>تنفرد الخلية الحيوانية</b> بالمريكزات والجسيمات الحالّة، وفجواتها صغيرة متعدّدة.";d.append(im,t,p);}
-function setView(v){document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));const isC=v==="cmp";document.getElementById("main").style.display=isC?"none":"";document.getElementById("cmp").style.display=isC?"":"none";document.getElementById("bQuiz").style.display=isC?"none":"";
- if(isC)cmp();else{view=v;if(quiz){quiz=null;const b=document.getElementById("bQuiz");b.classList.remove("on");b.textContent="🎯 اختبري نفسك";}build();}history.replaceState(null,"","#"+v);}
+
+/* معرض الصور المجهرية */
+const PCELLS=[["epi","خلايا البشرة","خلايا رقيقة شفّافة تغطي سطح النبات وتحميه."],["grd","الخلايا الحارسة","تتحكّم في فتح الثغور وإغلاقها لتنظيم تبادل الغازات وفقدان الماء."],["pal","خلايا النسيج العمادي","تحتوي عددًا كبيرًا من البلاستيدات الخضراء وتقوم بعملية البناء الضوئي."],["spg","خلايا النسيج الإسفنجي","تحتوي بلاستيدات خضراء، وبينها فراغات هوائية تسهّل تبادل الغازات."],
+ ["xyl","خلايا الخشب","خلايا ميتة ذات جدران سميكة تنقل الماء والأملاح المعدنية من الجذور إلى باقي أجزاء النبات."],["phl","خلايا اللحاء","خلايا حيّة تنقل الغذاء الجاهز (السكّريات) من الأوراق إلى باقي أجزاء النبات."],["par","الخلايا البرنشيمية","خلايا حيّة رقيقة الجدران تقوم بالتخزين والبناء الضوئي والدعم."],["col","الخلايا الكولنشيمية","خلايا حيّة جدرانها غير متساوية السمك، توفّر الدعامة للأجزاء الفتيّة في النبات."],["scl","الخلايا السكلرنشيمية","خلايا ميتة جدرانها سميكة ملجننة، توفّر الدعامة والحماية للنبات."]];
+const PEX=[["lea","خلايا ورقة النبات","تحتوي بلاستيدات خضراء."],["roo","خلايا جذر النبات","تخزّن الماء والمواد الغذائية، ولا تحتوي بلاستيدات خضراء."],["fru","خلايا ثمرة النبات","تخزّن المواد الغذائية والصبغات."]];
+const BACT=[["cocc","البكتيريا الكروية (كرويات)","مكوّرات العنقود الذهبية","Staphylococcus aureus","كروية الشكل، وقد تتجمّع في عناقيد أو سلاسل."],["bacl","البكتيريا العصوية (عصيّات)","الإشريكية القولونية","Escherichia coli","عصوية الشكل (أسطوانية) تعيش في أمعاء الإنسان."],["spir","البكتيريا الحلزونية (حلزونات)","اللولبية البوّابية","Helicobacter pylori","حلزونية ملتوية، وتسبّب بعض قرح المعدة."],["vib","البكتيريا الضمّة (ضمّيات)","الضمّة الكوليرية","Vibrio cholerae","تشبه الفاصلة (،) ولها سوط، وتسبّب مرض الكوليرا."]];
+function lbx(src,t){const d=document.createElement("div");d.className="lbx";d.innerHTML="<img alt=''><b></b><span>اضغطي للإغلاق</span>";d.querySelector("img").src=src;d.querySelector("b").textContent=t;d.onclick=()=>d.remove();document.body.append(d);}
+function gallery(v){const g=document.getElementById("gal");g.innerHTML="";const mk=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;};
+ const sec=(title,list,f)=>{const S=mk("section","gsec");S.append(mk("h2",null,title));const G=mk("div","ggrid");list.forEach(x=>G.append(f(x)));S.append(G);g.append(S);};
+ const card=(src,t,p)=>{const c=mk("div","gcard");const im=new Image();im.src=src;im.alt=t;im.loading="lazy";c.append(im);const tt=mk("div","gt");tt.append(mk("b",null,t),mk("p",null,p));c.append(tt);c.onclick=()=>lbx(src,t);return c;};
+ if(v==="pc"){sec("أنواع الخلايا النباتية (صور مجهرية)",PCELLS,([k,t,p])=>card("img/pc-"+k+".jpg",t,p));sec("أمثلة على خلايا من أجزاء مختلفة من النبات",PEX,([k,t,p])=>card("img/pc-"+k+".jpg",t,p));}
+ else sec("أشكال الخلايا البكتيرية",BACT,([k,t,n,sci,p])=>{const c=mk("div","gcard");const two=mk("div","two");[["img/sem-"+k+".jpg","مجهر إلكتروني (ملوّنة)"],["img/micro-"+k+".jpg","مجهر ضوئي (صبغة غرام)"]].forEach(([src,l])=>{const w=mk("div");const im=new Image();im.src=src;im.alt=t;im.loading="lazy";im.onclick=e=>{e.stopPropagation();lbx(src,t+" · "+l);};w.append(im,mk("span",null,l));two.append(w);});
+  c.append(two);const tt=mk("div","gt");tt.append(mk("b",null,t),mk("i",null,n+" · "+sci),mk("p",null,p));c.append(tt);c.style.cursor="default";return c;});
+ g.append(mk("p","foot","اضغطي على أي صورة لتكبيرها."));}
+function setView(v){document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));const isC=v==="cmp",isG=v==="pc"||v==="bc";document.getElementById("main").style.display=isC||isG?"none":"";document.getElementById("cmp").style.display=isC?"":"none";document.getElementById("gal").style.display=isG?"":"none";document.getElementById("bQuiz").style.display=isC||isG?"none":"";
+ if(isG)gallery(v);else if(isC)cmp();else{view=v;if(quiz){quiz=null;const b=document.getElementById("bQuiz");b.classList.remove("on");b.textContent="🎯 اختبري نفسك";}build();}history.replaceState(null,"","#"+v);}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));
 document.getElementById("bQuiz").onclick=e=>{const b=e.currentTarget;if(quiz){quiz=null;b.classList.remove("on");b.textContent="🎯 اختبري نفسك";sel=null;paint();showInfo();return;}
  b.classList.add("on");b.textContent="⏹️ إنهاء الاختبار";quiz={ok:0,n:0,done:new Set()};sel=null;toast("غطّيتُ الأسماء… أين العضيّة؟");nextQ();};
 (()=>{const bk=document.getElementById("back");if(window!==window.top){bk.style.display="none";return;}
  let ref=null;try{if(document.referrer&&new URL(document.referrer).origin===location.origin)ref=document.referrer;}catch(e){}
  bk.onclick=e=>{e.preventDefault();if(history.length>1&&ref)history.back();else if(ref)location.href=ref;else location.href=bk.getAttribute("href");};})();
-const h0=location.hash.slice(1);setView(["an","pl","cmp"].includes(h0)?h0:"an");
+const h0=location.hash.slice(1);setView(["an","pl","cmp","pc","bc"].includes(h0)?h0:"an");
 </script>
 <script src="../js/namewheel-lab.js"></script>
 </body>

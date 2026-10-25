@@ -151,6 +151,17 @@ readColors();matchMedia('(prefers-color-scheme: dark)').addEventListener('change
 new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d):'—';
 const FONT='"IBM Plex Sans Arabic",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
+/* صور مجهرية حقيقية للشرائح: um = عرض الصورة بالميكرومتر */
+const PH={ch:{src:'img/micro-ch.jpg',um:440},bl:{src:'img/micro-bl.jpg',um:150},yst:{src:'img/micro-yst.jpg',um:150},bac:{src:'img/micro-bac.jpg',um:150},cocc:{src:'img/micro-cocc.jpg',um:120},spir:{src:'img/micro-spir.jpg',um:120},vib:{src:'img/micro-vib.jpg',um:120},on:{src:'img/micro-on.jpg',um:1700}};
+for(const k in PH){const im=new Image();im.decoding='async';im.src=PH[k].src;PH[k].img=im;}
+function phReady(k){const o=PH[k];return !!(o&&o.img.complete&&o.img.naturalWidth);}
+function phDraw(c,k,D,F){const o=PH[k],im=o.img,w=im.naturalWidth,h=im.naturalHeight,sc=(D/F)/(w/o.um),tw=w*sc,th=h*sc;c.save();c.setTransform(1,0,0,1,0,0);
+  if(tw<6){if(!o.avg){const t=document.createElement('canvas');t.width=t.height=1;const x=t.getContext('2d');x.drawImage(im,0,0,1,1);const d=x.getImageData(0,0,1,1).data;o.avg='rgb('+d[0]+','+d[1]+','+d[2]+')';}c.fillStyle=o.avg;c.fillRect(0,0,D,D);c.restore();return;}
+  const nx=Math.ceil(D/tw/2)+1,ny=Math.ceil(D/th/2)+1;
+  for(let i=-nx;i<=nx;i++)for(let j=-ny;j<=ny;j++){const fx=hh(i,j,41)<.5?-1:1,fy=hh(i,j,42)<.5?-1:1,ox=(j%2?tw*.37:0);const x=D/2-tw/2+i*tw+ox,y=D/2-th/2+j*th;if(x>D||y>D||x+tw<0||y+th<0)continue;
+   c.setTransform(fx,0,0,fy,fx<0?2*x+tw:0,fy<0?2*y+th:0);c.drawImage(im,x,y,tw,th);}
+  c.restore();}
+
 const SUBD='₀₁₂₃₄₅₆₇₈₉',SUPD='⁰¹²³⁴⁵⁶⁷⁸⁹',sub=n=>String(n).split('').map(c=>SUBD[c]||c).join(''),sup=n=>String(n).split('').map(c=>SUPD[c]||c).join('');
 const gcd=(a,b)=>b?gcd(b,a%b):a;
 function interp(tb,x){if(x<=tb[0][0])return tb[0][1];for(let i=1;i<tb.length;i++)if(x<=tb[i][0]){const a=tb[i-1],b=tb[i];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return tb[tb.length-1][1]}
@@ -602,10 +613,11 @@ const SIMS=[
 /* ---------- Microscope ---------- */
 {id:'micro',short:'المجهر الضوئي',branch:'مهارات المختبر',name:'المجهر الضوئي المركب',law:'التكبير الكلي = تكبير العدسة العينية × تكبير الشيئية',
  tip:'ابدئي دائمًا بالعدسة الشيئية الصغرى (4×) واضبطي الصورة، ثم انتقلي إلى عدسة أكبر واضبطي الضابط الدقيق. لاحظي أن مجال الرؤية يصغر كلما زاد التكبير. لماذا لا نرى خلايا الدم بوضوح إلا بالعدسة الزيتية؟',
- controls:[{id:'sp',type:'seg',label:'الشريحة',options:[['on','بشرة البصل'],['ch','خلايا الخد'],['bl','مسحة دم'],['bac','بكتيريا'],['pro','طلائعيات'],['yst','خميرة'],['mold','عفن الخبز']],val:'on'},{id:'obj',type:'seg',label:'العدسة الشيئية',options:[['4','4×'],['10','10×'],['40','40×'],['100','100× زيتية']],val:'10'},{id:'f',label:'الضابط (التركيز)',min:0,max:100,step:.5,val:40,unit:''},{id:'L',label:'شدة الإضاءة (الحاجز القزحي)',min:0,max:100,step:1,val:60,unit:'%'}],
+ controls:[{id:'sp',type:'seg',label:'الشريحة',options:[['on','بشرة البصل'],['ch','خلايا الخد'],['bl','مسحة دم'],['bac','بكتيريا عصوية'],['cocc','بكتيريا كروية'],['spir','بكتيريا حلزونية'],['vib','بكتيريا ضمّة'],['pro','طلائعيات'],['yst','خميرة'],['mold','عفن الخبز']],val:'on'},{id:'obj',type:'seg',label:'العدسة الشيئية',options:[['4','4×'],['10','10×'],['40','40×'],['100','100× زيتية']],val:'10'},{id:'f',label:'الضابط (التركيز)',min:0,max:100,step:.5,val:40,unit:''},{id:'L',label:'شدة الإضاءة (الحاجز القزحي)',min:0,max:100,step:1,val:60,unit:'%'}],
  FOV:{4:4500,10:1800,40:450,100:180},BEST:{4:42,10:52,40:60,100:66},TOL:{4:20,10:12,40:6,100:3},
  reset(){this.s={key:'',img:null}},step(){},
  build(p,D){const cv=document.createElement('canvas');cv.width=D;cv.height=D;const c=cv.getContext('2d'),F=this.FOV[p.obj],k=D/F,h2=F/2;c.fillStyle={bl:'#f3dfe0',on:'#f5ecd2',ch:'#eef3f8',bac:'#f6eef2',pro:'#eef4e6',yst:'#f4f1fa',mold:'#f3efe4'}[p.sp]||'#eef3f8';c.fillRect(0,0,D,D);c.translate(D/2,D/2);
+  if(phReady(p.sp)){phDraw(c,p.sp,D,F);return cv}if(PH[p.sp]&&!PH[p.sp].tile&&['cocc','spir','vib'].includes(p.sp))return cv;
   if(p.sp==='on'){const rh=60;for(let r=Math.floor(-h2/rh)-1;r*rh<h2+rh;r++){let x=-h2-300+hh(r,1)*200;let j=0;while(x<h2+300){const w=200+hh(r,j,2)*140;c.fillStyle='#f0deb0';c.strokeStyle='#9a7440';c.lineWidth=Math.max(.6,k*4);c.fillRect(x*k,r*rh*k,w*k,rh*k);c.strokeRect(x*k,r*rh*k,w*k,rh*k);c.fillStyle='#8a5a2a';c.beginPath();c.arc((x+w*(.2+hh(r,j,3)*.6))*k,(r*rh+rh*.5)*k,Math.max(.8,9*k),0,7);c.fill();x+=w;j++}}}
   else if(p.sp==='ch'){const g=90;for(let i=Math.floor(-h2/g)-1;i*g<h2+g;i++)for(let j=Math.floor(-h2/g)-1;j*g<h2+g;j++){if(hh(i,j)<.45)continue;const x=(i+hh(i,j,1))*g,y=(j+hh(i,j,2))*g,r=26+hh(i,j,3)*10;c.fillStyle='rgba(120,170,220,.35)';c.strokeStyle='rgba(60,110,170,.7)';c.lineWidth=Math.max(.5,k*1.5);c.beginPath();for(let a=0;a<7;a++){const an=a/7*Math.PI*2+hh(i,j,4),rr2=r*(.75+hh(i,j,a+5)*.4);a?c.lineTo((x+Math.cos(an)*rr2)*k,(y+Math.sin(an)*rr2)*k):c.moveTo((x+Math.cos(an)*rr2)*k,(y+Math.sin(an)*rr2)*k)}c.closePath();c.fill();c.stroke();c.fillStyle='#2d4f8f';c.beginPath();c.arc(x*k,y*k,Math.max(.7,5*k),0,7);c.fill()}}
    else if(p.sp==='bac'){const g=26;const px=v=>Math.max(1.6,v*k);
@@ -636,14 +648,14 @@ const SIMS=[
     c.fillStyle='#d65e6c';c.beginPath();c.arc(x*k,y*k,3.75*k,0,7);c.fill();c.fillStyle='#eaa0a8';c.beginPath();c.arc(x*k,y*k,1.6*k,0,7);c.fill()}}}
   return cv},
  sharp(p){return Math.abs(p.f-this.BEST[p.obj])/this.TOL[p.obj]},
- draw(ctx,W,H,p){const s=this.s,D=Math.round(Math.min(W*.64,H-30)),key=[p.sp,p.obj,D].join('|');if(s.key!==key){s.img=this.build(p,D);s.key=key}
+ draw(ctx,W,H,p){const s=this.s,D=Math.round(Math.min(W*.64,H-30)),key=[p.sp,p.obj,D,phReady(p.sp)?1:0].join('|');if(s.key!==key){s.img=this.build(p,D);s.key=key}
   const cx=Math.min(W*.36,D/2+16),cy=H/2,bl=Math.min(14,this.sharp(p)*3.2);ctx.fillStyle='#0b0b10';ctx.beginPath();ctx.arc(cx,cy,D/2+10,0,7);ctx.fill();
   ctx.save();ctx.beginPath();ctx.arc(cx,cy,D/2,0,7);ctx.clip();ctx.drawImage(s.img,cx-D/2,cy-D/2);if(bl>.4){for(let i=0;i<10;i++){const a=i/10*Math.PI*2;ctx.globalAlpha=.3;ctx.drawImage(s.img,cx-D/2+Math.cos(a)*bl,cy-D/2+Math.sin(a)*bl)}ctx.globalAlpha=1}
   ctx.fillStyle='#000';ctx.globalAlpha=(1-p.L/100)*.88;ctx.fillRect(cx-D/2,cy-D/2,D,D);ctx.globalAlpha=1;if(p.L>85){ctx.fillStyle='#fff';ctx.globalAlpha=(p.L-85)/15*.65;ctx.fillRect(cx-D/2,cy-D/2,D,D);ctx.globalAlpha=1}ctx.restore();
   ctx.strokeStyle=C.ink;ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,D/2+10,0,7);ctx.stroke();
   const sx=cx+D/2+24,F=this.FOV[p.obj];if(W-sx>90){text(ctx,'×'+(+p.obj*10),sx,cy-30,C.accent,26,'left',MONO,600);text(ctx,'التكبير الكلي',sx,cy-6,C.muted,11,'left');text(ctx,(F>=1000?fmt(F/1000,2)+' mm':F+' µm'),sx,cy+24,C.ink,15,'left',MONO,600);text(ctx,'قطر مجال الرؤية',sx,cy+44,C.muted,11,'left')}
   else{text(ctx,'×'+(+p.obj*10),W-14,22,C.accent,18,'right',MONO,600)}},
- readouts(p){const F=this.FOV[p.obj],sh=this.sharp(p);const size={on:'نحو 250 × 60 µm',ch:'نحو 60 µm',bl:'خلية الدم الحمراء نحو 7.5 µm',bac:'نحو 1–5 µm (تحتاج العدسة الزيتية)',pro:'البراميسيوم نحو 200 µm، والأميبا نحو 250 µm، واليوغلينا نحو 60 µm',yst:'خلية الخميرة نحو 5 µm',mold:'كيس الأبواغ نحو 100 µm'}[p.sp];
+ readouts(p){const F=this.FOV[p.obj],sh=this.sharp(p);const size={on:'نحو 250 × 60 µm',ch:'نحو 60 µm',bl:'خلية الدم الحمراء نحو 7.5 µm',bac:'العصوية نحو 1–5 µm (تحتاج العدسة الزيتية)',cocc:'الكروية نحو 1 µm، وتتجمّع في عناقيد أو سلاسل',spir:'الحلزونية نحو 3–15 µm',vib:'الضمّة (شكل الفاصلة) نحو 1–3 µm',pro:'البراميسيوم نحو 200 µm، والأميبا نحو 250 µm، واليوغلينا نحو 60 µm',yst:'خلية الخميرة نحو 5 µm',mold:'كيس الأبواغ نحو 100 µm'}[p.sp];
   return[['التكبير الكلي','×'+(+p.obj*10)+' (10 × '+p.obj+')',1],['قطر مجال الرؤية',F>=1000?fmt(F/1000,2)+' mm':F+' µm'],['حجم الخلية الحقيقي',size,'ar'],['وضوح الصورة',sh<.25?'واضحة':sh<1?'ضبابية قليلًا: استخدمي الضابط الدقيق':'غير واضحة: حرّكي الضابط','ar'],['الإضاءة',p.L<35?'خافتة: افتحي الحاجز القزحي':p.L>85?'ساطعة جدًا: التفاصيل تختفي':'مناسبة','ar'],['ملاحظة',p.obj==='100'?'العدسة الزيتية تحتاج إلى قطرة من زيت الأرز بين الشريحة والعدسة.':p.sp==='on'?'تُصبغ بشرة البصل بمحلول اليود لإظهار النواة والجدار الخلوي.':p.sp==='ch'?'تُصبغ خلايا الخد بأزرق الميثيلين لإظهار النواة.':p.sp==='bac'?'صبغة غرام: المكوّرات العنقودية بنفسجية (موجبة غرام)، والعصيّات وردية (سالبة غرام)، والحلزونيات ملتوية.':p.sp==='pro'?'قطرة من ماء بركة: البراميسيوم بأهدابه، والأميبا بأقدامها الكاذبة، واليوغلينا الخضراء بسوطها وبقعتها العينية.':p.sp==='yst'?'خلايا خميرة وحيدة الخلية، وبعضها يتكاثر بالتبرعم.':p.sp==='mold'?'عفن الخبز: خيوط فطرية (هيفات) وحوامل أبواغ تنتهي بأكياس أبواغ سوداء.':'تحتاج مسحة الدم إلى صبغة رايت لتمييز خلايا الدم البيضاء.','w']]}},
 /* ---------- النظم البيئية (منقولة من مختبر علوم الأرض) ---------- */
 {id:'eco',branch:'البيئة والنظم البيئية',name:'العلاقة بين الفريسة والمفترس',law:'dx/dt = αx − βxy ,  dy/dt = δxy − γy',

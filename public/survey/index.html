@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>استبيان رأي الحضور</title>
+<meta name="description" content="استبيان رأي الحضور في لقاء مجتمع التعلّم ومعرض التجارب الكيميائية والجدران التفاعلية — مدرسة القطرانة الثانوية للبنات.">
+<meta name="theme-color" content="#7A1F2E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--soft:#FBF1D6;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;--soft:#2e2516;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;--soft:#2e2516;color-scheme:dark}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 var(--f)}
+.hero{background:radial-gradient(120% 90% at 85% 0%,#a3324a 0%,var(--w) 45%,var(--w2) 100%);color:#fff;text-align:center;padding:26px 16px 54px;border-top:6px solid var(--g)}
+.hero small{color:var(--g2);font-weight:700}.hero h1{font:700 clamp(26px,6.5vw,36px)/1.3 var(--fd);margin:6px 0}.hero p{margin:0 auto;max-width:34em;color:#f6e3e6;font-size:15px}
+main{max-width:640px;margin:-36px auto 0;padding:0 16px 40px;position:relative}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:18px 16px;box-shadow:0 8px 24px rgba(60,20,30,.08);margin-bottom:14px}
+.sec{display:flex;align-items:center;gap:10px;margin:0 0 6px}.sec i{font-style:normal;font-size:26px;width:46px;height:46px;flex-shrink:0;border-radius:14px;display:grid;place-items:center;background:var(--soft)}
+.sec h2{font:700 20px/1.35 var(--fd);margin:0;color:var(--w)}.sec small{display:block;color:var(--mut);font:400 13px var(--f)}
+:root[data-theme="dark"] .sec h2{color:#f0b7c2}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sec h2{color:#f0b7c2}}
+.q{padding:12px 0 4px;border-top:1px dashed var(--ln)}.q:first-of-type{border-top:0}.q>b{display:block;font-weight:700;margin-bottom:8px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale button{font:inherit;border:1.5px solid var(--ln);background:var(--card);color:var(--ink);border-radius:14px;padding:6px 2px;min-height:64px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0}
+.scale button span{font-size:26px;line-height:1.2}.scale button small{font-size:11px;color:var(--mut);line-height:1.3}
+.scale button[aria-pressed=true]{border-color:var(--g);background:var(--soft);box-shadow:0 0 0 2px var(--g) inset}
+.scale button[aria-pressed=true] small{color:var(--ink);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{font:inherit;font-weight:600;font-size:15px;border:1.5px solid var(--ln);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--w);border-color:var(--w);color:#fff}
+textarea{width:100%;font:inherit;font-size:16px;border:1.5px solid var(--ln);border-radius:14px;padding:10px 12px;min-height:90px;background:var(--card);color:var(--ink);resize:vertical}
+textarea:focus,button:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.send{width:100%;font:700 19px var(--fd);border:0;border-radius:16px;min-height:58px;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--g),var(--w));box-shadow:0 10px 24px rgba(92,22,34,.25)}
+.send:disabled{opacity:.6}.err{color:#c2410c;font-weight:700;text-align:center;min-height:1.5em;margin:8px 0 0}
+.prog{position:sticky;top:0;z-index:5;height:6px;background:var(--ln);margin:0 -16px 12px}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--w));transition:width .3s}
+.done{text-align:center;padding:30px 18px}.done .big{font-size:64px}.done h2{font:700 26px var(--fd);color:var(--w);margin:6px 0}
+.anon{display:flex;gap:8px;align-items:center;justify-content:center;color:var(--mut);font-size:13px;margin:0 0 12px;background:var(--card);border:1px solid var(--ln);border-radius:999px;padding:6px 14px;box-shadow:0 6px 18px rgba(60,20,30,.08)}
+footer{text-align:center;color:var(--mut);font-size:13px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <small>مدرسة القطرانة الثانوية للبنات</small>
+  <h1>شاركونا رأيكم</h1>
+  <p>لقاء مجتمع التعلّم · عرض منصة القطرانة للتعلّم الرقمي · معرض التجارب الكيميائية · الجدران التفاعلية</p>
+</header>
+<main id="app">
+  <div class="prog" aria-hidden="true"><i id="pb"></i></div>
+  <div class="anon">🔒 الاستبيان مجهول الهوية، ويستغرق دقيقتين تقريبًا.</div>
+  <form id="f" novalidate></form>
+  <footer>منسّقة المختبرات العلمية: نوال بني عطية · «التركيب يخدم الوظيفة»</footer>
+</main>
+<script>
+(()=>{
+const API="https://zealous-walrus-367.eu-west-1.convex.cloud/api/mutation",EVENT=new URLSearchParams(location.search).get("e")||"plc-2026-10-29";
+const FACES=[["😞","ضعيف"],["😕","مقبول"],["🙂","جيد"],["😀","جيد جدًّا"],["🤩","ممتاز"]];
+const ROLES=["معلّمة","إدارة المدرسة","مشرف/ة تربوي/ة","وليّ/ة أمر","طالبة","ضيف/ة"];
+const SECS=[
+ {ic:"💻",t:"منصة القطرانة للتعلّم الرقمي",s:"العرض والمحتوى",q:[["p_clear","وضوح عرض المنصة وسهولة فهم أقسامها"],["p_use","فائدة المنصة في تعلّم الطالبات"],["p_apply","إمكانية توظيف المنصة في التدريس"]]},
+ {ic:"⚗️",t:"معرض التجارب الكيميائية",s:"بمناسبة اليوم العالمي للكيمياء",q:[["x_var","تنوّع التجارب وارتباطها بالمنهاج"],["x_pres","تمكّن الطالبات من تقديم التجارب وشرحها"],["x_safe","الالتزام بإجراءات السلامة"]]},
+ {ic:"🧱",t:"الجدران التفاعلية",s:"",q:[["w_design","جاذبية التصميم ووضوحه"],["w_value","القيمة التعليمية للجدران"]]},
+ {ic:"⭐",t:"التقييم العام",s:"",q:[["o_org","تنظيم اللقاء وإدارة الوقت"],["o_all","رضاي العام عن اللقاء"]]}];
+const LIKES=["المنصة الرقمية","التجارب العلمية","الجدران التفاعلية","أداء الطالبات","التنظيم والترتيب","الفكرة والإبداع"];
+const APPLY=[["yes","نعم"],["maybe","ربّما"],["no","لا"]];
+const st={role:"",ratings:{},likes:[],apply:""};
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,y]of Object.entries(a)){if(y==null||y===false)continue;if(x==="class")e.className=y;else if(x.startsWith("on"))e.addEventListener(x.slice(2),y);else e.setAttribute(x,y);}for(const c of k.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e;};
+const f=document.getElementById("f"),pb=document.getElementById("pb");
+const TOTAL=1+SECS.reduce((a,s)=>a+s.q.length,0)+1;
+const prog=()=>{const n=(st.role?1:0)+Object.keys(st.ratings).length+(st.apply?1:0);pb.style.width=Math.round(n/TOTAL*100)+"%";};
+function single(opts,key,onSel){const box=h("div",{class:"chips",role:"radiogroup"});opts.forEach(([v,t])=>{const b=h("button",{type:"button",role:"radio","aria-pressed":"false","aria-checked":"false",onclick:()=>{box.querySelectorAll("button").forEach(x=>{x.setAttribute("aria-pressed","false");x.setAttribute("aria-checked","false");});b.setAttribute("aria-pressed","true");b.setAttribute("aria-checked","true");onSel(v);prog();}},t);box.append(b);});return box;}
+// الصفة
+f.append(h("section",{class:"card"},h("div",{class:"sec"},h("i",{},"👤"),h("div",{},h("h2",{},"صفتكِ / صفتك"),h("small",{},"اختر/ي واحدة"))),single(ROLES.map(r=>[r,r]),"role",v=>st.role=v)));
+SECS.forEach(s=>{const c=h("section",{class:"card"},h("div",{class:"sec"},h("i",{},s.ic),h("div",{},h("h2",{},s.t),s.s?h("small",{},s.s):null)));
+  s.q.forEach(([k,t])=>{const sc=h("div",{class:"scale",role:"radiogroup","aria-label":t});
+    FACES.forEach(([e,l],i)=>{const b=h("button",{type:"button",role:"radio","aria-pressed":"false","aria-label":l,onclick:()=>{sc.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");st.ratings[k]=i+1;prog();}},h("span",{},e),h("small",{},l));sc.append(b);});
+    c.append(h("div",{class:"q"},h("b",{},t),sc));});f.append(c);});
+const lk=h("div",{class:"chips"});LIKES.forEach(t=>{const b=h("button",{type:"button","aria-pressed":"false",onclick:()=>{const on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",String(on));st.likes=on?st.likes.concat(t):st.likes.filter(x=>x!==t);}},t);lk.append(b);});
+const best=h("textarea",{maxlength:"600",placeholder:"اكتب/ي بحرّية…"}),sug=h("textarea",{maxlength:"800",placeholder:"فكرة، ملاحظة، أو اقتراح…"});
+f.append(h("section",{class:"card"},h("div",{class:"sec"},h("i",{},"💬"),h("div",{},h("h2",{},"رأيكم يهمّنا"),h("small",{},"الأسئلة المكتوبة اختيارية"))),
+  h("div",{class:"q"},h("b",{},"ما الذي أعجبك أكثر؟ (يمكن اختيار أكثر من إجابة)"),lk),
+  h("div",{class:"q"},h("b",{},"هل ترغب/ين في تطبيق فكرة مشابهة في صفّك أو مدرستك؟"),single(APPLY,"apply",v=>st.apply=v)),
+  h("div",{class:"q"},h("b",{},"أجمل ما لفت انتباهك اليوم"),best),
+  h("div",{class:"q"},h("b",{},"اقتراحاتك للتطوير"),sug)));
+const err=h("p",{class:"err","aria-live":"polite"}),btn=h("button",{type:"submit",class:"send"},"📨 إرسال الاستبيان");f.append(btn,err);
+f.addEventListener("submit",async e=>{e.preventDefault();err.textContent="";
+  if(!st.role){err.textContent="اختر/ي صفتك أولًا 🙏";f.querySelector(".card").scrollIntoView({behavior:"smooth"});return;}
+  const miss=SECS.flatMap(s=>s.q).filter(([k])=>!st.ratings[k]);
+  if(miss.length>2){err.textContent="بقي "+miss.length+" أسئلة تقييم دون إجابة 🙏";const el=[...f.querySelectorAll(".scale")].find(x=>!x.querySelector('[aria-pressed="true"]'));if(el)el.scrollIntoView({behavior:"smooth",block:"center"});return;}
+  btn.disabled=true;btn.textContent="⏳ جارٍ الإرسال…";
+  try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({path:"survey:submit",format:"json",args:{event:EVENT,role:st.role,ratings:st.ratings,likes:st.likes,apply:st.apply,best:best.value,suggest:sug.value}})});
+    const j=await r.json();if(j.status!=="success")throw 0;try{localStorage.setItem("survey.done."+EVENT,"1");}catch(e){}thanks();}
+  catch(e){btn.disabled=false;btn.textContent="📨 إرسال الاستبيان";err.textContent="تعذّر الإرسال. تأكّد/ي من الاتصال بالإنترنت ثم أعد/أعيدي المحاولة.";}});
+function thanks(){pb.style.width="100%";f.replaceChildren(h("section",{class:"card done"},h("div",{class:"big"},"💐"),h("h2",{},"شكرًا لكم!"),h("p",{},"وصل رأيكم، وسيساعدنا على التطوير."),
+  h("button",{type:"button",class:"send",style:"margin-top:10px;font-size:16px;min-height:48px;background:var(--card);color:var(--ink);border:1.5px solid var(--ln);box-shadow:none",onclick:()=>location.reload()},"تعبئة استبيان آخر من هذا الجهاز")));window.scrollTo({top:0,behavior:"smooth"});}
+try{if(localStorage.getItem("survey.done."+EVENT))f.prepend(h("p",{class:"anon",style:"background:var(--soft);border-radius:12px;padding:8px"},"✅ سبق إرسال استبيان من هذا الجهاز. يمكن تعبئة استبيان جديد لشخص آخر."));}catch(e){}
+})();
+</script>
+</body>
+</html>

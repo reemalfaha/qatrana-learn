@@ -44,6 +44,7 @@ footer{text-align:center;color:var(--muted);font-size:13px}
 <div class="wrap">
 <header class="hd"><h1>أنواع الروابط الكيميائية</h1><p>كيف تترابط الذرّات؟ قرّبي الذرّات وشاهدي ما يحدث للإلكترونات</p><p class="back"><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
 <div id="cards"></div>
+<a class="card" href="shapes.html" style="display:block;text-decoration:none;color:inherit;border:2px dashed var(--gold)"><b style="font-family:var(--fd);font-size:19px">🧊 التالي: الشكل الفراغي والتهجين والقطبية ←</b><br><span style="color:var(--muted)">دوّري الجزيئات ثلاثية الأبعاد وشاهدي الزوايا وأسهم القطبية</span></a>
 <section class="card cmp"><div class="ch"><div class="grow"><h2>📊 مقارنة قوّة الروابط</h2><p>الروابط بين الذرّات أقوى بكثير من قوى التجاذب بين الجزيئات</p></div></div><div id="cmp" style="margin-top:8px"></div></section>
 <section class="card quiz"><div class="ch"><div class="grow"><h2>🧠 صنّفي الرابطة</h2><p>ما نوع الرابطة أو قوّة التجاذب في كل مما يأتي؟</p></div><span class="tag" id="qs">0 / 0</span></div>
  <div class="sub" id="qsub"></div><p id="qhint" style="text-align:center;margin:2px 0;color:var(--muted)"></p><div class="opts" id="qo" style="justify-content:center"></div>
@@ -216,5 +217,6 @@ document.getElementById("qn").onclick=quiz;quiz();
 const hs=location.hash.slice(1);if(hs){const k={ionic:0,covalent:1,metallic:2,hydrogen:3,vdw:4}[hs];if(k!=null)setTimeout(()=>host.children[k*2].scrollIntoView({block:"start"}),200);}
 })();
 </script>
+<script src="../js/namewheel-lab.js"></script>
 </body>
 </html>

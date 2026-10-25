@@ -1,6 +1,6 @@
 /* 🎡 دولاب أسماء الطالبات: زرّ عائم في أقسام المعلّمة (حلّ التدريبات، الكتابة على السبورة، التجارب…) يفتح دولاب الأسماء لتتحكّم المعلّمة في نمط المشاركة */
-;(function(){const SRC="../teachers/wheel.html?s=sci,bio,chem,phys,earth";
-const VIS=()=>{try{return T_OK&&/^#\/(t|book|books|l)(\/|$)/.test(location.hash||"");}catch(e){return document.body.classList.contains("classmode");}};
+;(function(){const SRC="/teachers/wheel.html?s=sci,bio,chem,phys,earth";
+const VIS=()=>{try{return T_OK;}catch(e){return document.body.classList.contains("classmode");}};
 function init(){if(document.querySelector(".nwb"))return;const st=document.createElement("style");
 st.textContent=".nwb{position:fixed;bottom:16px;left:16px;z-index:80;display:none;align-items:center;gap:6px;font-family:inherit;font-weight:700;font-size:17px;border:0;border-radius:999px;padding:12px 20px;min-height:52px;color:#fff;cursor:pointer;background:linear-gradient(135deg,#B8902A,#7A1F2E);box-shadow:0 8px 22px rgba(60,20,30,.35)}"+
 ".nwb.on{display:inline-flex}.nwb.mini{padding:10px 14px;font-size:15px;min-height:46px;opacity:.9}.nwov{position:fixed;inset:0;z-index:300;background:rgba(30,10,15,.62);display:none;align-items:center;justify-content:center;padding:10px}"+

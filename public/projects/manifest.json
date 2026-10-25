@@ -1,0 +1,1 @@
+{ "short_name": "مشاريع الطالبات", "name": "منصة مشاريع الطالبات", "icons": [{ "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any" }], "start_url": ".", "display": "standalone", "theme_color": "#1d7c70", "background_color": "#ffffff" }

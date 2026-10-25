@@ -8,3 +8,7 @@
 - النشر: Cloudflare Workers (Static Assets) من مجلد `public` (ملف `wrangler.jsonc`).
 
 تصميمُ المنصّة وتنفيذُها: نوال بني عطية
+
+## مشاريع الطالبات (`public/projects/`)
+نسخة مبنية من مستودع `student-projects` (الخلفية على Convex كما هي). لإعادة البناء:
+`SP_BASE=/projects/ npx vite build --outDir <مؤقت>` ثم نسخ `assets` و`index.html` و`favicon.svg` و`manifest.json` إلى `public/projects/`، ونسخ `index.html` إلى `public/projects/display/` (صفحة الشاشة).

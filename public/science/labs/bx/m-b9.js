@@ -178,11 +178,9 @@ BX.reg("b9-2-1-0",{cols:[["n","رقم الشريحة"],["see","العضيّات 
     A.ui.choice("العدسة الشيئية",[[4,"×4"],[10,"×10"],[40,"×40"]],v=>{obj=v;draw();},4);const fsl=A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});S.knob(g,50,-110,fsl);
     const CP=Array.from({length:30},()=>[R(-120,120),R(-120,120),R(.8,1.2)]);
     function draw(){cells.innerHTML="";if(!cur)return;const k=SLD[cur.si][1],blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");
-      S.circ(0,0,140,{fill:{liver:"#fce4ec",onion:"#fff8e1",nerve:"#ede7f6",leaf:"#f1f8e9"}[k]},grp);
-      if(k==="onion"||k==="leaf"){const w=24*z,hh=k==="onion"?w*.4:w*.7;for(let r=-9;r<=9;r++)for(let c=-7;c<=7;c++){const x=c*w+(r%2?w/2:0),y=r*hh;if(Math.abs(x)>170||Math.abs(y)>170)continue;S.rect(x-w/2,y-hh/2,w-2,hh-2,{fill:k==="onion"?"#ffe0b2":"#c5e1a5",stroke:k==="onion"?"#8d6e63":"#33691e","stroke-width":Math.max(1.5,z*.9),rx:2},grp);
-        if(k==="onion")S.ell(x+w*.15,y,hh*.2,hh*.18,{fill:"#6d4c41"},grp);else{for(let q=0;q<5;q++)S.ell(x-w*.3+q*w*.15,y+(q%2?hh*.2:-hh*.2),w*.05,w*.035,{fill:"#2e7d32"},grp);S.ell(x,y,w*.08,w*.07,{fill:"#5d4037",opacity:.7},grp);}}}
-      else if(k==="liver"){const w=22*z;for(let r=-8;r<=8;r++)for(let c=-8;c<=8;c++){const x=c*w*.9+(r%2?w*.45:0),y=r*w*.78;if(Math.abs(x)>170||Math.abs(y)>170)continue;let d="";for(let a=0;a<6;a++){const an=a*Math.PI/3+.5;d+=(a?"L":"M")+(x+Math.cos(an)*w*.5)+" "+(y+Math.sin(an)*w*.5);}S.path(d+"Z",{fill:"#f8bbd0",stroke:"#ad1457","stroke-width":1},grp);S.circ(x,y,w*.12,{fill:"#6a1b9a"},grp);}}
-      else{CP.slice(0,Math.round(8/z)+1).forEach(([x,y,s])=>{const r=10*z*s;for(let q=0;q<6;q++){const a=q*1.05+s;S.path("M"+x+" "+y+" q "+Math.cos(a)*r*2+" "+Math.sin(a)*r*2+" "+Math.cos(a+.3)*r*4+" "+Math.sin(a+.3)*r*4,{stroke:"#7e57c2","stroke-width":Math.max(1,z*.6),fill:"none"},grp);}S.circ(x,y,r,{fill:"#b39ddb",stroke:"#5e35b1","stroke-width":1.5},grp);S.circ(x,y,r*.35,{fill:"#4527a0"},grp);});}
+      const W=150*z,off={liver:[0,0],onion:[-20,10],nerve:[10,-8],leaf:[0,0]}[k];S.circ(0,0,140,{fill:"#f4efe6"},grp);
+      S.mk("image",{href:"img/"+k+".jpg",x:-W/2+off[0]*z,y:-W/2+off[1]*z,width:W,height:W,preserveAspectRatio:"xMidYMid slice"},grp);
+      S.circ(0,0,140,{fill:"none",stroke:"#000","stroke-opacity":.35,"stroke-width":26,style:"filter:blur(10px)"},grp);
       lab.set("الشريحة "+cur.num+" · التكبير ×"+(obj*10)+(blur>.6?" · حرّكي الضابط":""));
       if(blur<=.6&&obj>=10&&!seen[cur.si]){seen[cur.si]=1;cur.see={liver:"خلايا متعدّدة الأضلاع، نواة واضحة، غشاء خلوي، لا جدار",onion:"خلايا مستطيلة منتظمة، جدار خلوي، نواة",nerve:"جسم خلية ونواة وزوائد متفرّعة طويلة، لا جدار",leaf:"خلايا منتظمة، جدار خلوي، بلاستيدات خضراء، نواة"}[k];
         A.obs("الشريحة "+cur.num+": "+cur.see);A.toast("📝 سُجّلت ملاحظاتكِ ورسمكِ للشريحة "+cur.num);if(Object.keys(seen).length===4){A.step(3);A.step(4);compare();}}}}

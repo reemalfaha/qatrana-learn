@@ -33,7 +33,7 @@ function rockLab(S,A,o){const rocks=o.rocks,N=rocks.length,sp=Math.min(110,700/N
   if(o.tools.includes("hcl"))tl("hcl",260,"قطّارة HCl مخفّف",g=>{S.rect(-6,-40,12,44,{rx:3,fill:"#fff8e1",stroke:"#8d6e63","stroke-width":2},g);S.rect(-8,-56,16,18,{rx:5,fill:"#e53935"},g);S.path("M-3 4 L0 16 L3 4Z",{fill:"#8d6e63"},g);});
   if(o.tools.includes("hard"))tl("hard",560,"أداة القساوة (مسمار)",g=>{S.rect(-4,-30,8,46,{fill:S.lg(["#cfd8dc","#78909c"]),rx:2},g);S.rect(-12,-34,24,6,{fill:"#607d8b",rx:2},g);S.path("M-4 16 L0 28 L4 16Z",{fill:"#78909c"},g);});
   if(o.tools.includes("ham"))tl("ham",660,"مطرقة",g=>{S.rect(-3,-10,6,40,{fill:"#8d6e63",rx:2},g);S.rect(-18,-22,36,14,{fill:"#546e7a",rx:3},g);});
-  const showLens=(g,thin)=>{lensV.innerHTML="";lensV.style.display="";S.circ(0,0,92,{fill:"#263238"},lensV);S.circ(0,0,86,{fill:thin?"#111":g.r.c},lensV);const ins=S.g(lensV);pat(S,ins,g.r,80,g.i+3,thin);S.circ(0,0,86,{fill:"none",stroke:"#B8902A","stroke-width":5},lensV);};
+  const showLens=(g,thin)=>{lensV.innerHTML="";lensV.style.display="";S.circ(0,0,92,{fill:"#263238"},lensV);S.circ(0,0,86,{fill:thin?"#111":g.r.c},lensV);const ins=S.g(lensV);const tsi=thin&&TSIMG[g.r.n];if(tsi){ins.setAttribute("clip-path",S.clip(S.mk("circle",{r:86})));S.mk("image",{href:"../img/ts-"+tsi+".jpg",x:-130,y:-86,width:260,height:172,preserveAspectRatio:"xMidYMid slice"},ins);}else pat(S,ins,g.r,80,g.i+3,thin);S.circ(0,0,86,{fill:"none",stroke:"#B8902A","stroke-width":5},lensV);};
   let hold=null;const ok=(g,id)=>{st[g.i][id]=1;g.ic.textContent=Object.keys(st[g.i]).map(k=>({lens:"🔍",hcl:"💧",hard:"🔩",ham:"🔨"})[k]).join("");upd(g);};
   const tgts=id=>()=>o.ready()?G.map(g=>({g,pad:8,fn:async()=>{await use(id,g);return false;}})):[];
   async function use(id,g){const r=g.r;if(id==="lens"){showLens(g);lensCap.style.display="";lensCap.set((o.numbered?"العيّنة "+(g.i+1):r.n)+": "+r.col+" • "+r.tex);A.toast("🔍 "+r.col+"؛ النسيج: "+r.tex+(r.fos?"؛ تظهر بقايا كائنات حيّة (أحافير)":"")+(r.lay?"؛ تظهر طبقات رقيقة":""));}
@@ -49,6 +49,7 @@ function rockLab(S,A,o){const rocks=o.rocks,N=rocks.length,sp=Math.min(110,700/N
   return {G,rows,st,showLens,refresh:()=>A.setRows(rows.filter(Boolean))};}
 
 /* ---------- 1) تصنيف الصخور (استهلالية) ---------- */
+const TSIMG={"غرانيت":"granite","بازلت":"basalt","رخام":"marble","صخر رملي":"sand","صخر جيري أحفوري":"fossil","الصخر الجيري":"fossil","صخر جيري":"fossil","نايس":"gneiss"};
 const RK1=[{n:"غرانيت",c:"#d7c4bd",cs:["#f8bbd0","#fafafa","#212121","#bcaaa4"],p:"coarse",touch:"خشن",gr:"كبير",hcl:0,fos:0,lay:0,col:"فاتح مرقّط (وردي وأبيض وأسود)",tex:"بلّورات كبيرة متداخلة",hard:"قاسٍ: لا يخدشه المسمار",H:6,type:"ناري",why:"بلّورات معادن متداخلة كبيرة، ولا طبقات ولا أحافير، ولا يتفاعل مع الحمض."},
  {n:"صخر جيري أحفوري",c:"#eadfc6",cs:["#d7ccc8","#bcaaa4","#fff8e1"],p:"fossil",touch:"خشن",gr:"متوسط",hcl:2,fos:1,lay:1,col:"أبيض مصفرّ",tex:"حبيبات وبقايا أصداف",hard:"ليّن: يخدشه المسمار",H:3,type:"رسوبي",why:"يحوي أحافير وطبقات، ويتفاعل بشدّة مع الحمض."},
  {n:"بازلت",c:"#37474f",cs:["#263238","#546e7a","#455a64"],p:"fine",ves:1,touch:"ناعم",gr:"صغير جدًّا",hcl:0,fos:0,lay:0,col:"أسود/رمادي غامق",tex:"بلّورات دقيقة لا تُرى، وفيه فجوات",hard:"قاسٍ: لا يخدشه المسمار",H:6,type:"ناري",why:"بلّورات دقيقة جدًّا وفجوات غازية، ولا طبقات ولا أحافير."},
@@ -62,7 +63,7 @@ BX.reg("e10-1-1-0",{cols:[["n","رقم العيّنة"],["t","الملمس"],["g
  build(S,A){let num=false;A.say("رقّمي العيّنات الصخرية: اضغطي الزرّ.");
   const L=rockLab(S,A,{rocks:RK1,tools:["lens","hcl","hard","ham"],numbered:true,ready:()=>num,stepOf:{lens:1},steps:()=>["lens","hcl","hard"],
    row:(r,s,i)=>({n:i+1,t:s.lens?r.touch:"",g:s.lens?r.gr:"",a:s.hcl?(r.hcl===2?"شديد":r.hcl?"ضعيف":"لا يتفاعل"):"",f:s.lens?(r.fos?"نعم":"لا"):"",c:s.lens?r.col:"",l:s.lens?(r.lay?"نعم":"لا"):"",h:s.hard?r.hard.split(":")[0]:"",k:"",w:""}),
-   after:(G,rows)=>{A.say("صنّفي العيّنات بناءً على ملاحظاتك، واذكري المسوّغ.");let k=0;const ask=()=>{if(k>=G.length){A.step(2);A.ui.clear();return;}const g=G[k],r=g.r;S.glow(g,true);L.showLens(g);A.ui.clear();
+   after:(G,rows)=>{A.say("صنّفي العيّنات بناءً على ملاحظاتك، واذكري المسوّغ.");let k=0;const ask=()=>{if(k>=G.length){A.step(2);A.ui.clear();return;}const g=G[k],r=g.r;S.glow(g,true);L.showLens(g,!!TSIMG[r.n]);if(TSIMG[r.n])A.say("العيّنة "+(k+1)+": هذه شريحتها الرقيقة تحت المجهر المستقطب. لاحظي: بلّورات متداخلة؟ حبيبات؟ أحافير؟ تورّق؟");A.ui.clear();
       A.ui.choice("العيّنة "+(k+1)+": ما نوع الصخر المقترح؟",TYP,v=>{if(v!==r.type){A.toast("راجعي ملاحظاتك: "+r.why.split("،")[0]);return;}S.glow(g,false);rows[k].k=r.type+" ("+r.n+")";rows[k].w=r.why;L.refresh();A.obs("العيّنة "+(k+1)+" ← "+r.type+": "+r.why);k++;ask();});};ask();}});
   L.G.forEach(g=>g.tag.style.display="none");A.ui.add(A.ui.btn("🏷️ رقّمي العيّنات",b=>{b.remove();num=true;L.G.forEach((g,i)=>{g.tag.style.display="";});A.step(0);A.say("تفحّصي كل عيّنة: اسحبي العدسة، وقطّارة الحمض، وأداة القساوة إلى العيّنة (المطرقة لكشف سطح جديد).");},"gold"));
  }});

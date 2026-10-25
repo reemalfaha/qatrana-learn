@@ -152,7 +152,7 @@ new MutationObserver(readColors).observe(document.documentElement,{attributes:tr
 const fmt=(x,d=2)=>Number.isFinite(x)?x.toFixed(d):'—';
 const FONT='"IBM Plex Sans Arabic",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
 /* صور مجهرية حقيقية للشرائح: um = عرض الصورة بالميكرومتر */
-const PH={ch:{src:'img/micro-ch.jpg',um:440},bl:{src:'img/micro-bl.jpg',um:150},yst:{src:'img/micro-yst.jpg',um:150},bac:{src:'img/micro-bac.jpg',um:150},cocc:{src:'img/micro-cocc.jpg',um:120},spir:{src:'img/micro-spir.jpg',um:120},vib:{src:'img/micro-vib.jpg',um:120},on:{src:'img/micro-on.jpg',um:1700}};
+const PH={ch:{src:'img/micro-ch.jpg',um:440},bl:{src:'img/micro-bl.jpg',um:150},yst:{src:'img/micro-yst.jpg',um:150},bac:{src:'img/micro-bac.jpg',um:150},cocc:{src:'img/micro-cocc.jpg',um:120},spir:{src:'img/micro-spir.jpg',um:120},vib:{src:'img/micro-vib.jpg',um:120},on:{src:'img/micro-on.jpg',um:600},pro:{src:'img/micro-pro.jpg',um:650},mold:{src:'img/micro-mold.jpg',um:400}};
 for(const k in PH){const im=new Image();im.decoding='async';im.src=PH[k].src;PH[k].img=im;}
 function phReady(k){const o=PH[k];return !!(o&&o.img.complete&&o.img.naturalWidth);}
 function phDraw(c,k,D,F){const o=PH[k],im=o.img,w=im.naturalWidth,h=im.naturalHeight,sc=(D/F)/(w/o.um),tw=w*sc,th=h*sc;c.save();c.setTransform(1,0,0,1,0,0);

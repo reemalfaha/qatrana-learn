@@ -178,7 +178,7 @@ BX.reg("b9-2-1-0",{cols:[["n","رقم الشريحة"],["see","العضيّات 
     A.ui.choice("العدسة الشيئية",[[4,"×4"],[10,"×10"],[40,"×40"]],v=>{obj=v;draw();},4);const fsl=A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});S.knob(g,50,-110,fsl);
     const CP=Array.from({length:30},()=>[R(-120,120),R(-120,120),R(.8,1.2)]);
     function draw(){cells.innerHTML="";if(!cur)return;const k=SLD[cur.si][1],blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");
-      const W=150*z,off={liver:[0,0],onion:[-20,10],nerve:[10,-8],leaf:[0,0]}[k];S.circ(0,0,140,{fill:"#f4efe6"},grp);
+      const W=Math.min(150*z,640),off={liver:[0,0],onion:[-20,10],nerve:[10,-8],leaf:[0,0]}[k];S.circ(0,0,140,{fill:"#f4efe6"},grp);
       S.mk("image",{href:"img/"+k+".jpg",x:-W/2+off[0]*z,y:-W/2+off[1]*z,width:W,height:W,preserveAspectRatio:"xMidYMid slice"},grp);
       S.circ(0,0,140,{fill:"none",stroke:"#000","stroke-opacity":.35,"stroke-width":26,style:"filter:blur(10px)"},grp);
       lab.set("الشريحة "+cur.num+" · التكبير ×"+(obj*10)+(blur>.6?" · حرّكي الضابط":""));

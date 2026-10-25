@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>التوزيع الإلكتروني بالأفلاك</title>
+<meta name="description" content="مختبر تفاعلي للصف العاشر: عبّئي الإلكترونات في الأفلاك وفق مبدأ أوفباو وقاعدة هوند ومبدأ باولي، وشاهدي التوزيع المكتوب والمستويات.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--ok:#1f8f5b;--bad:#c2410c;--soft:#f6ece6;--hi:#fdf1dc;
+ --cs:#d64545;--cp:#e8892b;--cd:#2f8f5b;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif;--fm:ui-rounded,"Segoe UI",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--hi:#3a2c16;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--hi:#3a2c16;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1200px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+header.hd{background:linear-gradient(135deg,var(--wine2),var(--wine));color:#fff;border-radius:18px;padding:16px 18px;border-bottom:4px solid var(--gold)}
+header.hd h1{font-family:var(--fd);margin:0;font-size:clamp(23px,4.4vw,34px);line-height:1.3}
+header.hd p{margin:4px 0 0;color:var(--gold2)}header.hd a{color:#fff}
+html.embed header.hd,html.embed footer{display:none!important}html.embed .wrap{padding-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 6px 20px rgba(60,20,30,.07);min-width:0}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:8px 14px;background:var(--wine);color:#fff;cursor:pointer;min-height:44px}
+.btn.g{background:var(--soft);color:var(--ink);border:1.5px solid var(--line)}.btn.gold{background:var(--gold);color:#2b1a00}.btn:disabled{opacity:.45;cursor:default}
+.btn:active{transform:scale(.97)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+select{font:600 16px var(--f);border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--card);color:var(--ink);min-height:44px;max-width:100%}
+.mode{display:inline-flex;background:var(--soft);border:1.5px solid var(--line);border-radius:999px;padding:3px}
+.mode button{font:700 14px var(--f);border:0;background:none;color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;min-height:38px}
+.mode button[aria-pressed=true]{background:var(--wine);color:#fff}
+/* رأس العنصر */
+.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px}
+@media (max-width:860px){.top{grid-template-columns:1fr}}
+.cap{font-size:14px}.cap table{border-collapse:collapse;width:100%}.cap td{padding:2px 6px;border-bottom:1px dashed var(--line)}
+.cap td:first-child{font:800 16px var(--fm);direction:ltr;text-align:left;width:34px}.cap td:last-child{direction:ltr;text-align:left;font-family:var(--fm);font-weight:700}
+.cap .sh{direction:ltr;text-align:center;font:700 14px var(--fm);margin-top:6px;color:var(--muted)}
+.el{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.sym{width:104px;height:104px;border-radius:16px;border:3px solid #2563c9;background:#eef4ff;color:#1b2b4b;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;font-family:var(--fm)}
+.sym small{position:absolute;top:4px;left:8px;font-weight:800;font-size:15px;color:#2563c9}.sym b{font-size:44px;line-height:1}.sym i{font-style:normal;font-size:13px;font-weight:700;margin-top:4px}
+.el .info b{font-size:20px}.el .info .mut{color:var(--muted);font-size:14px}
+.bar{height:10px;background:var(--soft);border-radius:6px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#2563c9,#7A1F2E);width:0;transition:width .3s}
+.cnt{font:800 26px var(--fm);direction:ltr}
+/* المخطط */
+.bench{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:1fr}.bench .diag{order:-1}}
+.written{direction:ltr;text-align:left;font:800 30px/1.5 var(--fm);min-height:48px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.written span{border-radius:8px;padding:0 6px}.written .now{background:var(--hi)}.written sup{font-size:.6em}
+.written .s{color:var(--cs)}.written .p{color:var(--cp)}.written .d{color:var(--cd)}
+.short{direction:ltr;text-align:left;font:700 18px var(--fm);color:var(--muted);margin-top:6px}
+#bohr{width:100%;max-width:420px;display:block;margin:6px auto 0}
+.props{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;text-align:center}
+.props div{background:var(--soft);border-radius:12px;padding:6px 4px}.props small{display:block;color:var(--muted);font-size:12px}.props b{font:800 18px var(--fm)}
+.diag{position:relative}
+.ehead{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:4px}
+.lv{display:grid;grid-template-columns:28px 48px minmax(0,1fr) 64px;align-items:center;gap:8px;padding:6px 6px;border-bottom:1px solid var(--line);border-radius:10px;transition:background .2s}
+.lv.next{background:var(--hi)}.lv.full .nm{opacity:1}
+.lv .ar{color:var(--muted);font-size:12px;text-align:center}
+.lv .nm{font:800 24px var(--fm);direction:ltr;color:var(--muted)}.lv.has .nm{color:var(--ink)}
+.lv .bx{display:flex;gap:6px;direction:ltr;flex-wrap:nowrap}
+.lv .fill{white-space:nowrap;font:800 18px var(--fm);direction:ltr;text-align:center;color:var(--muted)}.lv.full .fill{color:var(--c)}
+.box{width:clamp(38px,6.4vw,58px);height:clamp(38px,6.4vw,58px);border:2.5px solid #b9a9ad;border-radius:10px;background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:2px;font:900 clamp(20px,3.6vw,30px)/1 var(--fm);color:var(--c);padding:0;transition:transform .12s}
+.box:hover{transform:translateY(-2px)}.box.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 8%,var(--card))}
+.box.shake{animation:sh .35s}@keyframes sh{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.box .a{display:inline-block;animation:pop .25s}@keyframes pop{from{transform:translateY(-14px);opacity:0}}
+.axis{position:absolute;top:34px;bottom:14px;right:-2px;width:3px;background:var(--ink);opacity:.8;border-radius:2px}
+.axis:before{content:"";position:absolute;top:-8px;right:-6px;border:7.5px solid transparent;border-bottom:10px solid var(--ink)}
+.hint{display:flex;gap:10px;align-items:center;background:#1e2a44;color:#fff;border-radius:14px;padding:12px 14px;font-weight:700;font-size:17px;min-height:56px;margin-top:10px}
+.hint i{font-style:normal;font-size:22px}.hint.no{background:#8a2a12}.hint.ok{background:#1f6f4a}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}@media (max-width:620px){.rules{grid-template-columns:1fr}}
+.rules div{background:var(--soft);border-radius:12px;padding:8px 10px;font-size:14px}.rules b{color:var(--wine);display:block;font-family:var(--fd);font-size:16px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rules b{color:var(--gold2)}}
+.exc{background:#fff6e0;border:2px dashed var(--gold);border-radius:14px;padding:10px 12px;margin-top:10px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .exc{background:#2a2114}}
+.quiz .opt{display:block;width:100%;text-align:left;direction:ltr;font:700 18px var(--fm);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;margin:6px 0;cursor:pointer}
+.quiz .opt.ok{border-color:var(--ok);background:#e3f6ec;color:#155c3b}.quiz .opt.no{border-color:var(--bad);background:#fdeee6;color:#8a2a12}
+.tag{background:var(--soft);border-radius:999px;padding:2px 10px;font-weight:800}
+footer{text-align:center;color:var(--muted);font-size:13px}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hd"><h1>🧪 التوزيع الإلكتروني بالأفلاك</h1><p>الكيمياء · الصف العاشر · ضعي الإلكترونات في الأفلاك وفق أوفباو وهوند وباولي</p>
+<p><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
+
+<div class="top">
+ <div class="card cap"><div class="row" style="justify-content:space-between"><b>سعة الأفلاك (المربّعات)</b><span class="tag" id="modeTag"></span></div>
+  <table><tr><td style="color:var(--cs)">s</td><td>فلك واحد</td><td>= 2e⁻</td></tr><tr><td style="color:var(--cp)">p</td><td>3 أفلاك</td><td>= 6e⁻</td></tr><tr><td style="color:var(--cd)">d</td><td>5 أفلاك</td><td>= 10e⁻</td></tr><tr><td style="color:#2563c9">f</td><td>7 أفلاك</td><td>= 14e⁻</td></tr></table>
+  <div class="sh">المستويات: K=2 · L=8 · M=18 · N=32</div></div>
+ <div class="card">
+  <div class="el"><div class="sym" id="sym"></div>
+   <div class="info"><div class="row" style="justify-content:space-between"><b id="nm"></b><span class="cnt" id="cnt"></span></div>
+    <div class="mut" id="sub"></div><div class="bar"><i id="pb"></i></div></div></div>
+  <div class="row" style="margin-top:10px"><select id="sel" aria-label="العنصر"></select>
+   <button class="btn g" id="prev" aria-label="العنصر السابق">→</button><button class="btn g" id="next" aria-label="العنصر التالي">←</button><button class="btn gold" id="rnd">🎲 عشوائي</button></div>
+  <div class="row" style="margin-top:8px;justify-content:space-between"><div class="mode" role="group" aria-label="النمط"><button id="mG" aria-pressed="true">🧭 موجَّه</button><button id="mC" aria-pressed="false">🎯 تحدٍّ</button></div>
+   <div class="row"><button class="btn g" id="undo">↶ تراجع</button><button class="btn g" id="reset">↺ من جديد</button><button class="btn" id="auto">▶️ تعبئة تلقائية</button></div></div>
+ </div>
+</div>
+
+<div class="bench">
+ <div class="card">
+  <b>الصيغة المكتوبة</b>
+  <div class="written" id="wr"></div><div class="short" id="short"></div>
+  <svg id="bohr" viewBox="0 0 420 420" aria-label="المستويات الرئيسة K L M N"></svg>
+  <div class="props"><div><small>الدورة</small><b id="pPer">—</b></div><div><small>الفئة</small><b id="pBlk">—</b></div><div><small>المجموعة</small><b id="pGrp">—</b></div><div><small>إلكترونات التكافؤ</small><b id="pVal">—</b></div></div>
+  <div id="exc"></div>
+ </div>
+ <div class="card diag">
+  <div class="ehead"><span>⬆ الطاقة</span><span>المُعبّأ</span></div>
+  <div id="lvls"></div>
+  <div class="hint" id="hint" aria-live="polite"><i>🔊</i><span></span></div>
+ </div>
+</div>
+
+<div class="card"><b style="font-family:var(--fd);font-size:18px">📏 القواعد الثلاث</b>
+ <div class="rules" style="margin-top:8px"><div><b>مبدأ أوفباو</b>تملأ الإلكترونات الأفلاك الأقل طاقة أولًا: 1s ← 2s ← 2p ← 3s ← 3p ← 4s ← 3d ← 4p</div>
+ <div><b>قاعدة هوند</b>في الأفلاك المتساوية الطاقة (p و d) تتوزّع الإلكترونات منفردة وبالاتجاه نفسه قبل أن تتزاوج.</div>
+ <div><b>مبدأ باولي</b>يتّسع الفلك الواحد لإلكترونين فقط، ويكون غزلهما متعاكسًا <span dir="ltr">↑↓</span>.</div></div></div>
+
+<div class="card quiz"><div class="row" style="justify-content:space-between"><b style="font-family:var(--fd);font-size:18px">🧠 تحدّي الكتابة</b><span class="tag" id="qs">0 / 0</span></div>
+ <p id="qq" style="margin:6px 0"></p><div id="qo"></div><div class="row"><button class="btn g" id="qn">سؤال آخر ←</button></div></div>
+
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+</div>
+<script>
+(()=>{
+const EL=[["H","الهيدروجين"],["He","الهيليوم"],["Li","الليثيوم"],["Be","البيريليوم"],["B","البورون"],["C","الكربون"],["N","النيتروجين"],["O","الأكسجين"],["F","الفلور"],["Ne","النيون"],
+["Na","الصوديوم"],["Mg","المغنيسيوم"],["Al","الألمنيوم"],["Si","السيليكون"],["P","الفسفور"],["S","الكبريت"],["Cl","الكلور"],["Ar","الأرغون"],["K","البوتاسيوم"],["Ca","الكالسيوم"],
+["Sc","السكانديوم"],["Ti","التيتانيوم"],["V","الفاناديوم"],["Cr","الكروم"],["Mn","المنغنيز"],["Fe","الحديد"],["Co","الكوبالت"],["Ni","النيكل"],["Cu","النحاس"],["Zn","الخارصين"],
+["Ga","الغاليوم"],["Ge","الجرمانيوم"],["As","الزرنيخ"],["Se","السيلينيوم"],["Br","البروم"],["Kr","الكريبتون"]];
+const SUB=[["1s",1,"s"],["2s",2,"s"],["2p",2,"p"],["3s",3,"s"],["3p",3,"p"],["4s",4,"s"],["3d",3,"d"],["4p",4,"p"]];
+const NB={s:1,p:3,d:5},COL={s:"var(--cs)",p:"var(--cp)",d:"var(--cd)"},HEX={s:"#d64545",p:"#e8892b",d:"#2f8f5b"},SUPN="⁰¹²³⁴⁵⁶⁷⁸⁹";
+const NOBLE=[[2,"He"],[10,"Ne"],[18,"Ar"]],EXC={24:{t:"الكروم",to:"[Ar] 4s¹ 3d⁵",why:"يصبح المستوى الفرعي 3d نصف ممتلئ (5 إلكترونات منفردة)، وهذا أكثر استقرارًا."},29:{t:"النحاس",to:"[Ar] 4s¹ 3d¹⁰",why:"يصبح المستوى الفرعي 3d ممتلئًا تمامًا (10 إلكترونات)، وهذا أكثر استقرارًا."}};
+const $=id=>document.getElementById(id);const sup=n=>String(n).split("").map(d=>SUPN[d]).join("");
+let Z=1,B={},hist=[],mode="g",timer=null,mist=0,excDone=false;
+const cap=k=>NB[SUB.find(s=>s[0]===k)[2]]*2;const cnt=k=>B[k].reduce((a,b)=>a+b.length,0);const total=()=>SUB.reduce((a,[k])=>a+cnt(k),0);
+function init(z){stop();Z=z;B={};SUB.forEach(([k,,t])=>B[k]=Array.from({length:NB[t]},()=>[]));hist=[];mist=0;excDone=false;$("sel").value=z;try{history.replaceState(null,"","#"+z);}catch(e){}draw();say(nextMsg(),"");}
+/* التعبئة الصحيحة بحسب أوفباو للعدد الذرّي */
+function ideal(z){let left=z;const o=[];for(const [k,,t] of SUB){if(!left)break;const n=Math.min(left,NB[t]*2);o.push([k,n,t]);left-=n;}return o;}
+function nextSub(){for(const [k] of SUB){if(cnt(k)<cap(k))return k;}return null;}
+function nextMsg(){const t=total();if(t>=Z)return null;const k=nextSub(),s=SUB.find(x=>x[0]===k),nb=NB[s[2]],need=Math.min(Z-t,cap(k)-cnt(k));
+  const w={1:"فلك واحد",3:"ثلاثة أفلاك",5:"خمسة أفلاك"}[nb];
+  let m="التالي: "+k+" — "+w+"، يتّسع لـ "+(cap(k)===2?"إلكترونين":cap(k)+" إلكترونات")+". ضعي "+(need===1?"إلكترونًا واحدًا":need===2?"إلكترونين":need+" إلكترونات")+".";
+  if(nb>1&&cnt(k)<nb)m+=" تذكّري هوند: منفردة أولًا ↑.";return m;}
+function say(m,cls){const h=$("hint");h.className="hint"+(cls?" "+cls:"");h.querySelector("span").textContent=m||"";h.querySelector("i").textContent=cls==="no"?"⚠️":cls==="ok"?"🎉":"🔊";h.style.visibility=m?"visible":"hidden";}
+function tap(k,i,el){if(timer)return;const t=total();
+  const bad=(msg)=>{mist++;if(el){el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");}say(msg,"no");};
+  if(t>=Z){bad("اكتمل العدد: لـ "+EL[Z-1][1]+" "+Z+" إلكترونات فقط.");return;}
+  const ns=nextSub();if(k!==ns){const ki=SUB.findIndex(s=>s[0]===k),ni=SUB.findIndex(s=>s[0]===ns);
+    bad(ki>ni?"مبدأ أوفباو: املئي "+ns+" أولًا لأنه أقل طاقة من "+k+".":"مبدأ باولي: أفلاك "+k+" ممتلئة \u2066↑↓\u2069 (إلكترونان في كل فلك). التالي هو "+ns+".");return;}
+  const bx=B[k][i];if(bx.length>=2){bad("مبدأ باولي: الفلك يتّسع لإلكترونين فقط.");return;}
+  if(bx.length===1&&B[k].some(b=>b.length===0)){bad("قاعدة هوند: ضعي إلكترونًا منفردًا في كل فلك من "+k+" قبل التزاوج.");return;}
+  bx.push(bx.length?"d":"u");hist.push([k,i]);draw(k);after();}
+function after(){const t=total();if(t===Z){const ok=mode==="c"?(mist?" · أخطاء: "+mist:" · دون أي خطأ! ⭐"):"";say("أحسنتِ! اكتمل التوزيع الإلكتروني لـ "+EL[Z-1][1]+ok,"ok");try{const d=JSON.parse(localStorage.getItem("orb.done")||"{}");d[Z]=1;localStorage.setItem("orb.done",JSON.stringify(d));}catch(e){}}else say(mode==="g"?nextMsg():"",""); }
+function undo(){stop();const h=hist.pop();if(!h)return;if(h[0]==="exc"){init(Z);return;}B[h[0]][h[1]].pop();excDone=false;draw();say(mode==="g"?nextMsg():"","");}
+function stop(){if(timer){clearInterval(timer);timer=null;$("auto").textContent="▶️ تعبئة تلقائية";}}
+function auto(){if(timer){stop();return;}if(total()>=Z)init(Z);$("auto").textContent="⏸ إيقاف";
+  timer=setInterval(()=>{if(total()>=Z){stop();after();return;}const k=nextSub();const e=B[k].findIndex(b=>b.length===0);const i=e>=0?e:B[k].findIndex(b=>b.length===1);const bx=B[k][i];bx.push(bx.length?"d":"u");hist.push([k,i]);draw(k);if(total()<Z)say(mode==="g"?nextMsg():"","");},520);}
+function config(){return SUB.filter(([k])=>cnt(k)).map(([k,,t])=>[k,cnt(k),t]);}
+function draw(last){const t=total();const E=EL[Z-1];
+  $("sym").innerHTML="<small>"+Z+"</small><b>"+E[0]+"</b><i>Z = "+Z+"</i>";$("nm").textContent=E[1]+" ("+E[0]+")";$("sub").textContent="العدد الذرّي "+Z+"، إذن "+Z+" إلكترونًا في الذرّة المتعادلة";
+  $("cnt").textContent=t+" / "+Z;$("pb").style.width=(t/Z*100)+"%";
+  const ns=nextSub(),L=$("lvls");L.innerHTML="";
+  SUB.slice().reverse().forEach(([k,n,ty])=>{const c=cnt(k),row=document.createElement("div");row.className="lv"+(c?" has":"")+(c===cap(k)?" full":"")+(mode==="g"&&k===ns&&t<Z?" next":"");row.style.setProperty("--c",COL[ty]);
+    row.innerHTML='<span class="ar">n='+n+'</span><span class="nm">'+k+'</span><div class="bx"></div><span class="fill">'+c+" / "+cap(k)+"</span>";
+    const bxs=row.querySelector(".bx");B[k].forEach((b,i)=>{const e=document.createElement("button");e.className="box"+(b.length?" on":"");e.setAttribute("aria-label",k+" فلك "+(i+1)+": "+b.length+" إلكترون");
+      e.innerHTML=b.map((s,j)=>'<span class="'+(k===last&&j===b.length-1&&hist.length&&hist[hist.length-1][1]===i?"a":"")+'">'+(s==="u"?"↑":"↓")+"</span>").join("");e.addEventListener("click",()=>tap(k,i,e));bxs.append(e);});L.append(row);});
+  const cf=config();$("wr").innerHTML=cf.length?cf.map(([k,c,ty],i)=>'<span class="'+ty+(i===cf.length-1&&t<Z?" now":"")+'">'+k+"<sup>"+c+"</sup></span>").join(""):'<span style="color:var(--muted);font-size:18px">اضغطي على المربّعات لتضعي الإلكترونات</span>';
+  if(excDone){const X=EXC[Z];$("wr").innerHTML='<span>'+X.to.replace(/\[Ar\] /,"1s² 2s² 2p⁶ 3s² 3p⁶ ")+"</span>";}
+  // المختصر
+  let sh="";if(t===Z&&Z>2){const nb=NOBLE.filter(x=>x[0]<Z).pop();if(nb){let left=nb[0];const rest=[];cf.forEach(([k,c])=>{if(left>=c){left-=c;}else rest.push(k+sup(c));});sh="المختصر: ["+nb[1]+"] "+(excDone?EXC[Z].to.slice(5):rest.join(" "));}}
+  $("short").textContent=sh;
+  bohr();props(t===Z);excBox(t===Z);}
+function bohr(){const sv=$("bohr"),R=[48,92,136,180],C=210,ns="http://www.w3.org/2000/svg";sv.innerHTML="";
+  const mk=(t,a)=>{const e=document.createElementNS(ns,t);for(const k in a)e.setAttribute(k,a[k]);sv.append(e);return e;};
+  R.forEach((r,i)=>{mk("circle",{cx:C,cy:C,r,fill:"none",stroke:"#b9a9ad","stroke-width":2});const lx=C+r*Math.cos(-1.05),ly=C+r*Math.sin(-1.05);mk("circle",{cx:lx,cy:ly,r:11,fill:"#fff",stroke:"#b9a9ad"});const tx=mk("text",{x:lx,y:ly+4,"text-anchor":"middle","font-size":11,"font-weight":700,fill:"#76606A"});tx.textContent="KLMN"[i];});
+  mk("circle",{cx:C,cy:C,r:30,fill:"#fff5d6",stroke:"#B8902A","stroke-width":3});const nt=mk("text",{x:C,y:C+7,direction:"ltr","unicode-bidi":"plaintext","text-anchor":"middle","font-size":20,"font-weight":800,fill:"#2B1218","font-family":"sans-serif"});nt.textContent="+"+Z;
+  const per=[[],[],[],[]];SUB.forEach(([k,n,ty])=>B[k].forEach(b=>b.forEach(()=>per[n-1].push(ty))));
+  if(excDone){/* 4s¹ 3d */}
+  per.forEach((L,i)=>{const r=R[i],N=L.length;L.forEach((ty,j)=>{const a=-Math.PI/2+j*2*Math.PI/Math.max(N,2)+i*.35;mk("circle",{cx:C+r*Math.cos(a),cy:C+r*Math.sin(a),r:9,fill:HEX[ty],stroke:"#fff","stroke-width":2});});});}
+function props(full){const cf=config();if(!full||!cf.length){["pPer","pBlk","pGrp","pVal"].forEach(i=>$(i).textContent="—");return;}
+  const per=Math.max(...cf.map(c=>+c[0][0]));const last=excDone?"d":cf[cf.length-1][2];
+  const ns=cf.filter(c=>+c[0][0]===per&&c[2]==="s").reduce((a,c)=>a+c[1],0),np=cf.filter(c=>+c[0][0]===per&&c[2]==="p").reduce((a,c)=>a+c[1],0);
+  const nd=cf.filter(c=>c[0]==="3d").reduce((a,c)=>a+c[1],0);
+  let blk=Z===2?"s":last,grp,val;
+  if(Z===2){grp=18;val=2;}else if(blk==="s"){grp=ns;val=ns;}else if(blk==="p"){grp=10+ns+np;val=ns+np;}else{grp=ns+nd;val=ns+nd;}
+  $("pPer").textContent=per;$("pBlk").textContent=blk;$("pGrp").textContent=grp;$("pVal").textContent=val;}
+function excBox(full){const X=EXC[Z],b=$("exc");b.innerHTML="";if(!X||!full)return;
+  const d=document.createElement("div");d.className="exc";
+  if(!excDone){d.innerHTML="<b>⚠️ استثناء: "+X.t+"</b><p style='margin:4px 0'>التوزيع وفق أوفباو هو [Ar] 4s² 3d"+(Z===24?"⁴":"⁹")+"، لكن التوزيع الفعلي مختلف! ينتقل إلكترون من 4s إلى 3d.</p>";
+    const bt=document.createElement("button");bt.className="btn gold";bt.textContent="↗️ انقلي إلكترونًا من 4s إلى 3d";bt.onclick=()=>{B["4s"][0].pop();const k=B["3d"].findIndex(x=>x.length===0);const i=k>=0?k:B["3d"].findIndex(x=>x.length===1);B["3d"][i].push(B["3d"][i].length?"d":"u");excDone=true;hist.push(["exc",0]);draw("3d");say("التوزيع الفعلي لـ "+X.t+": \u2066"+X.to+"\u2069","ok");};d.append(bt);}
+  else d.innerHTML="<b>✅ التوزيع الفعلي لـ "+X.t+": <span dir='ltr'>"+X.to+"</span></b><p style='margin:4px 0'>"+X.why+"</p>";
+  b.append(d);}
+/* تحدّي الكتابة */
+let qa=0,qok=0;function fmt(z,swap){const o=ideal(z);if(swap==="exc"&&EXC[z])return "1s² 2s² 2p⁶ 3s² 3p⁶ "+EXC[z].to.slice(5);return o.map(([k,n])=>k+sup(n)).join(" ");}
+function quiz(){const z=2+Math.floor(Math.random()*35);const right=EXC[z]?fmt(z,"exc"):fmt(z);const wrong=new Set();
+  const o=ideal(z);
+  if(o.length>1){const a=o.map(x=>x.slice());const i=a.length-1;if(a[i][1]>1){a[i][1]--;a.push(a.length<SUB.length?[SUB[a.length][0],1]:[a[0][0],1]);}wrong.add(a.map(([k,n])=>k+sup(n)).join(" "));}
+  if(o.find(x=>x[0]==="3d")){wrong.add(o.filter(x=>x[0]!=="4s").map(([k,n])=>k+sup(n)).join(" ").replace(/3d(\S+)/,m=>m+" 4s²"));}
+  wrong.add(o.map(([k,n,t])=>k+sup(t==="p"&&n<6?n+1:n)).join(" "));
+  wrong.add(o.map(([k,n,t])=>k.replace("p","d").replace(/^1d/,"1s")+sup(n)).join(" ").replace("2d","2p"));
+  wrong.add(fmt(z));wrong.add(fmt(z-1));wrong.add(fmt(Math.min(36,z+1)));wrong.delete(right);
+  const opts=[right,...[...wrong].slice(0,3)].sort(()=>Math.random()-.5);
+  $("qq").innerHTML="اختاري التوزيع الإلكتروني الصحيح لذرّة <b>"+EL[z-1][1]+" ("+EL[z-1][0]+")</b>، عددها الذرّي "+z+":";const box=$("qo");box.innerHTML="";let done=false;
+  opts.forEach(t=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>{if(done)return;done=true;qa++;if(t===right){qok++;b.classList.add("ok");}else{b.classList.add("no");[...box.children].find(x=>x.textContent===right).classList.add("ok");}$("qs").textContent=qok+" / "+qa;};box.append(b);});}
+/* الواجهة */
+EL.forEach(([s,n],i)=>{const o=document.createElement("option");o.value=i+1;o.textContent=(i+1)+" · "+n+" ("+s+")";$("sel").append(o);});
+$("sel").onchange=e=>init(+e.target.value);$("prev").onclick=()=>init(Z>1?Z-1:36);$("next").onclick=()=>init(Z<36?Z+1:1);$("rnd").onclick=()=>init(1+Math.floor(Math.random()*36));
+$("undo").onclick=undo;$("reset").onclick=()=>init(Z);$("auto").onclick=auto;$("qn").onclick=quiz;
+const setMode=m=>{mode=m;$("mG").setAttribute("aria-pressed",String(m==="g"));$("mC").setAttribute("aria-pressed",String(m==="c"));$("modeTag").textContent=m==="g"?"🧭 موجَّه":"🎯 تحدٍّ";init(Z);if(m==="c")say("نمط التحدّي: لا تلميحات. املئي الأفلاك وحدكِ، وسنحسب الأخطاء.","");};
+$("mG").onclick=()=>setMode("g");$("mC").onclick=()=>setMode("c");
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="z"){e.preventDefault();undo();}});
+const h=parseInt((location.hash||"").slice(1));setMode("g");init(h>=1&&h<=36?h:21);quiz();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>أنواع الروابط الكيميائية</title>
+<meta name="description" content="مختبر تفاعلي للصف العاشر: قرّبي الذرّات وشاهدي تكوّن الرابطة الأيونية والتساهمية والفلزّية والهيدروجينية وقوى فاندرفالز.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#f6efe4;--card:#fbf7f0;--ink:#3a2418;--muted:#7a6457;--line:#e6d8c6;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--soft:#f1e7d8;--ok:#1f8f5b;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif;--fm:ui-rounded,"Segoe UI",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17110e;--card:#221a15;--ink:#f3e7dc;--muted:#c2ab9b;--line:#3b2e25;--soft:#2c2219;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17110e;--card:#221a15;--ink:#f3e7dc;--muted:#c2ab9b;--line:#3b2e25;--soft:#2c2219;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1000px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px}
+header.hd{text-align:center;padding:6px 0 0}header.hd h1{font:700 clamp(26px,5vw,40px)/1.25 var(--fd);margin:0;color:var(--wine2)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.hd h1{color:var(--gold2)}}
+header.hd p{margin:2px 0 0;color:var(--muted)}header.hd a{color:var(--wine);font-size:14px}
+html.embed .back,html.embed footer{display:none!important}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px 16px;box-shadow:0 8px 22px rgba(80,50,30,.10)}
+.ch{display:flex;align-items:flex-start;gap:10px}.num{width:34px;height:34px;flex-shrink:0;border-radius:50%;color:#fff;display:grid;place-items:center;font:800 17px var(--fm);margin-top:2px}
+.ch h2{margin:0;font:700 clamp(19px,3.4vw,25px)/1.3 var(--fd)}.ch h2 small{font:700 13px var(--fm);color:var(--muted);letter-spacing:.5px;margin-inline-start:8px;direction:ltr;unicode-bidi:isolate}
+.ch p{margin:0;color:var(--muted);font-size:14.5px}.ch .grow{flex:1;min-width:0}
+.tag{flex-shrink:0;font:800 12px var(--f);padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}.tag.on{background:#e3f6ec;color:var(--ok)}
+svg.st{width:100%;height:auto;display:block;touch-action:none;user-select:none;margin:4px 0}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.ctl .row{display:flex;gap:6px;flex-wrap:wrap}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:8px 16px;background:var(--wine);color:#fff;cursor:pointer;min-height:44px}.btn.g{background:var(--soft);color:var(--ink);border:1.5px solid var(--line)}.btn:active{transform:scale(.97)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{font:700 15px var(--fm);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 12px;min-height:40px;cursor:pointer;direction:ltr}
+.chips button[aria-pressed=true]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.note{margin-top:8px;background:var(--soft);border-radius:14px;padding:8px 12px;font-size:15px;min-height:44px}
+.note b{color:var(--wine)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .note b{color:var(--gold2)}}
+.cmp .r{display:grid;grid-template-columns:150px minmax(0,1fr) 70px;gap:10px;align-items:center;padding:5px 0}
+.cmp .bar{height:14px;background:var(--soft);border-radius:8px;overflow:hidden}.cmp .bar i{display:block;height:100%;border-radius:8px}
+@media (max-width:560px){.cmp .r{grid-template-columns:110px minmax(0,1fr) 54px;font-size:14px}}
+.quiz .opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.quiz .opts button{font:700 15px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 12px;min-height:44px;cursor:pointer}
+.quiz .opts button.ok{background:#e3f6ec;border-color:var(--ok);color:#155c3b}.quiz .opts button.no{background:#fdeee6;border-color:#c2410c;color:#8a2a12}
+.sub{font:800 30px var(--fm);direction:ltr;text-align:center;margin:6px 0 0}
+footer{text-align:center;color:var(--muted);font-size:13px}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hd"><h1>أنواع الروابط الكيميائية</h1><p>كيف تترابط الذرّات؟ قرّبي الذرّات وشاهدي ما يحدث للإلكترونات</p><p class="back"><a href="../#/labs">→ العودة إلى منصّة العلوم</a></p></header>
+<div id="cards"></div>
+<section class="card cmp"><div class="ch"><div class="grow"><h2>📊 مقارنة قوّة الروابط</h2><p>الروابط بين الذرّات أقوى بكثير من قوى التجاذب بين الجزيئات</p></div></div><div id="cmp" style="margin-top:8px"></div></section>
+<section class="card quiz"><div class="ch"><div class="grow"><h2>🧠 صنّفي الرابطة</h2><p>ما نوع الرابطة أو قوّة التجاذب في كل مما يأتي؟</p></div><span class="tag" id="qs">0 / 0</span></div>
+ <div class="sub" id="qsub"></div><p id="qhint" style="text-align:center;margin:2px 0;color:var(--muted)"></p><div class="opts" id="qo" style="justify-content:center"></div>
+ <div style="text-align:center;margin-top:8px"><button class="btn g" id="qn">سؤال آخر ←</button></div></section>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+</div>
+<script>
+(()=>{
+const NS="http://www.w3.org/2000/svg";
+/* ألوان الكرات */
+const COL={Na:["#c9a4f0","#5a2590"],K:["#d7b0f5","#4a1f80"],Li:["#ff9e9e","#9b2222"],Mg:["#eef0f2","#7b8088"],Cl:["#7fe08f","#16672e"],F:["#e6f58a","#6a8a12"],O:["#ff7f6e","#9b1310"],
+ H:["#ffffff","#a8b0ba"],N:["#8fb4ff","#1c3d9b"],Ar:["#6fc6e0","#14506a"],Ar2:["#7f9cff","#1e2f8f"],Cu:["#ffe18a","#a87508"],Hc:["#ffb27a","#b4450f"],H2:["#ff8fa3","#a3173a"]};
+let defs="";const grad=(k)=>{const [a,b]=COL[k];return `<radialGradient id="g${k}" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".22" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></radialGradient>`;};
+Object.keys(COL).forEach(k=>defs+=grad(k));
+defs+=`<radialGradient id="eB" cx="35%" cy="30%"><stop offset="0" stop-color="#e8f7ff"/><stop offset=".4" stop-color="#55b6f0"/><stop offset="1" stop-color="#0f5fa8"/></radialGradient>
+<radialGradient id="eY" cx="35%" cy="30%"><stop offset="0" stop-color="#fffbe0"/><stop offset=".45" stop-color="#f5d23a"/><stop offset="1" stop-color="#a87b00"/></radialGradient>
+<radialGradient id="eP" cx="35%" cy="30%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#e889c2"/><stop offset="1" stop-color="#a0306f"/></radialGradient>
+<radialGradient id="cloud"><stop offset=".55" stop-color="#ff9fd0" stop-opacity=".0"/><stop offset=".7" stop-color="#ff9fd0" stop-opacity=".55"/><stop offset="1" stop-color="#ffb8dc" stop-opacity="0"/></radialGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="2.2"/></filter>`;
+const sh=(x,y,r)=>`<ellipse cx="${x}" cy="${y+r+16}" rx="${r*.9}" ry="${r*.16}" fill="#5a4030" opacity=".18"/>`;
+const ball=(x,y,r,k,lab,o={})=>{const dark=["H","Mg","F","Cu"].includes(k);return `${o.noSh?"":sh(x,y,r)}<circle cx="${x}" cy="${y}" r="${r}" fill="url(#g${k})" ${o.op?`opacity="${o.op}"`:""}/>`+
+  (lab?`<text x="${x}" y="${y+r*.18}" text-anchor="middle" direction="ltr" font-family="Segoe UI,system-ui,sans-serif" font-weight="800" font-size="${Math.max(13,r*.52)}" fill="${dark?"#3a2418":"#fff"}" ${dark?"":'stroke="#0004" stroke-width=".6"'}>${lab}</text>`:"");};
+const el=(x,y,k,r)=>`<circle cx="${x}" cy="${y}" r="${r||6.5}" fill="url(#${k||"eB"})"/>`;
+const txt=(x,y,s,o={})=>`<text x="${x}" y="${y}" text-anchor="${o.a||"middle"}" font-family="Noto Naskh Arabic,Tahoma,sans-serif" font-weight="${o.w||700}" font-size="${o.s||15}" fill="${o.c||"#7a6457"}" ${o.ltr?'direction="ltr"':""}>${s}</text>`;
+const lerp=(a,b,t)=>a+(b-a)*t,ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,y]of Object.entries(a)){if(y==null||y===false)continue;if(x==="class")e.className=y;else if(x.startsWith("on"))e.addEventListener(x.slice(2),y);else e.setAttribute(x,y);}for(const c of k.flat())if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));return e;};
+const ring=(x,y,n,R,ph,k,skip)=>{let s="";for(let i=0;i<n;i++){if(skip&&skip(i))continue;const a=ph+i*2*Math.PI/Math.max(n,1);s+=el(x+R*Math.cos(a),y+R*Math.sin(a),k);}return s;};
+
+/* ============ تعريف البطاقات ============ */
+const CARDS=[];
+/* 1) الأيونية */
+CARDS.push({n:1,c:"#8e44c9",ti:"الرابطة الأيونية",en:"IONIC BOND",d:"انتقال إلكترون أو أكثر من ذرّة فلزّ إلى ذرّة لافلزّ، ثم تجاذب الأيونات المتعاكسة الشحنة",
+ pairs:[["NaCl","Na","Cl",1,1,7,"Na⁺","Cl⁻"],["LiF","Li","F",1,1,7,"Li⁺","F⁻"],["KCl","K","Cl",1,1,7,"K⁺","Cl⁻"],["MgO","Mg","O",2,2,6,"Mg²⁺","O²⁻"]],
+ init(){this.p=0;this.k=0;this.mv=null;this.t=0;this.drag=null;},
+ btn(){const P=this.pairs[this.pi];return this.k<P[3]?"▶ انقلي الإلكترون":this.t<1?"…":"↺ أعيديها متباعدة";},
+ act(){const P=this.pairs[this.pi];if(this.k<P[3]){if(!this.mv)this.mv={i:this.k,s:0};}else this.init();},
+ bonded(){return this.t>.98;},
+ pos(){const t=ease(this.t);const P=this.pairs[this.pi];const rM=lerp(40,28,this.k/P[3]),rN=lerp(34,44,this.k/P[3]);
+   return {mx:lerp(170,300-rM-rN+rN+2,t)+0,nx:lerp(440,300+rN-2,t)+0,rM,rN,y:105};},
+ frame(T){const P=this.pairs[this.pi];const g=this.pos();let mx=g.mx,nx=g.nx;if(this.t>0){mx=lerp(170,300-g.rM+2,ease(this.t));nx=lerp(440,300+g.rN+2,ease(this.t));}
+   let s="";const left=P[3]-this.k;
+   s+=ball(mx,g.y,g.rM,P[1],this.k===P[3]?P[6]:P[1]);s+=ball(nx,g.y,g.rN,P[2],this.k===P[3]?P[7]:P[2]);
+   // إلكترونات اللافلز
+   s+=ring(nx,g.y,P[5],g.rN+11,T*.5,"eB");
+   // الإلكترونات المنقولة
+   for(let i=0;i<this.k;i++){const a=T*.5+Math.PI*(1+i*.35)+.3;s+=el(nx+(g.rN+11)*Math.cos(a+.4),g.y+(g.rN+11)*Math.sin(a+.4),"eY",7.5);}
+   // إلكترونات الفلز المتبقّية
+   this.ep=[];for(let i=0;i<left;i++){const idx=this.k+i;let x,y;const a=Math.PI+i*.9+Math.sin(T*1.4)*.12;x=mx+(g.rM+14)*Math.cos(a);y=g.y+(g.rM+14)*Math.sin(a);
+     if(this.mv&&this.mv.i===idx){const b=T*.5+Math.PI*(1+this.k*.35)+.7;const tx=nx+(g.rN+11)*Math.cos(b),ty=g.y+(g.rN+11)*Math.sin(b);const q=ease(this.mv.s);x=lerp(x,tx,q);y=lerp(y,ty,q)-Math.sin(q*Math.PI)*55;}
+     if(this.drag&&this.drag.i===idx){x=this.drag.x;y=this.drag.y;}
+     this.ep.push([idx,x,y]);s+=`<circle cx="${x}" cy="${y}" r="13" fill="#f5d23a" opacity="${.25+.15*Math.sin(T*4)}" filter="url(#glow)"/>`+el(x,y,"eY",8);}
+   if(this.k===0&&!this.mv&&!this.drag)s+=txt((mx+nx)/2,40,"اسحبي الإلكترون الأصفر إلى "+P[2]+" ←",{c:"#a87b00",s:14});
+   if(this.k===P[3]&&this.t>.15){s+=txt(300,205,"تجاذب كهربائي بين أيون موجب وأيون سالب",{c:"#7A1F2E",s:14});}
+   if(this.t>.98)s+=txt(300,26,P[0],{s:24,c:"#3a2418",ltr:1,w:800});
+   return s;},
+ step(dt){const P=this.pairs[this.pi];if(this.mv){this.mv.s+=dt/900;if(this.mv.s>=1){this.k++;this.mv=null;}}if(this.k===P[3]&&!this.mv&&this.t<1)this.t=Math.min(1,this.t+dt/1400);},
+ note(){const P=this.pairs[this.pi];if(this.k<P[3])return `ذرّة <b>${P[1]}</b> فلزّ لها <b>${P[4]}</b> ${P[4]===1?"إلكترون تكافؤ":"إلكترونا تكافؤ"}، وذرّة <b>${P[2]}</b> لافلزّ لها <b>${P[5]}</b> إلكترونات تكافؤ. تفقد ${P[1]} وتكسب ${P[2]} لتصل كلٌّ منهما إلى ثمانية إلكترونات.`;
+   return `تكوّن الأيون الموجب <b dir="ltr">${P[6]}</b> والأيون السالب <b dir="ltr">${P[7]}</b>، فتجاذبا كهربائيًّا وتكوّن المركّب الأيوني <b dir="ltr">${P[0]}</b>.`;},
+ down(x,y){if(this.mv)return false;for(const [i,ex,ey] of this.ep||[]){if(i===this.k&&Math.hypot(x-ex,y-ey)<26){this.drag={i,x,y};return true;}}return false;},
+ move(x,y){if(this.drag){this.drag.x=x;this.drag.y=y;}},
+ up(x,y){if(!this.drag)return;const g=this.pos();const near=Math.hypot(x-g.nx,y-g.y)<g.rN+45;const i=this.drag.i;this.drag=null;if(near){this.k++;}}});
+/* 2) التساهمية */
+CARDS.push({n:2,c:"#e67e22",ti:"الرابطة التساهمية",en:"COVALENT BOND",d:"مشاركة زوج أو أكثر من الإلكترونات بين ذرّتين لافلزّيتين",
+ pairs:[["H₂","H","H",1,1,1,"H–H","أحادية غير قطبية"],["HCl","H","Cl",1,1,7,"H–Cl","أحادية قطبية"],["O₂","O","O",2,6,6,"O=O","ثنائية"],["N₂","N","N",3,5,5,"N≡N","ثلاثية"]],
+ init(){this.t=0;this.dir=0;},btn(){return this.t>=1?"↺ أعيديها متباعدة":"▶ قرّبي الذرّتين";},act(){this.dir=this.t>=1?-1:1;},bonded(){return this.t>.98;},
+ step(dt){this.t=clamp(this.t+this.dir*dt/1600,0,1);if(this.t===0||this.t===1)this.dir=0;},
+ frame(T){const P=this.pairs[this.pi];const t=ease(this.t);const kA=P[1]==="H"?"Hc":P[1],kB=P[2]==="H"?(P[1]==="H"?"H2":"Hc"):P[2];
+   const rA=P[1]==="H"?30:36,rB=P[2]==="H"?30:(P[2]==="Cl"?40:36);const y=110;const ax=lerp(170,300-rA*.62,t),bx=lerp(440,300+rB*.62,t);let s="";
+   s+=ball(ax,y,rA,kA,P[1]);s+=ball(bx,y,rB,kB,P[2]);
+   const sh=P[3];// عدد الأزواج المشتركة
+   const lonA=P[4]-sh,lonB=P[5]-sh;
+   s+=ring(ax,y,lonA,rA+11,Math.PI*.5+T*.3,"eB",null).replace(/./g,c=>c);
+   // إزاحة الإلكترونات الحرّة بعيدًا عن جهة الرابطة
+   const lone=(x,n,R,side)=>{let o="";for(let i=0;i<n;i++){const a=(side<0?Math.PI:0)+(i-(n-1)/2)*.62+Math.sin(T+i)*.05;o+=el(x+R*Math.cos(a),y+R*Math.sin(a));}return o;};
+   s=ball(ax,y,rA,kA,P[1])+ball(bx,y,rB,kB,P[2])+lone(ax,lonA,rA+11,-1)+lone(bx,lonB,rB+11,1);
+   // الإلكترونات المشتركة
+   const mid=(ax+bx)/2;for(let i=0;i<sh;i++){const off=(i-(sh-1)/2)*22;
+     const ea=[lerp(ax+rA+11,mid-6,t),y+lerp(off,off,t)],eb=[lerp(bx-rB-11,mid+6,t),y+off];
+     const wob=t>.95?Math.sin(T*3+i)*3:0;
+     s+=el(ea[0]+wob,ea[1]-wob,"eY",7)+el(eb[0]-wob,eb[1]+wob,"eB",7);}
+   if(t>.95){s+=`<ellipse cx="${mid}" cy="${y}" rx="22" ry="${12+sh*11}" fill="none" stroke="#B8902A" stroke-width="2" stroke-dasharray="5 4"/>`;s+=txt(mid,y+40+sh*11,sh===1?"زوج مشترك":sh===2?"زوجان مشتركان":"ثلاثة أزواج مشتركة",{c:"#a87b00",s:14});
+     s+=txt(300,26,P[6]+"   ·   "+P[0],{s:22,c:"#3a2418",ltr:1,w:800});
+     if(P[1]!==P[2])s+=txt(ax,y-rA-14,"δ+",{s:16,c:"#c2410c",ltr:1})+txt(bx,y-rB-14,"δ−",{s:16,c:"#1565c0",ltr:1});}
+   return s;},
+ note(){const P=this.pairs[this.pi];if(this.t<.98)return `لـ <b>${P[1]}</b> ${P[4]} إلكترون تكافؤ ولـ <b>${P[2]}</b> ${P[5]}. قرّبي الذرّتين لتتشاركا ${P[3]===1?"زوجًا واحدًا":P[3]===2?"زوجين":"ثلاثة أزواج"} من الإلكترونات.`;
+   return `رابطة تساهمية <b>${P[7]}</b>: ${P[1]!==P[2]?"تجذب ذرّة Cl الأعلى كهرسلبيةً الزوجَ المشترك نحوها، فتحمل شحنة جزئية سالبة δ−.":"الذرّتان متماثلتان فيتوزّع الزوج المشترك بالتساوي."}`;}});
+/* 3) الفلزّية */
+CARDS.push({n:3,c:"#d4a017",ti:"الرابطة الفلزّية",en:"METALLIC BOND",d:"أيونات فلزّ موجبة في بحر من الإلكترونات الحرّة الحركة",pairs:[["Cu","Cu"]],
+ init(){this.t=0;this.dir=0;this.v=false;if(!this.E){this.E=Array.from({length:22},()=>({x:Math.random()*600,y:30+Math.random()*160,vx:(Math.random()-.5)*60,vy:(Math.random()-.5)*60}));}},
+ btn(){return this.t>=1?"↺ أعيديها متباعدة":"▶ قرّبي الذرّات";},act(){this.dir=this.t>=1?-1:1;this.v=false;},bonded(){return this.t>.98;},
+ extra(){return this.t>=1?[["⚡ "+(this.v?"افصلي فرق الجهد":"وصّلي فرق جهد"),()=>{this.v=!this.v;}]]:[];},
+ step(dt){this.t=clamp(this.t+this.dir*dt/1600,0,1);if(this.t===0||this.t===1)this.dir=0;const s=dt/1000;
+   this.E.forEach(e=>{e.vx+=(Math.random()-.5)*90*s;e.vy+=(Math.random()-.5)*90*s;if(this.v)e.vx-=40*s;e.vx=clamp(e.vx,-90,90);e.vy=clamp(e.vy,-60,60);e.x+=e.vx*s;e.y+=e.vy*s;
+     if(e.x<70){e.x=530;}if(e.x>530){e.x=70;}if(e.y<35||e.y>190){e.vy*=-1;e.y=clamp(e.y,35,190);}});},
+ frame(T){const t=ease(this.t);let s="";const ions=[];for(let r=0;r<3;r++)for(let c=0;c<6;c++){const fx=110+c*76+(r%2?38:0),fy=55+r*58;
+     const ax=300+(fx-300)*lerp(1.9,1,t)+(r===1&&t<.5?0:0),ay=115+(fy-115)*lerp(1.5,1,t);ions.push([ax,ay]);}
+   const R=lerp(24,26,t);
+   ions.forEach(([x,y],i)=>{if(t<.4&&(x<20||x>580||y<10||y>220))return;s+=ball(x,y,R,"Cu",t>.5?"+":"",{noSh:t>.5});});
+   if(t<.5){ions.forEach(([x,y],i)=>{if(x<20||x>580||y<10||y>220)return;s+=ring(x,y,2,R+9,T*.8+i,"eB");});}
+   else{this.E.forEach(e=>s+=el(e.x,e.y,"eB",6));if(this.v)s+=`<path d="M560 210 H60" stroke="#c2410c" stroke-width="3" marker-end=""/><polygon points="52,210 66,203 66,217" fill="#c2410c"/>`+txt(310,228,"اتجاه حركة الإلكترونات ← تيار كهربائي",{c:"#c2410c",s:13});}
+   return s;},
+ note(){if(this.t<.98)return "ذرّات الفلزّ لها عدد قليل من إلكترونات التكافؤ، ترتبط بالنواة ارتباطًا ضعيفًا.";return this.v?"عند وصل فرق جهد تتحرّك الإلكترونات الحرّة في اتجاه واحد؛ لذا <b>توصل الفلزّات الكهرباء</b>.":"تفقد الذرّات إلكترونات تكافؤها فتصبح <b>أيونات موجبة</b> يحيط بها <b>بحر من الإلكترونات الحرّة</b>؛ وهذا يفسّر قابلية الفلزّات للطرق والسحب.";}});
+/* 4) الهيدروجينية */
+CARDS.push({n:4,c:"#1a9fc4",ti:"الرابطة الهيدروجينية",en:"HYDROGEN BOND",d:"تجاذب ذرّة H في جزيء مع ذرّة O (أو N أو F) في جزيء آخر",pairs:[["H₂O"]],
+ init(){this.t=0;this.dir=0;},btn(){return this.t>=1?"↺ أبعديهما":"▶ قرّبي الجزيئين";},act(){this.dir=this.t>=1?-1:1;},bonded(){return this.t>.98;},
+ step(dt){this.t=clamp(this.t+this.dir*dt/1600,0,1);if(this.t===0||this.t===1)this.dir=0;},
+ frame(T){const t=ease(this.t);const y=115;let s="";const wob=Math.sin(T*1.3)*3;
+   // الجزيء الأيسر: O ثم H متّجهة يمينًا
+   const lx=lerp(140,215,t),rx=lerp(470,370,t);
+   const Hr=[lx+40,y-6+wob],Hd=[lx+16,y+38];
+   // الجزيء الأيمن: O مع ذرّتي H للأعلى
+   const O2=[rx,y],H2a=[rx+30,y-28],H2b=[rx+38,y+18];
+   if(t>.9)s+=`<line x1="${Hr[0]+14}" y1="${Hr[1]}" x2="${O2[0]-30}" y2="${O2[1]}" stroke="#1a9fc4" stroke-width="3.5" stroke-dasharray="7 6"><animate attributeName="stroke-dashoffset" from="0" to="-26" dur="1s" repeatCount="indefinite"/></line>`;
+   s+=ball(Hd[0],Hd[1],15,"H","H",{noSh:1})+ball(lx,y,32,"O","O")+ball(Hr[0],Hr[1],15,"H","H",{noSh:1});
+   s+=ball(H2a[0],H2a[1],15,"H","H",{noSh:1})+ball(H2b[0],H2b[1],15,"H","H",{noSh:1})+ball(O2[0],O2[1],32,"O","O");
+   if(t>.6){s+=txt(Hr[0]+4,Hr[1]-22,"δ+",{s:15,c:"#c2410c",ltr:1})+txt(O2[0]-6,O2[1]-40,"δ−",{s:15,c:"#1565c0",ltr:1});}
+   if(t>.9)s+=txt((Hr[0]+O2[0])/2,y+62,"رابطة هيدروجينية",{c:"#1a9fc4",s:15});
+   s+=txt(lx,y+82,"جزيء ماء",{s:13})+txt(rx,y+82,"جزيء ماء",{s:13});return s;},
+ note(){return this.t<.98?"في جزيء الماء روابط تساهمية قطبية: ذرّة O تحمل شحنة جزئية سالبة δ−، وذرّتا H تحملان شحنة جزئية موجبة δ+.":"تتجاذب <b>H (δ+)</b> في جزيء مع <b>O (δ−)</b> في جزيء آخر. هذا التجاذب أضعف من الرابطة التساهمية، لكنه يفسّر ارتفاع درجة غليان الماء.";}});
+/* 5) فاندرفالز */
+CARDS.push({n:5,c:"#d6409f",ti:"قوى فاندرفالز",en:"VAN DER WAALS",d:"تجاذب ضعيف ينشأ من أقطاب مؤقّتة بسبب حركة الإلكترونات",pairs:[["Ar"]],
+ init(){this.t=0;this.dir=0;},btn(){return this.t>=1?"↺ أبعديهما":"▶ قرّبي الذرّتين";},act(){this.dir=this.t>=1?-1:1;},bonded(){return this.t>.98;},
+ step(dt){this.t=clamp(this.t+this.dir*dt/1800,0,1);if(this.t===0||this.t===1)this.dir=0;},
+ frame(T){const t=ease(this.t);const y=112;const ax=lerp(150,232,t),bx=lerp(450,368,t);let s="";
+   const shA=Math.sin(T*1.6)*10,shB=t>.5?shA*t:Math.sin(T*2.3+1)*10;// القطب المستحثّ
+   const cl=(x,d)=>`<circle cx="${x+d}" cy="${y}" r="74" fill="url(#cloud)"/>`;
+   s+=cl(ax,shA)+cl(bx,shB);s+=ball(ax,y,46,"Ar","Ar")+ball(bx,y,46,"Ar2","Ar");
+   const dots=(x,d,ph)=>{let o="";for(let i=0;i<8;i++){const a=ph+i*Math.PI/4;const bias=Math.cos(a)>0?d*.9:d*.2;o+=el(x+62*Math.cos(a)+bias,y+62*Math.sin(a),"eP",4.5);}return o;};
+   s+=dots(ax,shA,T*.4)+dots(bx,shB,-T*.35);
+   if(t>.6){const sg=shA>0;s+=txt(ax+(sg?40:-40),y-58,sg?"δ−":"δ+",{s:15,c:sg?"#1565c0":"#c2410c",ltr:1})+txt(bx+(sg?-40:40),y-58,sg?"δ+":"δ−",{s:15,c:sg?"#c2410c":"#1565c0",ltr:1});}
+   if(t>.95)s+=`<line x1="${ax+50}" y1="${y}" x2="${bx-50}" y2="${y}" stroke="#d6409f" stroke-width="2" stroke-dasharray="3 5" opacity="${.5+.4*Math.abs(Math.sin(T*1.6))}"/>`+txt(300,y+82,"تجاذب ضعيف جدًّا",{c:"#d6409f",s:14});
+   return s;},
+ note(){return this.t<.98?"ذرّات الغازات النبيلة مستقرّة ولا تكوّن روابط، لكن سحابتها الإلكترونية تتحرّك باستمرار.":"إزاحة السحابة الإلكترونية لحظيًّا تكوّن <b>قطبًا مؤقّتًا</b> يستحثّ قطبًا في الذرّة المجاورة، فينشأ تجاذب ضعيف جدًّا يسمح بتسييل الأرغون عند درجات حرارة منخفضة.";}});
+
+/* ============ البناء والتحريك ============ */
+const host=document.getElementById("cards");
+CARDS.forEach(C=>{C.pi=0;C.init();
+  const tag=h("span",{class:"tag"},"الذرّات متباعدة");const sv=document.createElementNS(NS,"svg");sv.setAttribute("class","st");sv.setAttribute("viewBox","0 0 600 235");sv.setAttribute("role","img");sv.setAttribute("aria-label",C.ti);
+  const btn=h("button",{class:"btn",onclick:()=>{C.act();sync();}});const ex=h("span",{class:"row"});
+  const chips=C.pairs.length>1?h("div",{class:"chips"},...C.pairs.map((p,i)=>h("button",{"aria-pressed":String(i===0),onclick:e=>{C.pi=i;C.init();chips.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",String(j===i)));sync();}},p[0]))):null;
+  const note=h("div",{class:"note"});
+  const card=h("section",{class:"card"},h("div",{class:"ch"},h("span",{class:"num",style:"background:"+C.c},String(C.n)),h("div",{class:"grow"},h("h2",{},C.ti,h("small",{},C.en)),h("p",{},C.d)),tag),
+    sv,h("div",{class:"ctl"},h("div",{class:"row"},btn,ex),chips),note);
+  host.append(card);host.append(h("div",{style:"height:14px"}));
+  C.sv=sv;C.vis=true;
+  const sync=()=>{btn.textContent=C.btn();btn.disabled=C.btn()==="…";note.innerHTML=C.note();const b=C.bonded();tag.textContent=b?"ترابطت ✓":"الذرّات متباعدة";tag.className="tag"+(b?" on":"");
+    ex.innerHTML="";(C.extra?C.extra():[]).forEach(([t,f])=>ex.append(h("button",{class:"btn g",onclick:()=>{f();sync();}},t)));};
+  C.sync=sync;sync();
+  const pt=e=>{const p=sv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(sv.getScreenCTM().inverse());};
+  if(C.down){sv.addEventListener("pointerdown",e=>{const p=pt(e);if(C.down(p.x,p.y)){sv.setPointerCapture(e.pointerId);e.preventDefault();}});
+    sv.addEventListener("pointermove",e=>{if(C.drag){const p=pt(e);C.move(p.x,p.y);}});
+    const up=e=>{if(C.drag){const p=pt(e);C.up(p.x,p.y);sync();}};sv.addEventListener("pointerup",up);sv.addEventListener("pointercancel",up);}
+  try{new IntersectionObserver(es=>es.forEach(x=>C.vis=x.isIntersecting)).observe(sv);}catch(e){}});
+let last=performance.now();
+function loop(now){const dt=Math.min(60,now-last);last=now;const T=now/1000;
+  CARDS.forEach(C=>{const was=C.bonded()+"|"+C.btn();C.step(dt);if(C.vis)C.sv.innerHTML="<defs>"+defs+"</defs>"+C.frame(T);if(was!==C.bonded()+"|"+C.btn())C.sync();});requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+
+/* المقارنة */
+[["الأيونية","#8e44c9",88,"قوية جدًّا"],["التساهمية","#e67e22",85,"قوية جدًّا"],["الفلزّية","#d4a017",70,"قوية"],["الهيدروجينية","#1a9fc4",18,"ضعيفة"],["فاندرفالز","#d6409f",5,"ضعيفة جدًّا"]].forEach(([n,c,v,l])=>
+  document.getElementById("cmp").append(h("div",{class:"r"},h("b",{},n),h("div",{class:"bar"},h("i",{style:`width:${v}%;background:${c}`})),h("span",{style:"font-size:13px;color:var(--muted)"},l))));
+/* الاختبار */
+const OPT=["أيونية","تساهمية","فلزّية","هيدروجينية","فاندرفالز"];
+const Q=[["NaCl","بين أيونات ملح الطعام",0],["MgO","بين أيونات أكسيد المغنيسيوم",0],["KBr","بين أيونات بروميد البوتاسيوم",0],["Cl₂","بين ذرّتي جزيء الكلور",1],["CH₄","بين ذرّات جزيء الميثان",1],["CO₂","بين ذرّات جزيء ثاني أكسيد الكربون",1],["N₂","بين ذرّتي جزيء النيتروجين",1],
+ ["Cu","بين ذرّات سلك النحاس",2],["Fe","بين ذرّات مسمار الحديد",2],["Al","بين ذرّات ورق الألمنيوم",2],["H₂O ··· H₂O","بين جزيئات الماء السائل",3],["HF ··· HF","بين جزيئات فلوريد الهيدروجين",3],["Ar ··· Ar","بين ذرّات الأرغون السائل",4],["CH₄ ··· CH₄","بين جزيئات الميثان السائل",4]];
+let qa=0,qok=0,lastQ=-1;function quiz(){let i;do{i=Math.floor(Math.random()*Q.length);}while(i===lastQ);lastQ=i;const [f,d,a]=Q[i];
+  document.getElementById("qsub").textContent=f;document.getElementById("qhint").textContent=d;const o=document.getElementById("qo");o.innerHTML="";let done=false;
+  OPT.forEach((t,j)=>o.append(h("button",{onclick:e=>{if(done)return;done=true;qa++;if(j===a){qok++;e.target.classList.add("ok");}else{e.target.classList.add("no");o.children[a].classList.add("ok");}document.getElementById("qs").textContent=qok+" / "+qa;}},t)));}
+document.getElementById("qn").onclick=quiz;quiz();
+const hs=location.hash.slice(1);if(hs){const k={ionic:0,covalent:1,metallic:2,hydrogen:3,vdw:4}[hs];if(k!=null)setTimeout(()=>host.children[k*2].scrollIntoView({block:"start"}),200);}
+})();
+</script>
+</body>
+</html>

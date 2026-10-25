@@ -7,7 +7,7 @@ function scope(S,A,slides,onSeen,o={}){const view=S.g();S.tr(view,210,200);const
   S.rect(-14,-300,26,110,{fill:"#455a64",rx:5,transform:"rotate(-15)"},g);S.rect(-30,-195,30,40,{fill:"#607d8b",rx:4},g);S.circ(50,-110,16,{fill:"#546e7a"},g);S.circ(-10,-60,10,{fill:"#fff59d"},g);S.label(0,-322,o.name||"مجهر ضوئي مركّب",g,"#37474f");
   S.circ(0,0,160,{fill:"#111"},view);const cells=S.g(view);cells.setAttribute("clip-path",S.clip(S.mk("circle",{r:150})));S.circ(0,0,152,{fill:"none",stroke:"#263238","stroke-width":10},view);const lab=S.label(0,178,"اسحبي شريحة إلى منصّة المجهر",view,"#263238");
   let cur=null,obj=o.obj0||4,focus=0,t0=performance.now();const seen=new Set();
-  const draw=()=>{cells.innerHTML="";if(!cur)return;const blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");S.circ(0,0,150,{fill:cur.bg||"#f5f5f5"},grp);cur.draw(S,grp,z,(performance.now()-t0)/1000);
+  const draw=()=>{cells.innerHTML="";if(!cur)return;const blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");S.circ(0,0,150,{fill:cur.bg||"#f5f5f5"},grp);if(cur.img){const W=160*z;S.mk("image",{href:cur.img,x:-W/2,y:-W/2,width:W,height:W,preserveAspectRatio:"xMidYMid slice"},grp);}else cur.draw(S,grp,z,(performance.now()-t0)/1000);
     lab.set(cur.n+" · ×"+(obj*10)+(blur>.6?" · حرّكي الضابط":""));if(blur<=.6&&obj>=(o.minObj||40)&&!seen.has(cur)){seen.add(cur);onSeen&&onSeen(cur);}};
   const anim=()=>{if(cur&&cur.live)draw();requestAnimationFrame(anim);};requestAnimationFrame(anim);
   A.ui.clear();A.ui.choice("العدسة الشيئية",(o.objs||[[4,"×4"],[10,"×10"],[40,"×40"],[100,"×100 زيتية"]]).map(x=>x),v=>{obj=v;draw();},obj);const fsl=A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});S.knob(g,50,-110,fsl);
@@ -102,6 +102,7 @@ BX.reg("b10-3-1-0",{cols:[["n","البصمة"],["p","نمط الخطوط"]],conc
 const BAC=[{n:"بكتيريا كروية (Cocci)",bg:"#fce4ec",dot:"#ab47bc",draw(S,g,z){for(let i=0;i<40;i++){const x=((i*53)%260)-130,y=((i*97)%260)-130,r=2.2*z;for(let k=0;k<(i%3)+2;k++)S.circ(x+k*r*2,y,r,{fill:"#8e24aa"},g);}}},
  {n:"بكتيريا عصوية (Bacilli)",bg:"#fff3e0",dot:"#ef6c00",draw(S,g,z){for(let i=0;i<30;i++){const x=((i*61)%260)-130,y=((i*89)%260)-130,a=(i*37)%180;S.rect(x,y,9*z,3*z,{rx:1.5*z,fill:"#d84315",transform:"rotate("+a+" "+x+" "+y+")"},g);}}},
  {n:"بكتيريا حلزونية (Spirilla)",bg:"#e8f5e9",dot:"#2e7d32",draw(S,g,z){for(let i=0;i<14;i++){const x=((i*71)%240)-120,y=((i*113)%240)-120;let d="M"+x+" "+y;for(let k=0;k<5;k++)d+=" q "+2*z+" "+(-3*z)+" "+4*z+" 0 q "+2*z+" "+3*z+" "+4*z+" 0";S.path(d,{stroke:"#1b5e20","stroke-width":1.4*z,fill:"none"},g);}}}];
+BAC.forEach(b=>{const k={"Cocci":"cocc","Bacilli":"bac","Spirilla":"spir"}[(b.n.match(/\((\w+)\)/)||[])[1]];if(k)b.img="../img/micro-"+k+".jpg";});
 BX.reg("b10-3-2-0",{cols:[["s","الشريحة"],["f","الشكل"],["d","وصف ما شاهدتُه"]],conclude:"للبكتيريا ثلاثة أشكال رئيسة: كروية، وعصوية، وحلزونية؛ وقد تكون منفردة أو في أزواج أو سلاسل أو عناقيد.",
  ans:["كروية، وعصوية، وحلزونية.","حسب الشكل: كروية (Cocci)، عصوية (Bacilli)، حلزونية (Spirilla)."],
  build(S,A){A.say("لاحظي أشكال البكتيريا على الشرائح بقوّة التكبير المناسبة (×1000 بالعدسة الزيتية): اسحبي كل شريحة إلى المجهر.");let k=0;

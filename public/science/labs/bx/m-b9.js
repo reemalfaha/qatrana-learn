@@ -175,7 +175,7 @@ BX.reg("b9-2-1-0",{cols:[["n","رقم الشريحة"],["see","العضيّات 
     S.circ(0,0,150,{fill:"#111"},view);const cells=S.g(view);cells.setAttribute("clip-path",S.clip(S.mk("circle",{r:140})));S.circ(0,0,142,{fill:"none",stroke:"#263238","stroke-width":10},view);const lab=S.label(0,168,"اسحبي شريحة إلى منصّة المجهر",view,"#263238");
     A.say("افحصي الشرائح: اسحبي كل شريحة إلى منصّة المجهر، واختاري قوّة التكبير المناسبة وحرّكي الضابط.");
     sl.forEach(s=>S.drag(s,{back:true,targets:()=>[{g,pad:0,fn:()=>{cur=s;A.step(2);draw();return false;}}]}));
-    A.ui.choice("العدسة الشيئية",[[4,"×4"],[10,"×10"],[40,"×40"]],v=>{obj=v;draw();},4);A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});
+    A.ui.choice("العدسة الشيئية",[[4,"×4"],[10,"×10"],[40,"×40"]],v=>{obj=v;draw();},4);const fsl=A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});S.knob(g,50,-110,fsl);
     const CP=Array.from({length:30},()=>[R(-120,120),R(-120,120),R(.8,1.2)]);
     function draw(){cells.innerHTML="";if(!cur)return;const k=SLD[cur.si][1],blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");
       S.circ(0,0,140,{fill:{liver:"#fce4ec",onion:"#fff8e1",nerve:"#ede7f6",leaf:"#f1f8e9"}[k]},grp);

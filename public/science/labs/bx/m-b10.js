@@ -10,7 +10,7 @@ function scope(S,A,slides,onSeen,o={}){const view=S.g();S.tr(view,210,200);const
   const draw=()=>{cells.innerHTML="";if(!cur)return;const blur=Math.abs(focus-50)/12,z=Math.sqrt(obj);const grp=S.g(cells);if(blur>.6)grp.setAttribute("style","filter:blur("+blur.toFixed(1)+"px)");S.circ(0,0,150,{fill:cur.bg||"#f5f5f5"},grp);cur.draw(S,grp,z,(performance.now()-t0)/1000);
     lab.set(cur.n+" · ×"+(obj*10)+(blur>.6?" · حرّكي الضابط":""));if(blur<=.6&&obj>=(o.minObj||40)&&!seen.has(cur)){seen.add(cur);onSeen&&onSeen(cur);}};
   const anim=()=>{if(cur&&cur.live)draw();requestAnimationFrame(anim);};requestAnimationFrame(anim);
-  A.ui.clear();A.ui.choice("العدسة الشيئية",(o.objs||[[4,"×4"],[10,"×10"],[40,"×40"],[100,"×100 زيتية"]]).map(x=>x),v=>{obj=v;draw();},obj);A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});
+  A.ui.clear();A.ui.choice("العدسة الشيئية",(o.objs||[[4,"×4"],[10,"×10"],[40,"×40"],[100,"×100 زيتية"]]).map(x=>x),v=>{obj=v;draw();},obj);const fsl=A.ui.slider("🔧 الضابط (التركيز)",0,100,1,0,v=>{focus=v;draw();});S.knob(g,50,-110,fsl);
   const sl=slides.map((s,i)=>{const e=S.g();S.tr(e,90+i*130,470);S.rect(-55,-12,110,24,{rx:3,fill:"#e1f5fe",stroke:"#81d4fa","stroke-width":2},e);S.ell(0,0,14,6,{fill:s.dot||"#ce93d8",opacity:.8},e);S.text(0,30,s.n,{"font-size":11},e);
     S.drag(e,{back:true,targets:()=>[{g,pad:0,fn:()=>{cur=s;draw();return false;}}]});return e;});
   return {set(s){cur=s;draw();},seen};}

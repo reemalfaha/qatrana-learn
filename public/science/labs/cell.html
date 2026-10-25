@@ -177,7 +177,7 @@ function gallery(v){const g=document.getElementById("gal");g.innerHTML="";const 
  if(v==="pc"){sec("أنواع الخلايا النباتية (صور مجهرية)",PCELLS,([k,t,p])=>card("img/pc-"+k+".jpg",t,p));sec("أمثلة على خلايا من أجزاء مختلفة من النبات",PEX,([k,t,p])=>card("img/pc-"+k+".jpg",t,p));}
  else sec("أشكال الخلايا البكتيرية",BACT,([k,t,n,sci,p])=>{const c=mk("div","gcard");const two=mk("div","two");[["img/sem-"+k+".jpg","مجهر إلكتروني (ملوّنة)"],["img/micro-"+k+".jpg","مجهر ضوئي (صبغة غرام)"]].forEach(([src,l])=>{const w=mk("div");const im=new Image();im.src=src;im.alt=t;im.loading="lazy";im.onclick=e=>{e.stopPropagation();lbx(src,t+" · "+l);};w.append(im,mk("span",null,l));two.append(w);});
   c.append(two);const tt=mk("div","gt");tt.append(mk("b",null,t),mk("i",null,n+" · "+sci),mk("p",null,p));c.append(tt);c.style.cursor="default";return c;});
- g.append(mk("p","foot","اضغطي على أي صورة لتكبيرها."));}
+ g.append(mk("p","foot","اضغطي على أي صورة لتكبيرها."),mk("p","foot","🖼️ صور توضيحية مولّدة بالذكاء الاصطناعي · إعداد: نوال بني عطية"));}
 function setView(v){document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===v)));const isC=v==="cmp",isG=v==="pc"||v==="bc";document.getElementById("main").style.display=isC||isG?"none":"";document.getElementById("cmp").style.display=isC?"":"none";document.getElementById("gal").style.display=isG?"":"none";document.getElementById("bQuiz").style.display=isC||isG?"none":"";
  if(isG)gallery(v);else if(isC)cmp();else{view=v;if(quiz){quiz=null;const b=document.getElementById("bQuiz");b.classList.remove("on");b.textContent="🎯 اختبري نفسك";}build();}history.replaceState(null,"","#"+v);}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setView(b.dataset.v));

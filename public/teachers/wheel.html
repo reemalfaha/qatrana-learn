@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دولاب الأسماء</title>
+<meta name="description" content="دولاب أسماء الطالبات لاختيار مَن تجيب أثناء حلّ التدريبات في الصف — مدرسة القطرانة الثانوية للبنات.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--ink:#2B1218}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--ink:#f6e9ec;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--ink:#f6e9ec;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Noto Naskh Arabic",system-ui,Tahoma,sans-serif}
+.top{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;border-bottom:4px solid var(--g)}
+.top .in{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top b{font:700 21px "El Messiri",sans-serif;display:block}.top small{color:var(--g2)}
+main{max-width:900px;margin:0 auto;padding:16px 16px 40px}
+footer{text-align:center;color:#8a7178;font-size:13px;margin-top:20px}
+body.emb .top{display:none}body.emb main{padding-top:10px}
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><div><b>🎡 دولاب الأسماء</b><small>مَن تجيب؟ · مدرسة القطرانة الثانوية للبنات</small></div></div></div>
+<main id="app"></main>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+<script src="qclass.js"></script>
+<script>
+(()=>{
+const SUBJ=[
+ {k:"ar",name:"اللغة العربية",color:"#0E8C8C",grades:["الثامن","التاسع","العاشر"]},
+ {k:"math",name:"الرياضيات",color:"#1d4f8a",grades:["الثامن","التاسع","العاشر"]},
+ {k:"sci",name:"العلوم (الصف الثامن)",color:"#1d7f8c",grades:["الثامن"]},
+ {k:"bio",name:"العلوم الحياتية",color:"#2f8f5b",grades:["التاسع","العاشر"]},
+ {k:"chem",name:"الكيمياء",color:"#c2297a",grades:["التاسع","العاشر"]},
+ {k:"phys",name:"الفيزياء",color:"#c98408",grades:["التاسع","العاشر"]},
+ {k:"earth",name:"علوم الأرض والبيئة",color:"#7a4fb5",grades:["التاسع","العاشر"]}];
+const q=new URLSearchParams(location.search),want=(q.get("s")||"").split(",").filter(Boolean);
+let emb=false;try{emb=window.self!==window.top;}catch(e){emb=true;}if(emb||q.has("emb"))document.body.classList.add("emb");
+const subjects=want.length?SUBJ.filter(s=>want.includes(s.k)):SUBJ;
+QClass.mount(document.getElementById("app"),{school:"مدرسة القطرانة الثانوية للبنات",rosterUrl:"roster.enc.json",wheel:true,subjects:subjects.map(s=>Object.assign({lessons:()=>[]},s))});
+})();
+</script>
+</body>
+</html>

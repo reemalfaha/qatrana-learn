@@ -45,10 +45,10 @@ function login(){const F=FILE;const sel=h("select",{class:"qc-in","aria-label":"
   const pin=h("input",{class:"qc-in",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمزكِ السرّي"}),err=h("div",{class:"qc-err","aria-live":"polite"});
   const enter=async()=>{const v=pin.value.trim();if(!v)return;err.textContent="⏳ جارٍ الفتح…";try{await unlock(sel.value,v);try{localStorage.setItem("qclass.last",sel.value);sessionStorage.setItem(SS,JSON.stringify([sel.value,v]));}catch(e){}view={v:"home"};draw();}catch(e){err.textContent="الرمز غير صحيح لهذه المعلّمة.";pin.value="";}};
   pin.addEventListener("keydown",e=>{if(e.key==="Enter")enter();});
-  ROOT.append(h("div",{class:"qc-card qc-login"},h("div",{class:"qc-big"},"👥"),h("h2",{},"صفّي: الفرق وتقييم الحصة"),h("p",{class:"qc-mut"},"لكل معلّمة رمز سرّي خاص يفتح شعب مبحثها فقط. أسماء الطالبات محفوظة مشفّرة."),
+  ROOT.append(h("div",{class:"qc-card qc-login"},h("div",{class:"qc-big"},"👥"),h("h2",{},OPT.wheel?"🎡 دولاب الأسماء: مَن تجيب؟":"صفّي: الفرق وتقييم الحصة"),h("p",{class:"qc-mut"},"لكل معلّمة رمز سرّي خاص يفتح شعب مبحثها فقط. أسماء الطالبات محفوظة مشفّرة."),
     h("label",{class:"qc-lbl"},"المعلّمة",sel),h("label",{class:"qc-lbl"},"الرمز السرّي",pin),h("button",{class:"qc-btn",onclick:enter},"🔓 فتح"),err));}
 function logout(){TEA=null;R=null;try{sessionStorage.removeItem(SS);}catch(e){}view={v:"home"};if(OPT&&OPT.onLogout)OPT.onLogout();else draw();}
-function home(){const S=mySubj();if(OPT.only&&!OPT._auto&&S.length===1){const cs=classesFor(S[0].k);if(cs.length===1){OPT._auto=true;go({v:"class",s:S[0].k,c:cs[0],t:"eval"});return;}}if(!S.length){ROOT.append(h("div",{class:"qc-card qc-mut"},"لا يوجد لهذا الرمز مبحث في هذه المنصّة."));return;}
+function home(){const S=mySubj();if((OPT.only||OPT.wheel)&&!OPT._auto&&S.length===1){const cs=classesFor(S[0].k);if(cs.length===1){OPT._auto=true;go({v:"class",s:S[0].k,c:cs[0],t:"eval"});return;}}if(!S.length){ROOT.append(h("div",{class:"qc-card qc-mut"},"لا يوجد لهذا الرمز مبحث في هذه المنصّة."));return;}
   S.forEach(s=>{const gr=h("div",{class:"qc-grid"});classesFor(s.k).forEach(ck=>{const [g,sc]=ck.split("|"),ev=Object.keys(C.evals[s.k+"#"+ck]||{}).length;
       gr.append(h("button",{class:"qc-card qc-cls",style:{"--c":s.color||"#7A1F2E"},onclick:()=>go({v:"class",s:s.k,c:ck,t:"eval"})},h("b",{},"الصف "+g+" · الشعبة "+sc),h("small",{},names(ck).length+" طالبة · "+ev+" حصة مقيّمة")));});
     ROOT.append(h("h3",{class:"qc-h"},s.name),gr);});
@@ -56,6 +56,7 @@ function home(){const S=mySubj();if(OPT.only&&!OPT._auto&&S.length===1){const cs
 const TABS=[["eval","✅ تقييم الحصة"],["teams","👥 الفرق"],["log","📊 السجلّ"],["list","📋 الأسماء"]];
 function klass(){const [g,sc]=view.c.split("|"),s=subjBy(view.s);
   ROOT.append(h("div",{class:"qc-head",style:{"--c":s.color||"#7A1F2E"}},h("small",{},s.name),h("h2",{},"الصف "+g+" · الشعبة "+sc),h("small",{},names(view.c).length+" طالبة")));
+  if(OPT.wheel){quickWheel();return;}
   const tb=h("div",{class:"qc-tabs",role:"tablist"});TABS.forEach(([k,t])=>tb.append(h("button",{role:"tab","aria-selected":String(k===view.t),onclick:()=>go({t:k})},t)));ROOT.append(tb);
   const P=h("div");ROOT.append(P);({eval:tEval,teams:tTeams,log:tLog,list:tList}[view.t]||tEval)(P,g,sc,s);}
 
@@ -142,6 +143,18 @@ function pickWheel(se){const done=new Set();const left=()=>names(view.c).filter(
   wheelDlg("دولاب الأسماء: مَن تجيب؟",left,(nm,box,next)=>{const r=se&&se.st[nm];
     const pt=(k,t)=>h("button",{class:"qc-btn"+(k==="w"?" g":""),onclick:()=>{if(r){r.c[k]=(r.c[k]||0)+1;save();}toast(t+" · "+first(nm));done.add(nm);next();}},t);
     box.append(h("div",{class:"qc-row",style:{justifyContent:"center",marginTop:"8px"}},pt("a","✅ إجابة صحيحة"),pt("p","🙋 مشاركة"),h("button",{class:"qc-btn g",onclick:()=>{done.add(nm);next();}},"⏭️ التالية"),h("button",{class:"qc-btn g",onclick:()=>next()},"↩ تُعاد للدولاب")));});}
+
+/* وضع الدولاب السريع (لحلّ التدريبات في الصف): يستخدم تقييم حصة اليوم إن وُجد، وإلا يُنشئ «تدريبات الصف» لتُسجَّل النقاط */
+function quickWheel(){const ex=Object.values(C.evals[K()]||{}).filter(x=>x.date===today());
+  const se=ex.length?ex[ex.length-1]:session(today(),"drill","تدريبات الصف");names(view.c).forEach(n=>{if(!se.st[n])se.st[n]={c:{},abs:false,note:""};});save();
+  const ab=Object.keys(se.st).filter(n=>se.st[n].abs);
+  const absBox=h("div",{class:"qc-row",style:{justifyContent:"center"}});
+  names(view.c).forEach(n=>{const r=se.st[n];absBox.append(h("button",{class:"qc-mem","aria-pressed":String(!!r.abs),title:r.abs?"غائبة":"حاضرة",onclick:()=>{r.abs=!r.abs;save();draw();}},(r.abs?"🚫 ":"")+first(n)));});
+  ROOT.append(h("div",{class:"qc-card",style:{textAlign:"center",display:"flex",flexDirection:"column",gap:"10px",alignItems:"center"}},
+    h("button",{class:"qc-btn qc-wspin",onclick:()=>pickWheel(se)},"🎡 افتحي الدولاب"),
+    h("p",{class:"qc-mut qc-small",style:{margin:0}},"الحاضرات: "+(names(view.c).length-ab.length)+" · تُسجَّل ✅ و🙋 في تقييم حصة اليوم ("+(se.title||"")+")"),
+    h("details",{style:{width:"100%"}},h("summary",{style:{cursor:"pointer",fontWeight:"700"}},"🚫 تحديد الغائبات (حتى لا تظهر أسماؤهن في الدولاب)"),absBox)));
+  if(OPT._wauto!==K()){OPT._wauto=K();pickWheel(se);}}
 
 /* ---------- السجلّ ---------- */
 function tLog(P,g,sc,s){const ses=Object.values(C.evals[K()]||{}).sort((a,b)=>a.date.localeCompare(b.date));

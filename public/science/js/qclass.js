@@ -2,7 +2,10 @@
    أسماء الطالبات مشفّرة (AES-GCM)، ولكل معلّمة رمز سرّي خاص يفتح مبحثها فقط.
    تقسيم الفرق · تقييم الحصة · سجلّ التقييم · كشف الأسماء.  تصميمُ المنصّة وتنفيذُها: نوال بني عطية */
 var QClass=(function(){
-const LS="qclass.v1",SS="qclass.ses";
+const LS="qclass.v1",SS="qclass.ses",DEV="qclass.dev",DEV_EXP=Date.parse("2026-10-31T00:00:00+03:00");
+function saveSes(a){try{sessionStorage.setItem(SS,JSON.stringify(a));if(Date.now()<DEV_EXP)localStorage.setItem(DEV,JSON.stringify({a,exp:DEV_EXP}));}catch(e){}}
+function loadSes(){try{const s=JSON.parse(sessionStorage.getItem(SS)||"null");if(s)return s;const d=JSON.parse(localStorage.getItem(DEV)||"null");if(d&&Date.now()<d.exp)return d.a;localStorage.removeItem(DEV);}catch(e){}return null;}
+function clearSes(){try{sessionStorage.removeItem(SS);localStorage.removeItem(DEV);}catch(e){}}
 const CR=[["p","🙋","مشاركة",1],["a","✅","إجابة صحيحة",1],["t","🤝","عمل الفريق",1],["h","📘","الواجب",1],["b","⭐","انضباط",1],["w","⚠️","تنبيه",-1]];
 const TEAMN=["ابن سينا","الخوارزمي","جابر بن حيّان","ابن الهيثم","البيروني","ماري كوري","الرازي","ابن النفيس"];
 const TCOL=["#7A1F2E","#1d7f8c","#B8902A","#2f8f5b","#2563c9","#c2297a","#7a4fb5","#c98408"];
@@ -43,11 +46,11 @@ function login(){const F=FILE;const sel=h("select",{class:"qc-in","aria-label":"
   const ok=Object.entries(F.keys).filter(([id,k])=>k.subj.includes("*")||k.subj.some(s=>OPT.subjects.find(x=>x.k===s)));ok.forEach(([id,k])=>sel.append(h("option",{value:id},k.label)));
   try{const last=localStorage.getItem("qclass.last");if(last&&F.keys[last])sel.value=last;}catch(e){}
   const pin=h("input",{class:"qc-in",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمزكِ السرّي"}),err=h("div",{class:"qc-err","aria-live":"polite"});
-  const enter=async()=>{const v=pin.value.trim();if(!v)return;err.textContent="⏳ جارٍ الفتح…";try{await unlock(sel.value,v);try{localStorage.setItem("qclass.last",sel.value);sessionStorage.setItem(SS,JSON.stringify([sel.value,v]));}catch(e){}view={v:"home"};draw();}catch(e){err.textContent="الرمز غير صحيح لهذه المعلّمة.";pin.value="";}};
+  const enter=async()=>{const v=pin.value.trim();if(!v)return;err.textContent="⏳ جارٍ الفتح…";try{await unlock(sel.value,v);try{localStorage.setItem("qclass.last",sel.value);saveSes([sel.value,v]);}catch(e){}view={v:"home"};draw();}catch(e){err.textContent="الرمز غير صحيح لهذه المعلّمة.";pin.value="";}};
   pin.addEventListener("keydown",e=>{if(e.key==="Enter")enter();});
   ROOT.append(h("div",{class:"qc-card qc-login"},h("div",{class:"qc-big"},"👥"),h("h2",{},OPT.wheel?"🎡 دولاب الأسماء: مَن تجيب؟":"صفّي: الفرق وتقييم الحصة"),h("p",{class:"qc-mut"},"لكل معلّمة رمز سرّي خاص يفتح شعب مبحثها فقط. أسماء الطالبات محفوظة مشفّرة."),
     h("label",{class:"qc-lbl"},"المعلّمة",sel),h("label",{class:"qc-lbl"},"الرمز السرّي",pin),h("button",{class:"qc-btn",onclick:enter},"🔓 فتح"),err));}
-function logout(){TEA=null;R=null;try{sessionStorage.removeItem(SS);}catch(e){}view={v:"home"};if(OPT&&OPT.onLogout)OPT.onLogout();else draw();}
+function logout(){TEA=null;R=null;clearSes();view={v:"home"};if(OPT&&OPT.onLogout)OPT.onLogout();else draw();}
 function home(){const S=mySubj();if((OPT.only||OPT.wheel)&&!OPT._auto&&S.length===1){const cs=classesFor(S[0].k);if(cs.length===1){OPT._auto=true;go({v:"class",s:S[0].k,c:cs[0],t:"eval"});return;}}if(!S.length){ROOT.append(h("div",{class:"qc-card qc-mut"},"لا يوجد لهذا الرمز مبحث في هذه المنصّة."));return;}
   S.forEach(s=>{const gr=h("div",{class:"qc-grid"});classesFor(s.k).forEach(ck=>{const [g,sc]=ck.split("|"),ev=Object.keys(C.evals[s.k+"#"+ck]||{}).length;
       gr.append(h("button",{class:"qc-card qc-cls",style:{"--c":s.color||"#7A1F2E"},onclick:()=>go({v:"class",s:s.k,c:ck,t:"eval"})},h("b",{},"الصف "+g+" · الشعبة "+sc),h("small",{},names(ck).length+" طالبة · "+ev+" حصة مقيّمة")));});
@@ -223,12 +226,12 @@ function style(){if(document.getElementById("qc-css"))return;const s=document.cr
 async function mount(el,opt){OPT=opt;ROOT=el;load();style();if(opt.only)view={v:"home"};document.body.classList.remove("qc-bigteams");
   ROOT.innerHTML='<div class="qc-card" style="text-align:center">⏳ جارٍ التحميل…</div>';
   try{await file();}catch(e){ROOT.innerHTML='<div class="qc-card" style="text-align:center">تعذّر التحميل. تأكّدي من الاتصال بالإنترنت.</div>';return;}
-  if(!TEA){try{const s=JSON.parse(sessionStorage.getItem(SS)||"null");if(s)await unlock(s[0],s[1]);}catch(e){}}
+  if(!TEA){try{const s=loadSes();if(s)await unlock(s[0],s[1]);}catch(e){}}
   if(view.v==="class"&&!(TEA&&mySubj().find(x=>x.k===view.s)))view={v:"home"};draw();flush();}
 addEventListener("online",()=>{if(C)flush();});
 /* واجهة للبوابة الموحّدة */
-async function signIn(url,tid,code){await file(url);await unlock(tid,code);try{localStorage.setItem("qclass.last",tid);sessionStorage.setItem(SS,JSON.stringify([tid,code]));}catch(e){}return {teacher:TEA,data:R};}
-async function resume(url){await file(url);if(!TEA){try{const s=JSON.parse(sessionStorage.getItem(SS)||"null");if(s)await unlock(s[0],s[1]);}catch(e){}}return TEA?{teacher:TEA,data:R}:null;}
-function signOut(){TEA=null;R=null;try{sessionStorage.removeItem(SS);}catch(e){}}
+async function signIn(url,tid,code){await file(url);await unlock(tid,code);try{localStorage.setItem("qclass.last",tid);saveSes([tid,code]);}catch(e){}return {teacher:TEA,data:R};}
+async function resume(url){await file(url);if(!TEA){try{const s=loadSes();if(s)await unlock(s[0],s[1]);}catch(e){}}return TEA?{teacher:TEA,data:R}:null;}
+function signOut(){TEA=null;R=null;clearSes();}
 async function keys(url){return (await file(url)).keys;}
 return {mount,signIn,resume,signOut,keys,openClass:(s,c)=>{view={v:"class",s,c,t:"eval"};}};})();

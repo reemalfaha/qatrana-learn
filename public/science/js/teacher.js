@@ -1,9 +1,10 @@
 /* منصّة العلوم — ركن المعلّمة */
-let T_OK=lsGet("qatrana.sci.tok",null)===CONFIG.T_HASH;let PIN="";try{PIN=sessionStorage.getItem("qatrana.sci.pin")||"";}catch(e){}
+let T_OK=lsGet("qatrana.sci.tok",null)===CONFIG.T_HASH;let PIN="";const PIN_EXP=Date.parse("2026-10-31T00:00:00+03:00");try{PIN=sessionStorage.getItem("qatrana.sci.pin")||"";if(!PIN){const d=JSON.parse(localStorage.getItem("qatrana.sci.pin.dev")||"null");if(d&&Date.now()<d.exp)PIN=d.p;else localStorage.removeItem("qatrana.sci.pin.dev");}}catch(e){}
+function pinDev(v){try{if(Date.now()<PIN_EXP)localStorage.setItem("qatrana.sci.pin.dev",JSON.stringify({p:v,exp:PIN_EXP}));}catch(e){}}
 function pinHash(s){let a=5381,b=52711;for(const c of s){const k=c.codePointAt(0);a=((a*33)^k)>>>0;b=((b*31)+k*7)>>>0;}return a.toString(36)+b.toString(36);}
-(()=>{try{const k=new URLSearchParams(location.search).get("k");if(k&&pinHash(k)===CONFIG.T_HASH){T_OK=true;PIN=k;lsSet("qatrana.sci.tok",CONFIG.T_HASH);sessionStorage.setItem("qatrana.sci.pin",k);}if(k)history.replaceState(null,"",location.pathname+location.hash);}catch(e){}})();
+(()=>{try{const k=new URLSearchParams(location.search).get("k");if(k&&pinHash(k)===CONFIG.T_HASH){T_OK=true;PIN=k;lsSet("qatrana.sci.tok",CONFIG.T_HASH);sessionStorage.setItem("qatrana.sci.pin",k);pinDev(k);}if(k)history.replaceState(null,"",location.pathname+location.hash);}catch(e){}})();
 function tGate(V,next){const pin=el("input",{class:"inp",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"الرمز السرّي للمعلّمة"});const err=el("p",{class:"muted","aria-live":"polite"});
-  const ok=()=>{const v=pin.value.trim();if(pinHash(v)!==CONFIG.T_HASH){err.textContent="الرمز غير صحيح.";pin.value="";return;}T_OK=true;PIN=v;lsSet("qatrana.sci.tok",CONFIG.T_HASH);try{sessionStorage.setItem("qatrana.sci.pin",v);}catch(e){}render();};
+  const ok=()=>{const v=pin.value.trim();if(pinHash(v)!==CONFIG.T_HASH){err.textContent="الرمز غير صحيح.";pin.value="";return;}T_OK=true;PIN=v;lsSet("qatrana.sci.tok",CONFIG.T_HASH);try{sessionStorage.setItem("qatrana.sci.pin",v);pinDev(v);}catch(e){}render();};
   pin.onkeydown=e=>{if(e.key==="Enter")ok();};
   V.append(crumbs(["الرئيسية","#/"],"ركن المعلّمة"),el("div",{class:"card",style:{maxWidth:"460px",margin:"30px auto",display:"grid",gap:"12px",textAlign:"center"}},el("div",{style:{fontSize:"44px"}},"👩‍🏫"),el("h2",{},"ركن المعلّمة"),el("p",{class:"muted"},"خطط الدروس والخطط الفصلية واستراتيجيات التدريس والتقويم ونتائج الطالبات."),pin,el("button",{class:"btn",onclick:ok},"دخول"),err));}
 const needT=fn=>(V,...a)=>{if(!T_OK){tGate(V);return;}fn(V,...a);};
@@ -180,7 +181,7 @@ route(/^#\/t\/contest(?:\/([\w-]+))?$/,needT((V,uid)=>{const u=uid&&findUnit(uid
 /* ---------- نتائج الطالبات ---------- */
 route(/^#\/t\/results$/,needT(async V=>{V.append(crumbs(["الرئيسية","#/"],["ركن المعلّمة","#/t"],"نتائج الطالبات"));
   const box=el("div",{class:"card"},"جارٍ تحميل النتائج…");V.append(box);
-  if(!PIN){box.innerHTML="";const pin=el("input",{class:"inp",type:"password",placeholder:"الرمز السرّي"});box.append(el("p",{},"أدخلي الرمز لعرض النتائج:"),pin,el("button",{class:"btn",style:{marginTop:"8px"},onclick:()=>{PIN=pin.value.trim();try{sessionStorage.setItem("qatrana.sci.pin",PIN);}catch(e){}render();}},"عرض"));return;}
+  if(!PIN){box.innerHTML="";const pin=el("input",{class:"inp",type:"password",placeholder:"الرمز السرّي"});box.append(el("p",{},"أدخلي الرمز لعرض النتائج:"),pin,el("button",{class:"btn",style:{marginTop:"8px"},onclick:()=>{PIN=pin.value.trim();try{sessionStorage.setItem("qatrana.sci.pin",PIN);pinDev(PIN);}catch(e){}render();}},"عرض"));return;}
   let rows=null;try{const r=await fetch(CONFIG.SCRIPT_URL+"?pin="+encodeURIComponent(PIN)+"&t="+Date.now());const j=await r.json();if(j.ok)rows=j.rows.filter(r=>String(r.grade||"").startsWith(CONFIG.SUBJ));}catch(e){}
   box.innerHTML="";if(!rows){box.append("تعذّر تحميل النتائج. تأكّدي من الإنترنت والرمز.");return;}
   if(!rows.length){box.append("لا توجد نتائج بعد. ستظهر هنا عندما تحلّ الطالبات الاختبارات على المنصّة.");return;}

@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبري الحر</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--muted:#76606A;--line:#ead9cf;--wine:#7A1F2E;--wine2:#5C1622;--gold:#B8902A;--gold2:#F3DFA8;--ok:#1f8f5b;--bad:#c2410c;--soft:#f6ece6;--stage:#eef3f6;
+ --f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--stage:#1d2629;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--muted:#c4abb3;--line:#3b2a30;--soft:#2b1d22;--stage:#1d2629;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f)}
+.wrap{max-width:1240px;margin:0 auto;padding:14px max(14px,env(safe-area-inset-right,0px)) 40px max(14px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+header.hd{background:linear-gradient(135deg,var(--wine2),var(--wine));color:#fff;border-radius:18px;padding:14px 18px;border-bottom:4px solid var(--gold)}
+header.hd h1{font-family:var(--fd);margin:0;font-size:clamp(24px,4.4vw,36px)}
+header.hd p{margin:2px 0 0;color:var(--gold2)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.top a{color:inherit}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 6px 20px rgba(60,20,30,.07);min-width:0}
+.card h2{font-family:var(--fd);font-size:20px;margin:0 0 6px;color:var(--wine)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .card h2{color:var(--gold2)}}
+.main{display:grid;grid-template-columns:330px minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:920px){.main{grid-template-columns:1fr}}
+.search{width:100%;font:16px var(--f);padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+.cats{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.chip{font:700 14px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 11px;cursor:pointer;min-height:34px}
+.chip.on{background:var(--wine);border-color:var(--wine);color:#fff}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;max-height:430px;overflow:auto;padding:2px}
+@media (max-width:920px){.lib{max-height:260px}}
+.mat{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:12px;padding:6px 8px;background:var(--card);color:var(--ink);cursor:pointer;font:600 14px var(--f);text-align:right;min-height:44px}
+.mat .e{font-size:22px;line-height:1}
+.mat.on{border-color:var(--gold);background:#fff6e0;box-shadow:0 0 0 2px var(--gold) inset}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .mat.on{background:#2c2216}}
+.sel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--soft);border-radius:12px;padding:8px 12px;margin-bottom:8px}
+.sel .big{font-size:34px;line-height:1}
+.sel b{font-family:var(--fd);font-size:20px}
+.warn{background:#fdeee6;color:#7a2a08;border-radius:10px;padding:6px 10px;font-size:14px;margin-bottom:8px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn{background:#33201a;color:#f7c9b0}}
+svg.sc{display:block;width:100%;height:auto;border-radius:12px;background:var(--stage)}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px;margin-top:8px}
+.tool{font:700 14px var(--f);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:6px;cursor:pointer;min-height:48px;display:flex;gap:6px;align-items:center;justify-content:center}
+.tool:disabled{opacity:.45;cursor:not-allowed}
+.tool .e{font-size:20px}
+.btn{font:700 15px var(--f);border:0;border-radius:12px;padding:7px 14px;background:var(--wine);color:#fff;cursor:pointer;min-height:42px}
+.btn.g{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.btn:focus-visible,.tool:focus-visible,.mat:focus-visible,.chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.say{background:linear-gradient(135deg,#fff7e2,#fdecd0);border:1.5px solid var(--gold);border-radius:14px;padding:8px 12px;margin-bottom:8px;font-weight:700;color:#4a2a00;min-height:48px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .say{background:#2c2216;color:#f6e3b8}}
+.pred{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.res{border-radius:12px;padding:8px 12px;margin-top:8px;font-weight:600}
+.res.hit{background:#e7f7ee;color:#14532d}.res.miss{background:#fff2e2;color:#7a3a00}.res.info{background:var(--soft)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .res.hit{background:#17291f;color:#bff0d2}:root:not([data-theme="light"]) .res.miss{background:#33240f;color:#f7d9a8}}
+.tg{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+table.nb{width:100%;border-collapse:collapse;font-size:14px}
+table.nb th,table.nb td{border:1px solid var(--line);padding:5px 6px;text-align:center;vertical-align:middle}
+table.nb th{background:var(--soft)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:8px}
+.sum div{background:var(--soft);border-radius:12px;padding:8px 10px;font-size:14px}
+.sum b{display:block;font-family:var(--fd);font-size:16px}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.credit{text-align:center;color:var(--muted);font-size:13px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(30px);opacity:0;background:#2B1218;color:#fff;padding:10px 18px;border-radius:999px;z-index:99;transition:.25s;font-weight:700;pointer-events:none;max-width:92vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script>try{if(self!==top)document.documentElement.classList.add("embed")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+ <div class="top"><a class="btn g" href="../#/labs">→ المختبرات التفاعلية</a><span class="credit">🧪 منصّة العلوم · مدرسة القطرانة الثانوية للبنات</span></div>
+ <header class="hd"><h1>🧪 مختبري الحر</h1><p>اختاري أيّ مادة من البيت أو المطبخ أو المختبر، وجرّبيها بالأداة التي تريدين: توقّعي، جرّبي، وسجّلي اكتشافاتكِ</p></header>
+
+ <div class="main">
+  <section class="card" aria-labelledby="h-lib">
+   <h2 id="h-lib">🧺 مكتبة المواد</h2>
+   <input id="q" class="search" type="search" placeholder="ابحثي عن مادة… (خل، مسمار، ملح…)" aria-label="ابحثي عن مادة">
+   <div class="cats" id="cats"></div>
+   <div class="lib" id="lib"></div>
+   <details style="margin-top:10px">
+    <summary style="cursor:pointer;font-weight:700;color:var(--wine)">➕ مادتي غير موجودة؟ اقترحيها</summary>
+    <div class="row" style="margin-top:6px">
+     <input id="sg" class="search" style="flex:1;min-width:160px" placeholder="اسم المادة (مثل: خميرة، ملح الليمون…)" aria-label="اسم المادة المقترحة">
+     <button class="btn" id="sgb" type="button">اقترحي</button>
+    </div>
+    <div id="sgout" style="font-size:14px;color:var(--muted);margin-top:6px"></div>
+   </details>
+  </section>
+
+  <section class="card" aria-labelledby="h-bench">
+   <h2 id="h-bench" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">🔬 طاولة التجربة <label class="tg"><input type="checkbox" id="pm" checked> 🔮 أتوقّع قبل أن أرى</label></h2>
+   <div class="sel" id="sel"><span class="big">👈</span><span>اختاري مادة من المكتبة لتبدئي.</span></div>
+   <div id="warn"></div>
+   <div class="say" id="say" aria-live="polite">اختاري مادة، ثم اختاري أداة الاختبار.</div>
+   <svg class="sc" id="sc" viewBox="0 0 640 360" role="img" aria-label="طاولة التجربة"></svg>
+   <div class="tools" id="tools"></div>
+   <div id="predbox"></div>
+   <div id="out"></div>
+  </section>
+ </div>
+
+ <section class="card" aria-labelledby="h-nb">
+  <h2 id="h-nb">📒 دفتر اكتشافاتي</h2>
+  <div style="overflow-x:auto"><table class="nb"><thead><tr><th>المادة</th><th>الاختبار</th><th>توقّعي</th><th>النتيجة</th></tr></thead><tbody id="nb"></tbody></table></div>
+  <div id="nbe" style="color:var(--muted);font-size:14px;margin-top:6px">لم تسجّلي أيّ تجربة بعد. كل اختبار تجرّبينه يُضاف هنا تلقائيًّا.</div>
+  <div class="sum" id="sum"></div>
+  <div class="row" style="margin-top:8px"><button class="btn g" id="cp" type="button">📋 نسخ النتائج</button><button class="btn g" id="clr" type="button">🗑️ مسح الدفتر</button><span id="clrc"></span></div>
+ </section>
+
+ <div class="card" style="font-size:14px;color:var(--muted)">⚠️ هذا مختبر افتراضي. لا تجرّبي المواد الكيميائية أو منظّفات البيت أو تخلطيها في الواقع إلا بإشراف المعلّمة وبأدوات السلامة.</div>
+ <div class="credit">منصّة العلوم · مدرسة القطرانة الثانوية للبنات · تصميمُ المنصّة وتنفيذُها: نوال بني عطية</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== مكتبة المواد =====
+ ph: الرقم الهيدروجيني بعد الإذابة/التلامس (null = لا يؤثّر في الكاشف)
+ sol: y تذوب | p جزئيًّا | n لا تذوب | l سائل يمتزج | o سائل لا يمتزج | m ينصهر
+ d: الكثافة g/cm³ | mag: مغناطيسية | cond: s موصل صلب، i محلول أيوني قوي، w ضعيف، d صلب أيوني (محلوله يوصل)، 0 عازل
+ fz: co2 أو h2 مع الخل | st نشا | vc فيتامين C | bl يتلف الكاشف */
+const M=[
+["خل","🍶","المطبخ",{ph:2.5,sol:"l",d:1.01,cond:"w",col:"#f3ead0"}],
+["عصير ليمون","🍋","المطبخ",{ph:2.2,sol:"l",d:1.03,cond:"w",vc:1,col:"#f6eb98"}],
+["صودا الخبز","🥄","المطبخ",{ph:8.3,sol:"y",d:2.2,cond:"d",fz:"co2",mic:"بلّورات بيضاء صغيرة غير منتظمة."}],
+["ملح الطعام","🧂","المطبخ",{ph:7,sol:"y",d:2.16,cond:"d",mic:"بلّورات مكعّبة شفّافة متقنة الحواف."}],
+["سكّر","🍬","المطبخ",{ph:7,sol:"y",d:1.59,cond:0,mic:"بلّورات شفّافة على شكل منشورات بأوجه لامعة."}],
+["حليب","🥛","المطبخ",{ph:6.7,sol:"l",d:1.03,cond:"w",col:"#fbfbf7",mic:"قطيرات دهن صغيرة جدًّا معلّقة في السائل."}],
+["لبن رائب","🥣","المطبخ",{ph:4.4,sol:"l",d:1.04,cond:"w",col:"#f7f5ee",mic:"عصيّات بكتيريا اللبن وكتل بروتين متخثّرة."}],
+["نشا","🌾","المطبخ",{ph:7,sol:"n",d:1.5,cond:0,st:1,mic:"حبيبات نشا بيضاوية صغيرة."}],
+["طحين","🥖","المطبخ",{ph:6.2,sol:"n",d:1.45,cond:0,st:1,mic:"حبيبات نشا ممزوجة بقطع بروتين."}],
+["زيت زيتون","🫒","المطبخ",{ph:null,sol:"o",d:0.91,cond:0,col:"#c9b23a"}],
+["عسل","🍯","المطبخ",{ph:3.9,sol:"l",d:1.42,cond:"w",col:"#d99a1e",mic:"حبيبات لقاح قليلة وبلّورات سكّر دقيقة."}],
+["قهوة","☕","المطبخ",{ph:5,sol:"l",d:1.0,cond:"w",col:"#6b3d1e"}],
+["شاي","🍵","المطبخ",{ph:5.5,sol:"l",d:1.0,cond:"w",col:"#b5651d"}],
+["مشروب غازي (كولا)","🥤","المطبخ",{ph:2.5,sol:"l",d:1.04,cond:"w",col:"#4a2511"}],
+["قشر بيض","🥚","المطبخ",{ph:7.8,sol:"n",d:2.5,cond:0,fz:"co2",mic:"سطح من كربونات الكالسيوم فيه آلاف المسامات الدقيقة."}],
+["بياض البيض","🍳","المطبخ",{ph:8.5,sol:"l",d:1.04,cond:"w",col:"#f4f0d8"}],
+["بطاطا","🥔","المطبخ",{ph:6,sol:"n",d:1.08,cond:"w",st:1,mic:"خلايا نباتية مليئة بحبيبات النشا."}],
+["أرز","🍚","المطبخ",{ph:7,sol:"n",d:1.5,cond:0,st:1,mic:"حبيبات نشا متراصّة."}],
+["تفّاح","🍎","المطبخ",{ph:3.5,sol:"n",d:0.85,cond:"w",mic:"خلايا نباتية كبيرة بجدر خلوية واضحة."}],
+["طماطم","🍅","المطبخ",{ph:4.3,sol:"n",d:0.97,cond:"w",mic:"خلايا نباتية كبيرة فيها بلاستيدات ملوّنة."}],
+["ماء الصنبور","🚰","المطبخ",{ph:7.5,sol:"l",d:1.0,cond:"w"}],
+["ماء مقطّر","💧","المختبر",{ph:7,sol:"l",d:1.0,cond:0}],
+["ماء مالح","🌊","المطبخ",{ph:7,sol:"l",d:1.03,cond:"i"}],
+["مكعّب ثلج","🧊","المطبخ",{ph:7,sol:"m",d:0.92,cond:0,mic:"بلّورات ماء متجمّد مع فقاعات هواء محبوسة."}],
+["صابون سائل","🧴","البيت",{ph:9.5,sol:"l",d:1.02,cond:"w",col:"#cfe8f7"}],
+["شامبو","🫧","البيت",{ph:6,sol:"l",d:1.02,cond:"w",col:"#f2d6e9"}],
+["معجون أسنان","🪥","البيت",{ph:8.5,sol:"p",d:1.4,cond:"w",fz:"co2"}],
+["مسحوق غسيل","🧺","البيت",{ph:10.5,sol:"y",d:1.1,cond:"d"}],
+["منظّف زجاج (أمونيا)","🧽","البيت",{ph:11,sol:"l",d:1.0,cond:"w",col:"#cfe9f5",warn:"منظّف يحتوي على الأمونيا: لا يُشمّ مباشرة ولا يُخلط مع المبيّض أبدًا."}],
+["مبيّض (كلور)","⚠️","البيت",{ph:12.5,sol:"l",d:1.1,cond:"i",bl:1,col:"#f3f6d8",warn:"المبيّض مادة خطرة: يهيّج الجلد والعينين، ولا يُخلط أبدًا مع الخل أو الأمونيا لأنه يطلق غازات سامة."}],
+["طبشورة","🖍️","البيت",{ph:9,sol:"n",d:2.3,cond:0,fz:"co2",mic:"حبيبات كربونات كالسيوم دقيقة وبقايا أصداف مجهرية."}],
+["رصاص قلم (غرافيت)","✏️","البيت",{ph:null,sol:"n",d:2.2,cond:"s",mic:"صفائح كربون رقيقة لامعة."}],
+["ورق","📄","البيت",{ph:null,sol:"n",d:0.8,cond:0,mic:"ألياف سليلوز متشابكة."}],
+["خشب","🪵","البيت",{ph:null,sol:"n",d:0.6,cond:0,mic:"خلايا وأوعية خشبية مجوّفة طويلة."}],
+["فلّين","🍾","البيت",{ph:null,sol:"n",d:0.24,cond:0,mic:"خلايا ميتة صغيرة كخلايا النحل مملوءة بالهواء (كما رآها روبرت هوك)."}],
+["بلاستيك (كيس)","🛍️","البيت",{ph:null,sol:"n",d:0.93,cond:0}],
+["ممحاة مطّاطية","🩹","البيت",{ph:null,sol:"n",d:1.2,cond:0}],
+["زجاج","🔍","البيت",{ph:null,sol:"n",d:2.5,cond:0}],
+["شمعة","🕯️","البيت",{ph:null,sol:"n",d:0.9,cond:0}],
+["مسمار حديد","🔩","الفلزّات",{ph:null,sol:"n",d:7.87,mag:1,cond:"s"}],
+["مشبك ورق فولاذي","📎","الفلزّات",{ph:null,sol:"n",d:7.8,mag:1,cond:"s"}],
+["ورق ألمنيوم","🥡","الفلزّات",{ph:null,sol:"n",d:2.7,cond:"s"}],
+["قطعة نقد نحاسية","🪙","الفلزّات",{ph:null,sol:"n",d:8.9,cond:"s"}],
+["قطعة نيكل","⚪","الفلزّات",{ph:null,sol:"n",d:8.9,mag:1,cond:"s"}],
+["شريط مغنيسيوم","🎗️","الفلزّات",{ph:null,sol:"n",d:1.74,cond:"s",fz:"h2",warn:"المغنيسيوم يشتعل بلهب أبيض ساطع يؤذي العين؛ يُستخدم في المختبر بإشراف المعلّمة فقط."}],
+["حبيبات خارصين","⚙️","الفلزّات",{ph:null,sol:"n",d:7.1,cond:"s",fz:"h2"}],
+["حجر جيري","🪨","الصخور والمعادن",{ph:null,sol:"n",d:2.6,cond:0,fz:"co2",mic:"حبيبات كالسيت وبقايا أصداف وأحافير دقيقة."}],
+["رخام","🏛️","الصخور والمعادن",{ph:null,sol:"n",d:2.7,cond:0,fz:"co2",mic:"بلّورات كالسيت متداخلة معاد تبلورها."}],
+["غرانيت","🗻","الصخور والمعادن",{ph:null,sol:"n",d:2.7,cond:0,mic:"بلّورات كبيرة متداخلة: كوارتز شفّاف وفلسبار وردي وميكا سوداء."}],
+["بازلت","⬛","الصخور والمعادن",{ph:null,sol:"n",d:3.0,cond:0,mic:"بلّورات دقيقة جدًّا؛ لأن اللابة بردت بسرعة على السطح."}],
+["حجر الخفّاف","🌋","الصخور والمعادن",{ph:null,sol:"n",d:0.65,cond:0,mic:"فجوات غازية كثيرة جدًّا تجعله خفيفًا."}],
+["مغنتيت","🧲","الصخور والمعادن",{ph:null,sol:"n",d:5.2,mag:1,cond:0,mic:"بلّورات سوداء ثمانية الأوجه لامعة."}],
+["ملح صخري (هاليت)","🔷","الصخور والمعادن",{ph:7,sol:"y",d:2.16,cond:"d",mic:"بلّورات مكعّبة شفّافة؛ مثل ملح الطعام."}],
+["جبس","🤍","الصخور والمعادن",{ph:7,sol:"p",d:2.3,cond:0,mic:"بلّورات صفائحية وإبرية شفّافة."}],
+["رمل (كوارتز)","🏖️","الصخور والمعادن",{ph:null,sol:"n",d:2.65,cond:0,mic:"حبيبات كوارتز زجاجية شفّافة مستديرة الحواف."}],
+["بيريت","✨","الصخور والمعادن",{ph:null,sol:"n",d:5.0,cond:"s",mic:"بلّورات مكعّبة ذهبية اللون ببريق فلزي."}],
+["حمض الهيدروكلوريك المخفّف","⚗️","المختبر",{ph:1,sol:"l",d:1.02,cond:"i",warn:"حمض: يُستخدم بالقفّازات والنظّارات الواقية فقط."}],
+["هيدروكسيد الصوديوم المخفّف","🧪","المختبر",{ph:13,sol:"l",d:1.04,cond:"i",warn:"قاعدة كاوية: تُستخدم بالقفّازات والنظّارات الواقية فقط."}],
+["محلول كبريتات النحاس","💙","المختبر",{ph:4,sol:"l",d:1.1,cond:"i",col:"#4aa3df",warn:"سامّ عند البلع؛ اغسلي يديكِ بعد استخدامه."}],
+["محلول فيتامين C","💊","المختبر",{ph:3,sol:"l",d:1.01,cond:"w",vc:1}]
+].map(([n,e,c,p])=>Object.assign({n,e,c},p));
+
+const CATS=["الكل","المطبخ","البيت","الفلزّات","الصخور والمعادن","المختبر"];
+const TOOLS=[["cab","🟣","كاشف الملفوف"],["tur","🟡","الكركم"],["vin","🍶","أضيفي الخل"],["wat","💧","في الماء"],["mag","🧲","المغناطيس"],["cir","💡","دارة التوصيل"],["iod","🟤","محلول اليود"],["mic","🔬","المجهر"]];
+const TNAME=Object.fromEntries(TOOLS.map(t=>[t[0],t[2]]));
+const $=s=>document.querySelector(s);
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const x in a){if(x==="style")Object.assign(e.style,a[x]);else if(x.startsWith("on"))e[x]=a[x];else e.setAttribute(x,a[x]);}k.flat().forEach(c=>c!=null&&e.append(c.nodeType?c:document.createTextNode(c)));return e;};
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2400);};
+const LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+/* ===== منطق الاختبارات: تعيد {txt, cls(تصنيف), color, opts, ok, anim} ===== */
+function cabCol(ph){if(ph<3)return["#d7263d","أحمر"];if(ph<5)return["#e2559a","وردي"];if(ph<6.5)return["#9b4f9e","بنفسجي محمرّ"];if(ph<7.6)return["#7b5ea7","بنفسجي"];if(ph<9)return["#3c7dc4","أزرق"];if(ph<11)return["#2e9e7a","أخضر مزرقّ"];return["#a6c83a","أخضر مصفرّ"];}
+function test(m,t){
+ const S=m.ph==null?null:m.ph<6.5?"حمضية":m.ph<=7.6?"متعادلة":"قاعدية";
+ switch(t){
+ case"cab":{const opts=["أحمر أو وردي (حمضية)","بنفسجي (متعادلة أو لا تتأثّر)","أزرق أو أخضر (قاعدية)"];
+  if(m.bl)return{txt:"بهت لون الكاشف واختفى تقريبًا! المبيّض مادة قاعدية مؤكسِدة قوية تُتلف صبغة الأنثوسيانين نفسها.",opts,ok:2,color:"#eef0dc",short:"بهت اللون (قاعدية مؤكسدة)"};
+  if(m.ph==null)return{txt:"بقي لون الكاشف بنفسجيًّا؛ فالمادة لا تذوب في الماء ولا تغيّر حموضة الوسط.",opts,ok:1,color:"#7b5ea7",short:"لا تغيّر (بنفسجي)"};
+  const [c,nm]=cabCol(m.ph);return{txt:"أصبح لون الكاشف "+nm+"؛ إذن المادة "+S+" (الرقم الهيدروجيني ≈ "+m.ph+").",opts,ok:S==="حمضية"?0:S==="متعادلة"?1:2,color:c,short:nm+" — "+S,cls:S};}
+ case"tur":{const opts=["يبقى أصفر","يصبح أحمر بنّيًّا"];
+  if(m.bl)return{txt:"بهت لون الكركم؛ المبيّض يُتلف الصبغة.",opts,ok:1,color:"#f1ecc8",short:"بهت اللون"};
+  const base=m.ph!=null&&m.ph>8.5;return{txt:base?"تحوّل الكركم إلى أحمر بنّي؛ المادة قاعدية (الكركم يكشف القواعد).":"بقي الكركم أصفر؛ المادة ليست قاعدية قوية (حمضية أو متعادلة أو لا تتأثّر).",opts,ok:base?1:0,color:base?"#a8321c":"#f2c12e",short:base?"أحمر بنّي — قاعدية":"أصفر"};}
+ case"vin":{const opts=["فوران وفقاعات","لا يحدث شيء ظاهر"];
+  if(m.bl)return{stop:1,txt:"⛔ توقّفي! لا نخلط المبيّض مع الخل في الواقع أبدًا؛ لأنه يطلق غاز الكلور السام. في المختبر الحقيقي هذه التجربة ممنوعة.",short:"ممنوع: يطلق غاز الكلور السام"};
+  if(m.fz==="co2")return{txt:"فوران قوي وفقاعات كثيرة! حمض الخل يتفاعل مع الكربونات وينطلق غاز ثاني أكسيد الكربون.",opts,ok:0,anim:"fizz",short:"فوران: غاز CO₂ (كربونات)"};
+  if(m.fz==="h2")return{txt:"تظهر فقاعات صغيرة ببطء على سطح الفلز: الحمض يتفاعل مع الفلز النشط وينطلق غاز الهيدروجين.",opts,ok:0,anim:"slow",short:"فقاعات بطيئة: غاز H₂"};
+  if(m.ph!=null&&m.ph>8.5&&m.sol!=="n")return{txt:"لا فوران ظاهر، لكن يحدث تفاعل تعادل بين الحمض والقاعدة (يتكوّن ملح وماء).",opts,ok:1,short:"تعادل دون فوران"};
+  return{txt:"لا يحدث تفاعل ظاهر بين المادة والخل.",opts,ok:1,short:"لا تفاعل ظاهر"};}
+ case"wat":{const opts=["تذوب أو تمتزج","تطفو","تغوص"];
+  if(m.sol==="y")return{txt:"ذابت المادة في الماء وتكوّن محلول متجانس.",opts,ok:0,anim:"dis",short:"تذوب"};
+  if(m.sol==="p")return{txt:"ذاب جزء قليل منها، وترسّب معظمها في القاع (قليلة الذوبان).",opts,ok:2,anim:"sink",short:"تذوب جزئيًّا وتترسّب"};
+  if(m.sol==="l")return m.d>1.2?{txt:"هبطت إلى القاع أوّلًا لأنها أكثف من الماء، ثم امتزجت ببطء عند التحريك.",opts,ok:0,anim:"mix",short:"تمتزج (أكثف من الماء)"}:{txt:"امتزجت بالماء وكوّنت خليطًا متجانسًا.",opts,ok:0,anim:"mix",short:"تمتزج"};
+  if(m.sol==="o")return{txt:"لم تمتزج، وطفت طبقة فوق الماء؛ لأنها غير قطبية وأقل كثافة منه ("+m.d+" g/cm³).",opts,ok:1,anim:"layer",short:"لا تمتزج وتطفو"};
+  if(m.sol==="m")return{txt:"طفا الثلج لأن كثافته (0.92 g/cm³) أقل من كثافة الماء، ثم بدأ ينصهر.",opts,ok:1,anim:"float",short:"يطفو ثم ينصهر"};
+  return m.d<1?{txt:"لم تذب وطفت؛ لأن كثافتها ("+m.d+" g/cm³) أقل من كثافة الماء (1 g/cm³).",opts,ok:1,anim:"float",short:"لا تذوب وتطفو"}:{txt:"لم تذب وغاصت؛ لأن كثافتها ("+m.d+" g/cm³) أكبر من كثافة الماء.",opts,ok:2,anim:"sink",short:"لا تذوب وتغوص"};}
+ case"mag":{const opts=["تنجذب","لا تنجذب"];return m.mag?{txt:"انجذبت المادة إلى المغناطيس؛ فهي من المواد المغناطيسية (حديد أو نيكل أو كوبالت أو خامات الحديد كالمغنتيت).",opts,ok:0,anim:"pull",short:"تنجذب"}:{txt:"لم تنجذب إلى المغناطيس؛ فليست كل الفلزّات مغناطيسية (النحاس والألمنيوم مثلًا لا ينجذبان).",opts,ok:1,anim:"nopull",short:"لا تنجذب"};}
+ case"cir":{const opts=["يضيء بقوة","يضيء ضعيفًا","لا يضيء"];
+  if(m.cond==="s")return{txt:"أضاء المصباح بقوة؛ المادة موصلة جيدة للكهرباء لأن فيها إلكترونات حرّة الحركة.",opts,ok:0,glow:1,short:"موصل جيد"};
+  if(m.cond==="i")return{txt:"أضاء المصباح بقوة؛ المحلول يحتوي على أيونات كثيرة تنقل الشحنة.",opts,ok:0,glow:1,short:"موصل جيد (أيونات)"};
+  if(m.cond==="w")return{txt:"أضاء المصباح ضعيفًا؛ فيه أيونات قليلة فهو موصل ضعيف.",opts,ok:1,glow:.35,short:"موصل ضعيف"};
+  if(m.cond==="d")return{txt:"لم يضئ المصباح والمادة صلبة جافة؛ لأن أيوناتها مقيّدة في البلّورة. جرّبي: إذا أذبتِها في الماء يصبح محلولها موصلًا!",opts,ok:2,glow:0,short:"لا توصل صلبة (محلولها يوصل)"};
+  return{txt:"لم يضئ المصباح؛ المادة عازلة لا تحتوي على شحنات حرّة الحركة.",opts,ok:2,glow:0,short:"عازل"};}
+ case"iod":{const opts=["يصبح أزرق داكنًا","يبقى بنّيًّا","يختفي اللون"];
+  if(m.st)return{txt:"تحوّل لون اليود إلى أزرق داكن؛ المادة تحتوي على النشا.",opts,ok:0,color:"#1d1f5c",short:"أزرق داكن — فيها نشا"};
+  if(m.vc)return{txt:"اختفى لون اليود البنّي! فيتامين C عامل مختزل يحوّل اليود إلى أيونات يوديد عديمة اللون.",opts,ok:2,color:"#f4f1e6",short:"اختفى اللون — فيتامين C"};
+  return{txt:"بقي لون اليود بنّيًّا؛ لا نشا فيها ولا مادة مختزلة.",opts,ok:1,color:"#a0571c",short:"يبقى بنّيًّا"};}
+ case"mic":return{txt:m.mic?("🔬 تحت المجهر: "+m.mic):"🔬 لا تظهر تراكيب مميّزة لهذه المادة بتكبير المجهر الضوئي المدرسي.",short:m.mic?"شوهد: "+m.mic.split(/[؛.]/)[0]:"لا تراكيب مميّزة",micv:1};
+ }}
+
+/* ===== المشهد ===== */
+const NS="http://www.w3.org/2000/svg";const sc=$("#sc");
+const mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||sc).append(e);return e;};
+function scene(){sc.innerHTML="";
+ mk("rect",{x:0,y:290,width:640,height:70,fill:"#c9b8a6"});mk("rect",{x:0,y:286,width:640,height:6,fill:"#a8937e"});
+ for(let i=0;i<8;i++)mk("line",{x1:i*80,y1:0,x2:i*80,y2:286,stroke:"#ffffff",opacity:.25});
+ return sc;}
+function beaker(x,liq,lvl){const g=mk("g",{transform:`translate(${x},0)`});
+ mk("rect",{x:-62,y:150,width:124,height:138,rx:10,fill:"#ffffff",opacity:.25,stroke:"#8aa2b1","stroke-width":3},g);
+ const L=mk("rect",{x:-58,y:288-lvl,width:116,height:lvl-4,rx:6,fill:liq,style:"transition:fill 1.4s, y 1s, height 1s"},g);
+ mk("rect",{x:-50,y:160,width:8,height:110,rx:4,fill:"#fff",opacity:.5},g);
+ for(let i=0;i<4;i++)mk("line",{x1:40,x2:56,y1:186+i*24,y2:186+i*24,stroke:"#8aa2b1","stroke-width":2},g);
+ return {g,L};}
+function sample(x,y,m,size){const t=mk("text",{x,y,"font-size":size||46,"text-anchor":"middle","dominant-baseline":"middle",style:"transition:transform 1s, opacity 1.4s"});t.textContent=m.e;return t;}
+function label(x,y,s,o){const t=mk("text",Object.assign({x,y,"font-size":18,"font-weight":700,"text-anchor":"middle",fill:"#3b2a30","font-family":"Noto Naskh Arabic,Tahoma"},o||{}));t.textContent=s;return t;}
+const wait=ms=>new Promise(r=>setTimeout(r,matchMedia("(prefers-reduced-motion:reduce)").matches?Math.min(ms,80):ms));
+function idle(m){scene();if(!m){label(320,150,"اختاري مادة من المكتبة");return;}
+ if(m.sol==="l"||m.sol==="o"){beaker(320,m.col||"#dbe9f2",90);label(320,128,m.n);}else{sample(320,240,m,70);label(320,170,m.n);}}
+
+async function animate(m,t,r){scene();
+ if(t==="cab"||t==="tur"||t==="iod"){const base=t==="cab"?"#7b5ea7":t==="tur"?"#f2c12e":"#a0571c";
+   const liquid=m.sol==="l"||m.sol==="o";const b=beaker(320,base,110);if(!liquid)sample(320,250,m,40);label(320,128,TNAME[t]+" + "+m.n);
+   for(let i=0;i<3;i++){const d=mk("circle",{cx:320,cy:60,r:7,fill:t==="cab"?"#7b5ea7":t==="tur"?"#f2c12e":"#8a4a17",style:"transition:cy .5s"});await wait(30);d.setAttribute("cy",180);await wait(420);d.remove();}
+   await wait(150);b.L.style.fill=r.color;await wait(1300);return;}
+ if(t==="vin"){const b=beaker(320,"#f3ead0",90);if(m.sol!=="l")sample(320,260,m,38);else b.L.style.fill=m.col||"#e9eef2";label(320,128,"خل + "+m.n);
+   if(r.stop){mk("rect",{x:150,y:60,width:340,height:60,rx:14,fill:"#c62828"});label(320,96,"⛔ خلط ممنوع",{fill:"#fff","font-size":24});return;}
+   if(r.anim){const n=r.anim==="fizz"?40:12;for(let i=0;i<n;i++){const c=mk("circle",{cx:280+Math.random()*80,cy:270,r:2+Math.random()*(r.anim==="fizz"?6:3),fill:"none",stroke:"#7a8f9c","stroke-width":1.5,style:`transition:cy ${r.anim==="fizz"?1:2.2}s ease-out, opacity 1.2s`});setTimeout(()=>{c.setAttribute("cy",r.anim==="fizz"?120+Math.random()*60:200);c.style.opacity=0;},40+i*(r.anim==="fizz"?40:150));}
+     if(r.anim==="fizz"){const f=mk("ellipse",{cx:320,cy:200,rx:0,ry:0,fill:"#fff",opacity:.85,style:"transition:all 1.4s"});setTimeout(()=>{f.setAttribute("rx",70);f.setAttribute("ry",34);f.setAttribute("cy",160);},200);}}
+   await wait(1800);return;}
+ if(t==="wat"){const b=beaker(320,"#cfe6f5",140);label(320,128,m.n+" في الماء");
+   if(r.anim==="mix"||r.anim==="layer"){const d=mk("rect",{x:270,y:60,width:100,height:30,rx:10,fill:m.col||"#e7d9b8",style:"transition:y 1s"});await wait(50);
+     if(r.anim==="layer"){d.setAttribute("y",142);await wait(1100);d.setAttribute("height",16);d.setAttribute("x",262);d.setAttribute("width",116);}
+     else{d.setAttribute("y",m.d>1.2?266:200);await wait(1100);d.remove();b.L.style.fill=m.col?mixc("#cfe6f5",m.col,.45):"#d6e6ee";}await wait(600);return;}
+   const s=sample(320,70,m,40);await wait(60);
+   const ty=r.anim==="float"?(158-70):r.anim==="sink"?(262-70):(200-70);s.style.transform=`translateY(${ty}px)`;await wait(1100);
+   if(r.anim==="dis"){s.style.opacity=0;b.L.style.fill="#d9ebf5";}await wait(700);return;}
+ if(t==="mag"){sample(250,240,m,52);label(250,170,m.n);const g=mk("g",{style:"transition:transform 1s",transform:"translate(0,0)"});
+   mk("path",{d:"M520 200 h60 v80 h-60 v-24 h36 v-32 h-36z",fill:"#c62828"},g);mk("rect",{x:520,y:200,width:20,height:24,fill:"#cfd8dc"},g);mk("rect",{x:520,y:256,width:20,height:24,fill:"#cfd8dc"},g);
+   await wait(50);g.style.transform="translateX(-190px)";await wait(1100);
+   if(r.anim==="pull"){const s=sc.querySelectorAll("text")[0];s.style.transition="transform .45s cubic-bezier(.5,0,.8,.3)";s.style.transform="translateX(58px)";}await wait(900);return;}
+ if(t==="cir"){/* بطارية — أسلاك — مصباح — المادة */
+   mk("rect",{x:90,y:220,width:90,height:46,rx:6,fill:"#455a64"});mk("rect",{x:180,y:234,width:10,height:18,fill:"#90a4ae"});label(135,248,"بطارية",{fill:"#fff","font-size":14});
+   mk("polyline",{points:"190,243 260,243 260,140 300,140",fill:"none",stroke:"#b71c1c","stroke-width":4});mk("polyline",{points:"340,140 380,140 380,243 420,243",fill:"none",stroke:"#b71c1c","stroke-width":4});
+   mk("polyline",{points:"90,243 60,243 60,310 560,310 560,243 520,243",fill:"none",stroke:"#1a237e","stroke-width":4});
+   const glow=mk("circle",{cx:320,cy:118,r:44,fill:"#ffd54f",opacity:0,style:"transition:opacity 1s"});mk("circle",{cx:320,cy:118,r:24,fill:"#fffde7",stroke:"#8d6e63","stroke-width":3});mk("rect",{x:308,y:138,width:24,height:14,fill:"#90a4ae"});
+   label(320,178,"مصباح",{"font-size":14});
+   if(m.sol==="l"||m.sol==="o"){const b=mk("g",{transform:"translate(470,0)"});mk("rect",{x:-50,y:210,width:100,height:70,rx:8,fill:m.col||"#dbe9f2",stroke:"#8aa2b1","stroke-width":3},b);mk("line",{x1:-30,y1:200,x2:-30,y2:262,stroke:"#555","stroke-width":5},b);mk("line",{x1:30,y1:200,x2:30,y2:262,stroke:"#555","stroke-width":5},b);}
+   else{sample(470,243,m,44);mk("circle",{cx:428,cy:243,r:6,fill:"#555"});mk("circle",{cx:512,cy:243,r:6,fill:"#555"});}
+   label(470,190,m.n,{"font-size":14});await wait(500);glow.style.opacity=r.glow||0;await wait(1000);return;}
+ if(t==="mic"){mk("circle",{cx:320,cy:150,r:120,fill:"#fbfbf4",stroke:"#263238","stroke-width":14});const cg=mk("g",{});
+   const draw=(n,fn)=>{for(let i=0;i<n;i++)fn(i);};const R=()=>Math.random();
+   const k=m.mic||"";
+   if(/مكعّب/.test(k))draw(9,i=>{const x=240+(i%3)*55+R()*10,y=80+Math.floor(i/3)*50+R()*10;mk("rect",{x,y,width:34,height:34,fill:"#e3f2fd",stroke:"#5d8aa8","stroke-width":2,transform:`rotate(${R()*30} ${x+17} ${y+17})`},cg);});
+   else if(/خلايا|خلية/.test(k))draw(12,i=>{const x=225+(i%4)*48,y=80+Math.floor(i/4)*48;mk("rect",{x,y,width:44,height:44,rx:6,fill:"#e8f5e9",stroke:"#558b2f","stroke-width":2},cg);if(/نشا/.test(k))draw(3,()=>mk("ellipse",{cx:x+8+R()*28,cy:y+8+R()*28,rx:5,ry:3.5,fill:"#fff",stroke:"#9e9e9e"},cg));else mk("circle",{cx:x+30,cy:y+14,r:5,fill:"#7b5ea7",opacity:.6},cg);});
+   else if(/نشا|حبيبات/.test(k))draw(26,()=>mk("ellipse",{cx:220+R()*200,cy:60+R()*180,rx:6+R()*7,ry:4+R()*5,fill:"#fffde7",stroke:"#9e9e9e"},cg));
+   else if(/ألياف|أوعية/.test(k))draw(12,()=>{const y=60+R()*180;mk("path",{d:`M210 ${y} C 280 ${y-30}, 360 ${y+30}, 430 ${y}`,fill:"none",stroke:"#a1887f","stroke-width":3},cg);});
+   else if(/فجوات|مسام|مسامات/.test(k))draw(24,()=>mk("circle",{cx:220+R()*200,cy:60+R()*180,r:3+R()*9,fill:"#fff",stroke:"#8d6e63"},cg));
+   else if(/بلّورات|صفائح/.test(k))draw(14,()=>{const x=220+R()*190,y=60+R()*170;mk("polygon",{points:`${x},${y} ${x+18+R()*14},${y+6} ${x+12},${y+24+R()*10} ${x-6},${y+16}`,fill:["#eceff1","#f8bbd0","#424242","#fff9c4"][Math.floor(R()*4)],stroke:"#607d8b"},cg);});
+   else if(/قطيرات|عصيّات/.test(k))draw(40,()=>mk("circle",{cx:220+R()*200,cy:60+R()*180,r:2+R()*4,fill:"#fff8e1",stroke:"#bcaaa4"},cg));
+   else label(320,150,"لا تراكيب مميّزة",{fill:"#90a4ae"});
+   mk("circle",{cx:320,cy:150,r:120,fill:"none",stroke:"#263238","stroke-width":14});label(320,300,"🔬 "+m.n);await wait(400);return;}
+}
+function mixc(a,b,t){const p=c=>{c=c.replace("#","");return[0,2,4].map(i=>parseInt(c.slice(i,i+2),16));};const A=p(a),B=p(b);return"rgb("+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(",")+")";}
+
+/* ===== الواجهة ===== */
+let cur=null,cat="الكل",busy=false;let NB=LS.get("free.nb",[]);
+function drawCats(){const c=$("#cats");c.innerHTML="";CATS.forEach(k=>c.append(h("button",{class:"chip"+(k===cat?" on":""),type:"button",onclick:()=>{cat=k;drawCats();drawLib();}},k)));}
+function drawLib(){const q=$("#q").value.trim();const l=$("#lib");l.innerHTML="";
+ const list=M.filter(m=>(cat==="الكل"||m.c===cat)&&(!q||m.n.includes(q)));
+ if(!list.length){l.append(h("div",{style:{color:"var(--muted)",fontSize:"14px"}},"لا توجد مادة بهذا الاسم. اقترحيها في الأسفل ↓"));return;}
+ list.forEach(m=>l.append(h("button",{class:"mat"+(cur===m?" on":""),type:"button",onclick:()=>pick(m)},h("span",{class:"e"},m.e),m.n)));}
+function pick(m){if(busy)return;cur=m;drawLib();
+ $("#sel").innerHTML="";$("#sel").append(h("span",{class:"big"},m.e),h("div",{},h("b",{},m.n),h("div",{style:{fontSize:"14px",color:"var(--muted)"}},m.c)));
+ $("#warn").innerHTML="";if(m.warn)$("#warn").append(h("div",{class:"warn"},"⚠️ "+m.warn));
+ $("#say").textContent="اختاري أداة لتختبري «"+m.n+"».";$("#out").innerHTML="";$("#predbox").innerHTML="";idle(m);drawTools();
+ if(innerWidth<920)$("#h-bench").scrollIntoView({behavior:"smooth",block:"start"});}
+function drawTools(){const t=$("#tools");t.innerHTML="";TOOLS.forEach(([k,e,n])=>t.append(h("button",{class:"tool",type:"button",onclick:()=>run(k)},h("span",{class:"e"},e),n)));
+ if(!cur||busy)t.querySelectorAll("button").forEach(b=>b.disabled=true);}
+async function run(t){if(!cur||busy)return;const m=cur,r=test(m,t);$("#out").innerHTML="";
+ const usePred=$("#pm").checked&&r.opts;
+ if(usePred){$("#say").textContent="🔮 قبل أن تجرّبي: ماذا تتوقّعين أن يحدث عند اختبار «"+m.n+"» بـ "+TNAME[t]+"؟";const pb=$("#predbox");pb.innerHTML="";
+  const box=h("div",{class:"pred"});r.opts.forEach((o,i)=>box.append(h("button",{class:"btn g",type:"button",onclick:()=>{pb.innerHTML="";go(i);}},o)));pb.append(box);return;}
+ go(null);
+ async function go(pi){busy=true;drawTools();$("#say").textContent="⏳ جارٍ التجربة: "+TNAME[t]+" + "+m.n+"…";
+  await animate(m,t,r);busy=false;drawTools();$("#say").textContent=r.stop?"تنبيه سلامة!":"✔ انتهت التجربة. جرّبي أداة أخرى أو مادة أخرى.";
+  let cls="info",lead="";if(pi!=null){const hit=pi===r.ok;cls=hit?"hit":"miss";lead=hit?"🎯 توقّعكِ صحيح! ":"🤔 فاجأتكِ النتيجة! هذا جوهر العلم. ";}
+  if(r.stop)cls="miss";$("#out").innerHTML="";$("#out").append(h("div",{class:"res "+cls},lead+r.txt));
+  NB.push({m:m.n,e:m.e,t,p:pi!=null?r.opts[pi]:"—",hit:pi!=null?pi===r.ok:null,r:r.short||r.txt,cls:r.cls||null,ph:m.ph,mag:!!m.mag,cond:m.cond});if(NB.length>200)NB=NB.slice(-200);LS.set("free.nb",NB);drawNB();}}
+function drawNB(){const b=$("#nb");b.innerHTML="";$("#nbe").style.display=NB.length?"none":"";
+ NB.slice().reverse().forEach(x=>b.append(h("tr",{},h("td",{},x.e+" "+x.m),h("td",{},TNAME[x.t]||x.t),h("td",{},x.p+(x.hit==null?"":x.hit?" ✅":" ❌")),h("td",{},x.r))));
+ const s=$("#sum");s.innerHTML="";if(!NB.length)return;
+ const uniq=(f)=>[...new Set(NB.filter(f).map(x=>x.e+" "+x.m))];
+ const A=uniq(x=>x.t==="cab"&&x.cls==="حمضية"),N=uniq(x=>x.t==="cab"&&x.cls==="متعادلة"),B=uniq(x=>x.t==="cab"&&x.cls==="قاعدية"),G=uniq(x=>x.t==="mag"&&x.mag),C=uniq(x=>x.t==="cir"&&(x.cond==="s"||x.cond==="i"||x.cond==="w"));
+ const P=NB.filter(x=>x.hit!=null),hits=P.filter(x=>x.hit).length;
+ const box=(t,l)=>h("div",{},h("b",{},t),l.length?l.join("، "):"—");
+ s.append(box("🔴 حمضية",A),box("🟣 متعادلة",N),box("🔵 قاعدية",B),box("🧲 مغناطيسية",G),box("💡 موصلة للكهرباء",C),h("div",{},h("b",{},"🔮 دقّة توقّعاتي"),P.length?hits+" من "+P.length+" ("+Math.round(hits*100/P.length)+"%)":"—"));}
+$("#q").oninput=drawLib;$("#pm").onchange=()=>{$("#predbox").innerHTML="";};
+$("#cp").onclick=async()=>{const t="دفتر اكتشافاتي — مختبري الحر\n"+NB.map(x=>`${x.m} | ${TNAME[x.t]} | توقّعي: ${x.p} | النتيجة: ${x.r}`).join("\n");try{await navigator.clipboard.writeText(t);toast("نُسخت النتائج ✔");}catch(e){toast("تعذّر النسخ؛ حدّدي الجدول وانسخيه يدويًّا.");}};
+$("#clr").onclick=()=>{const c=$("#clrc");c.innerHTML="";c.append(h("span",{style:{fontSize:"14px"}},"متأكّدة؟ "),h("button",{class:"btn",type:"button",onclick:()=>{NB=[];LS.set("free.nb",NB);drawNB();c.innerHTML="";}},"نعم، امسحي"),h("button",{class:"btn g",type:"button",onclick:()=>{c.innerHTML="";}},"تراجع"));};
+$("#sgb").onclick=()=>{const v=$("#sg").value.trim();if(!v){toast("اكتبي اسم المادة أولًا");return;}const l=LS.get("free.sug",[]);if(!l.includes(v))l.push(v);LS.set("free.sug",l);$("#sg").value="";
+ const msg="أقترح إضافة مادة «"+v+"» إلى «مختبري الحر» في منصّة العلوم.";const o=$("#sgout");o.innerHTML="";
+ o.append("شكرًا! سُجّل اقتراحكِ. أرسليه لمعلّمتكِ لتضيفه: ",h("a",{href:"https://wa.me/?text="+encodeURIComponent(msg),target:"_blank",rel:"noopener",style:{color:"var(--wine)",fontWeight:"700"}},"إرسال عبر واتساب"),h("div",{},"اقتراحاتي: "+l.join("، ")));};
+drawCats();drawLib();drawTools();idle(null);drawNB();
+</script>
+<script src="../js/namewheel-lab.js"></script>
+</body>
+</html>

@@ -107,7 +107,7 @@ function dash(){const T=S.teacher;tb.innerHTML="";tb.append(h("button",{class:"b
     h("div",{class:"acts"},A("👥","صفّي","الفرق وتقييم الحصة والسجلّ",null,()=>openClass(s.k)),A("🧰","أدوات المعلّمة",sci?"خطط وتحليل واستراتيجيات وبنك أسئلة":"مسابقة، حلّ التدريبات، أوراق العمل",plink(s,"tools")),
       A("📖","الكتاب على السبّورة","صفحات الكتاب بفراغات للشرح",plink(s,sci?"books":"tools")),A("📈","نتائج الطالبات","متابعة الإنجاز والاختبارات",plink(s,sci?"results":"tools")),
       sci?A("🎒","حقيبة الدرس","خطة، تقويم آخر الحصة، تذكرة خروج، سلّم تقدير",plink(s,"kit")):null,A("🎓","منصّة الطالبات","كما تراها الطالبة",plink(s,"student")))));});
-  app.append(gr,h("div",{class:"common"},h("a",{class:"btn gold",href:"https://lab-booking.reemalfahad-an.workers.dev",target:"_blank",rel:"noopener"},"🔬 حجز المختبر"),h("a",{class:"btn gold",href:"../projects/display/",target:"_blank",rel:"noopener"},"🖥️ عرض مشاريع الطالبات"),h("a",{class:"btn g",href:"../",target:"_blank",rel:"noopener"},"📱 بوابة الطالبات")));
+  app.append(gr,h("div",{class:"common"},h("a",{class:"btn gold",href:"https://lab-booking.reemalfahad-an.workers.dev",target:"_blank",rel:"noopener"},"🔬 حجز المختبر"),h("a",{class:"btn gold",href:"../projects/display/",target:"_blank",rel:"noopener"},"🖥️ عرض مشاريع الطالبات"),h("a",{class:"btn gold",href:"../forms/",target:"_blank",rel:"noopener"},"📑 نماذجي الذكية"),h("a",{class:"btn g",href:"../",target:"_blank",rel:"noopener"},"📱 بوابة الطالبات")));
   const cls=h("div",{id:"cls"});app.append(cls,h("footer",{},"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"));
   if(location.hash==="#class")openClass();}
 function openClass(k){const box=document.getElementById("cls");

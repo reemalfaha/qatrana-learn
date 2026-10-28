@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الكتاب الحي: الحركة في بعدين · منصة العلوم</title>
+<meta name="theme-color" content="#7A1F2E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--g3:#fbf1d6;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--soft:#f6ece6;
+--vx:#1565C0;--vy:#C62828;--ok:#2E7D32;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;--soft:#2b1e23;--g3:#33281a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.85 var(--f)}
+.top{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;border-bottom:4px solid var(--g);padding:12px max(16px,env(safe-area-inset-left,0px))}
+.top .in{max-width:920px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top small{color:var(--g2);font-weight:700}.top b{display:block;font:700 22px/1.3 var(--fd)}
+.top a{color:#fff;font-weight:700;font-size:14px;border:1px solid rgba(243,223,168,.5);border-radius:999px;padding:3px 12px;text-decoration:none}
+main{max-width:920px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-left,0px)) 60px}
+.prog{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;display:flex;gap:6px;overflow-x:auto}
+.prog a{flex:none;font:700 13px var(--f);text-decoration:none;color:var(--mut);border:1.5px solid var(--ln);border-radius:999px;padding:3px 12px;background:var(--card)}
+.prog a.done{border-color:var(--ok);color:var(--ok)}
+.page{background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:18px;margin-top:16px;box-shadow:0 8px 24px rgba(60,20,30,.06);position:relative}
+.page:before{content:attr(data-n);position:absolute;top:-12px;right:18px;background:var(--g);color:#2b1a00;font:700 13px var(--fd);border-radius:999px;padding:1px 12px}
+h1{font:700 clamp(26px,5vw,36px)/1.3 var(--fd);margin:4px 0;color:var(--w)}
+h2{font:700 22px/1.35 var(--fd);margin:0 0 6px;color:var(--w)}
+@media (prefers-color-scheme:dark){h1,h2{color:var(--g2)}}
+p{margin:6px 0}
+.law{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.law span{background:var(--g3);border:1px solid var(--g);border-radius:10px;padding:4px 12px;font:700 16px/1.6 "Cambria Math","Times New Roman",serif;direction:ltr}
+.pred{background:var(--soft);border-right:5px solid var(--g);border-radius:12px;padding:10px 12px;margin:10px 0}
+.pred b{color:var(--w)}
+@media (prefers-color-scheme:dark){.pred b{color:var(--g2)}}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.opt{font:700 15px var(--f);border:2px solid var(--ln);background:var(--card);color:var(--ink);border-radius:12px;padding:6px 14px;cursor:pointer;min-height:44px}
+.opt[aria-pressed="true"]{border-color:var(--g);box-shadow:0 0 0 2px var(--g) inset}
+.opt.right{border-color:var(--ok);background:#e5f4ea;color:#1b4d24}.opt.wrong{border-color:var(--vy);background:#fbe4e2;color:#7a1b16}
+.sim{margin-top:10px;border:1px solid var(--ln);border-radius:14px;overflow:hidden;background:#fdfbf7}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 14px;padding:10px 12px;border-top:1px solid var(--ln);background:var(--card)}
+.ctl label{display:flex;flex-direction:column;font-weight:700;font-size:14px}
+.ctl label b{font-family:var(--fd);color:var(--w);direction:ltr;text-align:right}
+@media (prefers-color-scheme:dark){.ctl label b{color:var(--g2)}}
+input[type=range]{width:100%;accent-color:var(--w)}
+.readout{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 12px;background:var(--card)}
+.readout span{border:1px solid var(--ln);border-radius:10px;padding:2px 10px;font-size:14px;font-variant-numeric:tabular-nums}
+.readout b{direction:ltr;display:inline-block}
+.btn{font:700 16px var(--f);border:0;border-radius:12px;padding:8px 18px;min-height:46px;background:var(--w);color:#fff;cursor:pointer}
+.btn.g{background:transparent;color:var(--w);border:2px solid var(--w)}.btn.gold{background:var(--g);color:#2b1a00}
+@media (prefers-color-scheme:dark){.btn.g{color:var(--g2);border-color:var(--g2)}}
+.btn:focus-visible,.opt:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+details.reveal{margin-top:10px;border:2px dashed var(--g);border-radius:12px;padding:0 12px;background:var(--g3)}
+details.reveal summary{cursor:pointer;font-weight:700;padding:8px 0;list-style:none}
+details.reveal summary::-webkit-details-marker{display:none}
+details.reveal[open]{padding-bottom:10px}
+.msg{font-weight:700;margin-top:8px;min-height:1.4em}.msg.ok{color:var(--ok)}.msg.no{color:var(--vy)}
+.life{background:linear-gradient(135deg,var(--g3),transparent);border:1px solid var(--g);border-radius:12px;padding:8px 12px;margin-top:10px;font-size:15px}
+.key{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;font-weight:700;padding:6px 12px 0;background:var(--card)}
+.key i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-left:4px}
+input.num{font:700 16px var(--f);width:110px;border:1.5px solid var(--ln);border-radius:10px;padding:6px 8px;background:var(--card);color:var(--ink);direction:ltr;text-align:center}
+.q{border-top:1px solid var(--ln);padding:10px 0}
+.q p{font-weight:700}
+.map{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.map .m{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--ln);border-radius:12px;padding:8px 12px}
+.map a{font-size:14px;font-weight:700;color:var(--w)}
+.chip{border-radius:999px;padding:1px 10px;font-size:13px;font-weight:700;color:#fff}
+footer{text-align:center;color:var(--mut);font-size:13px;margin-top:24px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><div><small>منصة العلوم · فيزياء الصف العاشر · الوحدة الثانية</small><b>📖 الكتاب الحي: الحركة في بعدين</b></div><a href="../#/l/p10-2-2">↩ صفحة الدرس</a></div></div>
+<main>
+<nav class="prog" id="prog" aria-label="فقرات الدرس"></nav>
+
+<section class="page" id="s0" data-n="مدخل">
+  <h1>لماذا تسير الكرة في قوس؟</h1>
+  <p>حين يرمي لاعب الكرة نحو السلّة، أو يتدفّق الماء من خرطوم الحديقة مائلًا، يرسم الجسم في الهواء مسارًا منحنيًا يسمّى <b>القطع المكافئ</b>. الجسم الذي يتحرّك بعد قذفه تحت تأثير وزنه فقط يسمّى <b>المقذوف</b>.</p>
+  <p>الفكرة الكبرى في هذا الدرس: <b>لسرعة المقذوف مركّبتان متعامدتان، أفقية ورأسية، لا تعتمد إحداهما على الأخرى.</b></p>
+  <div class="key"><span><i style="background:var(--vx)"></i>المركّبة الأفقية vₓ</span><span><i style="background:var(--vy)"></i>المركّبة الرأسية vᵧ</span></div>
+  <p class="life">📱 في هذا الكتاب: اقرئي الفقرة، ثم <b>توقّعي</b> قبل أن تجرّبي، ثم <b>جرّبي</b> في المحاكاة، ثم اكشفي التفسير.</p>
+</section>
+
+<section class="page" id="s1" data-n="الفقرة 1">
+  <h2>استقلال الحركتين</h2>
+  <p>نقذف كرة أفقيًّا من حافّة طاولة، ونُسقط كرة ثانية من الارتفاع نفسه في اللحظة نفسها.</p>
+  <div class="pred"><b>🔮 توقّعي أولًا:</b> أيّ الكرتين تصل إلى الأرض أولًا؟
+    <div class="opts" data-q="p1"><button class="opt" data-v="a">المقذوفة أفقيًّا</button><button class="opt" data-v="b">الساقطة</button><button class="opt" data-v="c">تصلان معًا</button></div></div>
+  <div class="sim"><canvas id="c1" width="800" height="420" aria-label="محاكاة كرة مقذوفة أفقيًّا وكرة ساقطة"></canvas>
+    <div class="ctl"><label>سرعة القذف الأفقي v₀ <b id="l1v">8 m/s</b><input type="range" id="r1v" min="2" max="14" step="1" value="8"></label></div></div>
+  <div class="row"><button class="btn" id="b1">▶ أطلقي الكرتين</button><span class="msg" id="m1" aria-live="polite"></span></div>
+  <details class="reveal"><summary>📜 ارفعي الورقة: التفسير العلمي</summary>
+    <p>تصل الكرتان <b>معًا</b>. الحركة الرأسية للكرتين متماثلة: كلتاهما تبدأ بسرعة رأسية صفر وتتسارع بـ g نحو الأسفل. السرعة الأفقية لا تؤثّر في زمن السقوط، بل في المسافة الأفقية فقط. لاحظي النقاط: في كل لحظة تكون الكرتان على الارتفاع نفسه.</p></details>
+</section>
+
+<section class="page" id="s2" data-n="الفقرة 2">
+  <h2>المقذوف الأفقي</h2>
+  <p>عند القذف أفقيًّا: v₀ₓ = v₀ و v₀ᵧ = 0. نحسب زمن السقوط من الارتفاع فقط، ثم نحسب المدى من السرعة الأفقية الثابتة.</p>
+  <div class="law"><span>h = ½ g t²</span><span>t = √(2h / g)</span><span>x = v₀ · t</span></div>
+  <div class="pred"><b>🧮 احسبي قبل أن تجرّبي:</b> كرة قُذفت أفقيًّا بسرعة <b id="q2v">10</b> m/s من ارتفاع <b id="q2h">20</b> m (خذي g = 9.8 m/s²). كم يكون مداها الأفقي تقريبًا؟
+    <div class="row"><input class="num" id="i2" inputmode="decimal" aria-label="المدى بالمتر"><span>m</span><button class="btn g" id="k2">تحقّقي</button><span class="msg" id="m2" aria-live="polite"></span></div></div>
+  <div class="sim"><canvas id="c2" width="800" height="420" aria-label="محاكاة المقذوف الأفقي"></canvas>
+    <div class="ctl"><label>الارتفاع h <b id="l2h">20 m</b><input type="range" id="r2h" min="5" max="45" step="5" value="20"></label>
+      <label>سرعة القذف v₀ <b id="l2v">10 m/s</b><input type="range" id="r2v" min="2" max="20" step="1" value="10"></label></div>
+    <div class="readout"><span>زمن السقوط t = <b id="o2t">–</b></span><span>المدى x = <b id="o2x">–</b></span></div></div>
+  <div class="row"><button class="btn" id="b2">▶ أطلقي</button></div>
+  <p class="life">🌍 في حياتنا: لذلك تُلقى صناديق الإغاثة من الطائرة <b>قبل</b> الوصول فوق الهدف؛ فهي تحتفظ بسرعة الطائرة الأفقية أثناء سقوطها.</p>
+</section>
+
+<section class="page" id="s3" data-n="الفقرة 3">
+  <h2>المقذوف بزاوية</h2>
+  <p>نحلّل السرعة الابتدائية إلى مركّبتين. المركّبة الأفقية تبقى ثابتة طوال الرحلة، أما الرأسية فتتناقص صعودًا حتى تصبح <b>صفرًا عند أقصى ارتفاع</b>، ثم تزداد هبوطًا.</p>
+  <div class="law"><span>v₀ₓ = v₀ cosθ</span><span>v₀ᵧ = v₀ sinθ</span><span>T = 2v₀ sinθ / g</span><span>H = v₀² sin²θ / 2g</span><span>R = v₀² sin2θ / g</span></div>
+  <div class="pred"><b>🔮 توقّعي:</b> عند أعلى نقطة في المسار، كم تكون المركّبة الرأسية للسرعة؟
+    <div class="opts" data-q="p3"><button class="opt" data-v="a">أكبر ما يمكن</button><button class="opt" data-v="b">صفرًا</button><button class="opt" data-v="c">تساوي الأفقية</button></div></div>
+  <div class="sim"><canvas id="c3" width="800" height="440" aria-label="محاكاة المقذوف بزاوية مع مركّبتي السرعة"></canvas>
+    <div class="ctl"><label>السرعة الابتدائية v₀ <b id="l3v">20 m/s</b><input type="range" id="r3v" min="8" max="30" step="1" value="20"></label>
+      <label>زاوية القذف θ <b id="l3a">50°</b><input type="range" id="r3a" min="10" max="80" step="5" value="50"></label></div>
+    <div class="readout"><span>T = <b id="o3t">–</b></span><span>H = <b id="o3h">–</b></span><span>R = <b id="o3r">–</b></span><span>vᵧ الآن = <b id="o3y">–</b></span></div></div>
+  <div class="row"><button class="btn" id="b3">▶ أطلقي</button><button class="btn g" id="p3b">⏸ توقّفي عند القمّة</button></div>
+  <details class="reveal"><summary>📜 ارفعي الورقة: التفسير العلمي</summary>
+    <p>عند أقصى ارتفاع تكون <b>vᵧ = 0</b> لحظيًّا، بينما تبقى vₓ كما هي. لهذا يكون المقذوف عند القمّة متحرّكًا أفقيًّا فقط. السهم الأزرق في المحاكاة لا يتغيّر طوله أبدًا، والسهم الأحمر يقصر ثم ينقلب.</p></details>
+</section>
+
+<section class="page" id="s4" data-n="الفقرة 4">
+  <h2>سرّ الزاوية 45°</h2>
+  <p>المدى الأفقي R = v₀² sin2θ / g. بالسرعة الابتدائية نفسها، أيّ زاوية تعطي أبعد مدى؟</p>
+  <div class="pred"><b>🔮 توقّعي:</b> أطلقنا ثلاث قذائف بالسرعة نفسها بالزوايا 30° و 45° و 60°. أيّها يصل أبعد؟
+    <div class="opts" data-q="p4"><button class="opt" data-v="a">30°</button><button class="opt" data-v="b">45°</button><button class="opt" data-v="c">60°</button></div></div>
+  <div class="sim"><canvas id="c4" width="800" height="400" aria-label="مقارنة مسارات ثلاث زوايا"></canvas></div>
+  <div class="row"><button class="btn" id="b4">▶ أطلقي الثلاثة</button><span class="msg" id="m4" aria-live="polite"></span></div>
+  <details class="reveal"><summary>📜 ارفعي الورقة: التفسير العلمي</summary>
+    <p>أكبر قيمة لـ sin2θ هي 1 عندما 2θ = 90°، أي <b>θ = 45°</b>. ولاحظي أن 30° و 60° أعطتا <b>المدى نفسه</b>، لأنهما زاويتان متتامّتان (مجموعهما 90°) و sin60° = sin120°. أما في الواقع فمقاومة الهواء تجعل المدى الأكبر عند زاوية أقل قليلًا من 45°.</p></details>
+  <p class="life">⚽ في حياتنا: لاعب رمي الجُلّة يقذف بزاوية قريبة من 45° ليصل أبعد، ورجل الإطفاء يغيّر زاوية الخرطوم ليصل الماء إلى النار.</p>
+</section>
+
+<section class="page" id="s5" data-n="التقويم">
+  <h2>🩺 تشخيص فوري: هل أتقنتِ الفقرات؟</h2>
+  <p>ثمانية أسئلة قصيرة. في النهاية تظهر لكِ خريطة إتقانكِ لكل فقرة، ورابط يعيدكِ إلى ما تحتاجين مراجعته.</p>
+  <div id="quiz"></div>
+  <div class="row"><button class="btn gold" id="qend">📊 أظهري خريطة إتقاني</button></div>
+  <div id="res"></div>
+</section>
+<footer>منصة العلوم · مدرسة القطرانة الثانوية للبنات · تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+</main>
+<script>
+(()=>{
+const g=9.8,$=id=>document.getElementById(id),C={vx:"#1565C0",vy:"#C62828",w:"#7A1F2E",g:"#B8902A",ink:"#2B1218",mut:"#9a8a8f",ground:"#d9c9bd",ok:"#2E7D32"};
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem("live.p1022")||"{}")[k];const o=JSON.parse(localStorage.getItem("live.p1022")||"{}");o[k]=v;localStorage.setItem("live.p1022",JSON.stringify(o));}catch(e){}};
+/* شريط الفقرات */
+const SECT=[["s0","مدخل"],["s1","استقلال الحركتين"],["s2","المقذوف الأفقي"],["s3","المقذوف بزاوية"],["s4","سرّ 45°"],["s5","التقويم"]];
+const prog=$("prog");SECT.forEach(([id,t])=>{const a=document.createElement("a");a.href="#"+id;a.textContent=t;a.id="n-"+id;if(store("d-"+id))a.className="done";prog.append(a);});
+const done=id=>{store("d-"+id,1);const a=$("n-"+id);if(a)a.className="done";};
+/* أسئلة التوقّع */
+document.querySelectorAll(".opts[data-q]").forEach(box=>box.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{box.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));box.dataset.pick=b.dataset.v;})));
+const judge=(q,right)=>{const box=document.querySelector('.opts[data-q="'+q+'"]');if(!box)return null;box.querySelectorAll(".opt").forEach(x=>{x.classList.toggle("right",x.dataset.v===right);x.classList.toggle("wrong",x.dataset.v===box.dataset.pick&&x.dataset.v!==right);});return box.dataset.pick?box.dataset.pick===right:null;};
+/* أدوات الرسم */
+function setup(cv){const r=devicePixelRatio||1,W=innerWidth<600?520:cv.width,H=Math.round(cv.height*W/cv.width*(innerWidth<600?1.15:1));cv.width=W*r;cv.height=H*r;const x=cv.getContext("2d");x.scale(r,r);return{x,W,H};}
+function arrow(x,x1,y1,x2,y2,col){const a=Math.atan2(y2-y1,x2-x1),L=Math.hypot(x2-x1,y2-y1);if(L<2)return;x.strokeStyle=col;x.fillStyle=col;x.lineWidth=3.5;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();
+  x.beginPath();x.moveTo(x2,y2);x.lineTo(x2-11*Math.cos(a-.45),y2-11*Math.sin(a-.45));x.lineTo(x2-11*Math.cos(a+.45),y2-11*Math.sin(a+.45));x.closePath();x.fill();}
+function ball(x,px,py,col,r){x.fillStyle=col;x.beginPath();x.arc(px,py,r||9,0,7);x.fill();x.strokeStyle="#fff";x.lineWidth=2;x.stroke();}
+function ground(c,gy){c.x.fillStyle=C.ground;c.x.fillRect(0,gy,c.W,c.H-gy);}
+function label(x,t,px,py,col,al){x.fillStyle=col||C.ink;x.font="700 "+(innerWidth<600?19:15)+"px 'Noto Naskh Arabic',sans-serif";x.textAlign=al||"center";x.fillText(t,px,py);}
+const anim=(dur,step,end)=>{if(RM){step(1);end&&end();return;}const t0=performance.now();const f=n=>{const k=Math.min(1,(n-t0)/dur);step(k);if(k<1)requestAnimationFrame(f);else end&&end();};requestAnimationFrame(f);};
+const fx=(v,d=1)=>(Math.round(v*10**d)/10**d).toString();
+
+/* ===== الفقرة 1 ===== */
+(()=>{const c=setup($("c1")),H0=20;let v0=8,busy=false;
+  const S=()=>{const gy=c.H-40,top=70,sc=(gy-top)/H0,tf=Math.sqrt(2*H0/g),maxX=14*tf,sx=(c.W-180)/maxX;return{gy,top,sc,sx,tf};};
+  const draw=(t,trail)=>{const s=S(),x=c.x;x.clearRect(0,0,c.W,c.H);ground(c,s.gy);
+    x.fillStyle="#c8b29e";x.fillRect(c.W-150,s.top,130,8);x.fillRect(c.W-40,s.top,10,s.gy-s.top);
+    const X0=c.W-150,ty=k=>s.top-9+.5*g*k*k*s.sc;
+    trail.forEach(k=>{x.fillStyle="rgba(122,31,46,.35)";x.beginPath();x.arc(X0-v0*k*s.sx,ty(k),4,0,7);x.fill();x.fillStyle="rgba(184,144,42,.45)";x.beginPath();x.arc(X0+10,ty(k),4,0,7);x.fill();
+      x.strokeStyle="rgba(0,0,0,.12)";x.setLineDash([4,4]);x.beginPath();x.moveTo(X0-v0*k*s.sx,ty(k));x.lineTo(X0+10,ty(k));x.stroke();x.setLineDash([]);});
+    const y=Math.min(ty(t),s.gy-9);ball(x,X0-v0*t*s.sx,y,C.w);ball(x,X0+10,y,C.g);
+    label(x,"مقذوفة أفقيًّا",X0-v0*t*s.sx,y-16,C.w);label(x,"ساقطة",X0+40,y+5,"#8a6516","right");};
+  const upd=()=>{v0=+$("r1v").value;$("l1v").textContent=v0+" m/s";if(!busy)draw(0,[]);};$("r1v").addEventListener("input",upd);upd();
+  $("b1").onclick=()=>{if(busy)return;busy=true;const s=S(),tr=[];let last=0;$("m1").textContent="";
+    anim(2200,k=>{const t=k*s.tf;if(t-last>=s.tf/8){tr.push(t);last=t;}draw(t,tr);},()=>{busy=false;const r=judge("p1","c");const m=$("m1");m.className="msg "+(r===false?"no":"ok");
+      m.textContent=r===true?"✅ توقّعكِ صحيح: وصلتا معًا!":r===false?"وصلتا معًا! ارفعي الورقة لتعرفي السبب 👇":"وصلتا معًا! هل توقّعتِ ذلك؟";done("s1");});};})();
+
+/* ===== الفقرة 2 ===== */
+(()=>{const c=setup($("c2"));let h=20,v=10,busy=false;
+  const calc=()=>{const t=Math.sqrt(2*h/g);return{t,x:v*t};};
+  const S=()=>{const gy=c.H-40,top=40,sc=Math.min((gy-top)/45,(c.W-120)/(20*Math.sqrt(90/g)));return{gy,top,sc};};
+  const draw=(t,path)=>{const s=S(),x=c.x;x.clearRect(0,0,c.W,c.H);ground(c,s.gy);const X0=c.W-60,Y0=s.gy-h*s.sc;
+    x.fillStyle="#c8b29e";x.fillRect(X0,Y0,50,s.gy-Y0);x.fillStyle=C.mut;label(x,"h = "+h+" m",X0+25,Y0-8,C.mut);
+    x.strokeStyle=C.w;x.lineWidth=2.5;x.setLineDash([6,5]);x.beginPath();path.forEach(([px,py],i)=>i?x.lineTo(px,py):x.moveTo(px,py));x.stroke();x.setLineDash([]);
+    const px=X0-v*t*s.sc,py=Y0+.5*g*t*t*s.sc;ball(x,px,Math.min(py,s.gy-8),C.w);
+    if(t>0){arrow(x,px,py,px-v*3.2,py,C.vx);arrow(x,px,py,px,py+g*t*3.2,C.vy);}
+    return[px,py];};
+  const upd=()=>{h=+$("r2h").value;v=+$("r2v").value;$("l2h").textContent=h+" m";$("l2v").textContent=v+" m/s";const r=calc();$("o2t").textContent=fx(r.t,2)+" s";$("o2x").textContent=fx(r.x)+" m";if(!busy)draw(0,[]);};
+  $("r2h").addEventListener("input",upd);$("r2v").addEventListener("input",upd);upd();
+  $("b2").onclick=()=>{if(busy)return;busy=true;const r=calc(),P=[];anim(1800,k=>{P.push(draw(k*r.t,P));},()=>{busy=false;done("s2");});};
+  $("k2").onclick=()=>{const ans=10*Math.sqrt(40/g),u=parseFloat(($("i2").value||"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace("،","."));const m=$("m2");
+    if(!isFinite(u)){m.className="msg no";m.textContent="اكتبي رقمًا.";return;}
+    if(Math.abs(u-ans)<=0.6){m.className="msg ok";m.textContent="✅ أحسنتِ! t = √(2×20/9.8) ≈ 2.02 s، و x = 10 × 2.02 ≈ "+fx(ans)+" m. جرّبيها الآن في المحاكاة.";$("r2h").value=20;$("r2v").value=10;upd();}
+    else{m.className="msg no";m.textContent="ليس تمامًا. ابدئي بالزمن: t = √(2h/g)، ثم اضربي في v₀.";}};})();
+
+/* ===== الفقرة 3 ===== */
+(()=>{const c=setup($("c3"));let v=20,a=50,busy=false,pausePeak=false,raf=0;
+  const S=()=>{const gy=c.H-36,sc=Math.min((c.W-90)/((v*v)/g),(gy-40)/((v*v*.97)/(2*g)));return{gy,sc,X0:c.W-45};};
+  const P=()=>{const th=a*Math.PI/180,vx=v*Math.cos(th),vy=v*Math.sin(th),T=2*vy/g;return{vx,vy,T,H:vy*vy/(2*g),R:vx*T};};
+  const draw=(t,full)=>{const s=S(),p=P(),x=c.x;x.clearRect(0,0,c.W,c.H);ground(c,s.gy);
+    x.strokeStyle="rgba(122,31,46,.25)";x.lineWidth=2;x.setLineDash([5,5]);x.beginPath();for(let k=0;k<=60;k++){const tt=p.T*k/60;const px=s.X0-p.vx*tt*s.sc,py=s.gy-(p.vy*tt-.5*g*tt*tt)*s.sc;k?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();x.setLineDash([]);
+    x.strokeStyle=C.w;x.lineWidth=3;x.beginPath();for(let k=0;k<=40;k++){const tt=t*k/40;const px=s.X0-p.vx*tt*s.sc,py=s.gy-(p.vy*tt-.5*g*tt*tt)*s.sc;k?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+    const hx=s.X0-p.vx*(p.T/2)*s.sc,hy=s.gy-p.H*s.sc;x.strokeStyle=C.g;x.setLineDash([3,4]);x.beginPath();x.moveTo(hx,hy);x.lineTo(hx,s.gy);x.stroke();x.setLineDash([]);label(x,"H",hx-10,(hy+s.gy)/2,"#8a6516");
+    x.strokeStyle=C.mut;x.lineWidth=1.5;x.beginPath();x.moveTo(s.X0,s.gy+14);x.lineTo(s.X0-p.R*s.sc,s.gy+14);x.stroke();label(x,"R = "+fx(p.R)+" m",(s.X0+s.X0-p.R*s.sc)/2,s.gy+30,C.mut);
+    const px=s.X0-p.vx*t*s.sc,py=s.gy-(p.vy*t-.5*g*t*t)*s.sc,vyn=p.vy-g*t,K=2.4;
+    arrow(x,px,py,px-p.vx*K,py,C.vx);arrow(x,px,py,px,py-vyn*K,C.vy);ball(x,px,py,C.w,10);
+    x.fillStyle="#6d4c41";x.save();x.translate(s.X0,s.gy);x.rotate(a*Math.PI/180);x.fillRect(0,-7,-34,14);x.restore();
+    $("o3y").textContent=fx(vyn)+" m/s";if(Math.abs(vyn)<.6&&t>0)label(x,"القمّة: vᵧ = 0",px,py-22,C.vy);};
+  const upd=()=>{v=+$("r3v").value;a=+$("r3a").value;$("l3v").textContent=v+" m/s";$("l3a").textContent=a+"°";const p=P();$("o3t").textContent=fx(p.T,2)+" s";$("o3h").textContent=fx(p.H)+" m";$("o3r").textContent=fx(p.R)+" m";if(!busy)draw(0);};
+  $("r3v").addEventListener("input",upd);$("r3a").addEventListener("input",upd);upd();
+  const go=(stopPeak)=>{if(busy)return;busy=true;const p=P(),end=stopPeak?p.T/2:p.T;const dur=2600*end/p.T;
+    anim(dur,k=>draw(k*end),()=>{busy=false;if(stopPeak){const r=judge("p3","b");}done("s3");});};
+  $("b3").onclick=()=>go(false);$("p3b").onclick=()=>go(true);})();
+
+/* ===== الفقرة 4 ===== */
+(()=>{const c=setup($("c4")),v=20,A=[[30,"#2F6FB0"],[45,"#2E7D32"],[60,"#C9822B"]];let busy=false;
+  const S=()=>{const gy=c.H-40;return{gy,sc:Math.min((c.W-90)/(v*v/g),(gy-30)/(v*v*.75/(2*g))),X0:c.W-45};};
+  const draw=k=>{const s=S(),x=c.x;x.clearRect(0,0,c.W,c.H);ground(c,s.gy);
+    A.forEach(([a,col],i)=>{const th=a*Math.PI/180,vx=v*Math.cos(th),vy=v*Math.sin(th),T=2*vy/g,t=T*k;
+      x.strokeStyle=col;x.lineWidth=3;x.beginPath();for(let n=0;n<=50;n++){const tt=t*n/50;const px=s.X0-vx*tt*s.sc,py=s.gy-(vy*tt-.5*g*tt*tt)*s.sc;n?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+      const px=s.X0-vx*t*s.sc,py=s.gy-(vy*t-.5*g*t*t)*s.sc;ball(x,px,py,col,8);
+      if(k>=1){const R=vx*T;x.direction="rtl";label(x,"الزاوية "+a+"°: المدى "+fx(R)+" م",c.W-14,30+i*26,col,"right");x.direction="inherit";x.strokeStyle=col;x.lineWidth=2;x.beginPath();x.moveTo(s.X0-R*s.sc,s.gy);x.lineTo(s.X0-R*s.sc,s.gy+12);x.stroke();}});
+    label(x,"v₀ = 20 m/s",14,26,C.mut,"left");};
+  draw(0);
+  $("b4").onclick=()=>{if(busy)return;busy=true;anim(2600,draw,()=>{busy=false;const r=judge("p4","b");const m=$("m4");m.className="msg "+(r===false?"no":"ok");
+    m.textContent=(r===true?"✅ توقّعكِ صحيح! ":"")+"45° وصلت الأبعد، و 30° و 60° وصلتا المسافة نفسها!";done("s4");});};})();
+
+/* ===== التشخيص ===== */
+const Q=[
+ {q:"المركّبة الأفقية لسرعة المقذوف (بإهمال مقاومة الهواء):",o:["تزداد","تتناقص","ثابتة","صفر"],a:2,s:"s3",why:"لا توجد قوّة أفقية."},
+ {q:"عند أقصى ارتفاع تكون المركّبة الرأسية للسرعة:",o:["قيمة عظمى","صفرًا","مساوية للأفقية","سالبة"],a:1,s:"s3",why:"يتوقّف الصعود لحظيًّا."},
+ {q:"زاوية القذف التي تعطي أكبر مدى أفقي:",o:["30°","45°","60°","90°"],a:1,s:"s4",why:"sin2θ أكبر ما يمكن عند θ = 45°."},
+ {q:"مسار المقذوف:",o:["خط مستقيم","دائرة","قطع مكافئ","قطع ناقص"],a:2,s:"s1",why:"تركيب حركة منتظمة وحركة بتسارع ثابت."},
+ {q:"كرة قُذفت أفقيًّا وأخرى أُسقطت من الارتفاع نفسه، تصلان الأرض:",o:["المقذوفة أولًا","الساقطة أولًا","معًا","لا يمكن التحديد"],a:2,s:"s1",why:"الحركة الرأسية متماثلة في الحالتين."},
+ {q:"مقذوف أفقي من ارتفاع 20 m (خذي g = 10 m/s²)، زمن سقوطه:",o:["1 s","2 s","4 s","20 s"],a:1,s:"s2",why:"20 = ½ × 10 × t² ⇒ t = 2 s."},
+ {q:"الزاويتان اللتان تعطيان المدى نفسه:",o:["20° و 40°","30° و 60°","45° و 90°","10° و 30°"],a:1,s:"s4",why:"الزاويتان المتتامّتان."},
+ {q:"مقذوف أفقي بسرعة 5 m/s استغرق 2 s ليصل الأرض. مداه الأفقي:",o:["2.5 m","5 m","10 m","20 m"],a:2,s:"s2",why:"x = v₀ t = 5 × 2 = 10 m."}];
+const NAME={s1:"استقلال الحركتين",s2:"المقذوف الأفقي",s3:"المقذوف بزاوية",s4:"سرّ 45°"};
+const L=["أ","ب","ج","د"],qb=$("quiz"),ans={};
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="q";const p=document.createElement("p");p.textContent=(i+1)+". "+q.q;const o=document.createElement("div");o.className="opts";
+  q.o.forEach((t,j)=>{const b=document.createElement("button");b.className="opt";b.textContent=L[j]+") "+t;b.onclick=()=>{if(ans[i]!=null)return;ans[i]=j;o.querySelectorAll(".opt").forEach((x,k)=>{x.disabled=true;if(k===q.a)x.classList.add("right");else if(k===j)x.classList.add("wrong");});
+    const w=document.createElement("div");w.className="msg "+(j===q.a?"ok":"no");w.textContent=(j===q.a?"✅ ":"💡 ")+q.why;d.append(w);};o.append(b);});d.append(p,o);qb.append(d);});
+$("qend").onclick=()=>{const per={};Q.forEach((q,i)=>{per[q.s]=per[q.s]||{c:0,n:0};per[q.s].n++;if(ans[i]===q.a)per[q.s].c++;});
+  const n=Object.keys(ans).length,c=Q.filter((q,i)=>ans[i]===q.a).length;const r=$("res");r.innerHTML="";
+  const h=document.createElement("p");h.style.fontWeight="700";h.textContent=n<Q.length?"أجبتِ عن "+n+" من "+Q.length+". أكملي الأسئلة لتكون الخريطة أدق.":"نتيجتكِ: "+c+" من "+Q.length;r.append(h);
+  const m=document.createElement("div");m.className="map";
+  Object.keys(NAME).forEach(s=>{const v=per[s];const p=v&&v.n?Math.round(v.c/v.n*100):0;const row=document.createElement("div");row.className="m";
+    const t=document.createElement("div");t.innerHTML="<b>"+NAME[s]+"</b> ";const chip=document.createElement("span");chip.className="chip";chip.style.background=p>=80?"#2E7D32":p>=50?"#C9822B":"#B3261E";chip.textContent=p>=80?"✅ متقنة":p>=50?"⚠️ تعزيز":"❌ علاج";t.append(chip);
+    row.append(t);if(p<80){const a=document.createElement("a");a.href="#"+s;a.textContent="↩ ارجعي للفقرة";row.append(a);}m.append(row);});
+  r.append(m);done("s5");store("diag",{c,n:Q.length,per,at:new Date().toISOString()});};
+})();
+</script>
+</body>
+</html>

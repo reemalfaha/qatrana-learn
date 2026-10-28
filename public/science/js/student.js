@@ -74,7 +74,9 @@ route(/^#\/l\/([\w-]+)(?:\/(\w+))?$/,(V,id,tab)=>{const l=findLesson(id);if(!l){
   nav.append(prev?el("a",{class:"btn ghost sm",href:"#/l/"+prev.id},"→ "+prev.title):el("span"),next?el("a",{class:"btn ghost sm",href:"#/l/"+next.id},next.title+" ←"):el("a",{class:"btn gold sm",href:"#/exam/"+u.id},"🎓 امتحان الوحدة"));
   V.append(nav,credit());
 });
+const LIVE={"p10-2-2":1};
 function lLearn(P,l){
+  if(LIVE[l.id])P.append(el("a",{class:"card",href:"live/"+l.id+".html",style:{display:"flex",gap:"12px",alignItems:"center",textDecoration:"none",color:"inherit",border:"2px solid var(--gold)",background:"linear-gradient(135deg,var(--gold3),transparent)",marginBottom:"14px"}},el("span",{style:{fontSize:"34px"}},"📖"),el("div",{},el("b",{style:{fontSize:"18px"}},"جديد: الكتاب الحي لهذا الدرس"),el("div",{class:"small"},"اقرئي الفقرة، توقّعي، جرّبي المحاكاة داخل الصفحة، ثم اكشفي التفسير وشخّصي فهمكِ."))));
   P.append(el("section",{class:"card"},el("h3",{style:{marginBottom:"8px"}},"🎯 نتاجات التعلّم"),el("ul",{class:"outs"},...l.outcomes.map(o=>el("li",{},o)))));
   const pts=el("div",{class:"pts"});l.points.forEach(([h,p],i)=>pts.append(el("div",{class:"pt"},el("span",{class:"n"},i+1),el("div",{},el("h4",{},h),el("p",{},p)))));
   P.append(el("section",{class:"card",style:{marginTop:"14px"}},el("h3",{style:{marginBottom:"12px"}},"📚 خلاصة الدرس"),pts));

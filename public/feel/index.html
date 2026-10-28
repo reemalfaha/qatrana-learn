@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>هل استمتعتِ بالحصة؟ · منصة القطرانة</title>
+<meta name="theme-color" content="#7A1F2E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 var(--f);min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;text-align:center;padding:16px 16px 22px;border-bottom:5px solid var(--g)}
+header small{color:var(--g2);font-weight:700}header h1{font:700 clamp(24px,6vw,36px)/1.3 var(--fd);margin:4px 0 0}
+main{width:100%;max-width:640px;margin:0 auto;padding:18px 16px 30px;flex:1;display:flex;flex-direction:column;gap:14px}
+main.wide{max-width:1100px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:16px;box-shadow:0 6px 20px rgba(60,20,30,.07)}
+.ctx{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-weight:700;color:var(--mut);font-size:15px}
+.ctx span{background:var(--card);border:1px solid var(--ln);border-radius:999px;padding:2px 12px}
+h2{font:700 22px var(--fd);margin:0 0 6px;text-align:center}
+.emos{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.emo{font:inherit;border:2.5px solid var(--ln);background:var(--card);border-radius:18px;padding:10px 2px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .15s,border-color .15s;color:var(--ink)}
+.emo i{font-style:normal;font-size:clamp(34px,10vw,52px);line-height:1.1}
+.emo span{font-size:12.5px;font-weight:700;color:var(--mut);text-align:center;line-height:1.3}
+.emo:hover{transform:translateY(-3px)}.emo[aria-pressed="true"]{border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 35%,transparent);transform:scale(1.06)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{font:700 15px var(--f);border:1.5px solid var(--ln);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;min-height:42px}
+.chip[aria-pressed="true"]{background:var(--w);border-color:var(--w);color:#fff}
+.btn{font:700 18px var(--f);border:0;border-radius:14px;padding:12px 18px;min-height:52px;background:var(--w);color:#fff;cursor:pointer;width:100%}
+.btn:disabled{opacity:.5;cursor:default}.btn.g{background:transparent;color:var(--w);border:2px solid var(--w)}
+@media (prefers-color-scheme:dark){.btn.g{color:var(--g2);border-color:var(--g2)}}
+.btn:focus-visible,.emo:focus-visible,.chip:focus-visible,select:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+select{font:600 16px var(--f);border:1.5px solid var(--ln);border-radius:12px;padding:8px 10px;min-height:46px;background:var(--card);color:var(--ink);width:100%}
+label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:15px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.thanks{text-align:center}.thanks .big{font-size:80px;line-height:1;animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.muted{color:var(--mut);font-size:14px;text-align:center}
+.err{color:#c2410c;text-align:center;font-weight:700}
+/* شاشة المعلّمة */
+.show{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px;align-items:start}
+@media (max-width:800px){.show{grid-template-columns:1fr}}
+.qr{background:#fff;border:4px solid var(--g);border-radius:18px;padding:12px;width:min(360px,100%);margin:0 auto;aspect-ratio:1}
+.qr{word-break:break-all;font-size:12px}
+.qr canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
+.cnt{font:700 64px/1 var(--fd);color:var(--w);text-align:center}
+@media (prefers-color-scheme:dark){.cnt{color:var(--g2)}}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:54px minmax(0,1fr) 40px;gap:8px;align-items:center;font-weight:700}
+.bar i{font-style:normal;font-size:36px;text-align:center}.bar .t{height:26px;border-radius:999px;background:color-mix(in srgb,var(--w) 10%,transparent);overflow:hidden}
+.bar .t b{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--g),var(--w));transition:width .6s}
+.bar span{text-align:center;font-variant-numeric:tabular-nums}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:14px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><small>مدرسة القطرانة الثانوية للبنات</small><h1 id="ttl">هل استمتعتِ بالحصة؟ 💭</h1></header>
+<main id="app"></main>
+<footer>إجابتكِ مجهولة الهوية تمامًا · تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+<script src="qrcode.js"></script>
+<script>
+(()=>{
+const API="https://zealous-walrus-367.eu-west-1.convex.cloud/api/";
+const P=new URLSearchParams(location.search);
+const ctx={s:P.get("s")||"",g:P.get("g")||"",c:P.get("c")||"",src:P.get("src")||"qr"};
+const SUBJ=["الأحياء","الكيمياء","الفيزياء","علوم الأرض والبيئة","العلوم","الرياضيات","اللغة العربية","اللغة الإنجليزية","التربية الإسلامية","الاجتماعيات","الحاسوب","أخرى"];
+const GR=["السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر"],SEC=["1","2","أ","ب"];
+const EM=[["😢","حزينة"],["😕","مش مبسوطة"],["😐","عادي"],["😊","استمتعت"],["😍","استمتعت كثير"]];
+const GOOD=["فهمت الدرس","التجربة العملية","اللعب والمسابقة","شاركت وتكلّمت","العمل مع صديقاتي","الشرح واضح"],BAD=["الدرس صعب","الوقت قصير","ما فهمت كل شيء","الصف مزعج"];
+const app=document.getElementById("app");
+function h(t,a,...k){const e=document.createElement(t);if(a)for(const[x,v]of Object.entries(a)){if(v==null||v===false)continue;if(x.startsWith("on"))e.addEventListener(x.slice(2),v);else e.setAttribute(x,v===true?"":v);}k.flat().forEach(c=>{if(c!=null&&c!==false)e.append(c.nodeType?c:document.createTextNode(c));});return e;}
+const call=(kind,path,args)=>fetch(API+kind,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({path,args,format:"json"})}).then(r=>r.json()).then(j=>{if(j.status!=="success")throw new Error(j.errorMessage||"err");return j.value;});
+const today=()=>new Date(Date.now()+3*3600e3).toISOString().slice(0,10);
+const lsk=()=>"feel."+today()+"."+[ctx.s,ctx.g,ctx.c].join(".");
+const get=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
+const sel=(lab,arr,key)=>{const s=h("select",{},h("option",{value:""},"اختاري…"),...arr.map(x=>h("option",{value:x},x)));s.value=ctx[key];s.addEventListener("change",()=>ctx[key]=s.value);return h("label",{},lab,s);};
+const ctxLine=()=>h("div",{class:"ctx"},ctx.s?h("span",{},"📘 "+ctx.s):null,ctx.g?h("span",{},"الصف "+ctx.g+(ctx.c?" · "+ctx.c:"")):null);
+
+function pickCtx(next,showMode){app.innerHTML="";const err=h("p",{class:"err"});
+  app.append(h("div",{class:"card"},h("h2",{},showMode?"اختاري الحصة لعرض الباركود":"أي حصة؟"),h("div",{class:"row"},sel("المبحث",SUBJ,"s"),sel("الصف",GR,"g"),sel("الشعبة",SEC,"c")),err,
+    h("button",{class:"btn",style:"margin-top:10px",onclick:()=>{if(!ctx.s||!ctx.g){err.textContent="اختاري المبحث والصف.";return;}next();}},"متابعة ←")));}
+
+/* ===== شاشة الطالبة ===== */
+function student(){app.innerHTML="";if(get(lsk()))return thanks(true);
+  let feel=0;const why=new Set();
+  const emos=h("div",{class:"emos",role:"group","aria-label":"شعوري"});const reasons=h("div",{class:"chips"});const rTitle=h("h2",{style:"font-size:18px;margin-top:6px"});
+  const send=h("button",{class:"btn",disabled:true},"أرسلي شعوري 💌");const err=h("p",{class:"err","aria-live":"polite"});
+  const drawR=()=>{reasons.innerHTML="";if(!feel){rTitle.textContent="";return;}rTitle.textContent=feel>=4?"شو أكثر إشي عجبكِ؟ (اختياري)":feel===3?"شو كان ممكن يخلّيها أحلى؟ (اختياري)":"شو اللي ما عجبكِ؟ (اختياري)";
+    (feel>=4?GOOD:feel===3?[...GOOD.slice(0,3),...BAD]:BAD).forEach(w=>{const b=h("button",{class:"chip","aria-pressed":String(why.has(w)),onclick:()=>{why.has(w)?why.delete(w):why.size<3&&why.add(w);b.setAttribute("aria-pressed",String(why.has(w)));}},w);reasons.append(b);});};
+  EM.forEach(([e,t],i)=>{const b=h("button",{class:"emo","aria-pressed":"false",onclick:()=>{feel=i+1;why.clear();emos.querySelectorAll(".emo").forEach((x,k)=>x.setAttribute("aria-pressed",String(k===i)));send.disabled=false;drawR();}},h("i",{},e),h("span",{},t));emos.append(b);});
+  send.addEventListener("click",async()=>{send.disabled=true;send.textContent="⏳ جارٍ الإرسال…";err.textContent="";
+    try{await call("mutation","feel:submit",{subject:ctx.s,grade:ctx.g,section:ctx.c,source:ctx.src,feel,why:[...why]});set(lsk(),String(feel));thanks(false,feel);}
+    catch(e){err.textContent="ما وصلت الإجابة، تأكّدي من الإنترنت وجرّبي مرة ثانية.";send.disabled=false;send.textContent="أرسلي شعوري 💌";}});
+  app.append(ctxLine(),h("div",{class:"card"},h("h2",{},"كيف كان شعوركِ في حصة اليوم؟"),emos,rTitle,reasons),send,err,h("p",{class:"muted"},"لا نسأل عن اسمكِ. إجابتكِ تساعد معلّمتكِ تخلّي الحصص أحلى."));}
+function thanks(already,feel){app.innerHTML="";
+  app.append(ctxLine(),h("div",{class:"card thanks"},h("div",{class:"big"},feel?EM[feel-1][0]:"💌"),h("h2",{},already?"سجّلتِ شعوركِ لهذه الحصة ✓":"شكرًا لكِ! وصل شعوركِ 💛"),h("p",{class:"muted"},feel>=4?"يسعدنا إنكِ استمتعتِ، بنستناكِ بالحصة الجاية 🌷":"معلّمتكِ رح تستفيد من رأيكِ لتكون الحصة الجاية أحلى 🌷")),
+    h("button",{class:"btn g",onclick:()=>{try{localStorage.removeItem(lsk());}catch(e){}student();}},"👭 طالبة أخرى على نفس الجهاز"));}
+
+/* ===== شاشة المعلّمة: باركود + عدّاد مباشر ===== */
+let timer;
+function show(){app.className="wide";app.innerHTML="";document.getElementById("ttl").textContent="هل استمتعتنّ بالحصة؟ 💭";
+  const u=new URL(location.origin+location.pathname);u.searchParams.set("s",ctx.s);u.searchParams.set("g",ctx.g);if(ctx.c)u.searchParams.set("c",ctx.c);u.searchParams.set("src",ctx.src==="qr"?"screen":ctx.src);
+  const qrBox=h("div",{class:"qr"});try{const q=qrcode(0,"M");q.addData(unescape(encodeURIComponent(u.toString())),"Byte");q.make();const n=q.getModuleCount(),m=2,s=10,c=document.createElement("canvas");c.width=c.height=(n+m*2)*s;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#5E1622";for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+m)*s,(r+m)*s,s,s);c.setAttribute("aria-label","باركود سؤال الشعور");qrBox.append(c);}catch(e){qrBox.textContent=u.toString();}
+  const since=new Date().toISOString();const cnt=h("div",{class:"cnt"},"0"),bars=h("div",{class:"bars"}),pct=h("p",{class:"muted",style:"font-size:18px;font-weight:700"}),why=h("div",{class:"chips"});
+  const paint=d=>{cnt.textContent=d.n;const mx=Math.max(1,...d.dist);bars.innerHTML="";[4,3,2,1,0].forEach(i=>bars.append(h("div",{class:"bar"},h("i",{},EM[i][0]),h("div",{class:"t"},h("b",{style:"width:"+Math.round(d.dist[i]/mx*100)+"%"})),h("span",{},String(d.dist[i])))));
+    pct.textContent=d.n?("😊 استمتعت "+Math.round((d.dist[3]+d.dist[4])/d.n*100)+"% من الطالبات"):"بانتظار أول إجابة…";why.innerHTML="";Object.entries(d.why).sort((a,b)=>b[1]-a[1]).slice(0,6).forEach(([w,n])=>why.append(h("span",{class:"chip"},w+" · "+n)));};
+  paint({n:0,dist:[0,0,0,0,0],why:{}});
+  const poll=()=>call("query","feel:live",{subject:ctx.s,grade:ctx.g,section:ctx.c,since}).then(paint).catch(()=>{});
+  clearInterval(timer);poll();timer=setInterval(poll,4000);
+  app.append(ctxLine(),h("div",{class:"show"},
+    h("div",{class:"card"},h("h2",{},"📱 صوّري الباركود وعبّري عن شعوركِ"),qrBox,h("p",{class:"muted"},"أو افتحي الرابط: "+u.host+u.pathname)),
+    h("div",{class:"card"},h("h2",{},"إجابات هذه الحصة"),cnt,pct,bars,why,h("p",{class:"muted"},"تُرصد الإجابات تلقائيًا في «لوحة الأثر» بموقع حجز المختبرات، دون أسماء."))),
+    h("button",{class:"btn g",onclick:()=>{clearInterval(timer);app.className="";pickCtx(show,true);}},"تغيير الحصة"));}
+
+const isShow=P.get("show")==="1";
+if(isShow)(ctx.s&&ctx.g)?show():pickCtx(show,true);
+else (ctx.s&&ctx.g)?student():pickCtx(student,false);
+})();
+</script>
+</body>
+</html>

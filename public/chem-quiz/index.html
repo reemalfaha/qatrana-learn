@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>دولاب الكيمياء · منصة القطرانة</title>
+<meta name="theme-color" content="#7A1F2E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;
+--e:#2E8B57;--m:#D9822B;--h:#B3261E;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",sans-serif}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:radial-gradient(120% 90% at 80% 0%,#fff 0%,var(--bg) 55%,#f3e7df 100%);color:var(--ink);font:18px/1.6 var(--f);display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;border-bottom:5px solid var(--g);padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font:700 clamp(22px,3.4vw,38px)/1.2 var(--fd);margin:0}header small{color:var(--g2);font-weight:700;display:block;font-size:clamp(12px,1.4vw,16px)}
+.hb{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.score{background:rgba(255,255,255,.12);border:1px solid rgba(243,223,168,.45);border-radius:999px;padding:4px 14px;font-weight:700;font-size:clamp(14px,1.6vw,18px)}
+.score b{color:var(--g2);font-size:1.2em}
+.ib{font:700 15px var(--f);background:transparent;color:#fff;border:1.5px solid rgba(243,223,168,.6);border-radius:999px;padding:5px 14px;cursor:pointer;min-height:40px}
+main{flex:1;width:100%;max-width:1300px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:center}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center;width:100%}
+@media (max-width:820px){.stage{grid-template-columns:1fr}}
+.wheelBox{position:relative;width:min(560px,86vw,68vh);aspect-ratio:1;margin:0 auto}
+.wheelBox svg{width:100%;height:100%;transition:transform 4.2s cubic-bezier(.17,.67,.12,.99);filter:drop-shadow(0 12px 26px rgba(60,20,30,.28))}
+.ptr{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:42px solid var(--w);z-index:2;filter:drop-shadow(0 3px 3px rgba(0,0,0,.3))}
+.side{display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+.side h2{font:700 clamp(28px,4vw,52px)/1.25 var(--fd);margin:0;color:var(--w)}
+.side p{margin:0;color:var(--mut);font-size:clamp(16px,1.8vw,22px)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.legend span{border-radius:999px;padding:4px 16px;color:#fff;font-weight:700;font-size:clamp(15px,1.7vw,20px)}
+.spin{font:700 clamp(22px,3vw,36px) var(--fd);border:0;border-radius:999px;padding:16px 52px;background:linear-gradient(135deg,var(--g),#d8b04c);color:#2b1a00;cursor:pointer;box-shadow:0 10px 24px rgba(184,144,42,.45);min-height:64px}
+.spin:disabled{opacity:.6;cursor:default}
+button:focus-visible{outline:4px solid var(--g);outline-offset:3px}
+/* question */
+.q{width:100%;max-width:1100px;display:flex;flex-direction:column;gap:16px}
+.qh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.lvl{color:#fff;border-radius:999px;padding:6px 22px;font:700 clamp(18px,2.2vw,28px) var(--fd)}
+.timer{display:flex;align-items:center;gap:10px;flex:1;min-width:200px;max-width:520px}
+.timer .t{flex:1;height:16px;border-radius:999px;background:#eadcd3;overflow:hidden}.timer .t i{display:block;height:100%;background:var(--e);transition:width 1s linear}
+.timer b{font:700 clamp(24px,3vw,40px) var(--fd);min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+.qt{background:var(--card);border:2px solid var(--ln);border-radius:24px;padding:clamp(16px,3vw,32px);font:700 clamp(24px,3.6vw,48px)/1.45 var(--fd);text-align:center;box-shadow:0 10px 28px rgba(60,20,30,.08)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.opts{grid-template-columns:1fr}}
+.opt{font:700 clamp(20px,2.8vw,36px)/1.35 var(--f);background:var(--card);color:var(--ink);border:3px solid var(--ln);border-radius:20px;padding:clamp(12px,2vw,22px);cursor:pointer;display:flex;align-items:center;gap:14px;text-align:right;min-height:84px;transition:transform .12s,border-color .12s}
+.opt:hover:not(:disabled){transform:translateY(-2px);border-color:var(--g)}
+.opt .l{flex:none;width:1.8em;height:1.8em;border-radius:50%;display:grid;place-items:center;background:var(--g2);color:var(--w);font-size:.8em}
+.opt.right{border-color:var(--e);background:#e5f4ea}.opt.right .l{background:var(--e);color:#fff}
+.opt.wrong{border-color:var(--h);background:#fbe4e2}.opt.wrong .l{background:var(--h);color:#fff}
+.opt:disabled{cursor:default}
+.msg{text-align:center;font:700 clamp(24px,3.4vw,44px) var(--fd);min-height:1.4em}
+.msg.ok{color:var(--e)}.msg.no{color:var(--h)}
+.info{background:#fdf6e3;border-right:6px solid var(--g);border-radius:14px;padding:12px 16px;font-size:clamp(17px,2vw,24px)}
+.acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{font:700 clamp(18px,2.2vw,26px) var(--f);border:0;border-radius:16px;padding:12px 28px;background:var(--w);color:#fff;cursor:pointer;min-height:56px}
+.btn.g{background:transparent;color:var(--w);border:2.5px solid var(--w)}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:8px}
+canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media (prefers-reduced-motion:reduce){.wheelBox svg{transition-duration:.01s}}
+</style>
+</head>
+<body>
+<header>
+  <div><small>مدرسة القطرانة الثانوية للبنات · قسم العلوم</small><h1>🧪 دولاب الكيمياء</h1></div>
+  <div class="hb"><span class="score">✅ إجابات صحيحة: <b id="sc">0</b> من <b id="tot">0</b></span>
+    <button class="ib" id="tm" type="button">⏱️ المؤقّت: 30 ث</button><button class="ib" id="fs" type="button">⛶ ملء الشاشة</button></div>
+</header>
+<main id="app"></main>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+<canvas id="cf"></canvas>
+<script>
+(()=>{
+/* l: 1 سهل · 2 متوسط · 3 صعب — a: رقم الإجابة الصحيحة — w: معلومة تظهر بعد الإجابة */
+const Q=[
+// ===== سهل =====
+[1,"ما الصيغة الكيميائية للماء؟",["H₂O","CO₂","O₂","NaCl"],0,"جزيء الماء: ذرتا هيدروجين وذرة أكسجين."],
+[1,"ما الغاز الذي نتنفّسه لنبقى أحياء؟",["الأكسجين","النيتروجين","ثاني أكسيد الكربون","الهيليوم"],0,"تستخدم خلايانا الأكسجين لإنتاج الطاقة من الغذاء."],
+[1,"ما الاسم الكيميائي لملح الطعام؟",["كلوريد الصوديوم","كربونات الكالسيوم","بيكربونات الصوديوم","كبريتات النحاس"],0,"صيغته NaCl."],
+[1,"ما الرمز الكيميائي للذهب؟",["Au","Ag","Go","Gd"],0,"Au من الاسم اللاتيني Aurum."],
+[1,"عند خلط الخلّ مع بيكربونات الصوديوم يتصاعد غاز:",["ثاني أكسيد الكربون","الأكسجين","الهيدروجين","النيتروجين"],0,"هذا سرّ «البركان» في تجارب المعرض!"],
+[1,"عند أي درجة حرارة يغلي الماء النقي عند مستوى سطح البحر؟",["100 °س","0 °س","50 °س","200 °س"],0,"ويتجمّد عند 0 °س."],
+[1,"أيّ حمض يوجد في الليمون؟",["حمض الستريك","حمض الكبريتيك","حمض الهيدروكلوريك","حمض النيتريك"],0,"حمض الستريك يعطي الليمون طعمه الحامض."],
+[1,"ورقة تبّاع الشمس الزرقاء في محلول حمضي يصبح لونها:",["أحمر","أزرق","أخضر","أسود"],0,"الحمض يحوّل تبّاع الشمس الزرقاء إلى الحمراء."],
+[1,"ما الرمز الكيميائي للحديد؟",["Fe","Ir","F","I"],0,"Fe من الاسم اللاتيني Ferrum."],
+[1,"تحوّل الماء من سائل إلى غاز يسمّى:",["التبخّر","التكاثف","الانصهار","التجمّد"],0,"والتكاثف هو العكس: من غاز إلى سائل."],
+[1,"ما الغاز الذي تطلقه النباتات في عملية البناء الضوئي؟",["الأكسجين","ثاني أكسيد الكربون","النيتروجين","الهيدروجين"],0,"تمتص النباتات ثاني أكسيد الكربون وتطلق الأكسجين."],
+[1,"يحتاج صدأ الحديد إلى:",["الماء والأكسجين","الضوء فقط","الملح فقط","البرودة فقط"],0,"لذلك نطلي الحديد لنعزله عن الهواء والرطوبة."],
+[1,"كم تبلغ قيمة pH للماء النقي؟",["7","0","14","1"],0,"7 تعني محلولًا متعادلًا: لا حمضي ولا قاعدي."],
+[1,"أيّ مما يلي فلز؟",["النحاس","الكبريت","الأكسجين","الكربون"],0,"النحاس موصل جيد للكهرباء، لذلك تُصنع منه الأسلاك."],
+[1,"ما الرمز الكيميائي للصوديوم؟",["Na","So","S","N"],0,"Na من الاسم اللاتيني Natrium."],
+[1,"ما الغاز الذي تُملأ به البالونات الطائرة لأنه أخفّ من الهواء؟",["الهيليوم","الأكسجين","ثاني أكسيد الكربون","الكلور"],0,"الهيليوم غاز نبيل خفيف ولا يشتعل."],
+[1,"ما الرمز الكيميائي للفضة؟",["Ag","Si","Au","S"],0,"Ag من الاسم اللاتيني Argentum."],
+[1,"لماذا يطفو الجليد على سطح الماء؟",["لأن كثافته أقل من كثافة الماء","لأنه أثقل من الماء","لأنه ساخن","لأنه مالح"],0,"يتمدد الماء عند تجمّده فتقلّ كثافته."],
+[1,"ما الغاز الذي نُخرجه مع الزفير بكمية أكبر مما نستنشقه؟",["ثاني أكسيد الكربون","الأكسجين","الهيليوم","النيون"],0,"ينتج عن تنفّس الخلايا."],
+[1,"ذوبان السكر في الماء تغيّر:",["فيزيائي","كيميائي","نووي","ضوئي"],0,"يبقى السكر سكرًا، ويمكن استرجاعه بتبخير الماء."],
+// ===== متوسط =====
+[2,"كم ذرة أكسجين في جزيء ثاني أكسيد الكربون CO₂؟",["2","1","3","4"],0,"الرقم الصغير 2 يدلّ على ذرتي أكسجين."],
+[2,"ما الغاز الأكثر وفرة في الهواء الجوي؟",["النيتروجين","الأكسجين","ثاني أكسيد الكربون","الأرغون"],0,"النيتروجين نحو 78% من الهواء، والأكسجين نحو 21%."],
+[2,"ما العدد الذري للكربون؟",["6","12","8","4"],0,"في نواة ذرة الكربون 6 بروتونات."],
+[2,"محلول قيمة pH له 12 يكون:",["قاعديًا","حمضيًا","متعادلًا","ملحيًا"],0,"أكبر من 7 قاعدي، وأقل من 7 حمضي."],
+[2,"ما الصيغة الكيميائية لغاز الميثان؟",["CH₄","CO₂","C₂H₆","H₂"],0,"الميثان أبسط الهيدروكربونات، وهو المكوّن الرئيس للغاز الطبيعي."],
+[2,"يتحوّل النشا إلى اللون الأزرق الداكن عند إضافة:",["محلول اليود","الخلّ","ملح الطعام","الماء"],0,"نستخدم اليود للكشف عن النشا في الطعام."],
+[2,"تفاعل الحمض مع القاعدة يسمّى:",["التعادل","الاحتراق","التحلّل","الصدأ"],0,"وينتج عنه ملح وماء."],
+[2,"ما نواتج تفاعل الحمض مع القاعدة؟",["ملح وماء","غاز الأكسجين","حديد وماء","سكر وماء"],0,"مثال: HCl + NaOH ← NaCl + H₂O"],
+[2,"كاشف الفينولفثالين في المحلول القاعدي يصبح لونه:",["ورديًا","أزرق","أصفر","عديم اللون"],0,"ويبقى عديم اللون في المحلول الحمضي."],
+[2,"غاز يطفئ عود الثقاب المشتعل ويعكّر ماء الجير:",["ثاني أكسيد الكربون","الأكسجين","الهيدروجين","النيتروجين"],0,"هذا هو الكشف المخبري عن CO₂."],
+[2,"كم إلكترونًا في ذرة الهيدروجين المتعادلة؟",["1","2","0","3"],0,"الهيدروجين أبسط ذرة: بروتون واحد وإلكترون واحد."],
+[2,"رُتّبت العناصر في الجدول الدوري الحديث حسب:",["العدد الذري","الكتلة فقط","اللون","تاريخ الاكتشاف"],0,"العدد الذري = عدد البروتونات في النواة."],
+[2,"التفاعل الذي يُطلق حرارة إلى المحيط يسمّى:",["طاردًا للحرارة","ماصًّا للحرارة","فيزيائيًا","متعادلًا"],0,"مثل احتراق الوقود."],
+[2,"ما الرمز الكيميائي للبوتاسيوم؟",["K","P","Po","Pt"],0,"K من الاسم اللاتيني Kalium."],
+[2,"أيّ مما يلي تغيّر كيميائي؟",["احتراق الورق","ذوبان السكر","انصهار الجليد","تقطيع الورق"],0,"الاحتراق يُنتج موادّ جديدة: رماد وغازات."],
+[2,"ما الحمض الموجود في عصارة المعدة؟",["حمض الهيدروكلوريك","حمض الستريك","حمض الخليك","حمض الكربونيك"],0,"يساعد على هضم البروتينات وقتل الجراثيم."],
+[2,"الماء العسر يحتوي على أيونات:",["الكالسيوم والمغنيسيوم","الذهب والفضة","الهيليوم والنيون","الكلور فقط"],0,"لذلك لا يُكوّن رغوة جيدة مع الصابون."],
+[2,"الكثافة تساوي:",["الكتلة ÷ الحجم","الحجم ÷ الكتلة","الكتلة × الحجم","الكتلة + الحجم"],0,"وحدتها مثلًا غ/سم³."],
+[2,"ما الغاز الذي يحترق بفرقعة عند تقريب عود ثقاب مشتعل منه؟",["الهيدروجين","الأكسجين","ثاني أكسيد الكربون","النيتروجين"],0,"هذا هو الكشف المخبري عن الهيدروجين."],
+// ===== صعب =====
+[3,"ما الكتلة المولية للماء H₂O؟ (H = 1، O = 16)",["18 غ/مول","16 غ/مول","17 غ/مول","20 غ/مول"],0,"2×1 + 16 = 18 غ/مول."],
+[3,"عدد أفوجادرو يساوي تقريبًا:",["6.02 × 10²³","3.14 × 10²³","6.02 × 10¹⁰","9.8 × 10²³"],0,"عدد الجسيمات في مول واحد من أي مادة."],
+[3,"ما التوزيع الإلكتروني لذرة الصوديوم (العدد الذري 11)؟",["2، 8، 1","2، 9","2، 8، 2","8، 2، 1"],0,"لذلك يفقد الصوديوم إلكترونه الأخير بسهولة."],
+[3,"ما نوع الرابطة في كلوريد الصوديوم NaCl؟",["أيونية","تساهمية","فلزية","هيدروجينية"],0,"تنتقل الإلكترونات من الصوديوم إلى الكلور فيتكوّن أيونان متجاذبان."],
+[3,"ما نوع الرابطة بين الأكسجين والهيدروجين في جزيء الماء؟",["تساهمية","أيونية","فلزية","لا توجد رابطة"],0,"تشترك الذرّات في أزواج من الإلكترونات."],
+[3,"ما الغاز النبيل في الدورة الثانية من الجدول الدوري؟",["النيون","الهيليوم","الأرغون","الكريبتون"],0,"عدده الذري 10، ومستوى طاقته الخارجي ممتلئ."],
+[3,"ما المعامل الذي يوازن المعادلة: 2H₂ + O₂ ← ؟ H₂O",["2","1","3","4"],0,"4 ذرات هيدروجين وذرتا أكسجين في الطرفين."],
+[3,"ما العنصر الأعلى كهروسلبية في الجدول الدوري؟",["الفلور","الأكسجين","الكلور","الصوديوم"],0,"الفلور أقوى العناصر جذبًا للإلكترونات."],
+[3,"كم نيوترونًا في ذرة الكربون-12؟",["6","12","8","4"],0,"العدد الكتلي 12 − العدد الذري 6 = 6 نيوترونات."],
+[3,"محلول تركيز أيونات H⁺ فيه 10⁻³ مول/لتر، قيمة pH له:",["3","−3","10","11"],0,"pH = −log[H⁺] = 3."],
+[3,"ما الفلز الذي يكون سائلًا في درجة حرارة الغرفة؟",["الزئبق","الحديد","الألمنيوم","الصوديوم"],0,"لذلك استُخدم قديمًا في موازين الحرارة."],
+[3,"ما صيغة أيون الكبريتات؟",["SO₄²⁻","SO₃²⁻","S²⁻","HSO₃⁻"],0,"كما في كبريتات النحاس CuSO₄."],
+[3,"عند تفاعل فلز المغنيسيوم مع حمض الهيدروكلوريك يتصاعد غاز:",["الهيدروجين","الأكسجين","الكلور","ثاني أكسيد الكربون"],0,"Mg + 2HCl ← MgCl₂ + H₂"],
+[3,"كم رابطة تساهمية تكوّنها ذرة الكربون عادة؟",["4","2","3","1"],0,"لها 4 إلكترونات في مستوى الطاقة الخارجي."],
+[3,"الأكسدة تعني:",["فقدان إلكترونات","كسب إلكترونات","كسب بروتونات","فقدان نيوترونات"],0,"والاختزال كسب إلكترونات."]
+];
+const LV={1:["سهل","var(--e)","#2E8B57",1],2:["متوسط","var(--m)","#D9822B",2],3:["صعب","var(--h)","#B3261E",3]};
+/* أجزاء الدولاب الثمانية: 3 سهل، 3 متوسط، 2 صعب */
+const SEG=[1,2,3,1,2,1,3,2];
+const app=document.getElementById("app");
+const $=id=>document.getElementById(id);
+function h(t,a,...k){const e=document.createElement(t);if(a)for(const[x,v]of Object.entries(a)){if(v==null||v===false)continue;if(x.startsWith("on"))e.addEventListener(x.slice(2),v);else e.setAttribute(x,v===true?"":v);}k.flat().forEach(c=>{if(c!=null&&c!==false)e.append(c.nodeType?c:document.createTextNode(c));});return e;}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const bags={1:[],2:[],3:[]};const draw=l=>{if(!bags[l].length)bags[l]=shuffle(Q.filter(q=>q[0]===l));return bags[l].pop();};
+let score=0,total=0,rot=0,secs=30;const TM=[30,45,60,0];
+$("tm").onclick=()=>{secs=TM[(TM.indexOf(secs)+1)%TM.length];$("tm").textContent=secs?"⏱️ المؤقّت: "+secs+" ث":"⏱️ بدون مؤقّت";};
+$("fs").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}catch(e){}};
+const ns="http://www.w3.org/2000/svg",S=(t,at)=>{const e=document.createElementNS(ns,t);for(const k in at)e.setAttribute(k,at[k]);return e;};
+function wheelSVG(){const n=SEG.length,A=360/n,R=195,P=(d,r)=>{const a=d*Math.PI/180;return (200+r*Math.sin(a)).toFixed(1)+","+(200-r*Math.cos(a)).toFixed(1);};
+  const svg=S("svg",{viewBox:"0 0 400 400","aria-label":"دولاب مستوى السؤال"});svg.style.transform="rotate("+rot+"deg)";
+  svg.append(S("circle",{cx:200,cy:200,r:199,fill:"#B8902A"}));
+  SEG.forEach((l,i)=>{const a0=i*A,a1=(i+1)*A;svg.append(S("path",{d:"M200,200 L"+P(a0,R)+" A"+R+","+R+" 0 0 1 "+P(a1,R)+" Z",fill:LV[l][2],stroke:"#fff","stroke-width":4}));
+    const mid=a0+A/2,tp=P(mid,R*.64).split(",");const tx=S("text",{x:tp[0],y:tp[1],fill:"#fff","text-anchor":"middle","dominant-baseline":"middle","font-size":30,"font-weight":800,"font-family":"El Messiri, sans-serif",transform:"rotate("+(mid>90&&mid<270?mid+180:mid)+" "+tp[0]+" "+tp[1]+")"});tx.textContent=LV[l][0];svg.append(tx);
+    const sp=P(mid,R*.88).split(",");const st=S("text",{x:sp[0],y:sp[1],fill:"#fff","text-anchor":"middle","dominant-baseline":"middle","font-size":15,transform:"rotate("+(mid>90&&mid<270?mid+180:mid)+" "+sp[0]+" "+sp[1]+")"});st.textContent="★".repeat(LV[l][3]);svg.append(st);});
+  svg.append(S("circle",{cx:200,cy:200,r:34,fill:"#fff",stroke:"#B8902A","stroke-width":6}));const c=S("text",{x:200,y:203,"text-anchor":"middle","dominant-baseline":"middle","font-size":30});c.textContent="🧪";svg.append(c);
+  return svg;}
+function home(){app.innerHTML="";const svg=wheelSVG();
+  const btn=h("button",{class:"spin",type:"button"},"🎡 لفّي الدولاب");
+  const sub=h("p",{},"جرّبوا حظّكم! الدولاب يختار مستوى السؤال، وأنتم تختارون الإجابة.");
+  btn.onclick=()=>{btn.disabled=true;btn.textContent="…";const n=SEG.length,A=360/n,i=Math.floor(Math.random()*n);
+    rot=Math.ceil(rot/360)*360+360*6+(360-(i*A+A/2))+(Math.random()*A*.6-A*.3);svg.style.transform="rotate("+rot+"deg)";
+    setTimeout(()=>ask(SEG[i]),4400);};
+  app.append(h("div",{class:"stage"},h("div",{class:"wheelBox"},h("div",{class:"ptr"}),svg),
+    h("div",{class:"side"},h("h2",{},"تحدّي الكيمياء للجمهور"),sub,h("div",{class:"legend"},...[1,2,3].map(l=>h("span",{style:"background:"+LV[l][1]},LV[l][0]+" "+"★".repeat(LV[l][3])))),btn)));
+  setTimeout(()=>btn.focus(),50);}
+let tick;
+function ask(l){clearInterval(tick);const q=draw(l);const order=shuffle([0,1,2,3]);const L=["أ","ب","ج","د"];let done=false;
+  app.innerHTML="";const msg=h("div",{class:"msg","aria-live":"polite"}),info=h("div",{class:"info",hidden:true}),acts=h("div",{class:"acts",hidden:true});
+  const optsBox=h("div",{class:"opts"});const num=h("b",{},secs||"∞"),bar=h("i",{style:"width:100%"});
+  const finish=(j)=>{if(done)return;done=true;clearInterval(tick);total++;const ok=j===q[3];if(ok)score++;$("sc").textContent=score;$("tot").textContent=total;
+    [...optsBox.children].forEach(b=>{b.disabled=true;const k=+b.dataset.k;if(k===q[3])b.classList.add("right");else if(k===j)b.classList.add("wrong");});
+    msg.className="msg "+(ok?"ok":"no");msg.textContent=j===-1?"⏰ انتهى الوقت! الإجابة الصحيحة باللون الأخضر":ok?["🎉 إجابة صحيحة! أحسنتم","👏 رائع! إجابة صحيحة","🌟 ممتاز! كيمياء على أصولها"][Math.floor(Math.random()*3)]+(l===3?" · سؤال صعب 🏆":""):"❌ ليست هذه، الإجابة الصحيحة باللون الأخضر";
+    if(q[4]){info.hidden=false;info.textContent="💡 "+q[4];}acts.hidden=false;if(ok)confetti(l);acts.querySelector("button").focus();};
+  order.forEach((k,i)=>optsBox.append(h("button",{class:"opt",type:"button","data-k":k,onclick:()=>finish(k)},h("span",{class:"l"},L[i]),h("span",{},q[2][k]))));
+  acts.append(h("button",{class:"btn",type:"button",onclick:home},"🎡 الدور التالي"),h("button",{class:"btn g",type:"button",onclick:()=>ask(l)},"🔁 سؤال آخر بنفس المستوى"));
+  app.append(h("div",{class:"q"},h("div",{class:"qh"},h("span",{class:"lvl",style:"background:"+LV[l][1]},"سؤال "+LV[l][0]+" "+"★".repeat(LV[l][3])),
+      secs?h("div",{class:"timer"},h("span",{},"⏱️"),h("div",{class:"t"},bar),num):null),
+    h("div",{class:"qt"},q[1]),optsBox,msg,info,acts));
+  if(secs){let left=secs;tick=setInterval(()=>{left--;num.textContent=left;bar.style.width=(left/secs*100)+"%";bar.style.background=left<=5?"var(--h)":left<=secs/2?"var(--m)":"var(--e)";if(left<=0)finish(-1);},1000);}}
+/* قصاصات احتفال */
+function confetti(l){const c=$("cf"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;const cols=["#7A1F2E","#B8902A","#2E8B57","#D9822B","#F3DFA8","#2F6FB0"];
+  const P=Array.from({length:60+l*50},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,vx:(Math.random()-.5)*4,vy:2+Math.random()*4,r:4+Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)],a:Math.random()*6}));
+  let t=0;const f=()=>{x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);x.restore();});if(++t<170)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height);};
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches)f();}
+addEventListener("keydown",e=>{if(e.key===" "&&document.querySelector(".spin:not(:disabled)")){e.preventDefault();document.querySelector(".spin").click();}});
+home();
+})();
+</script>
+</body>
+</html>

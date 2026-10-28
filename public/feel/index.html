@@ -51,6 +51,9 @@ label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:15px}
 .bar i{font-style:normal;font-size:36px;text-align:center}.bar .t{height:26px;border-radius:999px;background:color-mix(in srgb,var(--w) 10%,transparent);overflow:hidden}
 .bar .t b{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--g),var(--w));transition:width .6s}
 .bar span{text-align:center;font-variant-numeric:tabular-nums}
+.emos.big{gap:14px}.emos.big .emo{padding:18px 4px 12px;border-radius:24px}.emos.big .emo i{font-size:clamp(48px,11vw,110px)}.emos.big .emo span{font-size:clamp(13px,1.8vw,20px)}
+.kstage{min-height:52vh;display:flex;flex-direction:column;justify-content:center;gap:16px}.kq{font-size:clamp(22px,3vw,34px)}
+.kpick{font-size:clamp(70px,12vw,120px);text-align:center;line-height:1;animation:pop .5s ease}.chip.big{font-size:clamp(15px,2vw,22px);padding:10px 20px;min-height:52px}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:14px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -99,6 +102,36 @@ function thanks(already,feel){app.innerHTML="";
     h("button",{class:"btn g",onclick:()=>{try{localStorage.removeItem(lsk());}catch(e){}student();}},"👭 طالبة أخرى على نفس الجهاز"));}
 
 /* ===== شاشة المعلّمة: باركود + عدّاد مباشر ===== */
+/* ===== وضع الشاشة: كل طالبة تأتي وتلمس شعورها على الشاشة التفاعلية ===== */
+let kT;
+function kiosk(){app.className="wide";document.getElementById("ttl").textContent="كيف كان شعوركِ في حصة اليوم؟ 💭";
+  const since=new Date().toISOString();let n=0,dist=[0,0,0,0,0],whyC={},showRes=false;
+  const cnt=h("b",{},"0"),res=h("div",{class:"card",hidden:true});
+  const paintRes=()=>{res.innerHTML="";const mx=Math.max(1,...dist);res.append(h("h2",{},"نتيجة الحصة"),h("p",{class:"muted",style:"font-size:18px;font-weight:700"},n?("😊 استمتعت "+Math.round((dist[3]+dist[4])/n*100)+"% من الطالبات"):"لا إجابات بعد"),
+    h("div",{class:"bars"},...[4,3,2,1,0].map(i=>h("div",{class:"bar"},h("i",{},EM[i][0]),h("div",{class:"t"},h("b",{style:"width:"+Math.round(dist[i]/mx*100)+"%"})),h("span",{},String(dist[i]))))),
+    h("div",{class:"chips",style:"margin-top:8px"},...Object.entries(whyC).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([w,c])=>h("span",{class:"chip"},w+" · "+c))));};
+  const stage=h("div",{class:"card kstage"});
+  const ask=()=>{clearTimeout(kT);stage.innerHTML="";let feel=0;const why=new Set();
+    const emos=h("div",{class:"emos big",role:"group","aria-label":"شعوري"});
+    EM.forEach(([e,t],i)=>emos.append(h("button",{class:"emo",onclick:()=>pick(i+1)},h("i",{},e),h("span",{},t))));
+    stage.append(h("h2",{class:"kq"},"المسي الوجه اللي بيشبه شعوركِ 👇"),emos);
+    function pick(f){feel=f;stage.innerHTML="";const reasons=h("div",{class:"chips"});
+      (f>=4?GOOD:f===3?[...GOOD.slice(0,3),...BAD]:BAD).forEach(w=>{const b=h("button",{class:"chip big","aria-pressed":"false",onclick:()=>{why.has(w)?why.delete(w):why.size<3&&why.add(w);b.setAttribute("aria-pressed",String(why.has(w)));}},w);reasons.append(b);});
+      const send=h("button",{class:"btn",onclick:()=>submit()},"✅ تمّ");
+      stage.append(h("div",{class:"kpick"},EM[f-1][0]),h("h2",{},f>=4?"شو أكثر إشي عجبكِ؟":f===3?"شو كان ممكن يخلّيها أحلى؟":"شو اللي ما عجبكِ؟"),reasons,h("div",{class:"row",style:"margin-top:10px"},send,h("button",{class:"btn g",onclick:ask},"↩️ رجوع")));
+      kT=setTimeout(submit,15000);}
+    async function submit(){clearTimeout(kT);const f=feel,w=[...why];stage.innerHTML="";stage.append(h("div",{class:"thanks"},h("div",{class:"big"},EM[f-1][0]),h("h2",{},"شكرًا لكِ! 💛"),h("p",{class:"muted"},"الطالبة اللي بعدكِ تتفضّل 🌷")));
+      n++;dist[f-1]++;w.forEach(x=>whyC[x]=(whyC[x]||0)+1);cnt.textContent=n;if(showRes)paintRes();
+      try{await call("mutation","feel:submit",{subject:ctx.s,grade:ctx.g,section:ctx.c,source:"screen",feel:f,why:w});}catch(e){pending.push({f,w});}
+      kT=setTimeout(ask,1800);}};
+  const pending=[];setInterval(()=>{if(!pending.length)return;const x=pending[0];call("mutation","feel:submit",{subject:ctx.s,grade:ctx.g,section:ctx.c,source:"screen",feel:x.f,why:x.w}).then(()=>pending.shift()).catch(()=>{});},5000);
+  app.innerHTML="";
+  app.append(h("div",{class:"ctx"},ctx.s?h("span",{},"📘 "+ctx.s):null,h("span",{},"الصف "+ctx.g+(ctx.c?" · "+ctx.c:"")),h("span",{},"👭 أجابت: ",cnt)),stage,
+    h("div",{class:"row"},h("button",{class:"btn g",onclick:e=>{showRes=!showRes;res.hidden=!showRes;e.currentTarget.textContent=showRes?"🙈 إخفاء النتيجة":"📊 إظهار النتيجة (للمعلّمة)";if(showRes)paintRes();}},"📊 إظهار النتيجة (للمعلّمة)"),
+      h("button",{class:"btn g",onclick:()=>{clearTimeout(kT);app.className="";pickCtx(kiosk,true);}},"تغيير الحصة")),res,
+    h("p",{class:"muted"},"كل لمسة تُرصد تلقائيًا في «لوحة الأثر» دون أسماء."));
+  ask();}
+
 let timer;
 function show(){app.className="wide";app.innerHTML="";document.getElementById("ttl").textContent="هل استمتعتنّ بالحصة؟ 💭";
   const u=new URL(location.origin+location.pathname);u.searchParams.set("s",ctx.s);u.searchParams.set("g",ctx.g);if(ctx.c)u.searchParams.set("c",ctx.c);u.searchParams.set("src",ctx.src==="qr"?"screen":ctx.src);
@@ -115,7 +148,8 @@ function show(){app.className="wide";app.innerHTML="";document.getElementById("t
     h("button",{class:"btn g",onclick:()=>{clearInterval(timer);app.className="";pickCtx(show,true);}},"تغيير الحصة"));}
 
 const isShow=P.get("show")==="1";
-if(isShow)(ctx.s&&ctx.g)?show():pickCtx(show,true);
+const isQR=P.get("qr")==="1";
+if(isShow){const f=isQR?show:kiosk;(ctx.s&&ctx.g)?f():pickCtx(f,true);}
 else (ctx.s&&ctx.g)?student():pickCtx(student,false);
 })();
 </script>

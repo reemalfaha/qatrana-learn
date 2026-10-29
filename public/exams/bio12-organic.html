@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>امتحان الأحياء – المركبات العضوية الحيوية والإنزيمات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#7A1F2E; --teal-2:#5C1622; --teal-soft:#f6ece6;
+  --gold:#B8902A; --gold-soft:#F6EEDA;
+  --bg:#F5F7F6; --surface:#FFFFFF; --ink:#15302F; --muted:#5B6F6E; --line:#D5E0DE;
+  --bad:#A8412F; --bad-soft:#F7E5E1;
+  --s1:#6E8B3D; --s2:#7A1F2E; --s3:#8A4F7D; --s4:#B8902A; --s5:#2F5E9E; --s6:#A8412F; --s7:#4F6B6A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --teal:#4FB3AE; --teal-2:#7CCBC6; --teal-soft:#16302F;
+    --gold:#D9B45A; --gold-soft:#332A14;
+    --bg:#0F1A1A; --surface:#172525; --ink:#E6EFEE; --muted:#9DB1AF; --line:#2A3D3C;
+    --bad:#E08A78; --bad-soft:#3A1E19;
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#4FB3AE; --teal-2:#7CCBC6; --teal-soft:#16302F;
+  --gold:#D9B45A; --gold-soft:#332A14;
+  --bg:#0F1A1A; --surface:#172525; --ink:#E6EFEE; --muted:#9DB1AF; --line:#2A3D3C;
+  --bad:#E08A78; --bad-soft:#3A1E19;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans Arabic","Sakkal Majalla",Tahoma,"Segoe UI",sans-serif;
+  font-size:17px;line-height:1.75}
+h1,h2,h3{font-family:"Noto Naskh Arabic","Sakkal Majalla","Traditional Arabic",serif;line-height:1.4;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+.hidden{display:none!important}
+sub{font-size:.7em}
+
+/* masthead */
+.mast{border-bottom:3px solid var(--teal);padding-bottom:18px;margin-bottom:22px}
+.mast .school{color:var(--muted);font-size:14px}
+.mast h1{font-size:30px;color:var(--teal);margin-top:6px}
+.mast .unit{font-size:18px;margin-top:2px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);margin:22px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.facts div{padding:14px 8px;text-align:center;border-inline-start:1px solid var(--line)}
+.facts div:first-child{border-inline-start:0}
+.facts b{display:block;font-size:26px;color:var(--teal);line-height:1.2}
+.facts span{font-size:14px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.panel h2{font-size:20px;margin-bottom:8px}
+.panel ul{margin:0;padding-inline-start:20px}
+.panel li{margin:4px 0}
+label.field{display:block;margin:20px 0 6px;font-weight:600}
+input[type=text],input[type=password]{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.btn{border:0;border-radius:8px;padding:12px 20px;font-weight:600;background:var(--teal);color:#fff}
+.btn:hover{background:var(--teal-2)}
+.btn.ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+.btn.gold{background:var(--gold);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.spread{justify-content:space-between}
+.mt{margin-top:18px}
+.muted{color:var(--muted);font-size:14px}
+
+/* exam bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.bar .row{justify-content:space-between}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:20px;color:var(--teal);direction:ltr}
+.timer.low{color:var(--bad)}
+.progress{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--teal);transition:width .25s}
+
+/* question */
+.qmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:20px;background:var(--teal-soft);color:var(--ink);font-size:13px}
+.chip .dot{width:9px;height:9px;border-radius:50%}
+.chip.m2{background:var(--gold-soft)}
+.qnum{font-family:"Noto Naskh Arabic",serif;font-size:40px;color:var(--gold);line-height:1;font-weight:700}
+.qtext{font-size:19px;font-weight:600;margin:12px 0 18px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:start;width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--teal)}
+.opt .l{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);font-weight:700;font-size:15px}
+.opt.sel{border-color:var(--teal);background:var(--teal-soft)}
+.opt.sel .l{background:var(--teal);border-color:var(--teal);color:#fff}
+.opt.right{border-color:var(--teal);background:var(--teal-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt[disabled]{cursor:default}
+.nav{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.nav .btn{flex:1 1 120px}
+.flag.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* map */
+.map{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:10px}
+.cell{aspect-ratio:1;border-radius:6px;border:1.5px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;display:grid;place-items:center;position:relative;padding:0}
+.cell::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:40%;height:3px;border-radius:2px;background:var(--c)}
+.cell.ans{background:var(--teal);color:#fff;border-color:var(--teal)}
+.cell.flg{border-color:var(--gold);box-shadow:inset 0 0 0 2px var(--gold)}
+.cell.cur{outline:2.5px solid var(--ink);outline-offset:1px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px;vertical-align:middle;background:var(--k)}
+
+/* results */
+.score{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px}
+.score b{font-family:"Noto Naskh Arabic",serif;font-size:64px;color:var(--teal);line-height:1}
+.score span{font-size:22px;color:var(--muted)}
+.secs{display:grid;gap:10px;margin-top:10px}
+.sec .top{display:flex;justify-content:space-between;font-size:15px}
+.sec .track{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:4px}
+.sec .track i{display:block;height:100%}
+.review{margin-top:14px;display:grid;gap:14px}
+.rv{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;border-inline-start:5px solid var(--teal)}
+.rv.bad{border-inline-start-color:var(--bad)}
+.rv .qtext{font-size:17px;margin:8px 0 10px}
+.rv .opt{padding:9px 12px;font-size:15px}
+.explain{margin-top:10px;padding:10px 12px;background:var(--gold-soft);border-radius:8px;font-size:15px}
+
+/* key table */
+.tbl{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:460px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+th{background:var(--teal);color:#fff;font-weight:600}
+td.q{text-align:start}
+tfoot td{font-weight:700;background:var(--teal-soft)}
+.keygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;margin-top:10px}
+.keygrid div{border:1px solid var(--line);border-radius:6px;padding:6px;text-align:center;background:var(--surface);font-size:15px}
+.keygrid b{color:var(--teal)}
+
+dialog{border:0;border-radius:12px;padding:20px;max-width:360px;width:calc(100% - 32px);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(10,30,30,.45)}
+@media (max-width:520px){
+  .mast h1{font-size:25px}
+  .map{grid-template-columns:repeat(8,1fr)}
+  .qtext{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.bar,.nav,.noprint{display:none!important}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <div class="school">مدرسة القطرانة الثانوية للبنات · مبحث الأحياء</div>
+    <h1>امتحان تجريبي – التوجيهي</h1>
+    <div class="unit">الوحدة: المركبات العضوية الحيوية والإنزيمات</div>
+  </header>
+
+  <!-- START -->
+  <section id="vStart">
+    <div class="facts">
+      <div><b>40</b><span>سؤالاً</span></div>
+      <div><b>50</b><span>علامة</span></div>
+      <div><b>60</b><span>دقيقة</span></div>
+    </div>
+    <div class="panel">
+      <h2>تعليمات الامتحان</h2>
+      <ul>
+        <li>جميع الأسئلة من نوع الاختيار من متعدد، ولكل سؤال إجابة صحيحة واحدة.</li>
+        <li>الأسئلة السهلة والمتوسطة بعلامة واحدة، والأسئلة الصعبة (المشار إليها) بعلامتين.</li>
+        <li>يمكنكِ التنقل بين الأسئلة بحرية، وتعليم أي سؤال للرجوع إليه لاحقاً.</li>
+        <li>يُسلَّم الامتحان تلقائياً عند انتهاء الوقت، وتظهر النتيجة مع الإجابات الصحيحة وتفسيرها.</li>
+        <li>تُحفظ إجاباتكِ على هذا الجهاز، فلو أُغلقت الصفحة يمكنكِ المتابعة من حيث توقفتِ.</li>
+      </ul>
+      <label class="field" for="name">اسم الطالبة</label>
+      <input id="name" type="text" autocomplete="name" placeholder="اكتبي اسمكِ الثلاثي">
+      <div class="row mt">
+        <button class="btn" id="startBtn">ابدئي الامتحان</button>
+        <button class="btn ghost hidden" id="resumeBtn">متابعة الامتحان المحفوظ</button>
+      </div>
+    </div>
+    <div class="row mt noprint">
+      <button class="btn ghost" id="keyBtn">نموذج الإجابة وجدول المواصفات (للمعلّمة)</button>
+    </div>
+  </section>
+
+  <!-- EXAM -->
+  <section id="vExam" class="hidden">
+    <div class="bar">
+      <div class="row">
+        <div><span id="pos"></span> <span class="muted" id="answered"></span></div>
+        <div class="timer" id="timer">60:00</div>
+      </div>
+      <div class="progress"><i id="prog"></i></div>
+    </div>
+    <div id="qBox"></div>
+    <div class="nav">
+      <button class="btn ghost" id="prevBtn">السؤال السابق</button>
+      <button class="btn ghost flag" id="flagBtn">علّمي للمراجعة</button>
+      <button class="btn" id="nextBtn">السؤال التالي</button>
+    </div>
+    <div class="panel mt">
+      <div class="row spread">
+        <h2 style="margin:0">خريطة الأسئلة</h2>
+        <button class="btn gold" id="submitBtn">سلّمي الامتحان</button>
+      </div>
+      <div class="map" id="map"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="vResult" class="hidden">
+    <div class="panel">
+      <div class="muted" id="rName"></div>
+      <div class="score"><b id="rScore"></b><span>من 50</span></div>
+      <div id="rLine"></div>
+      <div class="secs" id="rSecs"></div>
+    </div>
+    <div class="row spread mt noprint">
+      <h2>مراجعة الإجابات</h2>
+      <div class="row">
+        <button class="btn ghost" id="onlyWrong">الأخطاء فقط</button>
+        <button class="btn" id="againBtn">امتحان جديد</button>
+      </div>
+    </div>
+    <div class="review" id="review"></div>
+  </section>
+
+  <!-- KEY -->
+  <section id="vKey" class="hidden">
+    <div class="row spread noprint">
+      <h2>نموذج الإجابة</h2>
+      <div class="row">
+        <button class="btn ghost" onclick="window.print()">طباعة</button>
+        <button class="btn" id="keyBack">رجوع</button>
+      </div>
+    </div>
+    <div class="panel mt">
+      <h2>جدول المواصفات</h2>
+      <div class="tbl" id="spec"></div>
+    </div>
+    <div class="panel mt">
+      <h2>مفتاح الإجابات</h2>
+      <div class="muted">(×2) تعني سؤالاً صعباً بعلامتين.</div>
+      <div class="keygrid" id="keygrid"></div>
+    </div>
+    <div class="panel mt">
+      <h2>توجيهات التصحيح</h2>
+      <ul>
+        <li>يُصحَّح الامتحان آلياً؛ لكل سؤال إجابة واحدة صحيحة، ولا علامات جزئية.</li>
+        <li>السؤال المتروك أو ذو الإجابة الخاطئة يُعطى صفراً، ولا تُخصم علامات على الإجابة الخاطئة.</li>
+        <li>إذا ثبت وجود خطأ مطبعي في سؤال، يُحتسب السؤال صحيحاً لجميع الطالبات.</li>
+        <li>مقترح التقدير: 45 فأعلى ممتاز، 40–44 جيد جداً، 33–39 جيد، 25–32 مقبول، أقل من 25 يحتاج إلى خطة علاجية.</li>
+      </ul>
+    </div>
+    <div class="review" id="keyReview"></div>
+  </section>
+</div>
+
+<dialog id="dlg">
+  <p id="dlgText" style="margin-top:0"></p>
+  <input id="dlgInput" type="password" class="hidden" inputmode="numeric" placeholder="رمز المعلّمة">
+  <div class="row mt">
+    <button class="btn" id="dlgOk">تأكيد</button>
+    <button class="btn ghost" id="dlgCancel">إلغاء</button>
+  </div>
+</dialog>
+
+<script>
+const SECTIONS=[
+  {n:"الكشف عن الكربون",c:"var(--s1)"},
+  {n:"الكربوهيدرات",c:"var(--s2)"},
+  {n:"البروتينات وفصائل الدم",c:"var(--s3)"},
+  {n:"الليبيدات",c:"var(--s4)"},
+  {n:"الحموض النووية",c:"var(--s5)"},
+  {n:"الإنزيمات",c:"var(--s6)"},
+  {n:"جزيئات حفظ الطاقة",c:"var(--s7)"}
+];
+const DL={e:"سهل",m:"متوسط",h:"صعب"};
+const MK={e:1,m:1,h:2};
+const L=["أ","ب","ج","د"];
+// s: section, d: difficulty, a: index of correct option
+const Q=[
+{s:0,d:"e",q:"عند تسخين مادة عضوية مع أكسيد النحاس للكشف عن الكربون فيها، ما الذي يحدث لذرات الكربون؟",o:["تُختزل، وينتج غاز CO<sub>2</sub>","تتأكسد، وينتج غاز CO<sub>2</sub>","تتأكسد، وينتج غاز O<sub>2</sub>","تُختزل، وينتج غاز O<sub>2</sub>"],a:1,x:"يزوّد أكسيد النحاس الكربونَ بالأكسجين فيتأكسد إلى CO<sub>2</sub>، الذي يعكّر ماء الجير."},
+{s:0,d:"m",q:"سُخِّنت أربع عينات كلٌّ منها مع أكسيد النحاس، ومُرِّر الغاز الناتج في ماء الجير. أيّ العينات لن يتعكّر معها ماء الجير؟",o:["إنزيم الببسين","سكر السكروز C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>","حمض الأوليك C<sub>18</sub>H<sub>34</sub>O<sub>2</sub>","هيدروكسيد الكالسيوم Ca(OH)<sub>2</sub>"],a:3,x:"هيدروكسيد الكالسيوم مركّب غير عضوي لا يحوي كربوناً، فلا ينتج CO<sub>2</sub>؛ أما البقية فمركّبات عضوية."},
+{s:1,d:"m",q:"سكر أحادي يحوي 14 ذرة هيدروجين. ما صيغته الجزيئية؟",o:["C<sub>7</sub>H<sub>14</sub>O<sub>7</sub>","C<sub>14</sub>H<sub>14</sub>O<sub>14</sub>","C<sub>14</sub>H<sub>28</sub>O<sub>14</sub>","C<sub>7</sub>H<sub>7</sub>O<sub>7</sub>"],a:0,x:"الصيغة العامة للسكريات الأحادية (CH<sub>2</sub>O)<sub>n</sub> بنسبة 1:2:1، فإذا كان H = 14 فإن C = O = 7."},
+{s:1,d:"e",q:"أيّ السكريات الآتية يختلف عن البقية في عدد الوحدات البنائية المكوِّنة له؟",o:["الغلوكوز","الرايبوز","الغلاكتوز","السكروز"],a:3,x:"السكروز سكر ثنائي، أما الغلوكوز والرايبوز والغلاكتوز فسكريات أحادية."},
+{s:1,d:"m",q:"عند هضم 40 جزيئاً من سكر المائدة (السكروز)، ما عدد جزيئات الغلوكوز الناتجة، وعدد جزيئات الماء اللازمة، على الترتيب؟",o:["40، 40","80، 40","40، 39","20، 20"],a:0,x:"كل جزيء سكروز يتحلل بإضافة جزيء ماء واحد إلى غلوكوز + فركتوز، فينتج 40 غلوكوز باستهلاك 40 جزيء ماء."},
+{s:1,d:"m",q:"ما عدد جزيئات الغلوكوز في 3 جزيئات من اللاكتوز، وعدد الروابط الغلايكوسيدية فيها، على الترتيب؟",o:["6، 3","3، 3","3، 6","6، 6"],a:1,x:"اللاكتوز = غلوكوز + غلاكتوز برابطة غلايكوسيدية واحدة؛ إذن 3 غلوكوز و3 روابط."},
+{s:1,d:"e",q:"سكر ثنائي يتكوّن من ارتباط جزيء غلوكوز بجزيء فركتوز. ما اسمه، وما رقما ذرتي الكربون اللتين تنشأ بينهما الرابطة الغلايكوسيدية؟",o:["السكروز، (1، 4)","المالتوز، (1، 2)","السكروز، (1، 2)","اللاكتوز، (1، 4)"],a:2,x:"السكروز يتكوّن من غلوكوز وفركتوز برابطة بين ذرة الكربون 1 في الغلوكوز وذرة الكربون 2 في الفركتوز."},
+{s:1,d:"e",q:"مِمَّ يتكوّن النشا؟",o:["أميلوز: سلاسل غير متفرعة من الغلوكوز، وأميلوبكتين: سلاسل من الغلوكوز متفرعة في بعض المواقع","أميلوز: سلاسل متفرعة في بعض المواقع، وأميلوبكتين: سلاسل غير متفرعة","أميلوز وأميلوبكتين: كلاهما سلاسل غير متفرعة من الغلوكوز","أميلوز وأميلوبكتين: كلاهما سلاسل كثيرة التفرع من الغلوكوز"],a:0,x:"الأميلوز سلاسل غير متفرعة، والأميلوبكتين متفرع في بعض المواقع، أما الغلايكوجين فكثير التفرع."},
+{s:1,d:"h",q:"أيّ السكريات المتعددة الآتية أسرع تحوّلاً إلى وحدات غلوكوز عند حاجة الجسم إلى الطاقة، ولماذا؟",o:["الأميلوز؛ لأن سلاسله غير متفرعة","السيليلوز؛ لأن سلاسله ترتبط معاً بروابط هيدروجينية","الأميلوبكتين؛ لأنه متفرع في بعض المواقع","الغلايكوجين؛ لأن كثرة تفرّعه توفّر أطرافاً عديدة تعمل عليها الإنزيمات في الوقت نفسه"],a:3,x:"التركيب يخدم الوظيفة: كثرة تفرّع الغلايكوجين تعني أطرافاً أكثر يبدأ منها التحلل في آنٍ واحد."},
+{s:1,d:"h",q:"مبلمرة غير متفرعة من الغلوكوز صيغتها C<sub>78</sub>H<sub>132</sub>O<sub>66</sub>. ما عدد وحدات الغلوكوز فيها، وعدد ذرات الهيدروجين، وعدد ذرات الأكسجين المفقودة عند تكوينها، على الترتيب؟",o:["12، 24، 12","13، 24، 24","13، 24، 12","13، 26، 13"],a:2,x:"78 ÷ 6 = 13 وحدة. تكوين 12 رابطة يُفقد 12 جزيء ماء = 24 ذرة H و12 ذرة O (تحقق: 13×12 − 132 = 24، و13×6 − 66 = 12)."},
+{s:1,d:"h",q:"وُجد في جزء من جدار خلية نباتية سكر متعدد يتكوّن من 4 سلاسل غير متفرعة من الغلوكوز مرتبطة معاً بروابط هيدروجينية، في كل سلسلة 8 جزيئات غلوكوز. ما اسم هذا السكر، وما عدد الروابط الغلايكوسيدية فيه؟",o:["الأميلوز، 28","السيليلوز، 28","السيليلوز، 32","الأميلوبكتين، 24"],a:1,x:"سلاسل متوازية تربطها روابط هيدروجينية في جدار الخلية = سيليلوز. كل سلسلة من 8 وحدات فيها 7 روابط، و7 × 4 = 28."},
+{s:2,d:"e",q:"تتكوّن الرابطة الببتيدية بين مجموعتي:",o:["الكربوكسيل والهيدروكسيل","الهيدروكسيل والأمين","الكربوكسيل في حمض أميني والأمين في حمض أميني آخر","الكربوكسيل والفوسفات"],a:2,x:"ترتبط مجموعة الكربوكسيل لحمض أميني بمجموعة الأمين لحمض أميني آخر بنزع جزيء ماء."},
+{s:2,d:"m",q:"عند إضافة أسيتات الرصاص إلى عينة تحوي عنصر الكبريت يتكوّن راسب أسود. أيّ الحموض الأمينية الآتية يُكشف عنه بهذا الفحص؟",o:["الغلايسين","السيرين","التربتوفان","السستين"],a:3,x:"السلسلة الجانبية للسستين (CH<sub>2</sub>–SH) تحوي الكبريت."},
+{s:2,d:"h",q:"سلسلة عديد ببتيد ذات تركيب أولي تحوي: 15 سيرين، و10 غلايسين، و5 تربتوفان، و13 سستين. ما عدد الروابط الببتيدية فيها، وعدد السلاسل الجانبية التي تحوي كربوناً، على الترتيب؟",o:["42، 33","42، 43","43، 33","43، 28"],a:0,x:"مجموع الحموض 43، فعدد الروابط 42. السلسلة الجانبية للغلايسين ذرة هيدروجين فقط، فالسلاسل التي تحوي كربوناً = 43 − 10 = 33."},
+{s:2,d:"m",q:"سلسلة عديد ببتيد تتكوّن من ثلاثة حموض أمينية مختلفة (Tyr، Pro، Gly)، يرد كلٌّ منها مرة واحدة. ما عدد التسلسلات الممكنة لها؟",o:["3","6","9","1"],a:1,x:"عدد الترتيبات الممكنة = 3 × 2 × 1 = 6."},
+{s:2,d:"m",q:"في تركيب حلزون ألفا تتكوّن الرابطة الهيدروجينية بين:",o:["ذرة الأكسجين في مجموعة الكربوكسيل لحمض أميني، وذرة الهيدروجين في مجموعة الأمين لحمض أميني يبعد عنه 4 حموض أمينية","ذرة الكربون في حمض أميني، وذرة الأكسجين في الحمض الأميني الذي يليه مباشرة","ذرة الأكسجين في مجموعة الهيدروكسيل، وذرة الهيدروجين في مجموعة الأمين للحمض الذي يليه مباشرة","ذرة الهيدروجين في مجموعة الأمين، وذرة الكربون في مجموعة الكربوكسيل لحمض أميني يبعد 4 حموض"],a:0,x:"الرابطة الهيدروجينية تنشأ بين O (من C=O) وH (من N–H) لحمضين يفصل بينهما 4 حموض، فتلتف السلسلة حلزونياً."},
+{s:2,d:"h",q:"وجد باحث في إحدى خلايا الدم الحمراء 140 جزيء هيموغلوبين. ما عدد أنواع السلاسل المكوِّنة للهيموغلوبين، وعدد سلاسل بيتا غلوبين في هذه الجزيئات، على الترتيب؟",o:["4، 280","2، 140","2، 280","4، 560"],a:2,x:"للهيموغلوبين نوعان من السلاسل (ألفا وبيتا)، وكل جزيء فيه سلسلتا بيتا: 140 × 2 = 280."},
+{s:2,d:"e",q:"ما عدد السلاسل عديدة الببتيد في بروتين الكولاجين، وما مستوى تركيبه؟",o:["4، رباعي","3، ثلاثي","4، ثلاثي","3، رباعي"],a:3,x:"الكولاجين ثلاث سلاسل ملتفة معاً، وتعدد السلاسل يجعل تركيبه رباعياً."},
+{s:2,d:"m",q:"شخص فصيلة دمه O⁻ يستطيع التبرع بخلايا دمه الحمراء لأي فصيلة. ما السبب؟",o:["خلاياه الحمراء لا تحمل مولدات الضد A أو B أو D","خلاياه الحمراء تحمل الأجسام المضادة Anti-A وAnti-B","خلاياه الحمراء تحمل مولد الضد D فقط","بلازما دمه لا تحتوي على أي أجسام مضادة"],a:0,x:"غياب مولدات الضد عن سطح خلاياه الحمراء يمنع تعرّف الأجسام المضادة عند المستقبِل عليها."},
+{s:2,d:"h",q:"بحسب نظام ABO، أيّ عمليات نقل بلازما الدم الآتية تؤدي إلى حدوث استجابة مناعية عند المستقبِل؟",o:["متبرع فصيلته A، ومستقبل فصيلته O","متبرع فصيلته AB، ومستقبل فصيلته B","متبرع فصيلته O، ومستقبل فصيلته B","متبرع فصيلته AB، ومستقبل فصيلته O"],a:2,x:"بلازما الفصيلة O تحوي Anti-A وAnti-B، فيرتبط Anti-B بمولد الضد B على خلايا المستقبل. بلازما AB خالية من الأجسام المضادة، وبلازما A تحوي Anti-B ولا يوجد B على خلايا O."},
+{s:2,d:"h",q:"مريضة فصيلة دمها A⁺ تحتاج إلى خلايا دم حمراء، وقائمة المتبرعين: (1) والدها O⁺، (2) والدتها AB⁺، (3) صديقتها B⁻، (4) صديق والدها A⁻. ما أرقام المتبرعين المناسبين بحسب نظامي ABO وRh؟",o:["2، 4","1، 4","1، 2","1، 2، 4"],a:1,x:"يستقبل A⁺ خلايا حمراء من A أو O (موجبة أو سالبة). AB⁺ يحمل مولد الضد B، وB⁻ كذلك، فيُستبعدان."},
+{s:3,d:"e",q:"درس باحث عينة من نسيج دهني فوجدها صلبة في درجة حرارة الغرفة. ما الذي تحويه العينة ويُعدّ سبباً لصلابتها؟",o:["رؤوس قطبية","حموض دهنية غير مشبعة","أربع حلقات كربونية ملتحمة","حموض دهنية مشبعة"],a:3,x:"سلاسل الحموض الدهنية المشبعة مستقيمة تتراص بإحكام، فتكون الدهون صلبة في درجة حرارة الغرفة."},
+{s:3,d:"m",q:"عينة من السمن الحيواني تحوي 15 جزيء دهن ثلاثي. ما عدد جزيئات الغليسرول، وعدد الحموض الدهنية، وعدد جزيئات الماء المتحررة عند تكوينها، على الترتيب؟",o:["15، 45، 45","45، 15، 45","15، 45، 15","15، 15، 30"],a:0,x:"كل دهن ثلاثي = غليسرول واحد + 3 حموض دهنية، ويتحرر 3 جزيئات ماء: 15، 45، 45."},
+{s:3,d:"m",q:"ماء البروم كاشف برتقالي يختفي لونه بوجود روابط ثنائية بين ذرات الكربون. أيّ المواد الآتية يبقى معها لون الكاشف برتقالياً؟",o:["حمض الأوليك","زيت الذرة غير المهدرج","حمض البالمتيك","زيت الزيتون"],a:2,x:"حمض البالمتيك حمض دهني مشبع لا يحوي روابط ثنائية، أما البقية فتحوي حموضاً غير مشبعة."},
+{s:3,d:"e",q:"أيّ الآتية يصف التركيب العام لهرمون الألدوستيرون؟",o:["جزيء غليسرول مرتبط بمجموعة فوسفات","أربع حلقات كربونية ملتحمة","جزيء غليسرول مع ثلاثة حموض دهنية","مجموعة كربوكسيل وسلسلة هيدروكربونية"],a:1,x:"الألدوستيرون هرمون ستيرويدي، والستيرويدات تتكوّن من أربع حلقات كربونية ملتحمة."},
+{s:3,d:"m",q:"يتحوّل لون محلول العينة إلى الأزرق عند إضافة كاشف الموليبيديت بوجود مجموعة الفوسفات. أيّ الزوجين الآتيين يتحوّل معهما اللون إلى الأزرق؟",o:["الدهون الثلاثية، والليبيدات المفسفرة","الستيرويدات، والدهون الثلاثية","الليبيدات المفسفرة، وDNA","DNA، وحمض البالمتيك"],a:2,x:"الليبيدات المفسفرة وDNA كلاهما يحوي مجموعات فوسفات."},
+{s:3,d:"m",q:"ما عدد مجموعات الفوسفات وعدد الحموض الدهنية في 20 جزيء ليبيد مفسفر، على الترتيب؟",o:["20، 20","20، 40","40، 20","10، 30"],a:1,x:"الليبيد المفسفر = غليسرول + مجموعة فوسفات واحدة + حمضان دهنيان."},
+{s:4,d:"m",q:"حلّل باحث عينة DNA فوجد أن 20% من قواعدها النيتروجينية أدينين. ما نسبة البيريميدينات، ونسبة السايتوسين في العينة، على الترتيب؟",o:["20%، 30%","30%، 20%","50%، 20%","50%، 30%"],a:3,x:"البيريميدينات دائماً 50%. A = T = 20%، فيكون G + C = 60%، وC = 30%."},
+{s:4,d:"m",q:"قطعة DNA تحوي 80 قاعدة ثايمين و80 قاعدة غوانين. ما عدد النيوكليوتيدات الكلي، وعدد الروابط الفوسفاتية ثنائية الإستر، على الترتيب؟",o:["160، 160","320، 318","320، 319","640، 319"],a:1,x:"T = A = 80 وG = C = 80، فالمجموع 320 في سلسلتين، في كل منهما 160 نيوكليوتيداً و159 رابطة: 159 × 2 = 318."},
+{s:4,d:"m",q:"نسبة الثايمين في قطعة DNA تساوي 40%، وعدد نيوكليوتيداتها 200. كم قاعدة غوانين فيها؟",o:["20","80","100","40"],a:0,x:"A + T = 80%، فيكون G + C = 20% وG = 10% من 200 = 20."},
+{s:4,d:"e",q:"أيّ القاعدتين النيتروجينيتين ترتبطان معاً بثلاث روابط هيدروجينية في جزيء DNA؟",o:["الأدينين والثايمين","الأدينين والسايتوسين","الغوانين والسايتوسين","الغوانين والثايمين"],a:2,x:"G ≡ C بثلاث روابط، وA = T برابطتين."},
+{s:4,d:"h",q:"عينة DNA تتكوّن من 850 نيوكليوتيداً، ونسبة الأدينين فيها 20%. ما عدد النيوكليوتيدات التي تحوي السايتوسين؟",o:["170","340","255","510"],a:2,x:"C = (100% − 40%) ÷ 2 = 30%، و30% من 850 = 255."},
+{s:4,d:"m",q:"أيّ العبارات الآتية دقيقة علمياً فيما يخص جزيء DNA ثنائي السلسلة؟",o:["نسبة البيورينات إلى البيريميدينات تتغيّر من عينة إلى أخرى","نسبة الأدينين أكبر دائماً من نسبة الغوانين","إذا كانت نسبة السايتوسين 28% فإن نسبة الثايمين 22%","ترتبط مجموعة الفوسفات بذرة الكربون رقم 3 في السكر الخماسي"],a:2,x:"G = C = 28% فمجموعهما 56%، ويبقى 44% لـ A وT بالتساوي: 22%. نسبة البيورينات للبيريميدينات ثابتة (1:1)، والفوسفات يرتبط بالكربون 5."},
+{s:5,d:"e",q:"العبارات الآتية تتعلق بالإنزيمات:<br>(1) تزيد الإنزيمات سرعة التفاعل بزيادة طاقة التنشيط.<br>(2) ترتبط المادة المتفاعلة بالموقع النشط للإنزيم ليتكوّن معقد الإنزيم – المادة المتفاعلة.<br>(3) يتغيّر شكل الموقع النشط تغيّراً بسيطاً ومؤقتاً عند ارتباطه بالمادة المتفاعلة بحسب فرضية التلاؤم المستحث.<br>أيّ العبارات دقيقة علمياً؟",o:["(1) فقط","(2) فقط","(3) فقط","(2) و(3) فقط"],a:3,x:"العبارة (1) خاطئة؛ الإنزيمات تخفض طاقة التنشيط."},
+{s:5,d:"m",q:"علامَ يدلّ ثبات سرعة تفاعل يحفّزه إنزيم رغم استمرار زيادة تركيز المادة المتفاعلة؟",o:["شغل جميع المواقع النشطة في الإنزيم","زيادة تركيز الإنزيم","تناقص تركيز المادة المتفاعلة","انخفاض طاقة التنشيط"],a:0,x:"عند التشبع تكون كل المواقع النشطة مشغولة، فلا تزيد السرعة إلا بزيادة الإنزيم."},
+{s:5,d:"e",q:"الرقم الهيدروجيني (pH) الأمثل لعمل إنزيمي الببسين والتربسين، على الترتيب، هو تقريباً:",o:["8، 2","2، 8","7، 7","2، 2"],a:1,x:"الببسين يعمل في المعدة الحمضية (pH ≈ 2)، والتربسين في الأمعاء الدقيقة القاعدية (pH ≈ 8)."},
+{s:5,d:"h",q:"تفاعل يحفّزه إنزيم مأخوذ من جسم الإنسان، ووسط التفاعل مشبع بالمادة المتفاعلة. أيّ الإجراءات الآتية يزيد سرعة التفاعل؟",o:["تسخين المحلول إلى 90°C","إضافة كمية من المادة المتفاعلة","إضافة كمية من الإنزيم","خفض درجة الحرارة إلى 10°C"],a:2,x:"الوسط مشبع، فإضافة المادة المتفاعلة لا تفيد؛ إضافة الإنزيم توفّر مواقع نشطة جديدة. أما 90°C فتفقد الإنزيم شكله، و10°C تبطئ التفاعل."},
+{s:5,d:"m",q:"أيّ الأوصاف الآتية يمثل تأثير رفع درجة الحرارة من 20°C إلى 35°C في سرعة تفاعل يحفّزه أحد إنزيمات الهضم في جسم الإنسان؟",o:["تتناقص السرعة تدريجياً","تبقى السرعة ثابتة","يتوقف التفاعل بسبب تغيّر شكل الإنزيم","تزداد السرعة تدريجياً"],a:3,x:"هذا المدى أقل من الدرجة المثلى (37°C تقريباً)، فتزداد السرعة بارتفاع الحرارة."},
+{s:6,d:"e",q:"ما الإنزيم الذي يحطّم الرابطة بين مجموعتي الفوسفات الثانية والثالثة في جزيء ATP، وما نواتج هذه العملية؟",o:["إنزيم إنتاج ATP، والنواتج AMP وطاقة","إنزيم ATPase، والنواتج AMP ومجموعتا فوسفات","إنزيم إنتاج ATP، والنواتج ADP ومجموعة فوسفات","إنزيم ATPase، والنواتج ADP ومجموعة فوسفات وطاقة متحررة"],a:3,x:"ATP → ADP + P + طاقة، بتحفيز إنزيم ATPase."},
+{s:6,d:"h",q:"ما عدد الإلكترونات اللازمة لاختزال 7 جزيئات NAD⁺ و5 جزيئات FAD؟",o:["24","12","19","31"],a:0,x:"كل جزيء NAD⁺ أو FAD يستقبل إلكترونين عند اختزاله: (7 + 5) × 2 = 24."}
+];
+
+// ---------- state ----------
+const KEY="bio-tawjihi-exam-v1", DURATION=3600, TEACHER_CODE="2026";
+let st=null, tick=null, wrongOnly=false;
+const $=id=>document.getElementById(id);
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function load(){try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):null}catch(e){return null}}
+function clearSave(){try{localStorage.removeItem(KEY)}catch(e){}}
+function show(v){["vStart","vExam","vResult","vKey"].forEach(x=>$(x).classList.toggle("hidden",x!==v));window.scrollTo(0,0)}
+function ar(n){return String(n)}
+
+function ask(text,withInput){
+  return new Promise(res=>{
+    $("dlgText").textContent=text;
+    $("dlgInput").value="";
+    $("dlgInput").classList.toggle("hidden",!withInput);
+    const d=$("dlg");d.showModal();
+    if(withInput)$("dlgInput").focus();
+    const done=ok=>{d.close();$("dlgOk").onclick=$("dlgCancel").onclick=null;res(ok?(withInput?$("dlgInput").value:true):false)};
+    $("dlgOk").onclick=()=>done(true);$("dlgCancel").onclick=()=>done(false);
+  });
+}
+
+// ---------- start ----------
+const saved=load();
+if(saved&&!saved.done){$("resumeBtn").classList.remove("hidden")}
+if(saved&&saved.done){st=saved}
+$("startBtn").onclick=async()=>{
+  const name=$("name").value.trim();
+  if(!name){$("name").focus();$("name").placeholder="اكتبي اسمكِ أولاً لبدء الامتحان";return}
+  if(saved&&!saved.done){if(!(await ask("يوجد امتحان محفوظ لم يُسلَّم. بدء امتحان جديد يحذفه. هل تريدين المتابعة؟")))return}
+  st={name,ans:Array(Q.length).fill(null),flag:Array(Q.length).fill(false),cur:0,start:Date.now(),done:false};
+  save();beginExam();
+};
+$("resumeBtn").onclick=()=>{st=load();beginExam()};
+
+// ---------- exam ----------
+function remaining(){return Math.max(0,DURATION-Math.floor((Date.now()-st.start)/1000))}
+function beginExam(){
+  if(remaining()<=0){finish();return}
+  show("vExam");buildLegend();renderQ();
+  clearInterval(tick);tick=setInterval(updTimer,1000);updTimer();
+}
+function updTimer(){
+  const r=remaining(),m=Math.floor(r/60),s=r%60;
+  $("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  $("timer").classList.toggle("low",r<300);
+  if(r<=0)finish();
+}
+function renderQ(){
+  const i=st.cur,q=Q[i],sec=SECTIONS[q.s];
+  $("pos").textContent="السؤال "+ar(i+1)+" من "+ar(Q.length);
+  const n=st.ans.filter(v=>v!==null).length;
+  $("answered").textContent="· أُجيب عن "+ar(n);
+  $("prog").style.width=(n/Q.length*100)+"%";
+  $("qBox").innerHTML=`
+    <div class="row" style="gap:14px;align-items:center">
+      <div class="qnum">${ar(i+1)}</div>
+      <div class="qmeta">
+        <span class="chip"><span class="dot" style="background:${sec.c}"></span>${sec.n}</span>
+        <span class="chip ${MK[q.d]==2?"m2":""}">${DL[q.d]} · ${MK[q.d]==2?"علامتان":"علامة واحدة"}</span>
+      </div>
+    </div>
+    <div class="qtext" id="qt">${q.q}</div>
+    <div class="opts" role="radiogroup" aria-labelledby="qt">
+      ${q.o.map((o,k)=>`<button class="opt ${st.ans[i]===k?"sel":""}" role="radio" aria-checked="${st.ans[i]===k}" data-k="${k}"><span class="l">${L[k]}</span><span>${o}</span></button>`).join("")}
+    </div>`;
+  $("qBox").querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const k=+b.dataset.k;st.ans[i]=(st.ans[i]===k?null:k);save();renderQ();
+  });
+  $("prevBtn").disabled=i===0;
+  $("nextBtn").textContent=i===Q.length-1?"مراجعة الخريطة":"السؤال التالي";
+  $("flagBtn").classList.toggle("on",st.flag[i]);
+  $("flagBtn").textContent=st.flag[i]?"أُزيلي علامة المراجعة":"علّمي للمراجعة";
+  renderMap();
+}
+function renderMap(){
+  $("map").innerHTML=Q.map((q,i)=>`<button class="cell ${st.ans[i]!==null?"ans":""} ${st.flag[i]?"flg":""} ${i===st.cur?"cur":""}" style="--c:${SECTIONS[q.s].c}" data-i="${i}" aria-label="السؤال ${i+1}">${ar(i+1)}</button>`).join("");
+  $("map").querySelectorAll(".cell").forEach(c=>c.onclick=()=>{st.cur=+c.dataset.i;save();renderQ();window.scrollTo(0,0)});
+}
+function buildLegend(){
+  $("legend").innerHTML=`<span style="--k:var(--teal)">أُجيب عنه</span><span style="--k:var(--gold)">معلَّم للمراجعة</span>`+
+    SECTIONS.map(s=>`<span style="--k:${s.c}">${s.n}</span>`).join("");
+}
+$("prevBtn").onclick=()=>{if(st.cur>0){st.cur--;save();renderQ();window.scrollTo(0,0)}};
+$("nextBtn").onclick=()=>{if(st.cur<Q.length-1){st.cur++;save();renderQ();window.scrollTo(0,0)}else{$("map").scrollIntoView({behavior:"smooth"})}};
+$("flagBtn").onclick=()=>{st.flag[st.cur]=!st.flag[st.cur];save();renderQ()};
+$("submitBtn").onclick=async()=>{
+  const left=st.ans.filter(v=>v===null).length;
+  const msg=left?`بقي ${left} سؤالاً دون إجابة. هل تريدين تسليم الامتحان الآن؟`:"هل تريدين تسليم الامتحان؟ لن تتمكني من تعديل إجاباتك بعد التسليم.";
+  if(await ask(msg))finish();
+};
+
+// ---------- results ----------
+function finish(){
+  clearInterval(tick);
+  if(!st.done){st.done=true;st.end=Math.min(Date.now(),st.start+DURATION*1000);save()}
+  renderResult();show("vResult");
+}
+function renderResult(){
+  let total=0;const per=SECTIONS.map(()=>({got:0,max:0}));
+  Q.forEach((q,i)=>{const m=MK[q.d];per[q.s].max+=m;if(st.ans[i]===q.a){total+=m;per[q.s].got+=m}});
+  const correct=Q.filter((q,i)=>st.ans[i]===q.a).length;
+  const mins=Math.round((st.end-st.start)/60000);
+  $("rName").textContent=st.name;
+  $("rScore").textContent=ar(total);
+  const pct=Math.round(total/50*100);
+  const lvl=total>=45?"ممتاز":total>=40?"جيد جداً":total>=33?"جيد":total>=25?"مقبول":"يحتاج إلى مراجعة";
+  $("rLine").innerHTML=`<b>${pct}%</b> · ${lvl} · ${ar(correct)} إجابة صحيحة من 40 · المدة ${ar(mins)} دقيقة`;
+  $("rSecs").innerHTML=per.map((p,k)=>`<div class="sec"><div class="top"><span>${SECTIONS[k].n}</span><span>${ar(p.got)} / ${ar(p.max)}</span></div><div class="track"><i style="width:${p.got/p.max*100}%;background:${SECTIONS[k].c}"></i></div></div>`).join("");
+  renderReview($("review"),i=>st.ans[i],wrongOnly);
+}
+function renderReview(el,getAns,onlyWrong){
+  el.innerHTML=Q.map((q,i)=>{
+    const a=getAns(i),ok=a===q.a;
+    if(onlyWrong&&ok)return"";
+    return `<div class="rv ${a!==undefined&&!ok?"bad":""}">
+      <div class="qmeta"><b>السؤال ${ar(i+1)}</b><span>${SECTIONS[q.s].n}</span><span>${DL[q.d]} · ${MK[q.d]} ${MK[q.d]==2?"علامتان":"علامة"}</span>${a===null?'<span style="color:var(--bad)">لم يُجَب عنه</span>':""}</div>
+      <div class="qtext">${q.q}</div>
+      <div class="opts">${q.o.map((o,k)=>`<button class="opt ${k===q.a?"right":""} ${a===k&&k!==q.a?"wrong":""}" disabled><span class="l">${L[k]}</span><span>${o}</span></button>`).join("")}</div>
+      <div class="explain"><b>الإجابة: ${L[q.a]}.</b> ${q.x}</div>
+    </div>`}).join("")||'<div class="panel">لا توجد إجابات خاطئة. أحسنتِ!</div>';
+}
+$("onlyWrong").onclick=()=>{wrongOnly=!wrongOnly;$("onlyWrong").textContent=wrongOnly?"جميع الأسئلة":"الأخطاء فقط";renderReview($("review"),i=>st.ans[i],wrongOnly)};
+$("againBtn").onclick=async()=>{if(await ask("سيُحذف هذا الامتحان ونتيجته من الجهاز. هل تريدين البدء من جديد؟")){clearSave();st=null;$("resumeBtn").classList.add("hidden");$("name").value="";show("vStart")}};
+
+// ---------- teacher key ----------
+$("keyBtn").onclick=async()=>{
+  const code=await ask("أدخلي رمز المعلّمة لعرض نموذج الإجابة:",true);
+  if(code===false)return;
+  if(code.trim()!==TEACHER_CODE){await ask("الرمز غير صحيح. تأكدي منه ثم أعيدي المحاولة.");return}
+  renderKey();show("vKey");
+};
+$("keyBack").onclick=()=>show(st&&st.done?"vResult":"vStart");
+function renderKey(){
+  const rows=SECTIONS.map((s,k)=>{
+    const qs=Q.map((q,i)=>({q,i})).filter(o=>o.q.s===k);
+    const c=d=>qs.filter(o=>o.q.d===d).length;
+    const marks=qs.reduce((t,o)=>t+MK[o.q.d],0);
+    return {n:s.n,nums:qs.map(o=>o.i+1),e:c("e"),m:c("m"),h:c("h"),cnt:qs.length,marks};
+  });
+  const sum=f=>rows.reduce((t,r)=>t+r[f],0);
+  $("spec").innerHTML=`<table><thead><tr><th>المحور</th><th>الأسئلة</th><th>سهل</th><th>متوسط</th><th>صعب</th><th>العدد</th><th>العلامات</th><th>الوزن</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td class="q">${r.n}</td><td>${r.nums[0]}–${r.nums[r.nums.length-1]}</td><td>${r.e}</td><td>${r.m}</td><td>${r.h}</td><td>${r.cnt}</td><td>${r.marks}</td><td>${Math.round(r.marks/50*100)}%</td></tr>`).join("")+
+    `</tbody><tfoot><tr><td class="q">المجموع</td><td>1–40</td><td>${sum("e")}</td><td>${sum("m")}</td><td>${sum("h")}</td><td>${sum("cnt")}</td><td>${sum("marks")}</td><td>100%</td></tr></tfoot></table>`;
+  $("keygrid").innerHTML=Q.map((q,i)=>`<div>${i+1} ← <b>${L[q.a]}</b>${MK[q.d]==2?" (×2)":""}</div>`).join("");
+  renderReview($("keyReview"),()=>undefined,false);
+}
+
+// finished exam on reload -> show result directly
+if(st&&st.done){renderResult();show("vResult")}
+</script>
+<div style="text-align:center;padding:14px"><a href="./" style="color:#7A1F2E;font-weight:700">↩ الامتحانات الإلكترونية</a> · <a href="../" style="color:#7A1F2E;font-weight:700">منصة القطرانة</a></div>
+</body></html>

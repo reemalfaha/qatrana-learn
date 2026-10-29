@@ -1,0 +1,790 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style rel="stylesheet" type="text/css">@charset "utf-8";
+
+:root { --teal: #7A1F2E; --teal-dark: #5C1622; --teal-light: #f6ece6; --gold: #B8902A; --gold-light: #faf3e2; --ink: #1f2b2b; --paper: #fffdf8; --line: #d8cba8; --correct: #1c7a4d; --wrong: #b3403a; }
+
+* { box-sizing: border-box; }
+
+body { font-family: "Sakkal Majalla", "Traditional Arabic", Arial, sans-serif; background: var(--paper); color: var(--ink); margin: 0px; line-height: 1.9; font-size: 18px; }
+
+.page { max-width: 960px; margin: 0px auto; padding: 0px 20px 60px; }
+
+header.doc-header { background: linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%); color: rgb(255, 255, 255); padding: 30px 24px 24px; border-radius: 0px 0px 18px 18px; position: relative; overflow: hidden; margin-bottom: 26px; }
+
+header.doc-header::before { content: ""; position: absolute; inset: 0px; background: repeating-linear-gradient(45deg, rgba(184, 144, 42, 0.1) 0px, rgba(184, 144, 42, 0.1) 12px, transparent 12px, transparent 24px); pointer-events: none; }
+
+.brand-title { font-size: 25px; font-weight: bold; letter-spacing: 0.5px; }
+
+.brand-sub { font-size: 15px; color: var(--gold-light); opacity: 0.9; margin-top: 4px; }
+
+.gold-rule { height: 4px; background: var(--gold); width: 70px; border-radius: 2px; margin: 14px 0px 10px; }
+
+.meta-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; position: relative; }
+
+.badge { background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(184, 144, 42, 0.6); color: rgb(255, 255, 255); padding: 5px 12px; border-radius: 20px; font-size: 13px; }
+
+.student-fields { background: var(--gold-light); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 26px; }
+
+.student-fields label { font-size: 15px; color: var(--teal-dark); font-weight: bold; display: block; margin-bottom: 4px; }
+
+.student-fields input { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 16px; background: rgb(255, 255, 255); }
+
+.instructions { border-right: 5px solid var(--gold); background: var(--teal-light); padding: 14px 18px; border-radius: 10px; margin-bottom: 26px; font-size: 16px; }
+
+.instructions strong { color: var(--teal-dark); }
+
+.legend-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+
+.legend-grid div { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 10px; padding: 8px 6px; font-size: 12.5px; text-align: center; }
+
+.legend-grid .ic { font-size: 18px; display: block; }
+
+.skill-legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 30px; }
+
+.skill-legend div { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 10px; padding: 8px 6px; font-size: 12px; text-align: center; }
+
+section.unit { margin-bottom: 34px; }
+
+.unit-title { display: flex; align-items: center; gap: 10px; background: var(--teal); color: rgb(255, 255, 255); padding: 10px 18px; border-radius: 10px; font-size: 19px; font-weight: bold; margin-bottom: 16px; }
+
+.unit-title .ic { font-size: 22px; }
+
+.q { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; position: relative; }
+
+.q-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+
+.q-num { font-weight: bold; color: var(--teal-dark); }
+
+.q-type { font-size: 11.5px; background: var(--gold-light); color: var(--gold); border: 1px solid var(--gold); padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+
+.options label { display: block; background: var(--teal-light); margin: 6px 0px; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.15s; }
+
+.options label:hover { background: rgb(215, 236, 236); }
+
+.options input { margin-left: 10px; }
+
+.datatable { width: 100%; border-collapse: collapse; margin: 10px 0px; font-size: 14.5px; }
+
+.datatable th, .datatable td { border: 1px solid var(--line); padding: 6px 10px; text-align: center; }
+
+.datatable th { background: var(--teal-light); }
+
+.feedback { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 15px; display: none; }
+
+.feedback.correct { background: rgb(229, 246, 236); color: var(--correct); border: 1px solid var(--correct); }
+
+.feedback.wrong { background: rgb(251, 233, 232); color: var(--wrong); border: 1px solid var(--wrong); }
+
+.grade-bar { position: sticky; bottom: 0px; background: var(--paper); border-top: 2px solid var(--gold); padding: 14px 0px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; z-index: 5; }
+
+button.primary { background: var(--teal); color: rgb(255, 255, 255); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; padding: 12px 28px; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: inherit; box-shadow: rgba(14, 107, 107, 0.3) 0px 3px 10px; }
+
+button.primary:hover { background: var(--teal-dark); }
+
+button.secondary { background: rgb(255, 255, 255); color: var(--teal-dark); border: 2px solid var(--teal); padding: 10px 22px; border-radius: 30px; font-size: 15px; font-weight: bold; cursor: pointer; font-family: inherit; }
+
+button.secondary:hover { background: var(--teal-light); }
+
+button.gold { background: var(--gold); color: rgb(255, 255, 255); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; padding: 10px 22px; border-radius: 30px; font-size: 15px; font-weight: bold; cursor: pointer; font-family: inherit; }
+
+#resultBox { display: none; background: linear-gradient(135deg,var(--gold-light),#fff); border: 2px solid var(--gold); border-radius: 16px; padding: 22px; margin: 26px 0px; }
+
+#resultBox h2 { color: var(--teal-dark); margin: 0px 0px 8px; text-align: center; }
+
+.scoreNum { font-size: 42px; color: var(--gold); font-weight: bold; text-align: center; }
+
+.level { font-size: 19px; font-weight: bold; margin-top: 6px; text-align: center; }
+
+.bars-title { font-size: 15px; color: var(--teal-dark); font-weight: bold; margin: 18px 0px 8px; }
+
+.skill-row { display: grid; grid-template-columns: 150px 1fr 50px; align-items: center; gap: 10px; margin-bottom: 9px; }
+
+.skill-row .lbl { font-size: 13.5px; color: var(--teal-dark); font-weight: bold; }
+
+.bar-track { background: rgb(238, 226, 196); border-radius: 20px; height: 16px; overflow: hidden; }
+
+.bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s; }
+
+.skill-row .pctval { font-size: 12.5px; text-align: left; color: rgb(85, 85, 85); }
+
+.diag-box { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; margin-top: 20px; }
+
+.diag-box h3 { color: var(--teal-dark); margin-top: 0px; }
+
+.diag-box ul { margin: 6px 0px; padding-right: 20px; }
+
+.diag-box li { margin-bottom: 6px; }
+
+.strength { color: var(--correct); font-weight: bold; }
+
+.weakness { color: var(--wrong); font-weight: bold; }
+
+table.keytable { width: 100%; border-collapse: collapse; margin: 16px 0px 30px; font-size: 14px; }
+
+table.keytable th, table.keytable td { border: 1px solid var(--line); padding: 7px 8px; text-align: center; }
+
+table.keytable th { background: var(--teal); color: rgb(255, 255, 255); }
+
+table.keytable tr:nth-child(2n) { background: var(--teal-light); }
+
+table.matrix { width: 100%; border-collapse: collapse; margin: 14px 0px 26px; font-size: 14px; }
+
+table.matrix th, table.matrix td { border: 1px solid var(--line); padding: 8px; text-align: center; }
+
+table.matrix th { background: var(--gold); color: rgb(255, 255, 255); }
+
+table.matrix td.count { font-weight: bold; color: var(--teal-dark); }
+
+.section-title { color: var(--teal-dark); border-bottom: 3px solid var(--gold); padding-bottom: 8px; margin-top: 44px; }
+
+.rubric-card { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+
+.rubric-card div { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+
+.rubric-card .pct { font-size: 20px; font-weight: bold; color: var(--teal); }
+
+.rubric-card .lvl { font-weight: bold; margin: 6px 0px; color: var(--gold); }
+
+.rubric-card p { font-size: 12.5px; margin: 0px; color: rgb(85, 85, 85); }
+
+footer.doc-footer { text-align: center; color: var(--teal-dark); border-top: 2px dashed var(--gold); margin-top: 40px; padding-top: 16px; font-size: 14px; }
+
+@media print {
+  .grade-bar, button { display: none !important; }
+  header.doc-header { print-color-adjust: exact; }
+}
+
+@media (max-width: 640px) {
+  .student-fields { grid-template-columns: 1fr; }
+  .rubric-card { grid-template-columns: 1fr 1fr; }
+  .legend-grid, .skill-legend { grid-template-columns: 1fr 1fr; }
+  .skill-row { grid-template-columns: 100px 1fr 40px; }
+}</style>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تشخيصي إلكتروني شامل - العلوم - الصف العاشر</title>
+
+</head>
+<body>
+<div class="page">
+
+  <header class="doc-header">
+    <div class="brand-title">الاختبار التشخيصي الإلكتروني الشامل – مبحث العلوم</div>
+    <div class="brand-sub">الصف العاشر الأساسي — مراجعة شاملة للمهارات والمفاهيم من الصفوف السابقة</div>
+    <div class="gold-rule"></div>
+    <div class="brand-sub">إعداد المعلمة: نوال أحمد بني عطية | مدرسة القطرانة الثانوية للبنات</div>
+    <div class="meta-badges">
+      <span class="badge">🧭 8 مهارات علمية أساسية</span>
+      <span class="badge">🧪 4 مباحث علمية (أحياء، كيمياء، فيزياء، أرض وفضاء)</span>
+      <span class="badge">📝 24 سؤال اختيار من متعدد</span>
+      <span class="badge">✅ تصحيح ذاتي + خطة علاجية فردية فورية</span>
+    </div>
+  </header>
+
+  <div class="student-fields">
+    <div><label>اسم الطالبة</label><input type="text" id="stName" placeholder="اكتبي اسمك هنا"></div>
+    <div><label>الشعبة</label><input type="text" id="stSection" placeholder="مثال: 10/أ"></div>
+    <div><label>التاريخ</label><input type="date" id="stDate"></div>
+    <div><label>الرقم</label><input type="text" id="stNo" placeholder="الرقم في السجل"></div>
+  </div>
+
+  <div class="instructions">
+    <strong>تعليمات الاختبار:</strong> هذا اختبار تشخيصي شامل يراجع أبرز المفاهيم والمهارات العلمية التي درستِها في الصفوف السابقة، موزَّعاً بالتساوي على المباحث العلمية الأربعة (العلوم الحياتية، الكيمياء، الفيزياء، الأرض والفضاء)، ومبنياً حول المهارات العلمية الأساسية الثماني لا المحتوى فقط. جميع الأسئلة من نوع الاختيار من متعدد. أجيبي عن كل الأسئلة ثم اضغطي <strong>«تصحيح الاختبار»</strong> لرؤية درجتك، وبطاقتَي أدائك حسب المبحث وحسب المهارة، مع خطة علاجية شخصية تُبنى تلقائياً على نقاط قوتك وضعفك.
+  </div>
+
+  <div class="legend-grid">
+    <div><span class="ic">🧬</span>العلوم الحياتية</div>
+    <div><span class="ic">⚗️</span>الكيمياء</div>
+    <div><span class="ic">⚡</span>الفيزياء</div>
+    <div><span class="ic">🌍</span>الأرض والفضاء</div>
+  </div>
+  <div class="skill-legend">
+    <div>👁️ الملاحظة</div><div>📏 القياس</div><div>🗂️ التصنيف</div><div>🧩 الاستنتاج</div>
+    <div>🔮 التنبؤ</div><div>📈 تفسير البيانات</div><div>⚗️ التصميم التجريبي</div><div>💡 التطبيق</div>
+  </div>
+
+  <form id="quizForm">
+
+  <!-- ================= BIOLOGY ================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="ic">🧬</span> المبحث الأول: العلوم الحياتية (الكائنات الحية، الخلية، الفسيولوجيا)</div>
+
+    <div class="q" data-qid="1" data-subject="bio" data-skill="classify" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 1</span><span class="q-type">مبحث: أحياء | مهارة: التصنيف</span></div>
+      <p>أي مما يلي يُصنَّف ضمن المحلِّلات (المفكِّكات) في النظام البيئي؟</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> أ) الأسد</label>
+        <label><input type="radio" name="q1" value="b"> ب) البكتيريا المحلِّلة</label>
+        <label><input type="radio" name="q1" value="c"> ج) الصقر</label>
+        <label><input type="radio" name="q1" value="d"> د) الغزال</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="2" data-subject="bio" data-skill="obs" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 2</span><span class="q-type">مبحث: أحياء | مهارة: الملاحظة</span></div>
+      <p>عند فحص خلية نباتية تحت المجهر، لوحظ أن قطرها يبلغ 40 ميكرومتراً. هذه ملاحظة:</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="a"> أ) نوعية</label>
+        <label><input type="radio" name="q2" value="b"> ب) كمّية</label>
+        <label><input type="radio" name="q2" value="c"> ج) استنتاجية</label>
+        <label><input type="radio" name="q2" value="d"> د) افتراضية</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="3" data-subject="bio" data-skill="infer" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 3</span><span class="q-type">مبحث: أحياء | مهارة: الاستنتاج</span></div>
+      <p>وُضع نبات في غرفة مظلمة تماماً لعدة أيام، فلوحظ أن لون أوراقه أصبح أصفر باهتاً. أفضل تفسير علمي لذلك:</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="a"> أ) نقص الماء</label>
+        <label><input type="radio" name="q3" value="b"> ب) توقف البناء الضوئي لغياب الضوء فتراجع إنتاج الكلوروفيل</label>
+        <label><input type="radio" name="q3" value="c"> ج) ارتفاع درجة الحرارة</label>
+        <label><input type="radio" name="q3" value="d"> د) زيادة ثاني أكسيد الكربون</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="4" data-subject="bio" data-skill="classify" data-answer="a">
+      <div class="q-head"><span class="q-num">السؤال 4</span><span class="q-type">مبحث: أحياء | مهارة: التصنيف</span></div>
+      <p>العضية المسؤولة عن هضم الفضلات والمواد الغريبة داخل الخلية تسمى:</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="a"> أ) الجسيم الحال (الليسوسوم)</label>
+        <label><input type="radio" name="q4" value="b"> ب) الميتوكندريا</label>
+        <label><input type="radio" name="q4" value="c"> ج) الشبكة الإندوبلازمية</label>
+        <label><input type="radio" name="q4" value="d"> د) جسم غولجي</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <table class="datatable">
+      <caption style="margin-bottom:6px;font-size:13.5px;color:var(--teal-dark);">جدول: معدل نبضات القلب (نبضة/دقيقة) لثلاث طالبات قبل الجري وبعده</caption>
+      <thead><tr><th>الطالبة</th><th>قبل</th><th>بعد</th></tr></thead>
+      <tbody><tr><td>أ</td><td>70</td><td>128</td></tr><tr><td>ب</td><td>74</td><td>92</td></tr><tr><td>ج</td><td>68</td><td>150</td></tr></tbody>
+    </table>
+    <div class="q" data-qid="5" data-subject="bio" data-skill="data" data-answer="c">
+      <div class="q-head"><span class="q-num">السؤال 5</span><span class="q-type">مبحث: أحياء | مهارة: تفسير البيانات</span></div>
+      <p>بالاعتماد على الجدول أعلاه، أي طالبة أظهرت أكبر زيادة في معدل نبضات القلب بعد الجري؟</p>
+      <div class="options">
+        <label><input type="radio" name="q5" value="a"> أ) الطالبة أ</label>
+        <label><input type="radio" name="q5" value="b"> ب) الطالبة ب</label>
+        <label><input type="radio" name="q5" value="c"> ج) الطالبة ج</label>
+        <label><input type="radio" name="q5" value="d"> د) جميعهن متساويات</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="6" data-subject="bio" data-skill="apply" data-answer="a">
+      <div class="q-head"><span class="q-num">السؤال 6</span><span class="q-type">مبحث: أحياء | مهارة: التطبيق</span></div>
+      <p>تعاني طالبة من فقر الدم (الأنيميا) الناتج عن نقص الحديد. أي جهاز في جسمها يتأثر بشكل مباشر؟</p>
+      <div class="options">
+        <label><input type="radio" name="q6" value="a"> أ) الجهاز الدوري (نقل الأكسجين عبر الهيموغلوبين)</label>
+        <label><input type="radio" name="q6" value="b"> ب) الجهاز الهضمي</label>
+        <label><input type="radio" name="q6" value="c"> ج) الجهاز البولي</label>
+        <label><input type="radio" name="q6" value="d"> د) الجهاز العضلي فقط</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ================= CHEMISTRY ================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="ic">⚗️</span> المبحث الثاني: الكيمياء الأساسية</div>
+
+    <div class="q" data-qid="7" data-subject="chem" data-skill="classify" data-answer="a">
+      <div class="q-head"><span class="q-num">السؤال 7</span><span class="q-type">مبحث: كيمياء | مهارة: التصنيف</span></div>
+      <p>عنصر عدده الذري 17 يُصنَّف ضمن مجموعة:</p>
+      <div class="options">
+        <label><input type="radio" name="q7" value="a"> أ) الهالوجينات</label>
+        <label><input type="radio" name="q7" value="b"> ب) الغازات النبيلة</label>
+        <label><input type="radio" name="q7" value="c"> ج) الفلزات القلوية</label>
+        <label><input type="radio" name="q7" value="d"> د) الفلزات الانتقالية</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="8" data-subject="chem" data-skill="measure" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 8</span><span class="q-type">مبحث: كيمياء | مهارة: القياس</span></div>
+      <p>الوحدة المستخدمة لقياس الكتلة الذرية تسمى:</p>
+      <div class="options">
+        <label><input type="radio" name="q8" value="a"> أ) الجول</label>
+        <label><input type="radio" name="q8" value="b"> ب) وحدة الكتلة الذرية (amu)</label>
+        <label><input type="radio" name="q8" value="c"> ج) المول</label>
+        <label><input type="radio" name="q8" value="d"> د) اللتر</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="9" data-subject="chem" data-skill="infer" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 9</span><span class="q-type">مبحث: كيمياء | مهارة: الاستنتاج</span></div>
+      <p>عند خلط محلولين شفافين، تشكَّل راسب أبيض وارتفعت درجة حرارة المحلول قليلاً. هذا يدل على:</p>
+      <div class="options">
+        <label><input type="radio" name="q9" value="a"> أ) تغيّر فيزيائي فقط</label>
+        <label><input type="radio" name="q9" value="b"> ب) حدوث تفاعل كيميائي</label>
+        <label><input type="radio" name="q9" value="c"> ج) تبخّر الماء</label>
+        <label><input type="radio" name="q9" value="d"> د) عدم حدوث أي تغيّر</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="10" data-subject="chem" data-skill="design" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 10</span><span class="q-type">مبحث: كيمياء | مهارة: التصميم التجريبي</span></div>
+      <p>في تجربة لدراسة أثر تركيز الحمض على سرعة تفاعله مع الرخام، ما المتغير التابع؟</p>
+      <div class="options">
+        <label><input type="radio" name="q10" value="a"> أ) تركيز الحمض</label>
+        <label><input type="radio" name="q10" value="b"> ب) زمن/سرعة التفاعل</label>
+        <label><input type="radio" name="q10" value="c"> ج) نوع الوعاء المستخدم</label>
+        <label><input type="radio" name="q10" value="d"> د) درجة حرارة الغرفة</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="11" data-subject="chem" data-skill="classify" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 11</span><span class="q-type">مبحث: كيمياء | مهارة: التصنيف</span></div>
+      <p>المادة التي تتكوّن من نوع واحد فقط من الذرات تسمى:</p>
+      <div class="options">
+        <label><input type="radio" name="q11" value="a"> أ) مركب</label>
+        <label><input type="radio" name="q11" value="b"> ب) عنصر</label>
+        <label><input type="radio" name="q11" value="c"> ج) مخلوط</label>
+        <label><input type="radio" name="q11" value="d"> د) محلول</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="12" data-subject="chem" data-skill="apply" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 12</span><span class="q-type">مبحث: كيمياء | مهارة: التطبيق</span></div>
+      <p>عند اشتعال حريق ناتج عن مادة زيتية في المطبخ، أفضل إجراء علمي للإطفاء هو:</p>
+      <div class="options">
+        <label><input type="radio" name="q12" value="a"> أ) صبّ الماء مباشرة عليه</label>
+        <label><input type="radio" name="q12" value="b"> ب) تغطية النار بغطاء لعزلها عن الأكسجين</label>
+        <label><input type="radio" name="q12" value="c"> ج) زيادة التهوية في المطبخ</label>
+        <label><input type="radio" name="q12" value="d"> د) إضافة مزيد من الزيت</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ================= PHYSICS ================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="ic">⚡</span> المبحث الثالث: الفيزياء والقوى</div>
+
+    <div class="q" data-qid="13" data-subject="phys" data-skill="measure" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 13</span><span class="q-type">مبحث: فيزياء | مهارة: القياس</span></div>
+      <p>الجهاز المستخدم لقياس المقاومة الكهربائية مباشرة يسمى:</p>
+      <div class="options">
+        <label><input type="radio" name="q13" value="a"> أ) الأميتر</label>
+        <label><input type="radio" name="q13" value="b"> ب) الأوميتر</label>
+        <label><input type="radio" name="q13" value="c"> ج) الفولتميتر</label>
+        <label><input type="radio" name="q13" value="d"> د) الجلفانومتر</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="14" data-subject="phys" data-skill="predict" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 14</span><span class="q-type">مبحث: فيزياء | مهارة: التنبؤ</span></div>
+      <p>إذا تضاعفت كتلة جسم مع بقاء القوة المؤثرة فيه ثابتة، فإن تسارعه (حسب قانون نيوتن الثاني) سوف:</p>
+      <div class="options">
+        <label><input type="radio" name="q14" value="a"> أ) يتضاعف</label>
+        <label><input type="radio" name="q14" value="b"> ب) ينخفض إلى النصف</label>
+        <label><input type="radio" name="q14" value="c"> ج) يبقى ثابتاً</label>
+        <label><input type="radio" name="q14" value="d"> د) يصبح صفراً</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="15" data-subject="phys" data-skill="data" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 15</span><span class="q-type">مبحث: فيزياء | مهارة: تفسير البيانات</span></div>
+      <p>في رسم بياني يوضح العلاقة بين المسافة والزمن لجسم يتحرك في خط مستقيم، فإن ميل الخط المستقيم يمثل:</p>
+      <div class="options">
+        <label><input type="radio" name="q15" value="a"> أ) التسارع</label>
+        <label><input type="radio" name="q15" value="b"> ب) السرعة</label>
+        <label><input type="radio" name="q15" value="c"> ج) القوة</label>
+        <label><input type="radio" name="q15" value="d"> د) الكتلة</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="16" data-subject="phys" data-skill="apply" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 16</span><span class="q-type">مبحث: فيزياء | مهارة: التطبيق</span></div>
+      <p>لماذا يوصى بتوزيع الأحمال الكهربائية في المنزل على أكثر من دائرة بدلاً من دائرة واحدة؟</p>
+      <div class="options">
+        <label><input type="radio" name="q16" value="a"> أ) لتقليل الجهد الكهربائي</label>
+        <label><input type="radio" name="q16" value="b"> ب) لتجنّب تجاوز التيار الكلي حدّ القاطع الكهربائي وتقليل خطر الحريق</label>
+        <label><input type="radio" name="q16" value="c"> ج) لزيادة المقاومة الكلية</label>
+        <label><input type="radio" name="q16" value="d"> د) لا داعي لذلك علمياً</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="17" data-subject="phys" data-skill="infer" data-answer="c">
+      <div class="q-head"><span class="q-num">السؤال 17</span><span class="q-type">مبحث: فيزياء | مهارة: الاستنتاج</span></div>
+      <p>أُسقطت كرة معدنية وكرة فلين متماثلتا الحجم من الارتفاع نفسه داخل أنبوب مفرَّغ من الهواء. ماذا نستنتج عن زمن وصول كل منهما للأسفل؟</p>
+      <div class="options">
+        <label><input type="radio" name="q17" value="a"> أ) تصل الكرة المعدنية أولاً</label>
+        <label><input type="radio" name="q17" value="b"> ب) تصل كرة الفلين أولاً</label>
+        <label><input type="radio" name="q17" value="c"> ج) تصلان في الوقت نفسه</label>
+        <label><input type="radio" name="q17" value="d"> د) لا يمكن التنبؤ بالنتيجة</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="18" data-subject="phys" data-skill="measure" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 18</span><span class="q-type">مبحث: فيزياء | مهارة: القياس</span></div>
+      <p>وحدة قياس الطاقة في النظام الدولي للوحدات هي:</p>
+      <div class="options">
+        <label><input type="radio" name="q18" value="a"> أ) نيوتن</label>
+        <label><input type="radio" name="q18" value="b"> ب) جول</label>
+        <label><input type="radio" name="q18" value="c"> ج) واط</label>
+        <label><input type="radio" name="q18" value="d"> د) باسكال</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ================= EARTH & SPACE ================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="ic">🌍</span> المبحث الرابع: الأرض والفضاء</div>
+
+    <div class="q" data-qid="19" data-subject="earth" data-skill="classify" data-answer="c">
+      <div class="q-head"><span class="q-num">السؤال 19</span><span class="q-type">مبحث: أرض وفضاء | مهارة: التصنيف</span></div>
+      <p>الطبقة الأرضية التي نعيش عليها وتتكوّن منها القارات والمحيطات تسمى:</p>
+      <div class="options">
+        <label><input type="radio" name="q19" value="a"> أ) اللب الداخلي</label>
+        <label><input type="radio" name="q19" value="b"> ب) الوشاح</label>
+        <label><input type="radio" name="q19" value="c"> ج) القشرة الأرضية</label>
+        <label><input type="radio" name="q19" value="d"> د) اللب الخارجي</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="20" data-subject="earth" data-skill="infer" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 20</span><span class="q-type">مبحث: أرض وفضاء | مهارة: الاستنتاج</span></div>
+      <p>لوحظ ازدياد تكرار الزلازل في منطقة قريبة من حدود صفيحتين تكتونيتين. أفضل تفسير لذلك:</p>
+      <div class="options">
+        <label><input type="radio" name="q20" value="a"> أ) نشاط بركاني بعيد لا علاقة له</label>
+        <label><input type="radio" name="q20" value="b"> ب) حركة الصفائح التكتونية عند منطقة الحدود</label>
+        <label><input type="radio" name="q20" value="c"> ج) التغيّر المناخي الموسمي</label>
+        <label><input type="radio" name="q20" value="d"> د) دوران الأرض حول محورها</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="21" data-subject="earth" data-skill="obs" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 21</span><span class="q-type">مبحث: أرض وفضاء | مهارة: الملاحظة</span></div>
+      <p>ما الذي يميّز الكواكب عن النجوم عند رصدها ليلاً عبر عدة ليالٍ متتالية؟</p>
+      <div class="options">
+        <label><input type="radio" name="q21" value="a"> أ) الكواكب تلمع والنجوم لا تلمع</label>
+        <label><input type="radio" name="q21" value="b"> ب) الكواكب تتحرك نسبياً عبر خلفية النجوم الثابتة</label>
+        <label><input type="radio" name="q21" value="c"> ج) النجوم أقرب إلى الأرض من الكواكب</label>
+        <label><input type="radio" name="q21" value="d"> د) لا يوجد أي فرق بينهما</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="22" data-subject="earth" data-skill="data" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 22</span><span class="q-type">مبحث: أرض وفضاء | مهارة: تفسير البيانات</span></div>
+      <p>تُظهر بيانات مدة الإضاءة النهارية في الأردن ازدياداً تدريجياً من كانون الثاني حتى حزيران، ثم تناقصاً حتى كانون الأول. أفضل تفسير لهذا النمط:</p>
+      <div class="options">
+        <label><input type="radio" name="q22" value="a"> أ) تغيّر كبير في بُعد الأرض عن الشمس</label>
+        <label><input type="radio" name="q22" value="b"> ب) ميلان محور الأرض ودورانها حول الشمس</label>
+        <label><input type="radio" name="q22" value="c"> ج) دوران القمر حول الأرض</label>
+        <label><input type="radio" name="q22" value="d"> د) نشاط الرياح الموسمية</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="23" data-subject="earth" data-skill="infer" data-answer="a">
+      <div class="q-head"><span class="q-num">السؤال 23</span><span class="q-type">مبحث: أرض وفضاء | مهارة: الاستنتاج</span></div>
+      <p>وُجدت أحافير كائنات بحرية داخل صخور رسوبية في منطقة صحراوية حالياً. ماذا نستنتج؟</p>
+      <div class="options">
+        <label><input type="radio" name="q23" value="a"> أ) كانت المنطقة مغطاة بالماء (بحر أو محيط) قديماً</label>
+        <label><input type="radio" name="q23" value="b"> ب) كانت المنطقة صحراء دائماً</label>
+        <label><input type="radio" name="q23" value="c"> ج) عاشت هذه الكائنات في الرمال مباشرة</label>
+        <label><input type="radio" name="q23" value="d"> د) لا يمكن الاستنتاج من الأحافير إطلاقاً</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="24" data-subject="earth" data-skill="apply" data-answer="a">
+      <div class="q-head"><span class="q-num">السؤال 24</span><span class="q-type">مبحث: أرض وفضاء | مهارة: التطبيق</span></div>
+      <p>بالاستفادة من معرفتك بحركة القمر، فسّري لماذا يعتمد التقويم الهجري القمري على أطوار القمر لتحديد الأشهر:</p>
+      <div class="options">
+        <label><input type="radio" name="q24" value="a"> أ) لأن دورة أطوار القمر الكاملة تستغرق نحو 29.5 يوماً بانتظام</label>
+        <label><input type="radio" name="q24" value="b"> ب) لأن الأرض تدور حول الشمس كل شهر</label>
+        <label><input type="radio" name="q24" value="c"> ج) بسبب ميلان محور الأرض فقط</label>
+        <label><input type="radio" name="q24" value="d"> د) بسبب حركة الكواكب الأخرى</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  </section>
+
+  </form>
+
+  <div class="grade-bar">
+    <button type="button" class="primary">✅ تصحيح الاختبار</button>
+    <button type="button" class="secondary">🔄 إعادة المحاولة</button>
+    <button type="button" class="gold">⬇️ تنزيل النتيجة (CSV)</button>
+    <button type="button" class="secondary">🖨️ طباعة</button>
+  </div>
+
+  <div id="resultBox">
+    <h2>نتيجتك في الاختبار التشخيصي</h2>
+    <div class="scoreNum" id="scoreNum">0 / 24</div>
+    <div class="level" id="levelText"></div>
+
+    <div class="bars-title">📊 بطاقة الأداء حسب المبحث</div>
+    <div id="subjectBars"></div>
+
+    <div class="bars-title">🧭 بطاقة الأداء حسب المهارة</div>
+    <div id="skillBars"></div>
+
+    <div class="diag-box">
+      <h3>🔎 تشخيص نقاط القوة والضعف وخطة العلاج الفردية</h3>
+      <div id="diagStrengths"></div>
+      <div id="diagWeaknesses"></div>
+      <div id="diagPlan"></div>
+    </div>
+  </div>
+
+  <!-- ======================= ANSWER KEY ======================= -->
+  <h2 class="section-title">🔑 مفتاح الإجابات والتصحيح</h2>
+  <table class="keytable">
+    <thead><tr><th>السؤال</th><th>المبحث</th><th>المهارة</th><th>الإجابة الصحيحة</th><th>شرح موجز</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>أحياء</td><td>التصنيف</td><td>ب) البكتيريا المحلِّلة</td><td>المحلِّلات تفكِّك بقايا الكائنات، وليست مفترسة كباقي الخيارات.</td></tr>
+      <tr><td>2</td><td>أحياء</td><td>الملاحظة</td><td>ب) 40 ميكرومتر</td><td>القيمة الرقمية المصحوبة بوحدة قياس تمثل ملاحظة كمّية.</td></tr>
+      <tr><td>3</td><td>أحياء</td><td>الاستنتاج</td><td>ب) توقف البناء الضوئي</td><td>غياب الضوء يمنع إنتاج الكلوروفيل فيصفرّ لون الأوراق.</td></tr>
+      <tr><td>4</td><td>أحياء</td><td>التصنيف</td><td>أ) الليسوسوم</td><td>يحتوي إنزيمات هضم داخلي للفضلات والمواد الغريبة.</td></tr>
+      <tr><td>5</td><td>أحياء</td><td>تفسير البيانات</td><td>ج) الطالبة ج</td><td>الفرق 150-68=82 وهو الأكبر مقارنة بالطالبتين الأخريين.</td></tr>
+      <tr><td>6</td><td>أحياء</td><td>التطبيق</td><td>أ) الجهاز الدوري</td><td>الهيموغلوبين يحتاج الحديد لنقل الأكسجين في الدم.</td></tr>
+      <tr><td>7</td><td>كيمياء</td><td>التصنيف</td><td>أ) الهالوجينات</td><td>الكلور (العدد الذري 17) من مجموعة الهالوجينات.</td></tr>
+      <tr><td>8</td><td>كيمياء</td><td>القياس</td><td>ب) amu</td><td>وحدة الكتلة الذرية الموحدة تُستخدم لقياس كتل الذرات الصغيرة جداً.</td></tr>
+      <tr><td>9</td><td>كيمياء</td><td>الاستنتاج</td><td>ب) تفاعل كيميائي</td><td>تكوّن راسب جديد وتغيّر الطاقة الحرارية دليلان على تفاعل كيميائي.</td></tr>
+      <tr><td>10</td><td>كيمياء</td><td>التصميم التجريبي</td><td>ب) زمن/سرعة التفاعل</td><td>هو الكمية التي تُقاس نتيجة تغيير التركيز (المتغير المستقل).</td></tr>
+      <tr><td>11</td><td>كيمياء</td><td>التصنيف</td><td>ب) عنصر</td><td>يحتوي نوعاً واحداً من الذرات، بخلاف المركب والمخلوط.</td></tr>
+      <tr><td>12</td><td>كيمياء</td><td>التطبيق</td><td>ب) عزل الأكسجين</td><td>حرائق الزيوت تُطفأ بمنع وصول الأكسجين لا بالماء.</td></tr>
+      <tr><td>13</td><td>فيزياء</td><td>القياس</td><td>ب) الأوميتر</td><td>جهاز مخصص لقياس المقاومة الكهربائية مباشرة.</td></tr>
+      <tr><td>14</td><td>فيزياء</td><td>التنبؤ</td><td>ب) ينخفض للنصف</td><td>التسارع = القوة ÷ الكتلة، فتضاعف الكتلة يُنصِّف التسارع.</td></tr>
+      <tr><td>15</td><td>فيزياء</td><td>تفسير البيانات</td><td>ب) السرعة</td><td>ميل الخط في رسم مسافة-زمن يمثل معدل تغيّر المسافة أي السرعة.</td></tr>
+      <tr><td>16</td><td>فيزياء</td><td>التطبيق</td><td>ب) تجنّب تجاوز القاطع</td><td>توزيع الأحمال يمنع زيادة التيار الكلي عن حدّ الأمان.</td></tr>
+      <tr><td>17</td><td>فيزياء</td><td>الاستنتاج</td><td>ج) تصلان معاً</td><td>في الفراغ، جميع الأجسام تتسارع بالمقدار نفسه بغضّ النظر عن كتلتها.</td></tr>
+      <tr><td>18</td><td>فيزياء</td><td>القياس</td><td>ب) جول</td><td>الوحدة الدولية لقياس الطاقة والشغل.</td></tr>
+      <tr><td>19</td><td>أرض وفضاء</td><td>التصنيف</td><td>ج) القشرة الأرضية</td><td>الطبقة الخارجية الصلبة التي تشمل اليابسة وقاع المحيطات.</td></tr>
+      <tr><td>20</td><td>أرض وفضاء</td><td>الاستنتاج</td><td>ب) حركة الصفائح</td><td>حدود الصفائح التكتونية مناطق نشاط زلزالي متكرر.</td></tr>
+      <tr><td>21</td><td>أرض وفضاء</td><td>الملاحظة</td><td>ب) تتحرك نسبياً</td><td>حركة الكواكب الظاهرية عبر النجوم الثابتة أبرز علامة ترصدها العين المجردة.</td></tr>
+      <tr><td>22</td><td>أرض وفضاء</td><td>تفسير البيانات</td><td>ب) ميلان المحور</td><td>يفسّر التغيّر الدوري في طول النهار عبر فصول السنة.</td></tr>
+      <tr><td>23</td><td>أرض وفضاء</td><td>الاستنتاج</td><td>أ) كانت مغطاة بالماء</td><td>وجود أحافير بحرية دليل على وجود بيئة مائية قديمة في المكان.</td></tr>
+      <tr><td>24</td><td>أرض وفضاء</td><td>التطبيق</td><td>أ) دورة 29.5 يوماً</td><td>انتظام أطوار القمر يجعله وحدة زمنية موثوقة لتحديد الأشهر.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ======================= SKILLS TABLE ======================= -->
+  <h2 class="section-title">🧭 دليل المهارات العلمية الأساسية الثماني</h2>
+  <table class="keytable">
+    <thead><tr><th>المهارة</th><th>وصف موجز</th></tr></thead>
+    <tbody>
+      <tr><td>👁️ الملاحظة</td><td>استخدام الحواس أو الأدوات لجمع معلومات دقيقة (كمّية أو نوعية) عن ظاهرة أو جسم.</td></tr>
+      <tr><td>📏 القياس</td><td>اختيار الأداة والوحدة المناسبتين للتعبير عن كمية فيزيائية بدقة.</td></tr>
+      <tr><td>🗂️ التصنيف</td><td>تجميع الأشياء أو الظواهر في فئات وفق معيار أو خاصية مشتركة.</td></tr>
+      <tr><td>🧩 الاستنتاج</td><td>تفسير الملاحظات أو البيانات للوصول إلى تفسير منطقي غير مُشاهَد مباشرة.</td></tr>
+      <tr><td>🔮 التنبؤ</td><td>توقّع نتيجة مستقبلية بناءً على أنماط أو قوانين علمية معروفة.</td></tr>
+      <tr><td>📈 تفسير البيانات</td><td>قراءة جدول أو رسم بياني واستخلاص علاقة أو نمط منه.</td></tr>
+      <tr><td>⚗️ التصميم التجريبي</td><td>تحديد المتغير المستقل والتابع والضابط، وتصميم خطوات تجربة عادلة.</td></tr>
+      <tr><td>💡 التطبيق</td><td>توظيف المفاهيم العلمية لحل مشكلة واقعية أو تفسير موقف من الحياة اليومية.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ======================= MATRIX: SKILL x SUBJECT ======================= -->
+  <h2 class="section-title">📐 مصفوفة تمييز المهارة حسب المبحث</h2>
+  <p style="font-size:15px;">توضح المصفوفة عدد الأسئلة التي تقيس كل مهارة ضمن كل مبحث من المباحث الأربعة، بما يتيح تتبّع أداء الطالبة في المهارة نفسها عبر مباحث مختلفة.</p>
+  <table class="matrix" id="matrixTable">
+    <thead><tr><th>المهارة \ المبحث</th><th>أحياء</th><th>كيمياء</th><th>فيزياء</th><th>أرض وفضاء</th><th>المجموع</th></tr></thead>
+    <tbody>
+      <tr><td>الملاحظة</td><td class="count">1</td><td class="count">0</td><td class="count">0</td><td class="count">1</td><td class="count">2</td></tr>
+      <tr><td>القياس</td><td class="count">0</td><td class="count">1</td><td class="count">2</td><td class="count">0</td><td class="count">3</td></tr>
+      <tr><td>التصنيف</td><td class="count">2</td><td class="count">2</td><td class="count">0</td><td class="count">1</td><td class="count">5</td></tr>
+      <tr><td>الاستنتاج</td><td class="count">1</td><td class="count">1</td><td class="count">1</td><td class="count">2</td><td class="count">5</td></tr>
+      <tr><td>التنبؤ</td><td class="count">0</td><td class="count">0</td><td class="count">1</td><td class="count">0</td><td class="count">1</td></tr>
+      <tr><td>تفسير البيانات</td><td class="count">1</td><td class="count">0</td><td class="count">1</td><td class="count">1</td><td class="count">3</td></tr>
+      <tr><td>التصميم التجريبي</td><td class="count">0</td><td class="count">1</td><td class="count">0</td><td class="count">0</td><td class="count">1</td></tr>
+      <tr><td>التطبيق</td><td class="count">1</td><td class="count">1</td><td class="count">1</td><td class="count">1</td><td class="count">4</td></tr>
+      <tr><td><strong>المجموع</strong></td><td class="count">6</td><td class="count">6</td><td class="count">6</td><td class="count">6</td><td class="count">24</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ======================= EVALUATION RUBRIC ======================= -->
+  <h2 class="section-title">📏 دليل معايير التقييم</h2>
+  <p>الدرجة الكلية للاختبار = 24 درجة (درجة واحدة لكل سؤال)، موزَّعة بالتساوي على المباحث الأربعة والمهارات الثماني.</p>
+  <div class="rubric-card">
+    <div><div class="pct">90%-100%</div><div class="lvl">ممتاز</div><p>إتقان تام لمعظم المهارات والمباحث.</p></div>
+    <div><div class="pct">75%-89%</div><div class="lvl">جيد جداً</div><p>إتقان جيد مع ثغرات بسيطة في مبحث أو مهارة.</p></div>
+    <div><div class="pct">60%-74%</div><div class="lvl">متوسط</div><p>إتقان أساسي، يلزم تعزيز عدة مهارات/مباحث.</p></div>
+    <div><div class="pct">أقل من 60%</div><div class="lvl">يحتاج دعماً</div><p>ثغرات جوهرية تستدعي خطة علاجية مكثفة.</p></div>
+  </div>
+
+  <footer class="doc-footer">
+    إعداد المعلمة: نوال أحمد بني عطية &nbsp;|&nbsp; مدرسة القطرانة الثانوية للبنات &nbsp;|&nbsp; اختبار تشخيصي إلكتروني شامل – مبحث العلوم – الصف العاشر
+  </footer>
+
+</div>
+
+<script>
+const SUBJECT_META = {
+  bio:{name:'العلوم الحياتية', color:'#7A1F2E'},
+  chem:{name:'الكيمياء', color:'#c65b4e'},
+  phys:{name:'الفيزياء', color:'#3a8fb7'},
+  earth:{name:'الأرض والفضاء', color:'#7a5cb0'}
+};
+const SKILL_META = {
+  obs:{name:'الملاحظة', color:'#7A1F2E'},
+  measure:{name:'القياس', color:'#1c7a4d'},
+  classify:{name:'التصنيف', color:'#3a8fb7'},
+  infer:{name:'الاستنتاج', color:'#7a5cb0'},
+  predict:{name:'التنبؤ', color:'#b8902a'},
+  data:{name:'تفسير البيانات', color:'#c9942f'},
+  design:{name:'التصميم التجريبي', color:'#c65b4e'},
+  apply:{name:'التطبيق', color:'#7A1F2E'}
+};
+const SUBJECT_REMEDY = {
+  bio:'مراجعة مفاهيم الخلية والأنظمة البيئية والفسيولوجيا عبر محاكاات PhET ولعبة "كنز الخلية"، مع أنشطة Wordwall لمطابقة المصطلحات.',
+  chem:'مراجعة تصنيف المادة وتغيّراتها عبر أنشطة تصنيف على Wordwall، ونقاش جماعي لأمثلة يومية على Padlet.',
+  phys:'تدريب إضافي على القوى والحركة والطاقة عبر محاكاات PhET التفاعلية وأسئلة Quizizz قصيرة بعد كل مفهوم.',
+  earth:'مراجعة حركة الأرض والقمر وطبقات الأرض عبر فيديوهات Edpuzzle قصيرة بأسئلة توقف مضمّنة.'
+};
+const SKILL_REMEDY = {
+  obs:'تدريبات ملاحظة موجهة عبر محاكاات PhET وأنشطة وصف الظواهر على Padlet.',
+  measure:'أنشطة قياس عملية بأدوات حقيقية، وبطاقات Wordwall لمطابقة الأداة بالوحدة المناسبة.',
+  classify:'مخططات تصنيف على Canva وألعاب تصنيف تفاعلية على Quizizz أو Kahoot.',
+  infer:'أسئلة "ماذا لو" قصيرة على Mentimeter لتدريب الاستنتاج من مواقف جديدة.',
+  predict:'محاكاة PhET تفاعلية للتنبؤ بالنتيجة قبل التشغيل ثم مقارنتها بالواقع.',
+  data:'تدريب على قراءة رسوم بيانية حقيقية عبر Edpuzzle مع أسئلة توقف مضمّنة.',
+  design:'أنشطة تصميم تجربة مصغّرة (متغير مستقل/تابع/ضابط) عبر أوراق عمل Nearpod التعاونية.',
+  apply:'مسائل تطبيقية من الحياة اليومية والبيئة المحلية تُناقش جماعياً على Google Classroom.'
+};
+
+let lastResults = null;
+
+function gradeQuiz(){
+  let total = 0, max = 0;
+  const subjScore = {}, subjMax = {}, skillScore = {}, skillMax = {};
+  Object.keys(SUBJECT_META).forEach(k=>{subjScore[k]=0; subjMax[k]=0;});
+  Object.keys(SKILL_META).forEach(k=>{skillScore[k]=0; skillMax[k]=0;});
+
+  document.querySelectorAll('.q').forEach(q=>{
+    const subj = q.dataset.subject;
+    const skill = q.dataset.skill;
+    const fb = q.querySelector('.feedback');
+    subjMax[subj] += 1; skillMax[skill] += 1; max += 1;
+
+    const selected = q.querySelector('input[type=radio]:checked');
+    fb.style.display = 'block';
+    if(selected && selected.value === q.dataset.answer){
+      total += 1; subjScore[subj] += 1; skillScore[skill] += 1;
+      fb.className = 'feedback correct'; fb.textContent = '✔ إجابة صحيحة!';
+    } else {
+      fb.className = 'feedback wrong';
+      fb.textContent = selected ? '✘ إجابة غير صحيحة. راجعي مفتاح الإجابات أدناه.' : '⚠ لم تتم الإجابة عن هذا السؤال.';
+    }
+  });
+
+  const pct = Math.round((total/max)*100);
+  let level;
+  if(pct >= 90) level='ممتاز 🌟';
+  else if(pct >= 75) level='جيد جداً 👍';
+  else if(pct >= 60) level='متوسط 📘';
+  else level='يحتاج دعماً 🧩';
+
+  document.getElementById('scoreNum').textContent = total + ' / ' + max + '  (' + pct + '%)';
+  document.getElementById('levelText').textContent = level;
+
+  const subjBarsHtml = Object.keys(SUBJECT_META).map(k=>{
+    const sPct = subjMax[k] ? Math.round((subjScore[k]/subjMax[k])*100) : 0;
+    return `<div class="skill-row"><div class="lbl">${SUBJECT_META[k].name}</div><div class="bar-track"><div class="bar-fill" style="width:${sPct}%;background:${SUBJECT_META[k].color};"></div></div><div class="pctval">${sPct}%</div></div>`;
+  }).join('');
+  document.getElementById('subjectBars').innerHTML = subjBarsHtml;
+
+  const skillBarsHtml = Object.keys(SKILL_META).map(k=>{
+    const sPct = skillMax[k] ? Math.round((skillScore[k]/skillMax[k])*100) : 0;
+    return `<div class="skill-row"><div class="lbl">${SKILL_META[k].name}</div><div class="bar-track"><div class="bar-fill" style="width:${sPct}%;background:${SKILL_META[k].color};"></div></div><div class="pctval">${sPct}%</div></div>`;
+  }).join('');
+  document.getElementById('skillBars').innerHTML = skillBarsHtml;
+
+  const subjPcts = Object.keys(SUBJECT_META).map(k=>({k, pct: subjMax[k]?Math.round((subjScore[k]/subjMax[k])*100):0, type:'subject'}));
+  const skillPcts = Object.keys(SKILL_META).map(k=>({k, pct: skillMax[k]?Math.round((skillScore[k]/skillMax[k])*100):0, type:'skill'}));
+
+  const strongSubj = subjPcts.filter(s=>s.pct>=75).sort((a,b)=>b.pct-a.pct);
+  const weakSubj = subjPcts.filter(s=>s.pct<60).sort((a,b)=>a.pct-b.pct);
+  const strongSkill = skillPcts.filter(s=>s.pct>=75).sort((a,b)=>b.pct-a.pct);
+  const weakSkill = skillPcts.filter(s=>s.pct<60).sort((a,b)=>a.pct-b.pct);
+
+  let strHtml = '<p><span class="strength">نقاط القوة:</span> ';
+  const strParts = [];
+  if(strongSubj.length) strParts.push('مباحث: ' + strongSubj.map(s=>SUBJECT_META[s.k].name+' ('+s.pct+'%)').join('، '));
+  if(strongSkill.length) strParts.push('مهارات: ' + strongSkill.map(s=>SKILL_META[s.k].name+' ('+s.pct+'%)').join('، '));
+  strHtml += (strParts.length ? strParts.join(' — ') : 'لم تصل أي فئة إلى 75% بعد، استمري في المحاولة!') + '</p>';
+
+  let weakHtml = '<p><span class="weakness">نقاط تحتاج دعماً:</span> ';
+  const weakParts = [];
+  if(weakSubj.length) weakParts.push('مباحث: ' + weakSubj.map(s=>SUBJECT_META[s.k].name+' ('+s.pct+'%)').join('، '));
+  if(weakSkill.length) weakParts.push('مهارات: ' + weakSkill.map(s=>SKILL_META[s.k].name+' ('+s.pct+'%)').join('، '));
+  weakHtml += (weakParts.length ? weakParts.join(' — ') : 'لا توجد فئة أقل من 60% — أداء متوازن!') + '</p>';
+
+  let planHtml = '<p><strong>🩹 خطة علاجية مخصصة لك:</strong></p><ul>';
+  if(weakSubj.length || weakSkill.length){
+    weakSubj.forEach(s=>{ planHtml += `<li><strong>مبحث ${SUBJECT_META[s.k].name}:</strong> ${SUBJECT_REMEDY[s.k]}</li>`; });
+    weakSkill.forEach(s=>{ planHtml += `<li><strong>مهارة ${SKILL_META[s.k].name}:</strong> ${SKILL_REMEDY[s.k]}</li>`; });
+  } else {
+    planHtml += '<li>لا حاجة لخطة علاجية عاجلة، يُنصح بأنشطة إثرائية للحفاظ على هذا المستوى وتعميقه.</li>';
+  }
+  planHtml += '</ul>';
+
+  document.getElementById('diagStrengths').innerHTML = strHtml;
+  document.getElementById('diagWeaknesses').innerHTML = weakHtml;
+  document.getElementById('diagPlan').innerHTML = planHtml;
+
+  document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('resultBox').scrollIntoView({behavior:'smooth', block:'center'});
+
+  lastResults = {total, max, pct, subjScore, subjMax, skillScore, skillMax};
+}
+
+function downloadResult(){
+  if(!lastResults){ gradeQuiz(); }
+  const name = document.getElementById('stName').value || 'غير مسمى';
+  const section = document.getElementById('stSection').value || '';
+  const date = document.getElementById('stDate').value || '';
+  const no = document.getElementById('stNo').value || '';
+
+  const header = ['الاسم','الشعبة','الرقم','التاريخ','الدرجة الكلية','النسبة المئوية']
+    .concat(Object.keys(SUBJECT_META).map(k=>SUBJECT_META[k].name))
+    .concat(Object.keys(SKILL_META).map(k=>SKILL_META[k].name));
+  const row = [name, section, no, date, lastResults.total+'/'+lastResults.max, lastResults.pct+'%']
+    .concat(Object.keys(SUBJECT_META).map(k=>lastResults.subjScore[k]+'/'+lastResults.subjMax[k]))
+    .concat(Object.keys(SKILL_META).map(k=>lastResults.skillScore[k]+'/'+lastResults.skillMax[k]));
+
+  const csv = '\uFEFF' + header.join(',') + '\n' + row.map(v=>'"'+v+'"').join(',');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'نتيجة_' + (name||'طالبة') + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function resetQuiz(){
+  document.getElementById('quizForm').reset();
+  document.querySelectorAll('.feedback').forEach(f=>{f.style.display='none';});
+  document.getElementById('resultBox').style.display = 'none';
+  lastResults = null;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+
+
+
+<div style="text-align:center;padding:14px"><a href="./" style="color:#7A1F2E;font-weight:700">↩ الامتحانات الإلكترونية</a> · <a href="../" style="color:#7A1F2E;font-weight:700">منصة القطرانة</a></div>
+</body></html>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الاختبار التشخيصي الإلكتروني – العلوم / الصف التاسع (نسخة الرسوم + جدول Google)</title>
+<meta property="og:title" content="الاختبار التشخيصي الإلكتروني في العلوم – الصف التاسع">
+<meta property="og:description" content="٤٨ سؤالاً في المباحث الأربعة مع محور لقراءة الرسوم العلمية، تصحيح فوري، خطة علاجية لكل طالبة، وإرسال النتيجة إلى جدول المعلمة – إعداد المعلمة نوال أحمد بني عطية، مدرسة القطرانة الثانوية للبنات">
+<style>
+:root{
+  --teal:#7A1F2E; --teal-d:#5C1622; --teal-l:#f6ece6;
+  --gold:#B8902A; --gold-l:#FAF3E0;
+  --sand:#FBF8F1; --ink:#15302F; --muted:#5C7472; --line:#DCD3C0; --white:#fff;
+  --bio:#2E7D52; --chem:#8E44AD; --phys:#1F5C9E; --earth:#A9662B; --vis:#7A1F2E;
+  --ok:#2E7D52; --warn:#C9821A; --bad:#B23A3A;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--sand);color:var(--ink);
+  font-family:"Sakkal Majalla","Traditional Arabic","Amiri","Segoe UI",Tahoma,sans-serif;font-size:19px;line-height:1.9;}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 60px;}
+header{background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff;padding:26px 16px 22px;border-bottom:6px solid var(--gold);}
+header .inner{max-width:900px;margin:0 auto;}
+.crest{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.crest .mark{width:54px;height:54px;border:3px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-size:26px;flex:none;}
+h1{font-size:29px;margin:0;font-weight:700;line-height:1.5;}
+.sub{opacity:.92;font-size:17px;margin-top:2px;}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+.chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 14px;font-size:15px;}
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:20px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+.card h2{font-size:23px;margin:0 0 10px;color:var(--teal-d);border-bottom:2px solid var(--gold);padding-bottom:8px;}
+.card h3{font-size:20px;margin:18px 0 8px;color:var(--teal-d);}
+.note{background:var(--gold-l);border-right:5px solid var(--gold);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:17px;}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+label.fl{display:block;font-size:16px;color:var(--muted);margin-bottom:4px;}
+input,select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:18px;background:#fff;color:var(--ink);}
+input:focus,select:focus{outline:3px solid rgba(14,107,107,.35);border-color:var(--teal);}
+.sec-head{display:flex;align-items:center;gap:12px;margin:26px 0 6px;padding:10px 16px;border-radius:12px;color:#fff;font-size:21px;font-weight:700;}
+.sec-head .cnt{margin-inline-start:auto;font-size:15px;font-weight:400;background:rgba(255,255,255,.2);padding:2px 12px;border-radius:999px;}
+.bio-bg{background:var(--bio);} .chem-bg{background:var(--chem);} .phys-bg{background:var(--phys);} .earth-bg{background:var(--earth);} .vis-bg{background:var(--teal-d);}
+.q{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:12px;}
+.q.flag{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-l);}
+.q-top{display:flex;gap:10px;align-items:flex-start;}
+.q-num{flex:none;width:34px;height:34px;border-radius:9px;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:17px;font-weight:700;}
+.q-text{font-size:19px;font-weight:600;}
+.tags{margin:8px 0 10px 0;display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:14px;border-radius:999px;padding:1px 10px;border:1px solid var(--line);color:var(--muted);background:#fbfbf9;}
+.tag.skill{border-color:var(--teal);color:var(--teal);}
+.opts{display:grid;gap:8px;}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;transition:.12s;font-size:18px;}
+.opt:hover{border-color:var(--teal);background:var(--teal-l);}
+.opt input{width:auto;flex:none;margin-top:8px;accent-color:var(--teal);}
+.opt.correct{border-color:var(--ok);background:#EDF7F0;}
+.opt.wrong{border-color:var(--bad);background:#FBEDED;}
+.why{margin-top:10px;font-size:17px;background:var(--teal-l);border-radius:9px;padding:9px 13px;display:none;}
+.why.show{display:block;}
+.dtable{width:100%;border-collapse:collapse;margin:10px 0;font-size:17px;}
+.dtable th,.dtable td{border:1px solid var(--line);padding:6px 10px;text-align:center;}
+.dtable th{background:var(--teal-l);color:var(--teal-d);}
+.fig{margin:10px 0;}
+.fig svg{max-width:100%;height:auto;display:block;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:10px;}
+.fig text{font-family:inherit;fill:#15302F;}
+.figcap{text-align:center;font-size:15px;color:var(--muted);margin-top:4px;}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+button{font-family:inherit;font-size:18px;border-radius:10px;padding:12px 22px;border:none;cursor:pointer;transition:.15s;}
+.primary{background:var(--teal);color:#fff;} .primary:hover{background:var(--teal-d);}
+.goldbtn{background:var(--gold);color:#2b2100;} .goldbtn:hover{filter:brightness(.94);}
+.ghost{background:#fff;color:var(--teal-d);border:1.5px solid var(--teal);} .ghost:hover{background:var(--teal-l);}
+.small{font-size:16px;padding:8px 14px;}
+button:focus-visible,.opt:focus-within{outline:3px solid var(--gold);}
+.bar{position:sticky;top:0;z-index:20;background:rgba(251,248,241,.96);border-bottom:1px solid var(--line);padding:8px 16px;backdrop-filter:blur(4px);}
+.bar .in{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px;font-size:16px;}
+.track{flex:1;height:9px;background:var(--line);border-radius:999px;overflow:hidden;}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .25s;}
+#results{display:none;}
+.score-hero{text-align:center;background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff;border-radius:16px;padding:26px 18px;border-bottom:6px solid var(--gold);}
+.score-hero .big{font-size:56px;font-weight:700;line-height:1.1;}
+.score-hero .lvl{display:inline-block;margin-top:8px;background:var(--gold);color:#2b2100;border-radius:999px;padding:4px 20px;font-size:19px;font-weight:700;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;}
+.stat .t{display:flex;justify-content:space-between;font-size:17px;font-weight:600;gap:8px;}
+.mini{height:10px;background:#EFEDE6;border-radius:999px;margin-top:7px;overflow:hidden;}
+.mini i{display:block;height:100%;border-radius:999px;}
+.badge{font-size:15px;border-radius:999px;padding:1px 10px;}
+.b-ok{background:#E7F3EB;color:var(--ok);} .b-warn{background:#FCF2DF;color:var(--warn);} .b-bad{background:#FAEAEA;color:var(--bad);}
+.plan{border:1px solid var(--line);border-right:6px solid var(--gold);border-radius:12px;padding:14px 18px;margin-top:12px;background:#fff;}
+.plan h4{margin:0 0 6px;font-size:19px;color:var(--teal-d);}
+ul.tight{margin:6px 0;padding-inline-start:22px;} ul.tight li{margin:3px 0;}
+ol.steps{padding-inline-start:22px;} ol.steps li{margin:6px 0;}
+.rubric{width:100%;border-collapse:collapse;font-size:17px;margin-top:10px;}
+.rubric th,.rubric td{border:1px solid var(--line);padding:8px 10px;text-align:center;}
+.rubric th{background:var(--teal);color:#fff;}
+.rubric tr.me td{background:var(--gold-l);font-weight:700;}
+.status{font-size:17px;margin-top:10px;display:none;border-radius:9px;padding:9px 13px;}
+.s-ok{background:#E7F3EB;color:#1c5a37;} .s-warn{background:#FCF2DF;color:#7a5508;} .s-off{background:#F1F0EA;color:var(--muted);}
+pre.code{background:#0F2B2B;color:#E8F3F1;border-radius:10px;padding:14px;overflow:auto;font-size:14px;line-height:1.6;direction:ltr;text-align:left;font-family:Consolas,Menlo,monospace;}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:10px;background:#fff;}
+summary{cursor:pointer;font-weight:600;color:var(--teal-d);}
+footer{margin-top:26px;text-align:center;font-size:16px;color:var(--muted);border-top:2px solid var(--gold);padding-top:14px;}
+@media(max-width:620px){.fields,.grid2{grid-template-columns:1fr;}h1{font-size:23px;}body{font-size:18px;}}
+@media print{.bar,.btns,header .meta,#teacher{display:none;}body{background:#fff;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="crest">
+      <div class="mark">🔬</div>
+      <div>
+        <h1>الاختبار التشخيصي الإلكتروني في العلوم</h1>
+        <div class="sub">الصف التاسع الأساسي — المباحث الأربعة + محور قراءة الرسوم والأشكال العلمية</div>
+      </div>
+    </div>
+    <div class="meta">
+      <span class="chip">٤٨ سؤال اختيار من متعدد</span>
+      <span class="chip">٨ أسئلة رسوم وأشكال</span>
+      <span class="chip">تصحيح فوري وخطة علاجية</span>
+      <span class="chip">إرسال النتيجة إلى جدول المعلمة</span>
+      <span class="chip">إعداد: المعلمة نوال أحمد بني عطية</span>
+      <span class="chip">مدرسة القطرانة الثانوية للبنات</span>
+    </div>
+  </div>
+</header>
+
+<div class="bar"><div class="in">
+  <span id="prog-txt">أُجيب عن ٠ من ٤٨</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <span id="clock">⏱ ٠٠:٠٠</span>
+</div></div>
+
+<div class="wrap">
+
+<div id="exam">
+  <div class="card">
+    <h2>بيانات الطالبة</h2>
+    <div class="fields">
+      <div><label class="fl" for="sname">اسم الطالبة الرباعي</label><input id="sname" placeholder="مثال: رهف محمد أحمد العمري"></div>
+      <div><label class="fl" for="sclass">الشعبة</label>
+        <select id="sclass"><option>التاسع (أ)</option><option>التاسع (ب)</option><option>التاسع (ج)</option><option>التاسع (د)</option></select>
+      </div>
+    </div>
+    <div class="note">
+      <b>تعليمات:</b> اختاري إجابة واحدة صحيحة لكل سؤال. لا علامة سالبة على الخطأ، فأجيبي عن الجميع. الزمن المقترح ٥٥ دقيقة.
+      تأمّلي الرسم أو الجدول جيداً قبل قراءة الخيارات في أسئلة المحور الخامس.
+      عند الانتهاء اضغطي <b>«تصحيح الاختبار وحفظ النتيجة»</b>؛ يظهر التصحيح وتقرير نقاط القوة والضعف وخطتكِ العلاجية، وتُحفظ النتيجة وتُرسل إلى جدول المعلمة في اللحظة ذاتها.
+      <br><b>الغاية:</b> اختبار تشخيصي لا يُحتسب ضمن العلامة المدرسية، هدفه تحديد نقطة الانطلاق وبناء خطة تعلّم مناسبة لكِ.
+    </div>
+  </div>
+
+  <div id="questions"></div>
+
+  <div class="btns">
+    <button class="primary" id="submit">✅ تصحيح الاختبار وحفظ النتيجة</button>
+    <button class="ghost" id="unanswered">🔎 إظهار الأسئلة غير المُجابة</button>
+  </div>
+</div>
+
+<div id="results">
+  <div class="score-hero">
+    <div id="who" style="font-size:20px"></div>
+    <div class="big"><span id="raw">0</span><span style="font-size:26px">/48</span></div>
+    <div style="font-size:22px">النسبة المئوية: <span id="pct">0</span>%</div>
+    <div class="lvl" id="lvl">—</div>
+  </div>
+
+  <div class="card">
+    <h2>أولاً: الأداء في محاور الاختبار</h2>
+    <div class="grid2" id="branch-stats"></div>
+  </div>
+
+  <div class="card">
+    <h2>ثانياً: تحليل المهارات العلمية</h2>
+    <p style="font-size:17px;color:var(--muted);margin:0">يبيّن ما يأتي مستوى إتقانكِ لكل مهارة من مهارات العلوم الأساسية، وهو أساس الخطة العلاجية.</p>
+    <div class="grid2" id="skill-stats" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>ثالثاً: معيار تقدير الأداء</h2>
+    <table class="rubric" id="rubric">
+      <tr><th>عدد الإجابات الصحيحة</th><th>النسبة</th><th>مستوى الأداء</th><th>القرار التربوي</th></tr>
+      <tr data-min="44"><td>٤٨ – ٤٤</td><td>٩٠% فأكثر</td><td>متميّزة</td><td>إثراء وتعميق وتكليفات تحدٍّ علمي</td></tr>
+      <tr data-min="39"><td>٤٣ – ٣٩</td><td>٨٩% – ٨٠%</td><td>متقدمة</td><td>متابعة عادية مع معالجة نقاط محددة</td></tr>
+      <tr data-min="32"><td>٣٨ – ٣٢</td><td>٧٩% – ٦٥%</td><td>جيدة</td><td>خطة علاجية جزئية للمحاور الضعيفة</td></tr>
+      <tr data-min="24"><td>٣١ – ٢٤</td><td>٦٤% – ٥٠%</td><td>مقبولة</td><td>خطة علاجية مكثفة وتعلّم تعاوني</td></tr>
+      <tr data-min="0"><td>٢٣ فأقل</td><td>أقل من ٥٠%</td><td>تحتاج دعماً</td><td>تدخّل فردي ومتابعة أسبوعية مع ولي الأمر</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>رابعاً: الخطة العلاجية الخاصة بكِ</h2>
+    <div id="plan"></div>
+  </div>
+
+  <div class="card">
+    <h2>خامساً: التصحيح التفصيلي</h2>
+    <p style="font-size:17px;color:var(--muted);margin:0 0 6px">الإجابة الصحيحة بالإطار الأخضر، وإجابتكِ الخاطئة بالإطار الأحمر، مع تفسير علمي لكل سؤال.</p>
+    <div class="btns"><button class="ghost" id="toggle-why">إظهار / إخفاء ورقة الأسئلة المصحّحة</button></div>
+  </div>
+
+  <div class="card">
+    <h2>حفظ النتيجة ومشاركتها</h2>
+    <div class="btns">
+      <button class="goldbtn" id="share-wa">📲 إرسال النتيجة عبر واتساب</button>
+      <button class="ghost" id="copy-res">📋 نسخ تقرير النتيجة</button>
+      <button class="ghost" id="dl">⬇️ تنزيل التقرير (ملف)</button>
+      <button class="ghost" id="print">🖨️ طباعة / حفظ PDF</button>
+      <button class="ghost" id="again">🔁 إعادة المحاولة</button>
+    </div>
+    <div class="status" id="saved-msg"></div>
+    <div class="status" id="sheet-msg"></div>
+    <div class="btns" id="retry-box" style="display:none"><button class="ghost small" id="retry">🔄 إعادة إرسال النتيجة إلى جدول المعلمة</button></div>
+  </div>
+</div>
+
+<!-- ============ لوحة المعلمة ============ -->
+<div class="card" id="teacher">
+  <h2>لوحة المعلمة</h2>
+  <div class="btns">
+    <button class="ghost small" id="show-log">📑 عرض النتائج المحفوظة على هذا الجهاز</button>
+    <button class="ghost small" id="copy-log">📋 نسخ السجل كجدول</button>
+    <button class="ghost small" id="clear-log">🗑️ مسح السجل</button>
+  </div>
+  <div id="log"></div>
+
+  <details>
+    <summary>ربط الاختبار بجدول Google Sheets — خطوات التنفيذ (مرة واحدة فقط)</summary>
+    <ol class="steps">
+      <li>أنشئي جدولاً جديداً في <b>Google Sheets</b> وسمّيه مثلاً «نتائج التشخيص – التاسع».</li>
+      <li>من القائمة: <b>الإضافات ← Apps Script</b> (Extensions ← Apps Script).</li>
+      <li>احذفي الكود الموجود، والصقي الكود أدناه ثم احفظي.</li>
+      <li>اضغطي <b>Deploy ← New deployment ← Web app</b>، واضبطي:
+        <br>«Execute as» = <b>Me</b> ، و«Who has access» = <b>Anyone</b>، ثم <b>Deploy</b> ووافقي على الأذونات.</li>
+      <li>انسخي الرابط المنتهي بـ <code>/exec</code>.</li>
+      <li>افتحي ملف الاختبار بأي محرر نصوص، وابحثي عن السطر:
+        <br><code>const SHEET_URL = "";</code> وضعي الرابط بين علامتي التنصيص، ثم احفظي الملف وارفعيه.</li>
+    </ol>
+    <p style="font-size:16px;color:var(--muted)">بعدها تصل نتيجة كل طالبة إلى الجدول تلقائياً لحظة ضغطها زر التصحيح، ويبقى الحفظ المحلي يعمل كنسخة احتياطية.</p>
+    <div class="btns"><button class="ghost small" id="copy-gs">📋 نسخ كود Apps Script</button></div>
+<pre class="code" id="gs-code">function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName("النتائج") || ss.insertSheet("النتائج");
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(["التاريخ والوقت","اسم الطالبة","الشعبة","العلامة من 48","النسبة %","مستوى الأداء",
+      "علوم الحياة /10","الكيمياء /10","الفيزياء /10","علوم الأرض /10","قراءة الرسوم /8",
+      "زمن الإنجاز (دقيقة)","محاور تحتاج معالجة","الدروس التي ظهر فيها الضعف"]);
+  }
+  var d = JSON.parse(e.postData.contents);
+  sh.appendRow([new Date(), d.name, d.cls, d.raw, d.pct, d.level,
+    d.bio, d.chem, d.phys, d.earth, d.vis, d.mins, d.weakBranches, d.weakTopics]);
+  return ContentService.createTextOutput(JSON.stringify({ok:true}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+  </details>
+</div>
+
+<footer>
+  إعداد المعلمة: <b>نوال أحمد بني عطية</b> — معلمة العلوم الحياتية وعلوم الأرض<br>
+  <b>مدرسة القطرانة الثانوية للبنات</b> — لواء القطرانة / مديرية تربية الكرك — المملكة الأردنية الهاشمية<br>
+  «التركيب يخدم الوظيفة» — العام الدراسي ٢٠٢٦/٢٠٢٧
+</footer>
+</div>
+
+<script>
+/* ======================================================
+   ضعي هنا رابط تطبيق الويب (Apps Script) المنتهي بـ /exec
+   ====================================================== */
+const SHEET_URL = "";
+
+/* ================== المحاور والمهارات ================== */
+const B = {
+  bio:{name:"علوم الحياة", cls:"bio-bg", color:"#2E7D52"},
+  chem:{name:"الكيمياء", cls:"chem-bg", color:"#8E44AD"},
+  phys:{name:"الفيزياء", cls:"phys-bg", color:"#1F5C9E"},
+  earth:{name:"علوم الأرض والبيئة", cls:"earth-bg", color:"#A9662B"},
+  vis:{name:"قراءة الرسوم والأشكال العلمية", cls:"vis-bg", color:"#5C1622"}
+};
+const SK = {
+  obs:{n:"الملاحظة", d:"التعرّف إلى التراكيب والظواهر وتسمية أجزائها ووظائفها بدقة."},
+  cls:{n:"التصنيف", d:"تجميع الأشياء والظواهر في فئات وفق خصائص مشتركة."},
+  mea:{n:"القياس والحساب", d:"استعمال الوحدات والعلاقات الرياضية لإيجاد كميات علمية."},
+  inf:{n:"الاستنتاج", d:"تفسير الملاحظات والوصول إلى سبب علمي يفسّرها."},
+  pre:{n:"التنبؤ", d:"توقّع ما سيحدث اعتماداً على معرفة علمية سابقة."},
+  app:{n:"التطبيق", d:"توظيف المفهوم العلمي في موقف حياتي أو مسألة جديدة."},
+  ana:{n:"التحليل وتفسير البيانات", d:"قراءة الجداول والرسوم والأشكال واستخلاص العلاقات منها."}
+};
+
+/* ================== الأشكال والرسوم ================== */
+const FIG = {};
+
+FIG.bar = `<svg viewBox="0 0 430 235" role="img" aria-label="رسم بياني بالأعمدة لنمو نبات تحت ألوان ضوء مختلفة">
+<line x1="55" y1="20" x2="55" y2="185" stroke="#5C7472" stroke-width="2"/>
+<line x1="55" y1="185" x2="410" y2="185" stroke="#5C7472" stroke-width="2"/>
+<g font-size="14" fill="#5C7472"><text x="20" y="30">سم</text>
+<text x="25" y="60">١٦</text><text x="25" y="108">١٠</text><text x="30" y="160">٤</text></g>
+<line x1="50" y1="55" x2="410" y2="55" stroke="#DCD3C0" stroke-dasharray="4 4"/>
+<line x1="50" y1="103" x2="410" y2="103" stroke="#DCD3C0" stroke-dasharray="4 4"/>
+<line x1="50" y1="155" x2="410" y2="155" stroke="#DCD3C0" stroke-dasharray="4 4"/>
+<rect x="85" y="89" width="52" height="96" fill="#B23A3A"/><text x="100" y="82" font-size="14">١٢</text>
+<rect x="165" y="73" width="52" height="112" fill="#1F5C9E"/><text x="180" y="66" font-size="14">١٤</text>
+<rect x="245" y="153" width="52" height="32" fill="#2E7D52"/><text x="262" y="146" font-size="14">٤</text>
+<rect x="325" y="41" width="52" height="144" fill="#B8902A"/><text x="340" y="34" font-size="14">١٨</text>
+<g font-size="15"><text x="95" y="205">أحمر</text><text x="175" y="205">أزرق</text><text x="253" y="205">أخضر</text><text x="337" y="205">أبيض</text></g>
+<text x="150" y="228" font-size="14" fill="#5C7472">لون الضوء المستعمل في الإضاءة</text></svg>`;
+
+FIG.heat = `<svg viewBox="0 0 430 230" role="img" aria-label="منحنى تسخين الماء">
+<line x1="55" y1="20" x2="55" y2="180" stroke="#5C7472" stroke-width="2"/>
+<line x1="55" y1="180" x2="410" y2="180" stroke="#5C7472" stroke-width="2"/>
+<line x1="50" y1="60" x2="410" y2="60" stroke="#DCD3C0" stroke-dasharray="4 4"/>
+<text x="8" y="65" font-size="14" fill="#5C7472">١٠٠°س</text>
+<text x="18" y="130" font-size="14" fill="#5C7472">٥٠°س</text>
+<polyline points="60,170 190,60 340,60" fill="none" stroke="#1F5C9E" stroke-width="3.5"/>
+<circle cx="120" cy="115" r="4" fill="#1F5C9E"/><circle cx="265" cy="60" r="4" fill="#1F5C9E"/>
+<text x="120" y="105" font-size="15">(أ)</text><text x="255" y="48" font-size="15">(ب)</text>
+<text x="170" y="205" font-size="15" fill="#5C7472">الزمن (دقيقة)</text>
+<text x="-140" y="16" transform="rotate(-90)" font-size="15" fill="#5C7472">درجة الحرارة</text></svg>`;
+
+FIG.web = `<svg viewBox="0 0 470 210" role="img" aria-label="شبكة غذائية">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+<polygon points="0 0, 9 3, 0 6" fill="#5C7472"/></marker></defs>
+<g font-size="16" text-anchor="middle">
+<rect x="15" y="80" width="80" height="34" rx="9" fill="#EDF7F0" stroke="#2E7D52"/><text x="55" y="103">عشب</text>
+<rect x="150" y="20" width="80" height="34" rx="9" fill="#FAF3E0" stroke="#B8902A"/><text x="190" y="43">أرنب</text>
+<rect x="150" y="140" width="80" height="34" rx="9" fill="#FAF3E0" stroke="#B8902A"/><text x="190" y="163">فأر</text>
+<rect x="285" y="20" width="80" height="34" rx="9" fill="#f6ece6" stroke="#7A1F2E"/><text x="325" y="43">ثعلب</text>
+<rect x="285" y="140" width="80" height="34" rx="9" fill="#f6ece6" stroke="#7A1F2E"/><text x="325" y="163">أفعى</text>
+<rect x="385" y="80" width="70" height="34" rx="9" fill="#FBEDED" stroke="#B23A3A"/><text x="420" y="103">صقر</text>
+</g>
+<g stroke="#5C7472" stroke-width="2" marker-end="url(#ah)" fill="none">
+<path d="M95,92 L148,45"/><path d="M95,102 L148,152"/>
+<path d="M230,37 L282,37"/><path d="M230,157 L282,157"/>
+<path d="M365,152 L390,110"/></g></svg>`;
+
+FIG.circ = `<svg viewBox="0 0 440 210" role="img" aria-label="دارتان كهربائيتان">
+<g stroke="#15302F" stroke-width="2.5" fill="none">
+<path d="M35,150 H185 V60 H35 Z"/>
+<circle cx="85" cy="60" r="13" fill="#FAF3E0"/><path d="M76,51 L94,69 M94,51 L76,69"/>
+<circle cx="140" cy="60" r="13" fill="#FAF3E0"/><path d="M131,51 L149,69 M149,51 L131,69"/>
+<path d="M100,140 V160 M112,133 V167"/>
+<path d="M255,150 H405 V60 H255 Z"/>
+<path d="M305,60 V150"/><path d="M360,60 V150"/>
+<circle cx="305" cy="105" r="13" fill="#FAF3E0"/><path d="M296,96 L314,114 M314,96 L296,114"/>
+<circle cx="360" cy="105" r="13" fill="#FAF3E0"/><path d="M351,96 L369,114 M369,96 L351,114"/>
+<path d="M275,140 V160 M287,133 V167"/>
+</g>
+<g font-size="17" font-weight="700"><text x="100" y="196">الدارة (أ)</text><text x="320" y="196">الدارة (ب)</text></g></svg>`;
+
+FIG.layers = `<svg viewBox="0 0 300 300" role="img" aria-label="مقطع في طبقات الأرض">
+<circle cx="150" cy="150" r="132" fill="#A9662B"/>
+<circle cx="150" cy="150" r="120" fill="#C9821A"/>
+<circle cx="150" cy="150" r="70" fill="#B23A3A"/>
+<circle cx="150" cy="150" r="34" fill="#7A1F1F"/>
+<g font-size="17" font-weight="700" fill="#fff" text-anchor="middle">
+<text x="276" y="156">١</text><text x="245" y="156">٢</text><text x="200" y="156">٣</text><text x="150" y="156">٤</text></g>
+<line x1="150" y1="150" x2="288" y2="150" stroke="#fff" stroke-width="1" stroke-dasharray="3 4" opacity=".6"/></svg>`;
+
+FIG.ph = `<svg viewBox="0 0 440 150" role="img" aria-label="مقياس الرقم الهيدروجيني">
+<defs><linearGradient id="phg" x1="0" x2="1"><stop offset="0" stop-color="#B23A3A"/><stop offset="0.5" stop-color="#2E7D52"/><stop offset="1" stop-color="#1F3F8E"/></linearGradient></defs>
+<rect x="40" y="55" width="364" height="34" rx="6" fill="url(#phg)"/>
+<g font-size="13" fill="#15302F" text-anchor="middle">
+<text x="40" y="108">٠</text><text x="118" y="108">٣</text><text x="222" y="108">٧</text><text x="326" y="108">١١</text><text x="404" y="108">١٤</text></g>
+<g font-size="16" font-weight="700" text-anchor="middle">
+<text x="92" y="38">(أ)</text><text x="222" y="38">(ب)</text><text x="352" y="38">(ج)</text></g>
+<g stroke="#15302F" stroke-width="2">
+<path d="M92,42 V55"/><path d="M222,42 V55"/><path d="M352,42 V55"/></g>
+<text x="220" y="135" font-size="14" fill="#5C7472" text-anchor="middle">مقياس الرقم الهيدروجيني (pH)</text></svg>`;
+
+FIG.cell = `<svg viewBox="0 0 420 250" role="img" aria-label="مخطط خلية">
+<rect x="20" y="20" width="380" height="210" rx="18" fill="#DCE9DA" stroke="#2E7D52" stroke-width="5"/>
+<rect x="32" y="32" width="356" height="186" rx="14" fill="#F3F8F1" stroke="#7FA98C" stroke-width="2.5"/>
+<ellipse cx="300" cy="125" rx="72" ry="66" fill="#DCEAF5" stroke="#1F5C9E" stroke-width="2"/>
+<circle cx="150" cy="120" r="38" fill="#C9A4D8" stroke="#8E44AD" stroke-width="2"/>
+<circle cx="150" cy="120" r="12" fill="#8E44AD"/>
+<g fill="#2E7D52"><ellipse cx="90" cy="60" rx="20" ry="11"/><ellipse cx="205" cy="200" rx="20" ry="11"/><ellipse cx="80" cy="190" rx="20" ry="11"/></g>
+<g font-size="17" font-weight="700" fill="#15302F">
+<text x="196" y="18">١</text><text x="144" y="126">٢</text><text x="84" y="65">٣</text><text x="296" y="131">٤</text></g>
+<g stroke="#15302F" stroke-width="1.5"><path d="M200,22 V32"/></g></svg>`;
+
+FIG.water = `<svg viewBox="0 0 440 230" role="img" aria-label="دورة الماء في الطبيعة">
+<defs><marker id="aw" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><polygon points="0 0, 9 3, 0 6" fill="#1F5C9E"/></marker></defs>
+<circle cx="60" cy="45" r="24" fill="#B8902A"/>
+<g fill="#CFE0EE" stroke="#1F5C9E" stroke-width="2">
+<circle cx="225" cy="55" r="26"/><circle cx="260" cy="60" r="20"/><circle cx="196" cy="62" r="18"/></g>
+<rect x="20" y="175" width="230" height="45" fill="#8FC1E3"/>
+<path d="M250,175 L300,150 L440,150 L440,220 L250,220 Z" fill="#C6A677"/>
+<g stroke="#1F5C9E" stroke-width="3" fill="none" marker-end="url(#aw)">
+<path d="M120,172 C110,130 130,110 160,88"/>
+<path d="M300,92 V140"/><path d="M340,92 V140"/></g>
+<path d="M232,32 C250,20 275,26 280,40" stroke="#1F5C9E" stroke-width="3" fill="none" marker-end="url(#aw)"/>
+<g font-size="17" font-weight="700" fill="#15302F">
+<text x="96" y="130">(أ)</text><text x="243" y="22">(ب)</text><text x="312" y="122">(ج)</text></g>
+<text x="60" y="205" font-size="15" fill="#0B3B5E">مياه البحر</text></svg>`;
+
+/* ================== بنك الأسئلة (٤٨ سؤالاً) ================== */
+const Q = [
+/* ---------- علوم الحياة ---------- */
+{b:"bio",s:"cls",t:"الخلية وتراكيبها",q:"أيّ التراكيب الآتية يوجد في الخلية النباتية ولا يوجد في الخلية الحيوانية؟",
+ o:["الغشاء البلازمي","النواة","الجدار الخلوي","السيتوبلازم"],a:2,
+ e:"الجدار الخلوي تركيب صلب من السليلوز يحيط بالخلية النباتية فيمنحها الدعامة والشكل الثابت، ولا يوجد في الخلية الحيوانية."},
+{b:"bio",s:"obs",t:"عضيات الخلية ووظائفها",q:"العضية المسؤولة عن تحرير الطاقة من الغذاء داخل الخلية هي:",
+ o:["الرايبوسوم","الميتوكندريا","الفجوة","البلاستيدة الخضراء"],a:1,
+ e:"تُعرف الميتوكندريا ببيت الطاقة؛ إذ يحدث فيها التنفس الخلوي الذي يحرّر الطاقة من الغذاء."},
+{b:"bio",s:"app",t:"البناء الضوئي",q:"تعتمد عملية البناء الضوئي في النبات على مواد داخلة هي:",
+ o:["الأكسجين والسكر","ثاني أكسيد الكربون والماء","النيتروجين والماء","الأكسجين والماء"],a:1,
+ e:"يستعمل النبات ثاني أكسيد الكربون والماء بوجود الضوء والكلوروفيل لإنتاج السكر (الغذاء) والأكسجين."},
+{b:"bio",s:"obs",t:"الجهاز الدوري",q:"الوظيفة الرئيسة لكريات الدم الحمراء هي:",
+ o:["الدفاع عن الجسم ضد الميكروبات","تخثّر الدم عند الجروح","نقل الأكسجين إلى خلايا الجسم","إفراز الهرمونات"],a:2,
+ e:"تحتوي كريات الدم الحمراء على الهيموغلوبين الذي يرتبط بالأكسجين وينقله من الرئتين إلى خلايا الجسم."},
+{b:"bio",s:"inf",t:"الجهاز التنفسي",q:"تكثر الشعيرات الدموية حول الحويصلات الهوائية في الرئتين؛ وأفضل تفسير علمي لذلك أنّ:",
+ o:["الحويصلات تحتاج إلى دعامة تحميها","تبادل الغازات يحدث بينها وبين الدم","الحويصلات تخزّن الهواء لوقت الحاجة","الشعيرات ترفع درجة حرارة الهواء"],a:1,
+ e:"الجدار الرقيق للحويصلة والشعيرة معاً يسمح بانتشار الأكسجين إلى الدم وخروج ثاني أكسيد الكربون منه."},
+{b:"bio",s:"cls",t:"تصنيف الكائنات الحية",q:"أيّ الحيوانات الآتية يُصنّف من الثدييات؟",
+ o:["التمساح","الحوت","السلحفاة","الضفدع"],a:1,
+ e:"الحوت حيوان ثديي لأنه يتنفّس بالرئتين وولود ويرضع صغاره الحليب، رغم عيشه في الماء."},
+{b:"bio",s:"pre",t:"السلاسل والشبكات الغذائية",q:"في السلسلة الغذائية: عشب ← جراد ← ضفدع ← أفعى، ماذا يُتوقّع أن يحدث إذا اختفت الضفادع؟",
+ o:["يزداد عدد الجراد ويقلّ عدد الأفاعي","يقلّ عدد الجراد ويزداد عدد الأفاعي","لا يتأثر أيّ كائن في السلسلة","يزداد عدد الأفاعي ويزداد العشب"],a:0,
+ e:"باختفاء المستهلك الثاني يفقد الجراد مفترسه فيزداد عدده، بينما تفقد الأفعى غذاءها فيقلّ عددها."},
+{b:"bio",s:"ana",t:"الجهاز الدوري والنشاط البدني",dat:{h:["الحالة","معدل النبض (نبضة/دقيقة)"],r:[["قبل الجري","٧٥"],["بعد الجري مباشرة","١٢٤"],["بعد راحة ٥ دقائق","٨٨"]]},
+ q:"سجّلت طالبة معدل نبضها كما في الجدول الآتي. أيّ استنتاج تدعمه هذه البيانات؟",
+ o:["النبض ثابت لا يتأثر بالنشاط","يرتفع النبض أثناء النشاط ثم يعود تدريجياً نحو معدله الطبيعي","يرتفع النبض ويبقى مرتفعاً بشكل دائم","ينخفض النبض كلما زاد النشاط البدني"],a:1,
+ e:"يزيد النشاط حاجة العضلات إلى الأكسجين فيتسارع القلب، ثم يعود تدريجياً بعد الراحة؛ وهذا ما تُظهره القراءات الثلاث."},
+{b:"bio",s:"app",t:"التكاثر في النباتات الزهرية",q:"انتقال حبوب اللقاح من المتك إلى ميسم الزهرة يُسمّى:",
+ o:["الإخصاب","الإنبات","التلقيح","التبرعم"],a:2,
+ e:"التلقيح هو انتقال حبوب اللقاح إلى الميسم، ويليه الإخصاب عند اتحاد النواة الذكرية بالبويضة."},
+{b:"bio",s:"inf",t:"حاجات النبات للضوء",q:"وُضعت نبتة خضراء في خزانة مظلمة أسبوعاً فاصفرّت أوراقها. أفضل استنتاج علمي هو:",
+ o:["النبتة لا تحتاج الماء في الظلام","الضوء لازم لتكوين الكلوروفيل وصنع الغذاء","الظلام يزيد نمو الجذور فقط","الأوراق الصفراء دليل على نضج النبتة"],a:1,
+ e:"في غياب الضوء يتوقف البناء الضوئي ويتحلّل الكلوروفيل، فيظهر اللون الأصفر وتضعف النبتة."},
+
+/* ---------- الكيمياء ---------- */
+{b:"chem",s:"cls",t:"حالات المادة",q:"مادة جسيماتها متراصّة ومنتظمة وحركتها اهتزازية في مكانها؛ هذه المادة في الحالة:",
+ o:["الغازية","السائلة","الصلبة","البلازما"],a:2,
+ e:"في الحالة الصلبة تكون قوى التجاذب كبيرة والمسافات بين الجسيمات صغيرة، فيثبت الشكل والحجم."},
+{b:"chem",s:"obs",t:"تركيب الذرة",q:"الجسيم الذي يحمل شحنة موجبة ويقع داخل نواة الذرة هو:",
+ o:["الإلكترون","البروتون","النيوترون","الأيون"],a:1,
+ e:"النواة تضم البروتونات الموجبة والنيوترونات المتعادلة، أما الإلكترونات السالبة فتدور حولها."},
+{b:"chem",s:"mea",t:"العدد الذري والعدد الكتلي",q:"ذرة عنصر عدد بروتوناتها ١١ وعدد نيوتروناتها ١٢؛ فإنّ عددها الكتلي يساوي:",
+ o:["١١","١٢","٢٣","١"],a:2,
+ e:"العدد الكتلي = عدد البروتونات + عدد النيوترونات = ١١ + ١٢ = ٢٣."},
+{b:"chem",s:"cls",t:"المخاليط والمركبات",q:"أيّ مما يأتي يُعدّ مخلوطاً؟",
+ o:["ماء مقطّر","ملح الطعام","ماء وسكر مذاب","ثاني أكسيد الكربون"],a:2,
+ e:"المخلوط اتحاد فيزيائي تحتفظ فيه المواد بخصائصها ويمكن فصلها بطرائق فيزيائية كالتبخير، بخلاف المركب."},
+{b:"chem",s:"inf",t:"التغير الفيزيائي والكيميائي",q:"يُعدّ صدأ الحديد تغيراً كيميائياً؛ لأنّ:",
+ o:["الحديد يتغيّر شكله فقط","مادة جديدة تكوّنت بخصائص مختلفة","الحديد يتحول إلى الحالة السائلة","الصدأ يمكن إزالته بالماء"],a:1,
+ e:"يتفاعل الحديد مع الأكسجين والرطوبة مكوّناً أكسيد الحديد، وهي مادة جديدة يصعب إرجاعها بطريقة فيزيائية."},
+{b:"chem",s:"ana",t:"الجدول الدوري",q:"عنصر يقع في الدورة الثالثة والمجموعة الأولى في الجدول الدوري؛ فإنّ ذرته:",
+ o:["لها ٣ مستويات طاقة وإلكترون تكافؤ واحد","لها مستوى طاقة واحد و٣ إلكترونات تكافؤ","لها ٣ مستويات طاقة و٣ إلكترونات تكافؤ","لا يمكن تحديد شيء عنها"],a:0,
+ e:"رقم الدورة يدل على عدد مستويات الطاقة، ورقم المجموعة (الأولى) يدل على وجود إلكترون تكافؤ واحد."},
+{b:"chem",s:"app",t:"الأحماض والقواعد",q:"محلول رقمه الهيدروجيني (pH) يساوي ٣؛ فإنه:",
+ o:["قاعدي ويحوّل ورقة تباع الشمس الحمراء إلى زرقاء","حمضي ويحوّل ورقة تباع الشمس الزرقاء إلى حمراء","متعادل لا يؤثر في ورقة تباع الشمس","قاعدي ملمسه صابوني"],a:1,
+ e:"كل محلول رقمه الهيدروجيني أقل من ٧ حمضي، ومن خصائص الأحماض تحمير ورقة تباع الشمس الزرقاء."},
+{b:"chem",s:"app",t:"طرائق فصل المخاليط",q:"أنسب طريقة لفصل الرمل عن الماء هي:",
+ o:["التبخير","الترشيح","التقطير","المغناطيس"],a:1,
+ e:"الترشيح يفصل المادة الصلبة غير الذائبة عن السائل باستعمال ورق الترشيح."},
+{b:"chem",s:"ana",t:"الذائبية والعوامل المؤثرة فيها",dat:{h:["درجة الحرارة (°س)","كتلة السكر الذائبة في ١٠٠ مل ماء (غ)"],r:[["٢٠","٢٠٤"],["٤٠","٢٣٨"],["٦٠","٢٨٧"]]},
+ q:"بالاعتماد على الجدول، أيّ العبارات الآتية صحيحة؟",
+ o:["تقلّ ذائبية السكر بارتفاع درجة الحرارة","تزداد ذائبية السكر بارتفاع درجة الحرارة","لا علاقة بين الحرارة والذائبية","تثبت الذائبية بعد ٤٠ درجة"],a:1,
+ e:"كلما ارتفعت درجة الحرارة زادت طاقة حركة الجسيمات فزادت الكتلة الذائبة، وهذا ما تُظهره القراءات الثلاث."},
+{b:"chem",s:"mea",t:"الصيغ الكيميائية",q:"في الصيغة الكيميائية Ca(OH)₂ يكون عدد ذرات الأكسجين:",
+ o:["١","٢","٣","٤"],a:1,
+ e:"الرقم ٢ خارج القوس يضرب بما داخله، فيصبح عدد ذرات الأكسجين ٢ وعدد ذرات الهيدروجين ٢."},
+
+/* ---------- الفيزياء ---------- */
+{b:"phys",s:"obs",t:"القوة ووحدة قياسها",q:"وحدة قياس القوة في النظام الدولي هي:",
+ o:["الجول","النيوتن","الواط","الأمبير"],a:1,
+ e:"النيوتن (N) وحدة قياس القوة، أما الجول فللشغل والطاقة والواط للقدرة."},
+{b:"phys",s:"mea",t:"السرعة والحركة",q:"قطعت دراجة مسافة ١٢٠ متراً في زمن ٢٠ ثانية؛ فإنّ سرعتها تساوي:",
+ o:["٢ م/ث","٦ م/ث","١٠٠ م/ث","٢٤٠٠ م/ث"],a:1,
+ e:"السرعة = المسافة ÷ الزمن = ١٢٠ ÷ ٢٠ = ٦ أمتار لكل ثانية."},
+{b:"phys",s:"app",t:"تحولات الطاقة",q:"عند إضاءة مصباح كهربائي متوهّج تتحول الطاقة من:",
+ o:["ضوئية إلى كهربائية","كهربائية إلى ضوئية وحرارية","حرارية إلى كيميائية","كيميائية إلى صوتية"],a:1,
+ e:"يحوّل المصباح الطاقة الكهربائية إلى ضوء، ويتحول جزء منها إلى حرارة (طاقة مفقودة)."},
+{b:"phys",s:"inf",t:"الاحتكاك",q:"دُحرجت كرة على أرض المختبر فتوقفت بعد مسافة. السبب العلمي لتوقفها هو:",
+ o:["انتهاء الطاقة من داخل الكرة","قوة الاحتكاك بين الكرة والأرض","انعدام الجاذبية الأرضية","زيادة كتلة الكرة أثناء الحركة"],a:1,
+ e:"الاحتكاك قوة تعاكس اتجاه الحركة فتحوّل طاقة الحركة إلى حرارة حتى تتوقف الكرة."},
+{b:"phys",s:"pre",t:"الدارات الكهربائية",q:"ثلاثة مصابيح موصولة على التوالي في دارة كهربائية، احترق أحدها. ماذا يُتوقّع أن يحدث؟",
+ o:["تنطفئ المصابيح الثلاثة","يبقى المصباحان الآخران مضيئين","يزداد سطوع المصباحين الآخرين","تنفجر البطارية"],a:0,
+ e:"في التوصيل على التوالي يوجد مسار واحد للتيار؛ فانقطاعه في أي نقطة يوقف التيار عن الدارة كلها."},
+{b:"phys",s:"cls",t:"الموصلات والعوازل",q:"أيّ المواد الآتية تُصنّف موصلاً جيداً للكهرباء؟",
+ o:["قطعة زجاج","مسمار حديد","قطعة مطاط","لوح خشب"],a:1,
+ e:"الفلزات كالحديد تحتوي إلكترونات حرة الحركة، لذا تُوصّل الكهرباء والحرارة بخلاف المواد العازلة."},
+{b:"phys",s:"obs",t:"الضوء والمرايا",q:"صفات الصورة المتكوّنة في المرآة المستوية أنها:",
+ o:["حقيقية ومقلوبة وأصغر","خيالية ومعتدلة ومساوية للجسم في الحجم","حقيقية ومعتدلة وأكبر","خيالية ومقلوبة وأصغر"],a:1,
+ e:"المرآة المستوية تكوّن صورة خيالية معتدلة مساوية للجسم في الحجم وتبعد عن المرآة بمقدار بُعد الجسم عنها."},
+{b:"phys",s:"inf",t:"الصوت وانتقاله",q:"ينتقل الصوت في الحديد أسرع منه في الهواء؛ لأنّ:",
+ o:["الحديد أثقل من الهواء","جسيمات الحديد متقاربة فتنقل الاهتزاز أسرع","الهواء لا ينقل الصوت إطلاقاً","الصوت ينتقل دون وسط مادي"],a:1,
+ e:"يحتاج الصوت وسطاً مادياً، وكلما تقاربت جسيمات الوسط زادت سرعة نقل الاهتزاز؛ لذا سرعته في الصلب أكبر."},
+{b:"phys",s:"app",t:"انتقال الحرارة",q:"وُضعت ملعقة معدنية في كوب شاي ساخن فسخُن طرفها الخارجي. انتقلت الحرارة بطريقة:",
+ o:["التوصيل","الحمل","الإشعاع","التبخر"],a:0,
+ e:"في التوصيل تنتقل الحرارة عبر المادة الصلبة من جسيم إلى آخر دون انتقال المادة نفسها."},
+{b:"phys",s:"ana",t:"تفسير بيانات الحركة",dat:{h:["الزمن (ث)","المسافة (م)"],r:[["١","١٠"],["٢","٢٠"],["٣","٣٠"],["٤","٤٠"]]},
+ q:"بالاعتماد على الجدول، أيّ وصف ينطبق على حركة الجسم؟",
+ o:["يتحرك بسرعة ثابتة مقدارها ١٠ م/ث","يتحرك بسرعة متزايدة","يتحرك بسرعة متناقصة","الجسم ساكن"],a:0,
+ e:"قطع الجسم مسافات متساوية (١٠ م) في أزمنة متساوية (١ ث)، وهذا يدل على سرعة ثابتة."},
+
+/* ---------- علوم الأرض والبيئة ---------- */
+{b:"earth",s:"obs",t:"طبقات الأرض",q:"الطبقة الصخرية الخارجية للأرض التي نعيش على سطحها تُسمّى:",
+ o:["اللبّ الداخلي","الوشاح","القشرة الأرضية","اللبّ الخارجي"],a:2,
+ e:"القشرة الأرضية أرقّ طبقات الأرض ويليها الوشاح ثم اللب الخارجي فالداخلي."},
+{b:"earth",s:"cls",t:"أنواع الصخور",q:"صخور تكوّنت نتيجة تبريد الصهارة وتصلّبها تُصنّف صخوراً:",
+ o:["رسوبية","نارية","متحوّلة","جيرية"],a:1,
+ e:"الصخور النارية تنشأ من تبريد الصهارة، والرسوبية من ترسّب الفتات، والمتحوّلة من تأثير الحرارة والضغط."},
+{b:"earth",s:"app",t:"دورة الماء في الطبيعة",q:"تحوّل بخار الماء في طبقات الجو العليا إلى قطرات ماء تكوّن الغيوم يُسمّى:",
+ o:["التبخّر","التكاثف","الهطول","النتح"],a:1,
+ e:"التكاثف تحوّل الغاز إلى سائل عند انخفاض درجة الحرارة، وهو الخطوة التي تسبق الهطول."},
+{b:"earth",s:"cls",t:"الطقس والمناخ",q:"الفرق الأساسي بين الطقس والمناخ أنّ المناخ:",
+ o:["يصف حالة الجو في ساعة واحدة","متوسط حالة الجو لمنطقة خلال مدة طويلة","يقتصر على درجة الحرارة فقط","يتغير عدة مرات في اليوم"],a:1,
+ e:"الطقس حالة الجو في زمن قصير ومكان محدد، أما المناخ فمتوسط حالات الجو خلال سنوات طويلة."},
+{b:"earth",s:"inf",t:"حركات الأرض",q:"تعاقب الليل والنهار على سطح الأرض ينتج عن:",
+ o:["دوران الأرض حول محورها","دوران الأرض حول الشمس","دوران القمر حول الأرض","ميلان محور الأرض فقط"],a:0,
+ e:"دورة الأرض حول محورها كل ٢٤ ساعة تجعل نصفها مواجهاً للشمس (نهار) ونصفها الآخر مظلماً (ليل)."},
+{b:"earth",s:"app",t:"المجموعة الشمسية والفصول",q:"تتعاقب فصول السنة على الأرض بسبب:",
+ o:["اقتراب الأرض من الشمس وابتعادها فقط","ميلان محور الأرض مع دورانها حول الشمس","دوران الأرض حول محورها","تغيّر حجم الشمس عبر السنة"],a:1,
+ e:"ميلان محور الأرض يجعل كمية أشعة الشمس الساقطة على نصفي الكرة تختلف خلال دورانها حول الشمس."},
+{b:"earth",s:"mea",t:"الزلازل وقياسها",q:"يُستعمل مقياس ريختر في:",
+ o:["قياس سرعة الرياح","قياس قوة الزلزال (شدته)","قياس كمية الأمطار","قياس الضغط الجوي"],a:1,
+ e:"مقياس ريختر يعبّر عن الطاقة المتحرّرة من الزلزال، بينما تُقاس الرياح بالأنيمومتر والأمطار بمقياس المطر."},
+{b:"earth",s:"cls",t:"الموارد الطبيعية",q:"أيّ الموارد الآتية يُعدّ مورداً متجدداً؟",
+ o:["الفحم الحجري","النفط","طاقة الرياح","الغاز الطبيعي"],a:2,
+ e:"الرياح مورد متجدد لا ينضب بالاستعمال، أما الوقود الأحفوري فمورد غير متجدد يحتاج ملايين السنين لتكوّنه."},
+{b:"earth",s:"pre",t:"التلوث والاحتباس الحراري",q:"إذا استمرّت نسبة غاز ثاني أكسيد الكربون في الجو بالارتفاع، فمن المتوقع أن:",
+ o:["تنخفض درجة حرارة الأرض","ترتفع درجة حرارة الأرض وتذوب الجليديات","تزداد سماكة طبقة الأوزون","يتوقف هطول الأمطار تماماً"],a:1,
+ e:"ثاني أكسيد الكربون من الغازات الدفيئة التي تحبس الأشعة تحت الحمراء، فتزداد حرارة الأرض (الاحتباس الحراري)."},
+{b:"earth",s:"ana",t:"تفسير البيانات المناخية",dat:{h:["الشهر","كمية الهطول (ملم)"],r:[["كانون الأول","٤٥"],["كانون الثاني","٦٢"],["شباط","٣٨"],["نيسان","١٠"]]},
+ q:"بالاعتماد على الجدول، أيّ استنتاج صحيح عن هطول الأمطار في المنطقة؟",
+ o:["أعلى هطول في نيسان وأقلّه في شباط","أعلى هطول في كانون الثاني ويقلّ الهطول مع دخول الربيع","الهطول متساوٍ في الأشهر الأربعة","لا يهطل المطر في فصل الشتاء"],a:1,
+ e:"أكبر قيمة (٦٢ ملم) في كانون الثاني، وتتناقص القيم حتى تصل ١٠ ملم في نيسان مع اقتراب الصيف."},
+
+/* ---------- قراءة الرسوم والأشكال العلمية ---------- */
+{b:"vis",from:"علوم الحياة",s:"ana",t:"قراءة الرسم البياني بالأعمدة",fig:FIG.bar,
+ cap:"الشكل (١): الزيادة في طول نبتة خلال أسبوعين تحت ألوان ضوء مختلفة.",
+ q:"بالاعتماد على الشكل (١)، أيّ لون من الضوء كان الأقلّ فاعلية في نمو النبتة، وما تفسير ذلك؟",
+ o:["الأبيض؛ لأنه يحوي جميع الألوان","الأزرق؛ لأنّ طاقته منخفضة","الأخضر؛ لأنّ الكلوروفيل يعكسه ولا يمتصه","الأحمر؛ لأنّ النبات لا يستعمله في البناء الضوئي"],a:2,
+ e:"أقصر عمود هو الأخضر (٤ سم)؛ لأنّ صبغة الكلوروفيل تعكس الضوء الأخضر فلا يُستفاد منه في البناء الضوئي، بينما الأبيض أعلاها لاحتوائه جميع الألوان."},
+{b:"vis",from:"الكيمياء",s:"ana",t:"قراءة منحنى التسخين",fig:FIG.heat,
+ cap:"الشكل (٢): منحنى تسخين كمية من الماء مع مرور الزمن.",
+ q:"بالاعتماد على الشكل (٢)، ماذا يمثّل الجزء الأفقي (ب) من المنحنى؟",
+ o:["توقّف التسخين عن الماء","غليان الماء وتحوّله إلى بخار مع ثبات درجة الحرارة","تجمّد الماء","تسرّب الماء من الوعاء"],a:1,
+ e:"عند درجة الغليان (١٠٠°س) تُستعمل الحرارة الممتصّة في تغيير حالة الماء من سائل إلى بخار، فتبقى درجة الحرارة ثابتة رغم استمرار التسخين."},
+{b:"vis",from:"علوم الحياة",s:"ana",t:"قراءة الشبكة الغذائية",fig:FIG.web,
+ cap:"الشكل (٣): شبكة غذائية في بيئة محلية.",
+ q:"بالاعتماد على الشكل (٣)، أيّ الكائنات الآتية يكون مفترِساً ومفترَساً في الوقت نفسه؟",
+ o:["العشب","الأرنب","الأفعى","الصقر"],a:2,
+ e:"تتغذى الأفعى على الفأر (فهي مفترِسة)، ويتغذى عليها الصقر (فهي مفترَسة)، في حين أنّ الصقر مفترِس فقط والعشب منتِج."},
+{b:"vis",from:"الفيزياء",s:"inf",t:"قراءة مخطط الدارة الكهربائية",fig:FIG.circ,
+ cap:"الشكل (٤): دارتان كهربائيتان تحتوي كل منهما بطارية ومصباحين.",
+ q:"بالاعتماد على الشكل (٤)، في أيّ الدارتين يبقى المصباح الثاني مضيئاً إذا احترق المصباح الأول، ولماذا؟",
+ o:["الدارة (أ)؛ لأنّ للتيار مساراً واحداً","الدارة (ب)؛ لأنّ لكل مصباح مساراً مستقلاً للتيار","الدارتان معاً؛ لأنّ البطارية واحدة","لا شيء مما سبق؛ ينطفئ المصباحان في الحالتين"],a:1,
+ e:"الدارة (ب) موصولة على التوازي، ولكل مصباح فرع مستقل، فلا يتأثر أحدهما بانقطاع الآخر، بخلاف الدارة (أ) الموصولة على التوالي بمسار واحد."},
+{b:"vis",from:"علوم الأرض",s:"obs",t:"قراءة مقطع طبقات الأرض",fig:FIG.layers,
+ cap:"الشكل (٥): مقطع عرضي في الكرة الأرضية.",
+ q:"بالاعتماد على الشكل (٥)، الطبقة المرقّمة (٢) هي:",
+ o:["القشرة الأرضية","الوشاح","اللبّ الخارجي","اللبّ الداخلي"],a:1,
+ e:"الترتيب من الخارج إلى الداخل: القشرة (١) ثم الوشاح (٢) وهو أسمك الطبقات، ثم اللب الخارجي (٣) فاللب الداخلي (٤)."},
+{b:"vis",from:"الكيمياء",s:"app",t:"قراءة مقياس الرقم الهيدروجيني",fig:FIG.ph,
+ cap:"الشكل (٦): مواضع ثلاث مواد على مقياس الرقم الهيدروجيني.",
+ q:"بالاعتماد على الشكل (٦)، أيّ العبارات الآتية صحيحة؟",
+ o:["الموضع (أ) قاعدي والموضع (ج) حمضي","الموضع (أ) حمضي و(ب) متعادل و(ج) قاعدي","المواضع الثلاثة كلها حمضية","الموضع (ب) هو الأكثر حمضية"],a:1,
+ e:"ما دون ٧ حمضي، و٧ متعادل، وما فوق ٧ قاعدي؛ فالموضع (أ) قرب ٢ حمضي، و(ب) عند ٧ متعادل، و(ج) قرب ١٢ قاعدي."},
+{b:"vis",from:"علوم الحياة",s:"obs",t:"قراءة مخطط الخلية",fig:FIG.cell,
+ cap:"الشكل (٧): مخطط لخلية كما تُرى تحت المجهر.",
+ q:"بالاعتماد على الشكل (٧)، التركيب المرقّم (٣) والخلية التي يمثّلها الشكل هما على الترتيب:",
+ o:["الفجوة — خلية حيوانية","البلاستيدة الخضراء — خلية نباتية","النواة — خلية نباتية","الميتوكندريا — خلية حيوانية"],a:1,
+ e:"الأجسام الخضراء البيضوية (٣) بلاستيدات خضراء موقع البناء الضوئي، ووجودها مع الجدار الخلوي (١) والفجوة الكبيرة (٤) دليل قاطع على أنّها خلية نباتية."},
+{b:"vis",from:"علوم الأرض",s:"app",t:"قراءة مخطط دورة الماء",fig:FIG.water,
+ cap:"الشكل (٨): دورة الماء في الطبيعة.",
+ q:"بالاعتماد على الشكل (٨)، السهمان (أ) و(ج) يمثّلان على الترتيب:",
+ o:["الهطول والتبخّر","التبخّر والهطول","التكاثف والتبخّر","النتح والتكاثف"],a:1,
+ e:"السهم (أ) صاعد من سطح الماء فيمثّل التبخّر، والسهم (ب) عند الغيمة يمثّل التكاثف، أما (ج) النازل من الغيمة إلى اليابسة فيمثّل الهطول."}
+];
+
+/* ================== خطط المعالجة ================== */
+const RX = {
+ bio:["مراجعة مخطط الخلية ووظائف عضياتها مع رسم مقارن بين الخلية النباتية والحيوانية.",
+      "بناء خريطة مفاهيم لأجهزة الجسم (الهضمي، الدوري، التنفسي) توضّح العضو ← وظيفته.",
+      "حلّ ٥ أسئلة يومياً على السلاسل الغذائية والتصنيف من كتاب الطالب وأسئلة الوحدة."],
+ chem:["مراجعة تركيب الذرة وحلّ تمارين على العدد الذري والكتلي حتى الإتقان.",
+       "تلخيص الفرق بين المخلوط والمركب والتغير الفيزيائي والكيميائي في جدول من عمودين مع أمثلة حياتية.",
+       "تنفيذ نشاط عملي بسيط في البيت: فصل الملح عن الماء بالتبخير، وكتابة تقرير قصير عنه."],
+ phys:["حفظ العلاقات الأساسية (السرعة = المسافة ÷ الزمن) وحل ٣ مسائل عددية يومياً.",
+       "رسم مخططات لتحولات الطاقة في أجهزة البيت (المصباح، المروحة، المدفأة).",
+       "تجربة عملية: مقارنة توصيل مواد مختلفة للكهرباء والحرارة وتسجيل الملاحظات."],
+ earth:["رسم مخطط طبقات الأرض ودورة الماء وتسمية كل مرحلة بالعربية.",
+        "إعداد جدول يقارن أنواع الصخور الثلاثة من حيث النشأة والأمثلة.",
+        "متابعة نشرة الطقس أسبوعاً وتسجيل البيانات في جدول، ثم استخلاص فرق الطقس عن المناخ."],
+ vis:["التدرّب على قراءة الشكل قبل قراءة السؤال: حدّدي العنوان، ثم المحاور أو المفاتيح، ثم أعلى قيمة وأقلّها.",
+      "اختاري رسماً واحداً من كتاب الطالب يومياً واكتبي عنه ثلاث جمل: ماذا يمثّل؟ ما العلاقة الظاهرة فيه؟ ماذا أستنتج؟",
+      "تحويل جدول بيانات من الكتاب إلى رسم بالأعمدة بيدكِ، فالرسم بالذات يثبّت مهارة القراءة.",
+      "مراجعة المخططات المفتاحية: الخلية، الدارة الكهربائية، طبقات الأرض، دورة الماء، الشبكة الغذائية."]
+};
+const SKRX = {
+ obs:"تدرّبي على الملاحظة الدقيقة: صفي كل رسم أو صورة في الكتاب بثلاث ملاحظات مكتوبة قبل قراءة الشرح.",
+ cls:"تدرّبي على التصنيف: اختاري ١٠ مصطلحات من الوحدة ووزّعيها في فئات مع ذكر أساس التصنيف.",
+ mea:"تدرّبي على الحساب: راجعي العلاقات الرياضية ووحداتها، وحلّي مسألتين عدديتين يومياً مع كتابة الوحدة.",
+ inf:"تدرّبي على الاستنتاج: بعد كل تجربة اسألي نفسك «لماذا حدث ذلك؟» واكتبي سبباً علمياً بجملة واحدة.",
+ pre:"تدرّبي على التنبؤ: قبل أي نشاط عملي اكتبي توقعكِ للنتيجة، ثم قارنيه بما حدث فعلاً.",
+ app:"تدرّبي على التطبيق: اربطي كل مفهوم بمثال من حياتكِ اليومية في البيت أو المدرسة.",
+ ana:"تدرّبي على تحليل البيانات والرسوم: اقرئي جدولاً أو رسماً بيانياً كل يومين واكتبي عنه ثلاث جمل استنتاجية."
+};
+
+/* ================== بناء الأسئلة ================== */
+const ar = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const ORDER = ["bio","chem","phys","earth","vis"];
+const host = document.getElementById("questions");
+let idx = 0;
+ORDER.forEach(bk=>{
+  const list = Q.map((q,i)=>({q,i})).filter(x=>x.q.b===bk);
+  const h = document.createElement("div");
+  h.className = "sec-head "+B[bk].cls;
+  h.innerHTML = `<span>${B[bk].name}</span><span class="cnt">${ar(list.length)} أسئلة</span>`;
+  host.appendChild(h);
+  if(bk==="vis"){
+    const p = document.createElement("div");
+    p.className="note";
+    p.innerHTML = "هذا المحور يقيس مهارة عابرة للمباحث الأربعة: قدرتكِ على قراءة الرسم البياني والمخطط العلمي واستخلاص المعنى منه. تأمّلي الشكل أولاً، ثم اقرئي السؤال.";
+    host.appendChild(p);
+  }
+  list.forEach(({q,i})=>{
+    idx++;
+    const d = document.createElement("div");
+    d.className="q"; d.id="q"+i;
+    let media="";
+    if(q.fig) media = `<div class="fig">${q.fig}<div class="figcap">${q.cap||""}</div></div>`;
+    if(q.dat) media = `<table class="dtable"><tr>${q.dat.h.map(x=>`<th>${x}</th>`).join("")}</tr>`+
+        q.dat.r.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")+`</table>`;
+    d.innerHTML = `
+      <div class="q-top"><div class="q-num">${ar(idx)}</div><div class="q-text">${q.q}</div></div>
+      <div class="tags"><span class="tag" style="border-color:${B[q.b].color};color:${B[q.b].color}">${B[q.b].name}</span>
+      ${q.from?`<span class="tag">مجال: ${q.from}</span>`:""}
+      <span class="tag skill">مهارة: ${SK[q.s].n}</span><span class="tag">${q.t}</span></div>
+      ${media}
+      <div class="opts">${q.o.map((o,j)=>`
+        <label class="opt" data-i="${i}" data-j="${j}">
+          <input type="radio" name="q${i}" value="${j}"><span>${["أ","ب","ج","د"][j]}) ${o}</span>
+        </label>`).join("")}</div>
+      <div class="why" id="why${i}"><b>التفسير العلمي:</b> ${q.e}</div>`;
+    host.appendChild(d);
+  });
+});
+
+/* ================== التقدّم والزمن ================== */
+const ans = {};
+const fill = document.getElementById("fill"), ptxt = document.getElementById("prog-txt");
+host.addEventListener("change", e=>{
+  if(e.target.type==="radio"){
+    const i = +e.target.closest(".opt").dataset.i;
+    ans[i] = +e.target.value;
+    document.getElementById("q"+i).classList.remove("flag");
+    const n = Object.keys(ans).length;
+    fill.style.width = (n/Q.length*100)+"%";
+    ptxt.textContent = `أُجيب عن ${ar(n)} من ${ar(Q.length)}`;
+  }
+});
+let sec=0, done=false;
+setInterval(()=>{ if(!done){ sec++;
+  document.getElementById("clock").textContent = "⏱ "+ar(String(Math.floor(sec/60)).padStart(2,"0"))+":"+ar(String(sec%60).padStart(2,"0"));}},1000);
+
+document.getElementById("unanswered").onclick = ()=>{
+  let first=null;
+  Q.forEach((q,i)=>{ const el=document.getElementById("q"+i);
+    if(!(i in ans)){ el.classList.add("flag"); if(!first) first=el; } else el.classList.remove("flag"); });
+  if(first) first.scrollIntoView({behavior:"smooth",block:"center"});
+  else alert("أحسنتِ، أجبتِ عن جميع الأسئلة. يمكنكِ الآن تصحيح الاختبار وحفظ النتيجة.");
+};
+
+/* ================== الإرسال إلى جدول Google ================== */
+function sheetReady(){ return typeof SHEET_URL==="string" && SHEET_URL.indexOf("http")===0; }
+async function sendToSheet(payload){
+  if(!sheetReady()) return "off";
+  try{
+    await fetch(SHEET_URL,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+    return "sent";
+  }catch(err){ return "fail"; }
+}
+let PAYLOAD = null;
+function showSheetStatus(st){
+  const el = document.getElementById("sheet-msg"), rb = document.getElementById("retry-box");
+  el.style.display="block";
+  if(st==="sent"){ el.className="status s-ok"; el.textContent="✔ أُرسلت نتيجتكِ إلى جدول متابعة المعلمة."; rb.style.display="none"; }
+  else if(st==="fail"){ el.className="status s-warn"; el.textContent="تعذّر الإرسال إلى جدول المعلمة (تحقّقي من اتصال الإنترنت). النتيجة محفوظة على الجهاز، ويمكنكِ إعادة المحاولة."; rb.style.display="flex"; }
+  else { el.className="status s-off"; el.textContent="ملاحظة للمعلمة: لم يُضبط رابط جدول Google بعد، لذا حُفظت النتيجة محلياً فقط."; rb.style.display="none"; }
+}
+
+/* ================== التصحيح + الحفظ + الإرسال (أمر واحد) ================== */
+let REPORT = "";
+document.getElementById("submit").onclick = async ()=>{
+  const name = document.getElementById("sname").value.trim();
+  if(!name){ alert("الرجاء كتابة اسم الطالبة أولاً."); document.getElementById("sname").focus(); return; }
+  const miss = Q.length - Object.keys(ans).length;
+  if(miss>0 && !confirm(`ما زال هناك ${ar(miss)} سؤالاً بلا إجابة. هل تريدين التصحيح الآن؟`)) return;
+  done = true;
+
+  const cls = document.getElementById("sclass").value;
+  let raw=0;
+  const bst={}, sst={}, weakTopics={};
+  ORDER.forEach(k=>bst[k]={c:0,t:0});
+  Object.keys(SK).forEach(k=>sst[k]={c:0,t:0});
+
+  Q.forEach((q,i)=>{
+    const ok = ans[i]===q.a;
+    if(ok) raw++;
+    bst[q.b].t++; if(ok) bst[q.b].c++;
+    sst[q.s].t++; if(ok) sst[q.s].c++;
+    if(!ok){ (weakTopics[q.b]=weakTopics[q.b]||[]).push(q.t); }
+    document.querySelectorAll(`.opt[data-i="${i}"]`).forEach(el=>{
+      const j=+el.dataset.j;
+      if(j===q.a) el.classList.add("correct");
+      if(j===ans[i] && !ok) el.classList.add("wrong");
+      el.querySelector("input").disabled = true;
+    });
+    document.getElementById("why"+i).classList.add("show");
+  });
+
+  const pct = Math.round(raw/Q.length*100);
+  const level = raw>=44?"متميّزة": raw>=39?"متقدمة": raw>=32?"جيدة": raw>=24?"مقبولة":"تحتاج دعماً";
+  const mins = Math.max(1, Math.round(sec/60));
+
+  document.getElementById("who").textContent = `${name} — ${cls} — ${new Date().toLocaleDateString("ar-JO")}`;
+  document.getElementById("raw").textContent = ar(raw);
+  document.getElementById("pct").textContent = ar(pct);
+  document.getElementById("lvl").textContent = "مستوى الأداء: "+level;
+  [...document.querySelectorAll("#rubric tr[data-min]")].forEach(tr=>{
+    if(raw>= +tr.dataset.min && !document.querySelector("#rubric tr.me")) tr.classList.add("me");
+  });
+
+  const badge = p => p>=80?'<span class="badge b-ok">نقطة قوة</span>' : p>=60?'<span class="badge b-warn">تحتاج تعزيزاً</span>' : '<span class="badge b-bad">تحتاج معالجة</span>';
+  const col = p => p>=80?"#2E7D52": p>=60?"#C9821A":"#B23A3A";
+
+  document.getElementById("branch-stats").innerHTML = ORDER.map(k=>{
+    const p = Math.round(bst[k].c/bst[k].t*100);
+    return `<div class="stat"><div class="t"><span style="color:${B[k].color}">${B[k].name}</span>
+      <span>${ar(bst[k].c)}/${ar(bst[k].t)} — ${ar(p)}% ${badge(p)}</span></div>
+      <div class="mini"><i style="width:${p}%;background:${col(p)}"></i></div></div>`;
+  }).join("");
+
+  document.getElementById("skill-stats").innerHTML = Object.keys(SK).map(k=>{
+    const p = Math.round(sst[k].c/sst[k].t*100);
+    return `<div class="stat"><div class="t"><span>${SK[k].n}</span><span>${ar(sst[k].c)}/${ar(sst[k].t)} — ${ar(p)}% ${badge(p)}</span></div>
+      <div class="mini"><i style="width:${p}%;background:${col(p)}"></i></div>
+      <div style="font-size:15px;color:var(--muted)">${SK[k].d}</div></div>`;
+  }).join("");
+
+  const strongB = ORDER.filter(k=>bst[k].c/bst[k].t>=0.8).map(k=>B[k].name);
+  const weakB   = ORDER.filter(k=>bst[k].c/bst[k].t<0.8).sort((a,b)=>bst[a].c/bst[a].t-bst[b].c/bst[b].t);
+  const weakS   = Object.keys(SK).filter(k=>sst[k].c/sst[k].t<0.8).sort((a,b)=>sst[a].c/sst[a].t-sst[b].c/sst[b].t);
+
+  let html = `<div class="plan"><h4>نقاط القوة لديكِ</h4>` +
+    (strongB.length ? `<p style="margin:4px 0">أداؤكِ متميّز في: <b>${strongB.join("، ")}</b>. حافظي على هذا المستوى واستعمليه لمساعدة زميلاتكِ في التعلّم التعاوني.</p>`
+                    : `<p style="margin:4px 0">لم يصل أيّ محور بعدُ إلى مستوى الإتقان (٨٠%)، وهذه بداية عادية جداً؛ الخطة أدناه ستوصلكِ إليه خطوة خطوة.</p>`) + `</div>`;
+
+  if(weakB.length){
+    html += weakB.map(k=>{
+      const p = Math.round(bst[k].c/bst[k].t*100);
+      const topics = [...new Set(weakTopics[k]||[])];
+      return `<div class="plan" style="border-right-color:${B[k].color}">
+        <h4>${B[k].name} — ${ar(p)}%</h4>
+        ${topics.length?`<p style="margin:4px 0"><b>ما ظهر فيه الضعف:</b> ${topics.join(" • ")}</p>`:""}
+        <b>إجراءات المعالجة:</b><ul class="tight">${RX[k].map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
+    }).join("");
+  }
+  if(weakS.length){
+    html += `<div class="plan"><h4>تنمية المهارات العلمية</h4><ul class="tight">`+
+      weakS.slice(0,4).map(k=>`<li><b>${SK[k].n}:</b> ${SKRX[k]}</li>`).join("")+`</ul></div>`;
+  }
+  const load = raw>=39?"جلسة مراجعة واحدة أسبوعياً (٢٠ دقيقة) + تكليف إثرائي":
+               raw>=32?"جلستان أسبوعياً (٢٠ دقيقة لكل جلسة) للمحاور الضعيفة":
+               raw>=24?"ثلاث جلسات أسبوعياً (٣٠ دقيقة) + ورقة عمل علاجية بعد كل جلسة":
+                       "جلسة يومية قصيرة (١٥ دقيقة) بإشراف المعلمة ومتابعة أسبوعية مع ولي الأمر";
+  html += `<div class="plan" style="border-right-color:var(--teal)">
+    <h4>جدولكِ المقترح للأسبوعين القادمين</h4>
+    <ul class="tight">
+      <li><b>الحمل الدراسي:</b> ${load}.</li>
+      <li><b>الترتيب:</b> ابدئي بالمحور الأضعف${weakB.length?` (<b>${B[weakB[0]].name}</b>)`:""} ثم انتقلي لما يليه.</li>
+      <li><b>مهارة الرسوم:</b> ${bst.vis.c>=7?"أداؤكِ فيها جيد؛ ثبّتيه برسم بياني واحد أسبوعياً.":"خصّصي ١٠ دقائق يومياً لقراءة رسم أو مخطط واحد وكتابة استنتاج عنه."}</li>
+      <li><b>الدليل على التقدّم:</b> إعادة أسئلة الدرس المعالج والحصول على ٨ من ١٠ على الأقل.</li>
+      <li><b>إعادة التشخيص:</b> إعادة هذا الاختبار بعد أسبوعين ومقارنة النتيجة بالنتيجة الحالية.</li>
+    </ul></div>`;
+  document.getElementById("plan").innerHTML = html;
+
+  const allWeakTopics = ORDER.flatMap(k=>[...new Set(weakTopics[k]||[])]).join(" • ");
+  REPORT = `الاختبار التشخيصي في العلوم — الصف التاسع
+مدرسة القطرانة الثانوية للبنات — إعداد المعلمة نوال أحمد بني عطية
+الطالبة: ${name} — ${cls}
+التاريخ: ${new Date().toLocaleDateString("ar-JO")} — زمن الإنجاز: ${mins} دقيقة
+النتيجة: ${raw}/${Q.length} (${pct}%) — مستوى الأداء: ${level}
+— المحاور: ${ORDER.map(k=>`${B[k].name} ${bst[k].c}/${bst[k].t}`).join(" | ")}
+— المهارات: ${Object.keys(SK).map(k=>`${SK[k].n} ${sst[k].c}/${sst[k].t}`).join(" | ")}
+— يحتاج معالجة: ${weakB.length?weakB.map(k=>B[k].name).join("، "):"لا يوجد"}`;
+
+  /* حفظ محلي */
+  let okSave=false;
+  try{
+    const log = JSON.parse(localStorage.getItem("diag9v2")||"[]");
+    log.push({n:name,c:cls,r:raw,p:pct,l:level,m:mins,d:new Date().toLocaleDateString("ar-JO"),
+      b:Object.fromEntries(ORDER.map(k=>[k,bst[k].c]))});
+    localStorage.setItem("diag9v2", JSON.stringify(log)); okSave=true;
+  }catch(err){ okSave=false; }
+  const sm = document.getElementById("saved-msg");
+  sm.style.display="block";
+  sm.className = okSave ? "status s-ok" : "status s-warn";
+  sm.textContent = okSave ? "✔ تم التصحيح وحُفظت النتيجة على هذا الجهاز باسم الطالبة وتاريخ الاختبار."
+                          : "تم التصحيح. الحفظ المحلي غير متاح في هذا المتصفح — استعملي زر نسخ التقرير أو تنزيله.";
+
+  /* إرسال إلى جدول المعلمة */
+  PAYLOAD = {name:name, cls:cls, raw:raw, pct:pct, level:level, mins:mins,
+    bio:bst.bio.c, chem:bst.chem.c, phys:bst.phys.c, earth:bst.earth.c, vis:bst.vis.c,
+    weakBranches: weakB.map(k=>B[k].name).join("، ") || "لا يوجد",
+    weakTopics: allWeakTopics || "لا يوجد"};
+
+  document.getElementById("exam").style.display="none";
+  document.getElementById("results").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+  showSheetStatus(await sendToSheet(PAYLOAD));
+};
+
+document.getElementById("retry").onclick = async ()=>{
+  if(!PAYLOAD) return;
+  document.getElementById("sheet-msg").textContent = "جارٍ إعادة الإرسال…";
+  showSheetStatus(await sendToSheet(PAYLOAD));
+};
+
+/* ================== أزرار النتائج ================== */
+document.getElementById("toggle-why").onclick = ()=>{
+  const ex = document.getElementById("exam");
+  ex.style.display = ex.style.display==="none" ? "block" : "none";
+  if(ex.style.display==="block") document.getElementById("questions").scrollIntoView({behavior:"smooth"});
+};
+document.getElementById("share-wa").onclick = ()=> window.open("https://wa.me/?text="+encodeURIComponent(REPORT+"\n"+location.href),"_blank");
+document.getElementById("copy-res").onclick = ()=>{ navigator.clipboard.writeText(REPORT).then(()=>alert("نُسخ تقرير النتيجة.")); };
+document.getElementById("dl").onclick = ()=>{
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+REPORT],{type:"text/plain;charset=utf-8"}));
+  a.download="نتيجة_الاختبار_التشخيصي.txt"; a.click();
+};
+document.getElementById("print").onclick = ()=>window.print();
+document.getElementById("again").onclick = ()=>location.reload();
+
+/* ================== لوحة المعلمة ================== */
+function readLog(){ try{ return JSON.parse(localStorage.getItem("diag9v2")||"[]"); }catch(e){ return []; } }
+document.getElementById("show-log").onclick = ()=>{
+  const log = readLog(); const box = document.getElementById("log");
+  if(!log.length){ box.innerHTML = `<p style="color:var(--muted)">لا توجد نتائج محفوظة على هذا الجهاز بعد.</p>`; return; }
+  box.innerHTML = `<table class="rubric"><tr><th>الطالبة</th><th>الشعبة</th><th>العلامة</th><th>النسبة</th><th>المستوى</th><th>الرسوم /٨</th><th>التاريخ</th></tr>`+
+    log.map(x=>`<tr><td>${x.n}</td><td>${x.c}</td><td>${ar(x.r)}/٤٨</td><td>${ar(x.p)}%</td><td>${x.l}</td><td>${ar((x.b&&x.b.vis)||0)}</td><td>${x.d}</td></tr>`).join("")+`</table>`;
+};
+document.getElementById("copy-log").onclick = ()=>{
+  const log = readLog();
+  if(!log.length){ alert("لا توجد نتائج محفوظة."); return; }
+  const txt = "الطالبة,الشعبة,العلامة,النسبة,المستوى,علوم الحياة,الكيمياء,الفيزياء,علوم الأرض,قراءة الرسوم,الزمن,التاريخ\n"+
+    log.map(x=>`${x.n},${x.c},${x.r},${x.p}%,${x.l},${x.b.bio},${x.b.chem},${x.b.phys},${x.b.earth},${x.b.vis},${x.m},${x.d}`).join("\n");
+  navigator.clipboard.writeText(txt).then(()=>alert("نُسخ السجل — الصقيه في Excel أو Google Sheets."));
+};
+document.getElementById("clear-log").onclick = ()=>{
+  if(confirm("سيُمسح سجل النتائج المحفوظة على هذا الجهاز نهائياً. هل تريدين المتابعة؟")){
+    try{ localStorage.removeItem("diag9v2"); }catch(e){}
+    document.getElementById("log").innerHTML=""; alert("مُسح السجل.");
+  }
+};
+document.getElementById("copy-gs").onclick = ()=>{
+  navigator.clipboard.writeText(document.getElementById("gs-code").textContent)
+    .then(()=>alert("نُسخ الكود — الصقيه في محرر Apps Script."));
+};
+</script>
+<div style="text-align:center;padding:14px"><a href="./" style="color:#7A1F2E;font-weight:700">↩ الامتحانات الإلكترونية</a> · <a href="../" style="color:#7A1F2E;font-weight:700">منصة القطرانة</a></div>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style rel="stylesheet" type="text/css">@charset "utf-8";
+
+:root { --teal: #7A1F2E; --teal-dark: #5C1622; --teal-light: #f6ece6; --gold: #B8902A; --gold-light: #faf3e2; --ink: #1f2b2b; --paper: #fffdf8; --line: #d8cba8; --correct: #1c7a4d; --wrong: #b3403a; }
+
+* { box-sizing: border-box; }
+
+body { font-family: "Sakkal Majalla", "Traditional Arabic", Arial, sans-serif; background: var(--paper); color: var(--ink); margin: 0px; line-height: 1.9; font-size: 18px; }
+
+.page { max-width: 900px; margin: 0px auto; padding: 0px 20px 60px; }
+
+header.doc-header { background: linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%); color: rgb(255, 255, 255); padding: 30px 24px 24px; border-radius: 0px 0px 18px 18px; position: relative; overflow: hidden; margin-bottom: 26px; }
+
+header.doc-header::before { content: ""; position: absolute; inset: 0px; background: repeating-linear-gradient(45deg, rgba(184, 144, 42, 0.1) 0px, rgba(184, 144, 42, 0.1) 12px, transparent 12px, transparent 24px); pointer-events: none; }
+
+.brand-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; position: relative; }
+
+.brand-title { font-size: 26px; font-weight: bold; letter-spacing: 0.5px; }
+
+.brand-sub { font-size: 15px; color: var(--gold-light); opacity: 0.9; margin-top: 4px; }
+
+.gold-rule { height: 4px; background: var(--gold); width: 70px; border-radius: 2px; margin: 14px 0px 10px; }
+
+.meta-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; position: relative; }
+
+.badge { background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(184, 144, 42, 0.6); color: rgb(255, 255, 255); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+
+.student-fields { background: var(--gold-light); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 26px; }
+
+.student-fields label { font-size: 15px; color: var(--teal-dark); font-weight: bold; display: block; margin-bottom: 4px; }
+
+.student-fields input { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 16px; background: rgb(255, 255, 255); }
+
+.instructions { border-right: 5px solid var(--gold); background: var(--teal-light); padding: 14px 18px; border-radius: 10px; margin-bottom: 30px; font-size: 16px; }
+
+.instructions strong { color: var(--teal-dark); }
+
+section.unit { margin-bottom: 34px; }
+
+.unit-title { display: flex; align-items: center; gap: 10px; background: var(--teal); color: rgb(255, 255, 255); padding: 10px 18px; border-radius: 10px; font-size: 19px; font-weight: bold; margin-bottom: 16px; }
+
+.unit-title .num { background: var(--gold); color: var(--teal-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex: 0 0 auto; }
+
+.q { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; position: relative; }
+
+.q-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+
+.q-num { font-weight: bold; color: var(--teal-dark); }
+
+.q-type { font-size: 12px; background: var(--gold-light); color: var(--gold); border: 1px solid var(--gold); padding: 2px 10px; border-radius: 12px; white-space: nowrap; }
+
+.options label { display: block; background: var(--teal-light); margin: 6px 0px; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.15s; }
+
+.options label:hover { background: rgb(215, 236, 236); }
+
+.options input { margin-left: 10px; }
+
+input[type="text"].blank { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 16px; }
+
+textarea { width: 100%; min-height: 80px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 16px; resize: vertical; }
+
+.feedback { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 15px; display: none; }
+
+.feedback.correct { background: rgb(229, 246, 236); color: var(--correct); border: 1px solid var(--correct); }
+
+.feedback.wrong { background: rgb(251, 233, 232); color: var(--wrong); border: 1px solid var(--wrong); }
+
+.feedback.info { background: var(--gold-light); color: rgb(138, 107, 31); border: 1px solid var(--gold); }
+
+.self-rate { margin-top: 10px; font-size: 14px; display: none; }
+
+.self-rate span { color: var(--teal-dark); font-weight: bold; }
+
+.self-rate select { margin-right: 8px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); font-family: inherit; }
+
+.grade-bar { position: sticky; bottom: 0px; background: var(--paper); border-top: 2px solid var(--gold); padding: 14px 0px; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; z-index: 5; }
+
+button.primary { background: var(--teal); color: rgb(255, 255, 255); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; padding: 12px 30px; border-radius: 30px; font-size: 17px; font-weight: bold; cursor: pointer; font-family: inherit; box-shadow: rgba(14, 107, 107, 0.3) 0px 3px 10px; }
+
+button.primary:hover { background: var(--teal-dark); }
+
+button.secondary { background: rgb(255, 255, 255); color: var(--teal-dark); border: 2px solid var(--teal); padding: 10px 26px; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: inherit; }
+
+button.secondary:hover { background: var(--teal-light); }
+
+#resultBox { display: none; background: linear-gradient(135deg,var(--gold-light),#fff); border: 2px solid var(--gold); border-radius: 16px; padding: 22px; text-align: center; margin: 26px 0px; }
+
+#resultBox h2 { color: var(--teal-dark); margin: 0px 0px 8px; }
+
+#resultBox .scoreNum { font-size: 44px; color: var(--gold); font-weight: bold; }
+
+#resultBox .level { font-size: 19px; font-weight: bold; margin-top: 6px; }
+
+table { width: 100%; border-collapse: collapse; margin: 16px 0px 30px; font-size: 15px; }
+
+th, td { border: 1px solid var(--line); padding: 9px 10px; text-align: center; }
+
+th { background: var(--teal); color: rgb(255, 255, 255); }
+
+tr:nth-child(2n) { background: var(--teal-light); }
+
+.skills-table td:nth-child(3), .skills-table td:nth-child(2) { text-align: right; }
+
+.section-title { color: var(--teal-dark); border-bottom: 3px solid var(--gold); padding-bottom: 8px; margin-top: 44px; }
+
+.rubric-card { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+
+.rubric-card div { background: rgb(255, 255, 255); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+
+.rubric-card .pct { font-size: 22px; font-weight: bold; color: var(--teal); }
+
+.rubric-card .lvl { font-weight: bold; margin: 6px 0px; color: var(--gold); }
+
+.rubric-card p { font-size: 13px; margin: 0px; color: rgb(85, 85, 85); }
+
+footer.doc-footer { text-align: center; color: var(--teal-dark); border-top: 2px dashed var(--gold); margin-top: 40px; padding-top: 16px; font-size: 14px; }
+
+@media print {
+  .grade-bar, button { display: none !important; }
+  header.doc-header { print-color-adjust: exact; }
+}
+
+@media (max-width: 640px) {
+  .student-fields { grid-template-columns: 1fr; }
+  .rubric-card { grid-template-columns: 1fr 1fr; }
+}</style>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تشخيصي إلكتروني شامل - العلوم - الصف الثامن</title>
+
+</head>
+<body>
+<div class="page">
+
+  <header class="doc-header">
+    <div class="brand-row">
+      <div>
+        <div class="brand-title">الاختبار التشخيصي الشامل – مبحث العلوم</div>
+        <div class="brand-sub">الصف الثامن الأساسي — المنهاج الأردني</div>
+        <div class="gold-rule"></div>
+        <div class="brand-sub">إعداد المعلمة: نوال أحمد بني عطية | مدرسة القطرانة الثانوية للبنات</div>
+      </div>
+    </div>
+    <div class="meta-badges">
+      <span class="badge">📘 6 وحدات دراسية</span>
+      <span class="badge">📝 24 سؤالاً متنوعاً</span>
+      <span class="badge">✅ تصحيح ذاتي فوري</span>
+      <span class="badge">📊 تحليل مهارات + معايير تقييم</span>
+    </div>
+  </header>
+
+  <div class="student-fields">
+    <div><label>اسم الطالبة</label><input type="text" id="stName" placeholder="اكتبي اسمك هنا"></div>
+    <div><label>الشعبة</label><input type="text" id="stSection" placeholder="مثال: 8/أ"></div>
+    <div><label>التاريخ</label><input type="date" id="stDate"></div>
+    <div><label>الرقم</label><input type="text" id="stNo" placeholder="الرقم في السجل"></div>
+  </div>
+
+  <div class="instructions">
+    <strong>تعليمات الاختبار:</strong> هذا اختبار تشخيصي يهدف إلى تحديد نقاط القوة والاحتياج لدى الطالبة قبل بدء الوحدات الدراسية. أجيبي عن جميع الأسئلة بعناية، ثم اضغطي زر <strong>«تصحيح الاختبار»</strong> في نهاية الصفحة لمعرفة نتيجتك فوراً مع التغذية الراجعة على كل سؤال. الأسئلة المقالية القصيرة تُقيَّم ذاتياً بالمقارنة مع الإجابة النموذجية.
+  </div>
+
+  <form id="quizForm">
+
+  <!-- ======================= UNIT 1 ======================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="num">1</span> الكائنات الحية والأنظمة البيئية</div>
+
+    <div class="q" data-qid="1" data-type="mcq" data-answer="a">
+      <div class="q-head"><span class="q-num">السؤال 1</span><span class="q-type">اختيار من متعدد</span></div>
+      <p>ما العامل غير الحيوي (اللاأحيائي) من بين العوامل التالية في النظام البيئي؟</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="a"> أ) الماء</label>
+        <label><input type="radio" name="q1" value="b"> ب) النبات</label>
+        <label><input type="radio" name="q1" value="c"> ج) الحيوان المفترس</label>
+        <label><input type="radio" name="q1" value="d"> د) البكتيريا المحللة</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="2" data-type="tf" data-answer="true">
+      <div class="q-head"><span class="q-num">السؤال 2</span><span class="q-type">صح / خطأ</span></div>
+      <p>العبارة: «المستهلكات الأولية (آكلات الأعشاب) تتغذى على النباتات مباشرة».</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="true"> صح</label>
+        <label><input type="radio" name="q2" value="false"> خطأ</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="3" data-type="blank" data-answer="المنتجات|منتجات">
+      <div class="q-head"><span class="q-num">السؤال 3</span><span class="q-type">أكمل الفراغ</span></div>
+      <p>يُطلق على الكائنات الحية القادرة على صنع غذائها بنفسها من خلال البناء الضوئي اسم: <input type="text" class="blank" name="q3"></p>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="4" data-type="short">
+      <div class="q-head"><span class="q-num">السؤال 4</span><span class="q-type">سؤال قصير</span></div>
+      <p>وضّحي أثر ازدياد أعداد الحيوانات المفترسة بشكل كبير في نظام بيئي معين على أعداد الفرائس والنباتات في السلسلة الغذائية نفسها.</p>
+      <textarea name="q4" placeholder="اكتبي إجابتك هنا..."></textarea>
+      <div class="feedback info" style="display:none;">
+        <strong>الإجابة النموذجية:</strong> زيادة أعداد المفترسات تؤدي إلى نقصان أعداد الفرائس (المستهلكات الأولية) بسبب الافتراس المتزايد، وهذا بدوره يقلل الضغط على النباتات فتزداد أعدادها، مما يوضح مفهوم "الشلال الغذائي" وتوازن السلسلة الغذائية.
+      </div>
+      <div class="self-rate">
+        <span>قيّمي إجابتك:</span>
+        <select name="q4_self">
+          <option value="2">صحيحة وكاملة</option>
+          <option value="1">صحيحة جزئياً</option>
+          <option value="0">غير صحيحة</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= UNIT 2 ======================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="num">2</span> الخلية وتركيبها</div>
+
+    <div class="q" data-qid="5" data-type="mcq" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 5</span><span class="q-type">اختيار من متعدد</span></div>
+      <p>أي العضيات التالية توجد في الخلية النباتية ولا توجد في الخلية الحيوانية؟</p>
+      <div class="options">
+        <label><input type="radio" name="q5" value="a"> أ) الميتوكندريا</label>
+        <label><input type="radio" name="q5" value="b"> ب) البلاستيدات الخضراء</label>
+        <label><input type="radio" name="q5" value="c"> ج) النواة</label>
+        <label><input type="radio" name="q5" value="d"> د) الغشاء البلازمي</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="6" data-type="tf" data-answer="false">
+      <div class="q-head"><span class="q-num">السؤال 6</span><span class="q-type">صح / خطأ</span></div>
+      <p>العبارة: «يوجد جدار خلوي في الخلية الحيوانية كما هو الحال في الخلية النباتية».</p>
+      <div class="options">
+        <label><input type="radio" name="q6" value="true"> صح</label>
+        <label><input type="radio" name="q6" value="false"> خطأ</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="7" data-type="blank" data-answer="الميتوكندريا|ميتوكندريا">
+      <div class="q-head"><span class="q-num">السؤال 7</span><span class="q-type">أكمل الفراغ</span></div>
+      <p>العضية المسؤولة عن إنتاج الطاقة داخل الخلية وتسمى "بيت الطاقة" هي: <input type="text" class="blank" name="q7"></p>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="8" data-type="short">
+      <div class="q-head"><span class="q-num">السؤال 8</span><span class="q-type">سؤال قصير</span></div>
+      <p>انطلاقاً من مبدأ "التركيب يخدم الوظيفة"، فسّري العلاقة بين تركيب نواة الخلية ووظيفتها في التحكم بأنشطة الخلية.</p>
+      <textarea name="q8" placeholder="اكتبي إجابتك هنا..."></textarea>
+      <div class="feedback info" style="display:none;">
+        <strong>الإجابة النموذجية:</strong> تحتوي النواة على المادة الوراثية (DNA) المحمية بغلاف نووي، وهذا التركيب يمكّنها من تخزين التعليمات الوراثية وإرسالها لتوجيه جميع الأنشطة الحيوية للخلية، كالنمو والانقسام وإنتاج البروتينات، فتعمل كمركز التحكم والإدارة في الخلية.
+      </div>
+      <div class="self-rate">
+        <span>قيّمي إجابتك:</span>
+        <select name="q8_self">
+          <option value="2">صحيحة وكاملة</option>
+          <option value="1">صحيحة جزئياً</option>
+          <option value="0">غير صحيحة</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= UNIT 3 ======================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="num">3</span> الفسيولوجيا البشرية (أجهزة جسم الإنسان)</div>
+
+    <div class="q" data-qid="9" data-type="mcq" data-answer="c">
+      <div class="q-head"><span class="q-num">السؤال 9</span><span class="q-type">اختيار من متعدد</span></div>
+      <p>أي الأعضاء التالية مسؤول بشكل رئيس عن ضخّ الدم إلى جميع أنحاء الجسم؟</p>
+      <div class="options">
+        <label><input type="radio" name="q9" value="a"> أ) الرئة</label>
+        <label><input type="radio" name="q9" value="b"> ب) الكبد</label>
+        <label><input type="radio" name="q9" value="c"> ج) القلب</label>
+        <label><input type="radio" name="q9" value="d"> د) المعدة</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="10" data-type="tf" data-answer="true">
+      <div class="q-head"><span class="q-num">السؤال 10</span><span class="q-type">صح / خطأ</span></div>
+      <p>العبارة: «تحمل الشرايين الدم من القلب إلى مختلف أعضاء الجسم».</p>
+      <div class="options">
+        <label><input type="radio" name="q10" value="true"> صح</label>
+        <label><input type="radio" name="q10" value="false"> خطأ</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="11" data-type="blank" data-answer="الحويصلات الهوائية|حويصلات هوائية|الحويصلات">
+      <div class="q-head"><span class="q-num">السؤال 11</span><span class="q-type">أكمل الفراغ</span></div>
+      <p>تتم عملية تبادل الغازات في الرئتين داخل أكياس هوائية صغيرة تُسمى: <input type="text" class="blank" name="q11"></p>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="12" data-type="short">
+      <div class="q-head"><span class="q-num">السؤال 12</span><span class="q-type">سؤال قصير</span></div>
+      <p>اشرحي كيف يرتبط الجهاز الهضمي بالجهاز الدوري في نقل المواد الغذائية إلى خلايا الجسم المختلفة.</p>
+      <textarea name="q12" placeholder="اكتبي إجابتك هنا..."></textarea>
+      <div class="feedback info" style="display:none;">
+        <strong>الإجابة النموذجية:</strong> يقوم الجهاز الهضمي بتفكيك الطعام إلى جزيئات صغيرة قابلة للامتصاص (كالسكريات والأحماض الأمينية)، وتُمتص هذه المواد عبر جدار الأمعاء الدقيقة إلى الدم، فيتولى الجهاز الدوري نقلها عبر الأوعية الدموية إلى جميع خلايا الجسم لتزويدها بالطاقة والمواد اللازمة للنمو.
+      </div>
+      <div class="self-rate">
+        <span>قيّمي إجابتك:</span>
+        <select name="q12_self">
+          <option value="2">صحيحة وكاملة</option>
+          <option value="1">صحيحة جزئياً</option>
+          <option value="0">غير صحيحة</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= UNIT 4 ======================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="num">4</span> الفيزياء والقوى</div>
+
+    <div class="q" data-qid="13" data-type="mcq" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 13</span><span class="q-type">اختيار من متعدد</span></div>
+      <p>ما نوع القوة التي تُبطئ حركة جسم متحرك على سطح خشن؟</p>
+      <div class="options">
+        <label><input type="radio" name="q13" value="a"> أ) الجاذبية الأرضية</label>
+        <label><input type="radio" name="q13" value="b"> ب) قوة الاحتكاك</label>
+        <label><input type="radio" name="q13" value="c"> ج) قوة الدفع</label>
+        <label><input type="radio" name="q13" value="d"> د) قوة الشد</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="14" data-type="tf" data-answer="true">
+      <div class="q-head"><span class="q-num">السؤال 14</span><span class="q-type">صح / خطأ</span></div>
+      <p>العبارة: «كلما زادت كتلة الجسم، زادت قوة الجاذبية الأرضية المؤثرة فيه (وزنه)».</p>
+      <div class="options">
+        <label><input type="radio" name="q14" value="true"> صح</label>
+        <label><input type="radio" name="q14" value="false"> خطأ</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="15" data-type="blank" data-answer="نيوتن|النيوتن|N">
+      <div class="q-head"><span class="q-num">السؤال 15</span><span class="q-type">أكمل الفراغ</span></div>
+      <p>وحدة قياس القوة في النظام الدولي للوحدات هي: <input type="text" class="blank" name="q15"></p>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="16" data-type="short">
+      <div class="q-head"><span class="q-num">السؤال 16</span><span class="q-type">سؤال قصير</span></div>
+      <p>بيئتنا الصحراوية في القطرانة مليئة بالأمثلة على قوة الاحتكاك؛ وضّحي بمثال واحد كيف تفيدنا هذه القوة، وبمثال آخر كيف قد تُشكّل عائقاً.</p>
+      <textarea name="q16" placeholder="اكتبي إجابتك هنا..."></textarea>
+      <div class="feedback info" style="display:none;">
+        <strong>الإجابة النموذجية (على سبيل المثال):</strong> فائدة: يساعد الاحتكاك بين إطارات السيارة والطريق الرملي في القطرانة على التحكم بالسيارة ومنع انزلاقها. عائق: يزيد الاحتكاك مع الرمال الناعمة من صعوبة سير المركبات وقد يوقفها، لذلك تُستخدم إطارات خاصة أو تُقلَّل سرعة السيارة.
+      </div>
+      <div class="self-rate">
+        <span>قيّمي إجابتك:</span>
+        <select name="q16_self">
+          <option value="2">صحيحة وكاملة</option>
+          <option value="1">صحيحة جزئياً</option>
+          <option value="0">غير صحيحة</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= UNIT 5 ======================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="num">5</span> الكيمياء الأساسية (المادة وتغيراتها)</div>
+
+    <div class="q" data-qid="17" data-type="mcq" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 17</span><span class="q-type">اختيار من متعدد</span></div>
+      <p>أي مما يلي يُعدّ مثالاً على تغيّر كيميائي؟</p>
+      <div class="options">
+        <label><input type="radio" name="q17" value="a"> أ) تبخر الماء</label>
+        <label><input type="radio" name="q17" value="b"> ب) صدأ الحديد</label>
+        <label><input type="radio" name="q17" value="c"> ج) تجمد الماء</label>
+        <label><input type="radio" name="q17" value="d"> د) تقطيع ورقة</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="18" data-type="tf" data-answer="false">
+      <div class="q-head"><span class="q-num">السؤال 18</span><span class="q-type">صح / خطأ</span></div>
+      <p>العبارة: «يمكن فصل مكوّنات المركب الكيميائي بطرق فيزيائية بسيطة كالترشيح أو التبخير».</p>
+      <div class="options">
+        <label><input type="radio" name="q18" value="true"> صح</label>
+        <label><input type="radio" name="q18" value="false"> خطأ</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="19" data-type="blank" data-answer="الذرة|ذرة">
+      <div class="q-head"><span class="q-num">السؤال 19</span><span class="q-type">أكمل الفراغ</span></div>
+      <p>أصغر جزء من العنصر يحتفظ بخصائص ذلك العنصر يُسمى: <input type="text" class="blank" name="q19"></p>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="20" data-type="short">
+      <div class="q-head"><span class="q-num">السؤال 20</span><span class="q-type">سؤال قصير</span></div>
+      <p>قارني بين المخلوط والمركب من حيث طريقة التكوّن وإمكانية فصل المكوّنات.</p>
+      <textarea name="q20" placeholder="اكتبي إجابتك هنا..."></textarea>
+      <div class="feedback info" style="display:none;">
+        <strong>الإجابة النموذجية:</strong> المخلوط يتكوّن من اتحاد مادتين أو أكثر فيزيائياً دون تفاعل كيميائي، وتحتفظ كل مادة بخصائصها، ويمكن فصل مكوناته بطرق فيزيائية بسيطة (كالترشيح والتبخير). أما المركب فيتكوّن من اتحاد عنصرين أو أكثر كيميائياً بنسب ثابتة، وتنتج مادة جديدة بخصائص مختلفة، ولا يمكن فصل مكوناته إلا بطرق كيميائية.
+      </div>
+      <div class="self-rate">
+        <span>قيّمي إجابتك:</span>
+        <select name="q20_self">
+          <option value="2">صحيحة وكاملة</option>
+          <option value="1">صحيحة جزئياً</option>
+          <option value="0">غير صحيحة</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= UNIT 6 ======================= -->
+  <section class="unit">
+    <div class="unit-title"><span class="num">6</span> الأرض والفضاء</div>
+
+    <div class="q" data-qid="21" data-type="mcq" data-answer="b">
+      <div class="q-head"><span class="q-num">السؤال 21</span><span class="q-type">اختيار من متعدد</span></div>
+      <p>ما السبب الرئيس لحدوث فصول السنة على كوكب الأرض؟</p>
+      <div class="options">
+        <label><input type="radio" name="q21" value="a"> أ) دوران الأرض حول نفسها</label>
+        <label><input type="radio" name="q21" value="b"> ب) ميلان محور الأرض ودورانها حول الشمس</label>
+        <label><input type="radio" name="q21" value="c"> ج) بُعد القمر عن الأرض</label>
+        <label><input type="radio" name="q21" value="d"> د) دوران الشمس حول الأرض</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="22" data-type="tf" data-answer="false">
+      <div class="q-head"><span class="q-num">السؤال 22</span><span class="q-type">صح / خطأ</span></div>
+      <p>العبارة: «القشرة الأرضية هي أكثر طبقات الأرض سماكة».</p>
+      <div class="options">
+        <label><input type="radio" name="q22" value="true"> صح</label>
+        <label><input type="radio" name="q22" value="false"> خطأ</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="23" data-type="blank" data-answer="عطارد">
+      <div class="q-head"><span class="q-num">السؤال 23</span><span class="q-type">أكمل الفراغ</span></div>
+      <p>الكوكب الأقرب إلى الشمس في المجموعة الشمسية هو: <input type="text" class="blank" name="q23"></p>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-qid="24" data-type="short">
+      <div class="q-head"><span class="q-num">السؤال 24</span><span class="q-type">سؤال قصير</span></div>
+      <p>فسّري لماذا نرى أوجهاً مختلفة للقمر (كالهلال والبدر) خلال الشهر القمري الواحد.</p>
+      <textarea name="q24" placeholder="اكتبي إجابتك هنا..."></textarea>
+      <div class="feedback info" style="display:none;">
+        <strong>الإجابة النموذجية:</strong> ينتج اختلاف أوجه القمر عن دورانه حول الأرض، إذ يتغيّر الجزء المُضاء منه الذي نراه من الأرض بحسب موقعه النسبي من الشمس والأرض، مع أن نصف القمر المواجه للشمس مضاء دائماً، فنراه بأشكال مختلفة من الهلال إلى البدر ثم يعود هلالاً.
+      </div>
+      <div class="self-rate">
+        <span>قيّمي إجابتك:</span>
+        <select name="q24_self">
+          <option value="2">صحيحة وكاملة</option>
+          <option value="1">صحيحة جزئياً</option>
+          <option value="0">غير صحيحة</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  </form>
+
+  <div class="grade-bar">
+    <button type="button" class="primary">✅ تصحيح الاختبار</button>
+    <button type="button" class="secondary">🔄 إعادة المحاولة</button>
+    <button type="button" class="secondary">🖨️ طباعة</button>
+  </div>
+
+  <div id="resultBox">
+    <h2>نتيجتك في الاختبار التشخيصي</h2>
+    <div class="scoreNum" id="scoreNum">0 / 32</div>
+    <div class="level" id="levelText"></div>
+    <p id="levelDesc" style="color:#555;font-size:15px;"></p>
+  </div>
+
+  <!-- ======================= ANSWER KEY ======================= -->
+  <h2 class="section-title">🔑 مفتاح الإجابات والتصحيح</h2>
+  <table>
+    <thead><tr><th>رقم السؤال</th><th>الإجابة الصحيحة</th><th>شرح موجز</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>أ) الماء</td><td>الماء عامل غير حي (لا أحيائي)، بينما البقية كائنات حية.</td></tr>
+      <tr><td>2</td><td>صح</td><td>المستهلكات الأولية (آكلات الأعشاب) تتغذى مباشرة على المنتجات (النباتات).</td></tr>
+      <tr><td>3</td><td>المنتجات</td><td>تصنع غذاءها ذاتياً عبر البناء الضوئي باستخدام الكلوروفيل.</td></tr>
+      <tr><td>4</td><td>إجابة مقالية</td><td>راجعي الإجابة النموذجية الظاهرة أسفل السؤال بعد التصحيح.</td></tr>
+      <tr><td>5</td><td>ب) البلاستيدات الخضراء</td><td>خاصة بالخلية النباتية لإجراء عملية البناء الضوئي.</td></tr>
+      <tr><td>6</td><td>خطأ</td><td>جدار الخلية موجود في الخلية النباتية فقط وليس الحيوانية.</td></tr>
+      <tr><td>7</td><td>الميتوكندريا</td><td>مسؤولة عن التنفس الخلوي وإنتاج الطاقة (ATP).</td></tr>
+      <tr><td>8</td><td>إجابة مقالية</td><td>راجعي الإجابة النموذجية الظاهرة أسفل السؤال بعد التصحيح.</td></tr>
+      <tr><td>9</td><td>ج) القلب</td><td>عضلة القلب تضخ الدم عبر الأوعية الدموية لكامل الجسم.</td></tr>
+      <tr><td>10</td><td>صح</td><td>الشرايين تنقل الدم بعيداً عن القلب باتجاه الأعضاء.</td></tr>
+      <tr><td>11</td><td>الحويصلات الهوائية</td><td>مكان تبادل الأكسجين وثاني أكسيد الكربون مع الشعيرات الدموية.</td></tr>
+      <tr><td>12</td><td>إجابة مقالية</td><td>راجعي الإجابة النموذجية الظاهرة أسفل السؤال بعد التصحيح.</td></tr>
+      <tr><td>13</td><td>ب) الاحتكاك</td><td>تنشأ قوة الاحتكاك من تلامس سطحين وتعاكس الحركة.</td></tr>
+      <tr><td>14</td><td>صح</td><td>الوزن = الكتلة × تسارع الجاذبية، فيزداد بزيادة الكتلة.</td></tr>
+      <tr><td>15</td><td>نيوتن (N)</td><td>الوحدة الدولية لقياس القوة نسبة للعالم إسحاق نيوتن.</td></tr>
+      <tr><td>16</td><td>إجابة مقالية</td><td>راجعي الإجابة النموذجية الظاهرة أسفل السؤال بعد التصحيح.</td></tr>
+      <tr><td>17</td><td>ب) صدأ الحديد</td><td>ينتج مادة جديدة (أكسيد الحديد) لا يمكن الرجوع عنها بسهولة.</td></tr>
+      <tr><td>18</td><td>خطأ</td><td>يحتاج فصل مكونات المركب إلى طرق كيميائية وليست فيزيائية.</td></tr>
+      <tr><td>19</td><td>الذرة</td><td>الوحدة البنائية الأساسية للعنصر.</td></tr>
+      <tr><td>20</td><td>إجابة مقالية</td><td>راجعي الإجابة النموذجية الظاهرة أسفل السؤال بعد التصحيح.</td></tr>
+      <tr><td>21</td><td>ب) ميلان المحور ودوران الأرض حول الشمس</td><td>يحدد كمية أشعة الشمس الواصلة لكل نصف كرة أرضية خلال العام.</td></tr>
+      <tr><td>22</td><td>خطأ</td><td>الوشاح هو الأكثر سماكة، بينما القشرة أرق طبقات الأرض.</td></tr>
+      <tr><td>23</td><td>عطارد</td><td>أقرب الكواكب الثمانية إلى الشمس في المجموعة الشمسية.</td></tr>
+      <tr><td>24</td><td>إجابة مقالية</td><td>راجعي الإجابة النموذجية الظاهرة أسفل السؤال بعد التصحيح.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ======================= SKILLS ANALYSIS ======================= -->
+  <h2 class="section-title">🧭 تحليل المهارات العلمية</h2>
+  <table class="skills-table">
+    <thead><tr><th>رقم السؤال</th><th>المهارة المستهدفة</th><th>وصف موجز للمهارة</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>التصنيف</td><td>تمييز العوامل الحيوية عن اللاأحيائية في النظام البيئي.</td></tr>
+      <tr><td>2</td><td>الاستدلال</td><td>الحكم على صحة علاقة غذائية بالاعتماد على معرفة سابقة.</td></tr>
+      <tr><td>3</td><td>التذكر / الاسترجاع</td><td>استرجاع مصطلح علمي محدد من الذاكرة.</td></tr>
+      <tr><td>4</td><td>الاستنتاج</td><td>توقع أثر تغيّر أحد عناصر النظام البيئي على بقية عناصره.</td></tr>
+      <tr><td>5</td><td>التصنيف / المقارنة</td><td>تمييز عضيات الخلية النباتية عن الحيوانية.</td></tr>
+      <tr><td>6</td><td>الاستدلال</td><td>تقييم صحة عبارة علمية عن تركيب الخلية.</td></tr>
+      <tr><td>7</td><td>التذكر / الاسترجاع</td><td>استرجاع اسم عضية ووظيفتها.</td></tr>
+      <tr><td>8</td><td>التفسير</td><td>ربط التركيب بالوظيفة وصياغة تفسير علمي متكامل.</td></tr>
+      <tr><td>9</td><td>التصنيف</td><td>تحديد العضو المسؤول عن وظيفة حيوية معينة.</td></tr>
+      <tr><td>10</td><td>الاستدلال</td><td>التحقق من صحة معلومة حول اتجاه جريان الدم.</td></tr>
+      <tr><td>11</td><td>التذكر / الاسترجاع</td><td>استرجاع المصطلح العلمي الدقيق لبنية تشريحية.</td></tr>
+      <tr><td>12</td><td>التحليل</td><td>تحليل العلاقة الوظيفية بين جهازين حيويين مختلفين.</td></tr>
+      <tr><td>13</td><td>التطبيق</td><td>تطبيق مفهوم القوة على موقف حركي واقعي.</td></tr>
+      <tr><td>14</td><td>الاستدلال</td><td>الربط المنطقي بين الكتلة والجاذبية.</td></tr>
+      <tr><td>15</td><td>التذكر / الاسترجاع</td><td>استرجاع وحدة قياس فيزيائية معيارية.</td></tr>
+      <tr><td>16</td><td>التطبيق / الربط بالبيئة المحلية</td><td>تطبيق المفهوم العلمي على أمثلة من البيئة المحلية (القطرانة).</td></tr>
+      <tr><td>17</td><td>التصنيف</td><td>تمييز التغيرات الكيميائية عن الفيزيائية.</td></tr>
+      <tr><td>18</td><td>الاستدلال</td><td>الحكم على صحة عبارة حول خصائص المركبات.</td></tr>
+      <tr><td>19</td><td>التذكر / الاسترجاع</td><td>استرجاع تعريف علمي أساسي في الكيمياء.</td></tr>
+      <tr><td>20</td><td>المقارنة</td><td>عقد مقارنة علمية منظمة بين مفهومين متقاربين.</td></tr>
+      <tr><td>21</td><td>التفسير</td><td>تفسير ظاهرة فلكية بالربط بين عدة عوامل (الميلان والدوران).</td></tr>
+      <tr><td>22</td><td>الاستدلال</td><td>التحقق من معلومة حول طبقات الأرض الداخلية.</td></tr>
+      <tr><td>23</td><td>التذكر / الاسترجاع</td><td>استرجاع ترتيب الكواكب في المجموعة الشمسية.</td></tr>
+      <tr><td>24</td><td>التفسير</td><td>تفسير ظاهرة طبيعية دورية (أطوار القمر) بلغة علمية.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ======================= EVALUATION RUBRIC ======================= -->
+  <h2 class="section-title">📏 دليل معايير التقييم</h2>
+  <p>الدرجة الكلية للاختبار = 32 درجة (سؤال الاختيار من متعدد، الصح والخطأ، أكمل الفراغ = درجة واحدة لكل سؤال (18 سؤالاً)، والأسئلة القصيرة = درجتان لكل سؤال (6 أسئلة)).</p>
+  <div class="rubric-card">
+    <div><div class="pct">90%-100%</div><div class="lvl">ممتاز</div><p>إتقان تام لمعظم المفاهيم، جاهزة للانتقال إلى محتوى متقدم.</p></div>
+    <div><div class="pct">75%-89%</div><div class="lvl">جيد جداً</div><p>فهم جيد مع ثغرات بسيطة تحتاج مراجعة سريعة.</p></div>
+    <div><div class="pct">60%-74%</div><div class="lvl">متوسط</div><p>فهم أساسي، يلزم تعزيز بعض المفاهيم قبل المتابعة.</p></div>
+    <div><div class="pct">أقل من 60%</div><div class="lvl">يحتاج دعماً</div><p>ثغرات جوهرية تستدعي خطة علاج ومراجعة مكثفة للوحدات.</p></div>
+  </div>
+
+  <footer class="doc-footer">
+    إعداد المعلمة: نوال أحمد بني عطية &nbsp;|&nbsp; مدرسة القطرانة الثانوية للبنات &nbsp;|&nbsp; اختبار تشخيصي إلكتروني – مبحث العلوم – الصف الثامن
+  </footer>
+
+</div>
+
+<script>
+function normalize(str){
+  return (str||"").trim()
+    .replace(/[\u064B-\u0652]/g,"")   // remove tashkeel
+    .replace(/أ|إ|آ/g,"ا")
+    .replace(/ة/g,"ه")
+    .replace(/ى/g,"ي")
+    .toLowerCase();
+}
+
+function gradeQuiz(){
+  let total = 0, max = 0;
+  document.querySelectorAll('.q').forEach(q=>{
+    const type = q.dataset.type;
+    const qid = q.dataset.qid;
+    const fb = q.querySelector('.feedback');
+
+    if(type === 'mcq' || type === 'tf'){
+      max += 1;
+      const selected = q.querySelector('input[type=radio]:checked');
+      fb.style.display = 'block';
+      if(selected && selected.value === q.dataset.answer){
+        total += 1;
+        fb.className = 'feedback correct';
+        fb.textContent = '✔ إجابة صحيحة!';
+      } else {
+        fb.className = 'feedback wrong';
+        fb.textContent = selected ? '✘ إجابة غير صحيحة. راجعي مفتاح الإجابات أدناه.' : '⚠ لم تتم الإجابة عن هذا السؤال.';
+      }
+    }
+
+    if(type === 'blank'){
+      max += 1;
+      const input = q.querySelector('input[type=text]');
+      const accepted = q.dataset.answer.split('|').map(normalize);
+      fb.style.display = 'block';
+      if(accepted.includes(normalize(input.value))){
+        total += 1;
+        fb.className = 'feedback correct';
+        fb.textContent = '✔ إجابة صحيحة!';
+      } else {
+        fb.className = 'feedback wrong';
+        fb.textContent = '✘ إجابة غير صحيحة. راجعي مفتاح الإجابات أدناه.';
+      }
+    }
+
+    if(type === 'short'){
+      max += 2;
+      const selfSelect = q.querySelector('select');
+      q.querySelector('.feedback.info').style.display = 'block';
+      q.querySelector('.self-rate').style.display = 'block';
+      total += parseInt(selfSelect.value, 10) || 0;
+    }
+  });
+
+  const pct = Math.round((total/max)*100);
+  let level, desc;
+  if(pct >= 90){level='ممتاز 🌟'; desc='إتقان تام لمعظم المفاهيم، جاهزة للانتقال إلى محتوى متقدم.';}
+  else if(pct >= 75){level='جيد جداً 👍'; desc='فهم جيد مع ثغرات بسيطة تحتاج مراجعة سريعة.';}
+  else if(pct >= 60){level='متوسط 📘'; desc='فهم أساسي، يلزم تعزيز بعض المفاهيم قبل المتابعة.';}
+  else {level='يحتاج دعماً 🧩'; desc='ثغرات جوهرية تستدعي خطة علاج ومراجعة مكثفة للوحدات.';}
+
+  document.getElementById('scoreNum').textContent = total + ' / ' + max + '  (' + pct + '%)';
+  document.getElementById('levelText').textContent = level;
+  document.getElementById('levelDesc').textContent = desc;
+  document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('resultBox').scrollIntoView({behavior:'smooth', block:'center'});
+
+  document.querySelectorAll('select[name$="_self"]').forEach(sel=>{
+    sel.addEventListener('change', gradeQuiz);
+  });
+}
+
+function resetQuiz(){
+  document.getElementById('quizForm').reset();
+  document.querySelectorAll('.feedback').forEach(f=>{f.style.display='none';});
+  document.querySelectorAll('.self-rate').forEach(f=>{f.style.display='none';});
+  document.getElementById('resultBox').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+
+
+
+<div style="text-align:center;padding:14px"><a href="./" style="color:#7A1F2E;font-weight:700">↩ الامتحانات الإلكترونية</a> · <a href="../" style="color:#7A1F2E;font-weight:700">منصة القطرانة</a></div>
+</body></html>

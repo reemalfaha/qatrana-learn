@@ -16,6 +16,7 @@
 .fr>span:first-child{border-bottom:1.3px solid currentColor;padding:0 .2em}.fr>span{padding:0 .2em}
 .sq{white-space:nowrap}.sq>span{border-top:1.3px solid currentColor;padding:0 .1em;margin-right:.05em}
 .ov{border-top:1.3px solid currentColor}sup{font-size:.7em;line-height:0}
+.fgw{text-align:center;margin:4px 0 6px}.fgw svg{max-width:300px;width:100%;height:auto}
 .tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding-bottom:4px}
 .tabs button{flex:none;font:700 14px var(--f);border:1.5px solid var(--ln);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer}
 .tabs button[aria-current="true"]{background:var(--w);color:#fff;border-color:var(--w)}
@@ -123,6 +124,7 @@ function rng(seed){let x=0;for(const c of seed)x=(x*31+c.charCodeAt(0))>>>0;retu
 function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function groupsOf(ex,ver){const r=rng(ex.id+"B");return ORDER.map(t=>{let qs=ex.qs.filter(q=>q.t===t&&q.q.trim());if(ver==="B"){qs=shuffle(qs,r).map(q=>{if(q.t!=="mcq")return q;const idx=shuffle(q.opts.map((_,i)=>i).filter(i=>q.opts[i].trim()),r);return{...q,opts:idx.map(i=>q.opts[i]),a:idx.indexOf(q.a)}})}return{t,qs}}).filter(g=>g.qs.length)}
 function R(s){s=String(s==null?"":s);if(!s.includes("$")&&!s.includes("\n"))return s;const e=document.createElement("span");e.innerHTML=s.split("\n").map(l=>window.ML&&ML.T?ML.T(l):l.replace(/\$/g,"")).join("<br>");return e}
+function figEl(svg){const d=document.createElement("div");d.className="fgw";d.innerHTML=svg;return d}
 function blank(s){return String(s).replace(/_{2,}|\.{4,}|…+/g,"________")}
 /* ---------- state ---------- */
 let tab="list";
@@ -170,7 +172,7 @@ function qCard(ex,q,i){
   else body=h("div",{class:"row"},h("label",{class:"f",style:"grid-column:1/-1"},"الإجابة النموذجية (اختياري، تظهر في المفتاح)",h("textarea",{class:"in",oninput:e=>{q.a=e.target.value;save()}},q.a||"")),h("label",{class:"f"},"عدد أسطر الإجابة",h("input",{class:"in",type:"number",min:1,max:15,value:q.lines||3,oninput:e=>{q.lines=+e.target.value||3;save()}})));
   return h("div",{class:"card qc",style:"--c:"+T.c},
     h("div",{class:"qh"},h("span",{class:"tg"},T.ic+" "+T.n+" · س"+(i+1)),h("label",{class:"f",style:"flex-direction:row;align-items:center;gap:6px"},"العلامة",h("input",{class:"in mk",type:"number",min:0,step:"0.5",value:q.m,oninput:e=>{q.m=+e.target.value||0;save()}}))),
-    qtxt,h("div",{style:"height:8px"}),body,
+    qtxt,q.fig?h("div",{},figEl(q.fig),h("button",{class:"btn sm g",onclick:()=>{q.fig="";save();render()}},"حذف الشكل")):null,h("div",{style:"height:8px"}),body,
     h("div",{class:"bar2",style:"margin-top:10px"},
       h("button",{class:"btn sm g",onclick:()=>mv(-1),"aria-label":"أعلى"},"↑"),h("button",{class:"btn sm g",onclick:()=>mv(1),"aria-label":"أسفل"},"↓"),
       h("button",{class:"btn sm g",onclick:()=>{ex.qs.splice(i+1,0,{...JSON.parse(JSON.stringify(q)),id:uid()});save();render()}},"نسخ"),
@@ -226,11 +228,11 @@ function loadCat(){if(CAT)return Promise.resolve(CAT);
       mcq:()=>(l.quiz||[]).filter(x=>x.q&&x.o&&x.o.length>=2).map(x=>({q:x.q,o:x.o,a:x.a})),
       defs:()=>(l.points||[]).filter(p=>p[0]&&p[1]).map(p=>({q:"وضّحي المقصود بـ: "+p[0]+".",a:p[1]})),probs:()=>[]}))}))}
     (window.MUNITS||[]).forEach(u=>{sub(u.grade,"math","الرياضيات").units.push({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map(l=>{
-      const draw=(n,fn)=>{const out=[],seen=new Set(),gs=l.gens||[];for(let i=0;i<n*4&&out.length<n&&gs.length;i++){try{const x=gs[i%gs.length].f();if(!x||x.fig||x.svg||!x.o||x.o.length<2||seen.has(x.q))continue;seen.add(x.q);out.push(fn(x))}catch(e){}}return out};
+      const draw=(n,fn)=>{const out=[],seen=new Set(),gs=l.gens||[];for(let i=0;i<n*4&&out.length<n&&gs.length;i++){try{const x=gs[i%gs.length].f();if(!x||!x.o&&fn.needsO||seen.has(x.q))continue;let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;if(x.o&&x.o.length<2&&fn.needsO)continue;seen.add(x.q);out.push(fn(x,fig))}catch(e){}}return out};
       return{id:u.id+"-"+l.id,title:l.title,info:"أسئلة متجدّدة",
-        mcq:()=>[...((l.recall&&l.recall.qs)||[]).map(x=>({q:x.q,o:x.o,a:x.a})),...draw(14,x=>({q:x.q,o:x.o,a:x.a,shuf:1}))],
+        mcq:()=>[...((l.recall&&l.recall.qs)||[]).map(x=>({q:x.q,o:x.o,a:x.a})),...draw(14,Object.assign((x,fig)=>({q:x.q,o:x.o,a:x.a,shuf:1,fig}),{needsO:1}))],
         defs:()=>((l.sum&&l.sum.rules)||[]).filter(r=>r[0]&&r[1]).map(r=>({q:"اشرحي باختصار: "+r[0]+".",a:r[1]})),
-        probs:()=>[...(l.ex&&l.ex.q?[{q:l.ex.q,a:(l.ex.steps||[]).join("\n")}]:[]),...draw(10,x=>({q:x.q,a:(x.steps||[]).join("\n")}))]}})})});
+        probs:()=>[...(l.ex&&l.ex.q?[{q:l.ex.q,a:(l.ex.steps||[]).join("\n")}]:[]),...draw(10,(x,fig)=>({q:x.q,a:(x.steps||[]).join("\n"),fig}))]}})})});
     for(const g in A){const o=sub(g,"ar","اللغة العربية");o.units=A[g].map(u=>({id:u.id,n:u.n,title:u.title,lessons:u.lessons.map(l=>({id:l.id,title:l.title,info:l.mcq.length+" سؤال",mcq:()=>l.mcq,defs:()=>l.defs,probs:()=>l.probs}))}))}
     return CAT=C})}
 const GEN={grade:"العاشر",key:null,sel:new Set(),nm:10,ns:3,np:0,mm:1,ms:2,mp:3,keep:false};
@@ -239,9 +241,9 @@ function lessonsOf(g,k){const o=CAT[g]&&CAT[g][k];return o?o.units.map(u=>({u,ls
 function pullQs(){
   const all=lessonsOf(GEN.grade,GEN.key).flatMap(x=>x.ls).filter(l=>GEN.sel.has(l.id));
   const r=Math.random;const rr=(lists,n)=>{const L=lists.map(a=>shuffle(a,r));const out=[];let i=0;while(out.length<n&&L.some(a=>a.length)){const a=L[i%L.length];if(a.length)out.push(a.shift());i++}return out};
-  const mc=rr(all.map(l=>l.mcq()),GEN.nm).map(x=>{let o=x.o.slice(0,4),a=x.a;if(x.shuf){const idx=shuffle(o.map((_,i)=>i),r);o=idx.map(i=>o[i]);a=idx.indexOf(a)}return{id:uid(),t:"mcq",q:x.q,opts:o,a,m:GEN.mm,lines:3}});
+  const mc=rr(all.map(l=>l.mcq()),GEN.nm).map(x=>{let o=x.o.slice(0,4),a=x.a;if(x.shuf){const idx=shuffle(o.map((_,i)=>i),r);o=idx.map(i=>o[i]);a=idx.indexOf(a)}return{id:uid(),t:"mcq",q:x.q,opts:o,a,m:GEN.mm,lines:3,fig:x.fig||""}});
   const sh=rr(all.map(l=>l.defs()),GEN.ns).map(x=>({id:uid(),t:"short",q:x.q,opts:[],a:x.a,m:GEN.ms,lines:3}));
-  const pr=rr(all.map(l=>l.probs()),GEN.np).map(x=>({id:uid(),t:"essay",q:x.q,opts:[],a:x.a,m:GEN.mp,lines:5}));
+  const pr=rr(all.map(l=>l.probs()),GEN.np).map(x=>({id:uid(),t:"essay",q:x.q,opts:[],a:x.a,m:GEN.mp,lines:5,fig:x.fig||""}));
   return{qs:[...mc,...sh,...pr],lessons:all}}
 function vGen(ex){
   const box=h("div",{class:"card stack"},h("h2",{style:"margin:0"},"⚡ تجهيز الامتحان تلقائيًا"),h("p",{class:"muted",style:"margin:0"},"اختاري الصف والمبحث والدروس وعدد الأسئلة، والمنصة تسحب الأسئلة من دروس منصاتنا وتجهّز الامتحان. بعدها طبعيه أو عدّلي عليه."));
@@ -301,6 +303,7 @@ function paper(ex,ver,key){
   gs.forEach((g,gi)=>{const T=TYPES[g.t];const sub=g.qs.reduce((x,q)=>x+(+q.m||0),0);
     const sec=h("div",{class:"pg"},h("h3",{},h("span",{},"السؤال "+ORD[gi]+": "+T.inst),h("span",{style:"white-space:nowrap"},"("+sub+" علامة)")));
     g.qs.forEach(q=>{n++;const el=h("div",{class:"pq"},h("div",{class:"qt"},h("span",{class:"n"},(g.t==="tf"?"( ) ":"")+n+")"),h("span",{},R(g.t==="fill"?blank(q.q):q.q)),h("span",{class:"m"},"["+q.m+"]")));
+      if(q.fig)el.append(figEl(q.fig));
       if(g.t==="mcq"){const os=q.opts.map((o,i)=>({o,i})).filter(x=>x.o.trim());const long=os.some(x=>x.o.length>28);el.append(h("div",{class:"po"+(long?" one":"")},os.map((x,k)=>h("div",{class:key&&x.i===q.a?"ok":""},LET[k]+") ",R(x.o)))));
         if(key){const k=os.findIndex(x=>x.i===q.a)}}
       else if(g.t==="tf"&&key)el.append(h("span",{class:"key-a"},q.a?"✓ صح":"✗ خطأ"));
@@ -325,7 +328,7 @@ function vPrev(ex){
 async function enc(o){const j=JSON.stringify(o);try{if(window.CompressionStream){const cs=new CompressionStream("deflate-raw");const w=cs.writable.getWriter();w.write(new TextEncoder().encode(j));w.close();const b=new Uint8Array(await new Response(cs.readable).arrayBuffer());let s="";b.forEach(x=>s+=String.fromCharCode(x));return"z"+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}}catch(e){}
   return"p"+encodeURIComponent(j)}
 async function dec(s){if(s[0]==="p")return JSON.parse(decodeURIComponent(s.slice(1)));let b=s.slice(1).replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";const bin=atob(b),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);const ds=new DecompressionStream("deflate-raw");const w=ds.writable.getWriter();w.write(u);w.close();return JSON.parse(new TextDecoder().decode(await new Response(ds.readable).arrayBuffer()))}
-function pack(ex){return{t:ex.meta.title,s:ex.meta.school,u:ex.meta.subject,g:ex.meta.grade,k:ex.meta.showAns!==false?1:0,q:ex.qs.filter(q=>q.q.trim()).map(q=>[q.t,q.q,q.t==="mcq"?q.opts.filter(o=>o.trim()):0,q.t==="mcq"?q.opts.filter(o=>o.trim()).indexOf(q.opts[q.a]):q.a,q.m,q.t==="mcq"||q.t==="tf"||q.t==="fill"?0:q.a])}}
+function pack(ex){return{t:ex.meta.title,s:ex.meta.school,u:ex.meta.subject,g:ex.meta.grade,k:ex.meta.showAns!==false?1:0,q:ex.qs.filter(q=>q.q.trim()).map(q=>[q.t,q.q,q.t==="mcq"?q.opts.filter(o=>o.trim()):0,q.t==="mcq"?q.opts.filter(o=>o.trim()).indexOf(q.opts[q.a]):q.a,q.m,q.t==="mcq"||q.t==="tf"||q.t==="fill"?0:q.a,q.fig||0])}}
 function vShare(ex){
   const box=h("div",{class:"card stack"});
   if(!ex.qs.some(q=>q.q.trim()))return h("div",{class:"card muted"},"أضيفي أسئلة أولًا.");
@@ -350,7 +353,7 @@ async function studentMode(code){
   const form=h("div",{class:"stack",style:"margin-top:14px"});
   form.append(h("label",{class:"f"},"اسمك",name));
   const els=[];
-  d.q.forEach((x,i)=>{const [t,q,opts,a,m]=x;const box=h("div",{class:"card sq"});box.append(h("div",{class:"qt"},(i+1)+") ",R(t==="fill"?blank(q):q),"  ",h("span",{class:"muted small"},"["+m+"]")));
+  d.q.forEach((x,i)=>{const [t,q,opts,a,m,,fg]=x;const box=h("div",{class:"card sq"});box.append(h("div",{class:"qt"},(i+1)+") ",R(t==="fill"?blank(q):q),"  ",h("span",{class:"muted small"},"["+m+"]")));if(fg)box.append(figEl(fg));
     const fbk=h("div",{class:"fb"});
     if(t==="mcq")(opts||[]).forEach((o,k)=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=k}),LET[k]+") ",R(o))));
     else if(t==="tf")[["صح",true],["خطأ",false]].forEach(([l,v])=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=v}),l)));

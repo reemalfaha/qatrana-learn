@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مصمّم الامتحانات · منصة القطرانة</title>
+<meta name="description" content="صمّمي امتحانك بنفسك: اختيار من متعدد، صح وخطأ، إكمال، إجابة قصيرة ومقالي، مع مفتاح إجابة ونسخة ب، وطباعة A4 أو رابط للطالبات يصحَّح آليًا.">
+<meta name="theme-color" content="#7A1F2E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../forms/forms.css">
+<style>
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding-bottom:4px}
+.tabs button{flex:none;font:700 14px var(--f);border:1.5px solid var(--ln);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer}
+.tabs button[aria-current="true"]{background:var(--w);color:#fff;border-color:var(--w)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.bar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sum{background:var(--soft);border:1px solid var(--ln);border-radius:14px;padding:10px 14px;display:flex;gap:14px;flex-wrap:wrap;font-weight:700}
+.sum b{color:var(--w)}
+.qc{border-inline-start:6px solid var(--c,var(--w))}
+.qc .qh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.qc .tg{font:700 13px var(--f);background:var(--soft);border-radius:999px;padding:2px 10px;color:var(--w)}
+.opt{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.opt input[type=radio]{width:22px;height:22px;accent-color:var(--w);flex:none}
+.opt .l{font-weight:700;width:22px;flex:none;text-align:center}
+.mk{width:90px!important}
+.tfb{display:flex;gap:8px}
+.tfb label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--ln);border-radius:12px;min-height:44px;font-weight:700;cursor:pointer}
+.tfb input{accent-color:var(--w);width:20px;height:20px}
+details.card summary{cursor:pointer;font-weight:700}
+pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wrap;font:600 14px/1.8 var(--f);margin:8px 0}
+.qrb{display:flex;justify-content:center;padding:10px}.qrb canvas{max-width:260px;width:100%;height:auto;border:6px solid #fff;border-radius:8px}
+.lnk{direction:ltr;text-align:left;font:12px/1.4 monospace;word-break:break-all;max-height:90px;overflow:auto;background:var(--soft);border-radius:10px;padding:8px}
+/* paper */
+.paperwrap{overflow-x:auto}
+.paper{background:#fff;color:#111;max-width:210mm;margin:0 auto;padding:12mm 12mm 10mm;border:1px solid var(--ln);box-shadow:0 6px 20px rgba(60,20,30,.1);font:13pt/1.75 "Noto Naskh Arabic","Sakkal Majalla",serif;min-width:640px}
+.paper *{box-sizing:border-box}
+.ph{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:8px;align-items:center;border-bottom:3px double #7A1F2E;padding-bottom:6px;font-size:11pt}
+.ph .c{text-align:center}.ph .c b{font:700 17pt "El Messiri",serif;color:#7A1F2E;display:block;line-height:1.3}
+.ph .l{text-align:left;direction:rtl}
+.stu{display:flex;gap:14px;justify-content:space-between;margin:8px 0;font-weight:700;font-size:11.5pt}
+.stu span{flex:1;border-bottom:1px dotted #555;white-space:nowrap}
+.stu .mk2{flex:none;border:1.5px solid #7A1F2E;border-radius:8px;padding:0 10px}
+.pin{font-size:11pt;border:1px solid #B8902A;background:#fbf4de;border-radius:8px;padding:2px 10px;margin:6px 0}
+.pg{margin-top:10px;break-inside:avoid-page}
+.pg>h3{font:700 13.5pt "El Messiri",serif;background:#f3e6e8;border-inline-start:6px solid #7A1F2E;margin:0 0 4px;padding:2px 10px;display:flex;justify-content:space-between;gap:10px}
+.pq{margin:4px 0 6px;break-inside:avoid}
+.pq .qt{display:flex;gap:6px}.pq .qt .n{font-weight:700;flex:none}.pq .qt .m{flex:none;font-size:10.5pt;color:#555;margin-inline-start:auto;white-space:nowrap}
+.po{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding-inline-start:22px}
+.po.one{grid-template-columns:1fr}
+.po div.ok,.key-a{color:#7A1F2E;font-weight:700}
+.po div.ok:after{content:" ✓"}
+.ln{border-bottom:1px dotted #777;height:26px}
+.key-a{background:#fbf4de;border-radius:6px;padding:0 8px;display:inline-block;margin-top:2px}
+.pf{margin-top:14px;border-top:1px solid #B8902A;padding-top:4px;display:flex;justify-content:space-between;font-size:9.5pt;color:#555}
+.endn{text-align:center;font-weight:700;margin-top:10px;color:#7A1F2E}
+/* student */
+.sq{margin-bottom:12px}
+.sq .qt{font-weight:700;margin-bottom:6px}
+.so{display:flex;gap:10px;align-items:center;border:1.5px solid var(--ln);border-radius:12px;padding:8px 12px;margin-bottom:6px;min-height:44px;cursor:pointer;background:var(--card)}
+.so input{accent-color:var(--w);width:20px;height:20px}
+.so.ok{border-color:#1F7A4D;background:#e6f4ec}.so.no{border-color:#B3261E;background:#fbe9e7}
+@media (prefers-color-scheme:dark){.so.ok{background:#173225}.so.no{background:#3a1a18}}
+.res{font:700 22px var(--fd);text-align:center;color:var(--w)}
+.fb{font-size:14px;margin-top:4px}
+.fb.ok{color:#1F7A4D}.fb.no{color:#B3261E}
+@media (max-width:640px){.paper{min-width:0;padding:8mm}.ph{grid-template-columns:1fr;text-align:center}.ph .l{text-align:center}}
+@media print{
+  @page{size:A4;margin:10mm}
+  body{background:#fff!important}
+  .noprint,.top,.tabs,.toast{display:none!important}
+  main{padding:0!important;max-width:none!important}
+  .paperwrap{overflow:visible}
+  .paper{border:0;box-shadow:0;padding:0;max-width:none;min-width:0}
+}
+</style>
+</head>
+<body>
+<div class="top noprint"><div class="tin">
+  <a class="brand" href="./"><b>📝 مصمّم الامتحانات</b><small>مدرسة القطرانة الثانوية للبنات</small></a>
+  <nav id="nav"><a href="../teachers/">بوابة المعلمات</a><a href="../forms/">نماذجي الذكية</a></nav>
+</div></div>
+<main id="app"></main>
+<div id="toast" class="toast noprint" hidden></div>
+<script src="../feel/qrcode.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+function h(t,a,...c){const e=document.createElement(t);for(const k in a||{}){const v=a[k];if(v==null||v===false)continue;if(k==="class")e.className=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else if(k==="value")e.value=v;else if(k==="checked")e.checked=!!v;else e.setAttribute(k,v===true?"":v)}c.flat(9).forEach(x=>{if(x==null||x===false)return;e.append(x.nodeType?x:document.createTextNode(String(x)))});return e}
+const app=$("#app");
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2400)}
+const LET=["أ","ب","ج","د"],ORD=["الأول","الثاني","الثالث","الرابع","الخامس"];
+const TYPES={
+  mcq:{n:"اختيار من متعدد",ic:"🔘",c:"#7A1F2E",inst:"اختاري الإجابة الصحيحة فيما يأتي:",m:1},
+  tf:{n:"صح / خطأ",ic:"✅",c:"#1F7A4D",inst:"ضعي إشارة (✓) أمام العبارة الصحيحة وإشارة (✗) أمام العبارة الخاطئة:",m:1},
+  fill:{n:"إكمال الفراغ",ic:"✏️",c:"#2F6FB0",inst:"أكملي الفراغات الآتية بما يناسبها:",m:1},
+  short:{n:"إجابة قصيرة",ic:"📝",c:"#C9822B",inst:"أجيبي عن الأسئلة الآتية بإيجاز:",m:2},
+  essay:{n:"سؤال مقالي",ic:"📖",c:"#6B3FA0",inst:"أجيبي عن الأسئلة الآتية:",m:3}
+};
+const ORDER=["mcq","tf","fill","short","essay"];
+/* ---------- storage ---------- */
+const KEY="exb.v1";
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!Array.isArray(S.exams))S={exams:[],bank:[],cur:null};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast("تعذّر الحفظ على الجهاز")}}
+const uid=()=>Math.random().toString(36).slice(2,9);
+function newExam(){return{id:uid(),meta:{title:"اختبار قصير",school:"مدرسة القطرانة الثانوية للبنات",teacher:"",subject:"",grade:"",term:"الفصل الدراسي الأول",date:"",time:"",instr:"",showAns:true},qs:[]}}
+function cur(){return S.exams.find(e=>e.id===S.cur)}
+function ensure(){if(!cur()){const e=newExam();S.exams.push(e);S.cur=e.id;save()}return cur()}
+function newQ(t){return{id:uid(),t,q:"",opts:t==="mcq"?["","","",""]:[],a:t==="mcq"?0:t==="tf"?true:"",m:TYPES[t].m,lines:t==="essay"?5:3}}
+const marks=ex=>ex.qs.reduce((s,q)=>s+(+q.m||0),0);
+/* ---------- helpers ---------- */
+function norm(s){return String(s||"").replace(/[ً-ْـ]/g,"").replace(/[إأآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/[^؀-ۿa-zA-Z0-9]+/g," ").trim().toLowerCase()}
+function rng(seed){let x=0;for(const c of seed)x=(x*31+c.charCodeAt(0))>>>0;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296}}
+function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function groupsOf(ex,ver){const r=rng(ex.id+"B");return ORDER.map(t=>{let qs=ex.qs.filter(q=>q.t===t&&q.q.trim());if(ver==="B"){qs=shuffle(qs,r).map(q=>{if(q.t!=="mcq")return q;const idx=shuffle(q.opts.map((_,i)=>i).filter(i=>q.opts[i].trim()),r);return{...q,opts:idx.map(i=>q.opts[i]),a:idx.indexOf(q.a)}})}return{t,qs}}).filter(g=>g.qs.length)}
+function blank(s){return String(s).replace(/_{2,}|\.{4,}|…+/g,"________")}
+/* ---------- state ---------- */
+let tab="list";
+const TABS=[["list","امتحاناتي"],["info","المعلومات"],["qs","الأسئلة"],["bank","بنك أسئلتي"],["prev","معاينة وطباعة"],["share","رابط للطالبات"]];
+function nav(t){tab=t;render();window.scrollTo(0,0)}
+function shell(body){return[h("div",{class:"tabs noprint",role:"tablist"},TABS.map(([k,n])=>h("button",{"aria-current":k===tab?"true":"false",onclick:()=>nav(k)},n))),body]}
+function render(){app.replaceChildren();const ex=cur();let v;
+  if(tab==="list")v=vList();else if(!ex){tab="list";v=vList()}
+  else v=({info:vInfo,qs:vQs,bank:vBank,prev:vPrev,share:vShare})[tab](ex);
+  app.append(...shell(v))}
+/* ---------- list ---------- */
+function vList(){
+  const box=h("div",{class:"stack"});
+  box.append(h("div",{class:"hero"},h("h1",{},"صمّمي ",h("span",{},"امتحانك"), " بنفسك"),h("p",{},"اختيار من متعدد، صح وخطأ، إكمال، إجابة قصيرة ومقالي. تحصلين على ورقة جاهزة A4 مع مفتاح إجابة ونسخة ب، أو رابط للطالبات يصحّح الأسئلة الموضوعية تلقائيًا."),h("div",{class:"chips"},h("span",{},"بدون حساب"),h("span",{},"من الجوال"),h("span",{},"مجاني"))));
+  box.append(h("div",{class:"bar2"},h("button",{class:"btn",onclick:()=>{const e=newExam();S.exams.unshift(e);S.cur=e.id;save();nav("info")}},"➕ امتحان جديد"),h("button",{class:"btn g",onclick:()=>{const t=prompt("الصقي هنا النص المنسوخ من نسخة احتياطية (JSON):");if(!t)return;try{const o=JSON.parse(t);if(o.exams)S.exams.push(...o.exams.filter(x=>!S.exams.some(y=>y.id===x.id)));if(o.bank)S.bank.push(...o.bank.filter(x=>!S.bank.some(y=>y.id===x.id)));save();render();toast("تم الاستيراد")}catch(e){toast("النص غير صالح")}}},"⬆️ استيراد"),h("button",{class:"btn g",onclick:async()=>{const t=JSON.stringify({exams:S.exams,bank:S.bank});try{await navigator.clipboard.writeText(t);toast("نُسخت النسخة الاحتياطية. الصقيها في ملاحظاتك")}catch(e){prompt("انسخي النص:",t)}}},"⬇️ نسخة احتياطية")));
+  if(!S.exams.length)box.append(h("div",{class:"card muted"},"ما عندك امتحانات بعد. ابدئي بـ «امتحان جديد»."));
+  S.exams.forEach(e=>box.append(h("div",{class:"card",style:e.id===S.cur?"border-color:var(--g);border-width:2px":""},
+    h("div",{style:"display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"},
+      h("div",{},h("b",{},e.meta.title||"بدون عنوان"),h("div",{class:"muted small"},[e.meta.subject,e.meta.grade,e.qs.length+" سؤال",marks(e)+" علامة"].filter(Boolean).join(" · "))),
+      h("div",{class:"bar2"},
+        h("button",{class:"btn sm",onclick:()=>{S.cur=e.id;save();nav("qs")}},"فتح"),
+        h("button",{class:"btn sm g",onclick:()=>{const c=JSON.parse(JSON.stringify(e));c.id=uid();c.meta.title+=" (نسخة)";S.exams.unshift(c);S.cur=c.id;save();render()}},"نسخ"),
+        h("button",{class:"btn sm g",onclick:()=>{if(confirm("حذف هذا الامتحان؟")){S.exams=S.exams.filter(x=>x.id!==e.id);if(S.cur===e.id)S.cur=S.exams[0]?.id||null;save();render()}}},"حذف"))))));
+  box.append(h("p",{class:"muted small"},"تُحفظ امتحاناتك على جهازك فقط. خذي نسخة احتياطية قبل تغيير الجوال أو مسح بيانات المتصفح."));
+  return box}
+/* ---------- info ---------- */
+function vInfo(ex){
+  const m=ex.meta;const f=(k,l,ph)=>h("label",{class:"f"},l,h("input",{class:"in",value:m[k]||"",placeholder:ph||"",oninput:e=>{m[k]=e.target.value;save()}}));
+  return h("div",{class:"card stack"},h("h2",{style:"margin:0"},"معلومات الامتحان"),
+    h("div",{class:"row"},f("title","عنوان الامتحان","مثال: اختبار الوحدة الأولى"),f("subject","المبحث","الأحياء"),f("grade","الصف والشعبة","العاشر")),
+    h("div",{class:"row"},f("school","المدرسة"),f("teacher","اسم المعلمة"),f("term","الفصل")),
+    h("div",{class:"row"},f("date","التاريخ","2026/11/07"),f("time","الزمن","45 دقيقة")),
+    h("label",{class:"f"},"تعليمات تظهر أعلى الورقة (اختياري)",h("textarea",{class:"in",oninput:e=>{m.instr=e.target.value;save()}},m.instr||"")),
+    h("label",{class:"so",style:"cursor:pointer"},h("input",{type:"checkbox",checked:m.showAns!==false,onchange:e=>{m.showAns=e.target.checked;save()}}),"في رابط الطالبات: إظهار الإجابات الصحيحة بعد التسليم"),
+    h("button",{class:"btn",onclick:()=>nav("qs")},"التالي: الأسئلة ←"))}
+/* ---------- questions ---------- */
+function qCard(ex,q,i){
+  const n=ex.qs.length;const T=TYPES[q.t];
+  const mv=d=>{const j=i+d;if(j<0||j>=n)return;[ex.qs[i],ex.qs[j]]=[ex.qs[j],ex.qs[i]];save();render()};
+  let body;
+  const qtxt=h("textarea",{class:"in",placeholder:q.t==="fill"?"اكتبي الجملة وضعي ____ مكان الفراغ":"نص السؤال",oninput:e=>{q.q=e.target.value;save()}},q.q);
+  if(q.t==="mcq")body=h("div",{},q.opts.map((o,k)=>h("div",{class:"opt"},h("input",{type:"radio",name:"c"+q.id,checked:q.a===k,"aria-label":"الإجابة الصحيحة "+LET[k],onchange:()=>{q.a=k;save()}}),h("span",{class:"l"},LET[k]),h("input",{class:"in",value:o,placeholder:"الخيار "+LET[k],oninput:e=>{q.opts[k]=e.target.value;save()}}))),h("div",{class:"hint"},"اضغطي الدائرة بجانب الخيار الصحيح. الخيارات الفارغة تُحذف تلقائيًا."));
+  else if(q.t==="tf")body=h("div",{class:"tfb"},[["صح",true],["خطأ",false]].map(([l,v])=>h("label",{},h("input",{type:"radio",name:"c"+q.id,checked:q.a===v,onchange:()=>{q.a=v;save()}}),l)));
+  else if(q.t==="fill")body=h("div",{},h("label",{class:"f"},"الإجابة الصحيحة (لأكثر من إجابة مقبولة افصلي بـ | )",h("input",{class:"in",value:q.a||"",oninput:e=>{q.a=e.target.value;save()}})),h("button",{class:"btn sm g",style:"margin-top:6px",onclick:()=>{qtxt.value+=" ________";q.q=qtxt.value;save();qtxt.focus()}},"＋ إدراج فراغ ____"));
+  else body=h("div",{class:"row"},h("label",{class:"f",style:"grid-column:1/-1"},"الإجابة النموذجية (اختياري، تظهر في المفتاح)",h("textarea",{class:"in",oninput:e=>{q.a=e.target.value;save()}},q.a||"")),h("label",{class:"f"},"عدد أسطر الإجابة",h("input",{class:"in",type:"number",min:1,max:15,value:q.lines||3,oninput:e=>{q.lines=+e.target.value||3;save()}})));
+  return h("div",{class:"card qc",style:"--c:"+T.c},
+    h("div",{class:"qh"},h("span",{class:"tg"},T.ic+" "+T.n+" · س"+(i+1)),h("label",{class:"f",style:"flex-direction:row;align-items:center;gap:6px"},"العلامة",h("input",{class:"in mk",type:"number",min:0,step:"0.5",value:q.m,oninput:e=>{q.m=+e.target.value||0;save()}}))),
+    qtxt,h("div",{style:"height:8px"}),body,
+    h("div",{class:"bar2",style:"margin-top:10px"},
+      h("button",{class:"btn sm g",onclick:()=>mv(-1),"aria-label":"أعلى"},"↑"),h("button",{class:"btn sm g",onclick:()=>mv(1),"aria-label":"أسفل"},"↓"),
+      h("button",{class:"btn sm g",onclick:()=>{ex.qs.splice(i+1,0,{...JSON.parse(JSON.stringify(q)),id:uid()});save();render()}},"نسخ"),
+      h("button",{class:"btn sm g",onclick:()=>{if(!q.q.trim())return toast("اكتبي السؤال أولًا");S.bank.unshift({...JSON.parse(JSON.stringify(q)),id:uid(),tag:ex.meta.subject||""});save();toast("حُفظ في بنك أسئلتي")}},"💾 للبنك"),
+      h("button",{class:"btn sm g",onclick:()=>{ex.qs.splice(i,1);save();render()}},"🗑 حذف")))}
+function parseBulk(txt){
+  const out=[];
+  txt.replace(/\r/g,"").split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean).forEach(b=>{
+    const lines=b.split("\n").map(l=>l.trim()).filter(Boolean);
+    const q=lines.shift().replace(/^(?:س\s*\d*|\d+)\s*[\)\.\-:：]\s*/,"");
+    const opts=[];let ans=null;
+    lines.forEach(l=>{
+      const a=l.match(/^(?:الإجابة|الاجابة|الجواب)\s*[:：]\s*(.+)$/);
+      if(a){ans=a[1].trim();return}
+      const m=l.match(/^(\*)?\s*([أبجدabcdABCD])\s*[\)\.\-:]\s*(.+?)\s*(\*)?$/);
+      if(m){opts.push(m[3]);if(m[1]||m[4])ans=opts.length-1}
+    });
+    let o;
+    if(opts.length>=2){o=newQ("mcq");o.opts=[...opts.slice(0,4)];while(o.opts.length<4)o.opts.push("");
+      if(typeof ans==="string"){const i="أبجد".indexOf(ans[0]);const j="abcd".indexOf(ans[0].toLowerCase());ans=i>=0?i:j>=0?j:0}
+      o.a=typeof ans==="number"&&ans<4?ans:0}
+    else if(ans&&/^(صح|صحيحة|صحيح|✓|√|خطأ|خاطئة|خطا|✗|×)$/.test(ans)){o=newQ("tf");o.a=/^(صح|صحيحة|صحيح|✓|√)$/.test(ans)}
+    else if(/_{2,}|\.{4,}|…/.test(q)){o=newQ("fill");o.a=ans||""}
+    else{o=newQ("short");o.a=ans||""}
+    o.q=o.t==="fill"?blank(q):q;out.push(o)});
+  return out}
+function vQs(ex){
+  const box=h("div",{class:"stack"});
+  box.append(h("div",{class:"sum"},h("span",{},"الأسئلة: ",h("b",{},ex.qs.length)),h("span",{},"مجموع العلامات: ",h("b",{},marks(ex))),ORDER.map(t=>{const c=ex.qs.filter(q=>q.t===t).length;return c?h("span",{class:"muted"},TYPES[t].n+" "+c):null})));
+  box.append(h("div",{class:"bar2"},ORDER.map(t=>h("button",{class:"btn sm",style:"background:"+TYPES[t].c,onclick:()=>{ex.qs.push(newQ(t));save();render();setTimeout(()=>{const c=app.querySelectorAll(".qc");c[c.length-1]?.scrollIntoView({behavior:"smooth",block:"center"})},50)}},"＋ "+TYPES[t].n))));
+  const ta=h("textarea",{class:"in",style:"min-height:170px",placeholder:"الصقي الأسئلة هنا"});
+  box.append(h("details",{class:"card"},h("summary",{},"⚡ إضافة سريعة: الصقي عدة أسئلة دفعة واحدة"),
+    h("p",{class:"muted small"},"افصلي بين كل سؤال والذي بعده بسطر فارغ. الخيارات تبدأ بـ أ) ب) ج) د) والصحيحة تنتهي بنجمة *، أو اكتبي سطر «الإجابة: ب». السؤال بدون خيارات يصير إكمالًا إذا فيه ____، وصح/خطأ إذا الإجابة صح أو خطأ، وإلا إجابة قصيرة."),
+    h("pre.ex".split(".")[0],{class:"ex"},"ما وحدة بناء الخلية؟\nأ) النواة\nب) الخلية*\nج) النسيج\nد) العضو\n\nالميتوكوندريا مسؤولة عن إنتاج الطاقة.\nالإجابة: صح\n\nعدد الكروموسومات في الخلية الجسمية للإنسان ____.\nالإجابة: 46"),
+    ta,h("button",{class:"btn",style:"margin-top:8px",onclick:()=>{const r=parseBulk(ta.value);if(!r.length)return toast("لم أجد أسئلة");ex.qs.push(...r);save();render();toast("أُضيف "+r.length+" سؤال")}},"إضافة الأسئلة")));
+  if(!ex.qs.length)box.append(h("div",{class:"card muted"},"لا توجد أسئلة بعد. اضغطي على نوع السؤال أعلاه، أو استخدمي الإضافة السريعة، أو اسحبي من بنك أسئلتك."));
+  ex.qs.forEach((q,i)=>box.append(qCard(ex,q,i)));
+  if(ex.qs.length)box.append(h("button",{class:"btn gold",onclick:()=>nav("prev")},"معاينة الورقة ←"));
+  return box}
+/* ---------- bank ---------- */
+let bankQ="",bankSel=new Set();
+function vBank(ex){
+  const box=h("div",{class:"stack"});
+  const list=h("div",{class:"stack"});
+  function paint(){list.replaceChildren();const f=S.bank.filter(b=>!bankQ||(b.q+" "+(b.tag||"")).includes(bankQ));
+    if(!f.length)list.append(h("div",{class:"card muted"},S.bank.length?"لا نتائج.":"البنك فاضي. من تبويب «الأسئلة» اضغطي «💾 للبنك» على أي سؤال تريدين حفظه لتستخدميه لاحقًا."));
+    f.forEach(b=>list.append(h("label",{class:"so",style:"align-items:flex-start"},h("input",{type:"checkbox",checked:bankSel.has(b.id),onchange:e=>{e.target.checked?bankSel.add(b.id):bankSel.delete(b.id)}}),
+      h("div",{style:"flex:1;min-width:0"},h("div",{},b.q),h("div",{class:"muted small"},TYPES[b.t].n+(b.tag?" · "+b.tag:"")+" · "+b.m+" علامة")),
+      h("button",{class:"btn sm g",onclick:e=>{e.preventDefault();if(confirm("حذف السؤال من البنك؟")){S.bank=S.bank.filter(x=>x.id!==b.id);save();paint()}}},"🗑"))))}
+  box.append(h("div",{class:"card stack"},h("h2",{style:"margin:0"},"بنك أسئلتي"),
+    h("input",{class:"in",placeholder:"ابحثي بنص السؤال أو المبحث",oninput:e=>{bankQ=e.target.value;paint()}}),
+    h("button",{class:"btn",onclick:()=>{const a=S.bank.filter(b=>bankSel.has(b.id));if(!a.length)return toast("حددي أسئلة أولًا");a.forEach(b=>ex.qs.push({...JSON.parse(JSON.stringify(b)),id:uid()}));bankSel.clear();save();toast("أُضيف "+a.length+" سؤال للامتحان");nav("qs")}},"➕ أضيفي المحدد إلى الامتحان الحالي")),list);
+  paint();return box}
+/* ---------- paper ---------- */
+function paper(ex,ver,key){
+  const m=ex.meta;const gs=groupsOf(ex,ver);const total=gs.reduce((s,g)=>s+g.qs.reduce((x,q)=>x+(+q.m||0),0),0);let n=0;
+  const P=h("div",{class:"paper"});
+  P.append(h("div",{class:"ph"},
+    h("div",{},"المملكة الأردنية الهاشمية",h("br"),"وزارة التربية والتعليم",h("br"),m.school),
+    h("div",{class:"c"},h("b",{},m.title||"اختبار"),(key?"مفتاح الإجابة":"")+(ver==="B"?(key?" · ":"")+"النسخة (ب)":"")),
+    h("div",{class:"l"},"المبحث: "+(m.subject||"…"),h("br"),"الصف: "+(m.grade||"…"),h("br"),[m.term,m.date].filter(Boolean).join(" · "))));
+  if(!key)P.append(h("div",{class:"stu"},h("span",{},"اسم الطالبة: "),h("span",{},"الشعبة: "),m.time?h("span",{style:"flex:none;border:0"},"الزمن: "+m.time):null,h("span",{class:"mk2"},"العلامة:   /  "+total)));
+  else P.append(h("div",{class:"stu"},h("span",{style:"border:0"},"العلامة الكلية: "+total)));
+  if(m.instr&&!key)P.append(h("div",{class:"pin"},m.instr));
+  gs.forEach((g,gi)=>{const T=TYPES[g.t];const sub=g.qs.reduce((x,q)=>x+(+q.m||0),0);
+    const sec=h("div",{class:"pg"},h("h3",{},h("span",{},"السؤال "+ORD[gi]+": "+T.inst),h("span",{style:"white-space:nowrap"},"("+sub+" علامة)")));
+    g.qs.forEach(q=>{n++;const el=h("div",{class:"pq"},h("div",{class:"qt"},h("span",{class:"n"},(g.t==="tf"?"( ) ":"")+n+")"),h("span",{},g.t==="fill"?blank(q.q):q.q),h("span",{class:"m"},"["+q.m+"]")));
+      if(g.t==="mcq"){const os=q.opts.map((o,i)=>({o,i})).filter(x=>x.o.trim());const long=os.some(x=>x.o.length>28);el.append(h("div",{class:"po"+(long?" one":"")},os.map((x,k)=>h("div",{class:key&&x.i===q.a?"ok":""},LET[k]+") "+x.o))));
+        if(key){const k=os.findIndex(x=>x.i===q.a)}}
+      else if(g.t==="tf"&&key)el.append(h("span",{class:"key-a"},q.a?"✓ صح":"✗ خطأ"));
+      else if(g.t==="fill"&&key)el.append(h("span",{class:"key-a"},String(q.a||"—").split("|")[0]));
+      else if((g.t==="short"||g.t==="essay")){if(key){if(q.a)el.append(h("span",{class:"key-a"},q.a))}else for(let i=0;i<(q.lines||3);i++)el.append(h("div",{class:"ln"}))}
+      sec.append(el)});
+    P.append(sec)});
+  P.append(h("div",{class:"endn"},"انتهت الأسئلة، مع أطيب التمنيات بالتوفيق"));
+  P.append(h("div",{class:"pf"},h("span",{},m.teacher?"معلمة المبحث: "+m.teacher:""),h("span",{},"تصميمُ المنصّة وتنفيذُها: نوال بني عطية")));
+  return P}
+let pv={ver:"A",key:false};
+function vPrev(ex){
+  const box=h("div",{class:"stack"});
+  if(!ex.qs.some(q=>q.q.trim()))return h("div",{class:"card muted"},"أضيفي أسئلة أولًا.");
+  box.append(h("div",{class:"bar2 noprint"},
+    h("button",{class:"btn",onclick:()=>window.print()},"🖨️ طباعة / حفظ PDF"),
+    h("button",{class:"btn g",onclick:()=>{pv.ver=pv.ver==="A"?"B":"A";render()}},"النسخة: "+pv.ver+" (بدّلي)"),
+    h("button",{class:"btn g",onclick:()=>{pv.key=!pv.key;render()}},pv.key?"عرض ورقة الطالبة":"عرض مفتاح الإجابة")));
+  box.append(h("p",{class:"muted small noprint"},"النسخة ب ترتّب الأسئلة والخيارات بشكل مختلف لتقليل النقل، ومفتاحها يتغيّر معها. من نافذة الطباعة اختاري «حفظ كـ PDF» لإرسالها على واتساب."));
+  box.append(h("div",{class:"paperwrap"},paper(ex,pv.ver,pv.key)));return box}
+/* ---------- share ---------- */
+async function enc(o){const j=JSON.stringify(o);try{if(window.CompressionStream){const cs=new CompressionStream("deflate-raw");const w=cs.writable.getWriter();w.write(new TextEncoder().encode(j));w.close();const b=new Uint8Array(await new Response(cs.readable).arrayBuffer());let s="";b.forEach(x=>s+=String.fromCharCode(x));return"z"+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}}catch(e){}
+  return"p"+encodeURIComponent(j)}
+async function dec(s){if(s[0]==="p")return JSON.parse(decodeURIComponent(s.slice(1)));let b=s.slice(1).replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";const bin=atob(b),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);const ds=new DecompressionStream("deflate-raw");const w=ds.writable.getWriter();w.write(u);w.close();return JSON.parse(new TextDecoder().decode(await new Response(ds.readable).arrayBuffer()))}
+function pack(ex){return{t:ex.meta.title,s:ex.meta.school,u:ex.meta.subject,g:ex.meta.grade,k:ex.meta.showAns!==false?1:0,q:ex.qs.filter(q=>q.q.trim()).map(q=>[q.t,q.q,q.t==="mcq"?q.opts.filter(o=>o.trim()):0,q.t==="mcq"?q.opts.filter(o=>o.trim()).indexOf(q.opts[q.a]):q.a,q.m,q.t==="mcq"||q.t==="tf"||q.t==="fill"?0:q.a])}}
+function vShare(ex){
+  const box=h("div",{class:"card stack"});
+  if(!ex.qs.some(q=>q.q.trim()))return h("div",{class:"card muted"},"أضيفي أسئلة أولًا.");
+  box.append(h("h2",{style:"margin:0"},"رابط للطالبات"),h("p",{class:"muted"},"الطالبة تفتح الرابط، تكتب اسمها، تجيب، وتُصحَّح الأسئلة الموضوعية (اختيار، صح وخطأ، إكمال) تلقائيًا. الأسئلة القصيرة والمقالية تكتبها الطالبة وتصلك عبر واتساب لتصحّحيها."));
+  const out=h("div",{class:"stack"},h("div",{class:"muted"},"جارٍ تجهيز الرابط…"));box.append(out);
+  enc(pack(ex)).then(async z=>{
+    const url=location.origin+location.pathname+"#s="+z;out.replaceChildren();
+    out.append(h("div",{class:"lnk"},url),h("div",{class:"bar2"},
+      h("button",{class:"btn",onclick:async()=>{try{await navigator.clipboard.writeText(url);toast("نُسخ الرابط")}catch(e){prompt("انسخي الرابط:",url)}}},"📋 نسخ الرابط"),
+      h("a",{class:"btn gold",href:"https://wa.me/?text="+encodeURIComponent(ex.meta.title+"\n"+url),target:"_blank",rel:"noopener"},"إرسال عبر واتساب"),
+      h("button",{class:"btn g",onclick:()=>window.open(url,"_blank")},"👁 تجربة كطالبة")));
+    if(url.length<2400){try{const q=qrcode(0,"L");q.addData(unescape(encodeURIComponent(url)),"Byte");q.make();const nn=q.getModuleCount(),mm=2,s=8,c=document.createElement("canvas");c.width=c.height=(nn+mm*2)*s;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#5E1622";for(let r=0;r<nn;r++)for(let k=0;k<nn;k++)if(q.isDark(r,k))x.fillRect((k+mm)*s,(r+mm)*s,s,s);c.setAttribute("aria-label","باركود الامتحان");out.append(h("div",{class:"qrb"},c))}catch(e){}}
+    else out.append(h("p",{class:"muted small"},"الرابط طويل على باركود، شاركيه كرابط."));
+    out.append(h("div",{class:"card",style:"background:var(--soft)"},h("b",{},"تنبيه مهم"),h("p",{class:"small",style:"margin:4px 0 0"},"الامتحان مضمّن داخل الرابط نفسه (لا يمرّ بأي خادم). الطالبة المتمكنة تقنيًا قد تستخرج الإجابات منه، فالأنسب لاستخدامه في الواجبات والتقويم التكويني والمراجعة، وللامتحان الرسمي استخدمي الورقة المطبوعة.")))});
+  return box}
+/* ---------- student mode ---------- */
+async function studentMode(code){
+  document.querySelector(".top").style.display="none";
+  let d;try{d=await dec(code)}catch(e){app.append(h("div",{class:"card"},"الرابط غير صالح أو ناقص. اطلبي من معلمتك إرساله مرة ثانية."));return}
+  const A={};const name=h("input",{class:"in",placeholder:"اكتبي اسمك الثلاثي",autocomplete:"name"});
+  const hero=h("div",{class:"hero"},h("h1",{},d.t||"اختبار"),h("p",{},[d.u,d.g,d.s].filter(Boolean).join(" · ")),h("div",{class:"chips"},h("span",{},d.q.length+" سؤال"),h("span",{},d.q.reduce((s,x)=>s+(+x[4]||0),0)+" علامة")));
+  const form=h("div",{class:"stack",style:"margin-top:14px"});
+  form.append(h("label",{class:"f"},"اسمك",name));
+  const els=[];
+  d.q.forEach((x,i)=>{const [t,q,opts,a,m]=x;const box=h("div",{class:"card sq"});box.append(h("div",{class:"qt"},(i+1)+") "+(t==="fill"?blank(q):q)+"  ",h("span",{class:"muted small"},"["+m+"]")));
+    const fbk=h("div",{class:"fb"});
+    if(t==="mcq")(opts||[]).forEach((o,k)=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=k}),LET[k]+") "+o)));
+    else if(t==="tf")[["صح",true],["خطأ",false]].forEach(([l,v])=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=v}),l)));
+    else if(t==="fill")box.append(h("input",{class:"in",placeholder:"إجابتك",oninput:e=>A[i]=e.target.value}));
+    else box.append(h("textarea",{class:"in",placeholder:"اكتبي إجابتك",oninput:e=>A[i]=e.target.value}));
+    box.append(fbk);els.push({box,fbk});form.append(box)});
+  const resBox=h("div",{class:"card stack",hidden:true});
+  const btn=h("button",{class:"btn gold",onclick:()=>{
+    if(!name.value.trim()){name.focus();return toast("اكتبي اسمك أولًا")}
+    btn.disabled=true;let got=0,auto=0,manual=0;const lines=[];
+    d.q.forEach((x,i)=>{const [t,q,opts,a,m,model]=x;const {box,fbk}=els[i];
+      if(t==="mcq"||t==="tf"||t==="fill"){auto+=+m;let ok=false;
+        if(t==="fill")ok=!!A[i]&&String(a).split("|").some(z=>norm(z)===norm(A[i]));else ok=A[i]===a;
+        if(ok)got+=+m;
+        if(t==="mcq"||t==="tf"){const lab=box.querySelectorAll(".so");lab.forEach((l,k)=>{const v=t==="mcq"?k:k===0;if(d.k&&v===a)l.classList.add("ok");if(A[i]!==undefined&&v===A[i]&&!ok)l.classList.add("no");if(A[i]!==undefined&&v===A[i]&&ok)l.classList.add("ok")});}
+        fbk.className="fb "+(ok?"ok":"no");fbk.textContent=ok?"✓ إجابة صحيحة":("✗ "+(d.k&&t==="fill"?"الإجابة: "+String(a).split("|")[0]:"غير صحيحة"));
+        box.querySelectorAll("input").forEach(z=>z.disabled=true);
+        lines.push((i+1)+") "+(ok?"✓":"✗"))}
+      else{manual+=+m;box.querySelectorAll("textarea").forEach(z=>z.disabled=true);fbk.className="fb";fbk.textContent="تصحّحها معلمتك."+(d.k&&model?" الإجابة النموذجية: "+model:"");lines.push((i+1)+") "+(A[i]||"—"))}});
+    const txt="نتيجة: "+d.t+"\nالاسم: "+name.value.trim()+"\nالعلامة الآلية: "+got+" من "+auto+(manual?"\nأسئلة تنتظر التصحيح ("+manual+" علامة):":"")+"\n"+lines.join("\n");
+    resBox.hidden=false;resBox.append(h("div",{class:"res"},got+" من "+auto),h("p",{class:"muted",style:"text-align:center;margin:0"},manual?"هذه علامة الأسئلة الموضوعية. بقية العلامات ("+manual+") بعد تصحيح معلمتك.":"أحسنتِ، سُلّمت إجاباتك."),
+      h("a",{class:"btn",href:"https://wa.me/?text="+encodeURIComponent(txt),target:"_blank",rel:"noopener"},"📤 أرسلي نتيجتك لمعلمتك عبر واتساب"));
+    resBox.scrollIntoView({behavior:"smooth"});btn.hidden=true;name.disabled=true}},"تسليم الإجابات ✓");
+  app.append(hero,form,btn,resBox,h("p",{class:"muted small",style:"text-align:center"},"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"))}
+/* ---------- boot ---------- */
+const m=location.hash.match(/^#s=(.+)$/);
+if(m)studentMode(m[1]);else{if(S.cur&&!cur())S.cur=S.exams[0]?.id||null;render()}
+</script>
+</body>
+</html>

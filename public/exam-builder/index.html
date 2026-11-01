@@ -233,7 +233,7 @@ function loadCat(){if(CAT)return Promise.resolve(CAT);
         mcq:()=>[...((l.recall&&l.recall.qs)||[]).map(x=>({q:x.q,o:x.o,a:x.a})),...draw(14,Object.assign((x,fig)=>({q:x.q,o:x.o,a:x.a,shuf:1,fig}),{needsO:1}))],
         defs:()=>((l.sum&&l.sum.rules)||[]).filter(r=>r[0]&&r[1]).map(r=>({q:"اشرحي باختصار: "+r[0]+".",a:r[1]})),
         probs:()=>[...(l.ex&&l.ex.q?[{q:l.ex.q,a:(l.ex.steps||[]).join("\n")}]:[]),...draw(10,(x,fig)=>({q:x.q,a:(x.steps||[]).join("\n"),fig}))]}})})});
-    for(const g in A){const o=sub(g,"ar","اللغة العربية");o.units=A[g].map(u=>({id:u.id,n:u.n,title:u.title,lessons:u.lessons.map(l=>({id:l.id,title:l.title,info:l.mcq.length+" سؤال",mcq:()=>l.mcq,defs:()=>l.defs,probs:()=>l.probs}))}))}
+    for(const g in A){const o=sub(g,"ar","اللغة العربية");o.units=A[g].map(u=>({id:u.id,n:u.n,title:u.title,lessons:u.lessons.map(l=>({id:l.id,title:l.title,info:l.mcq.length+" سؤال",mcq:()=>l.mcq.map(x=>({q:x.q,o:x.o,a:x.a,shuf:1})),defs:()=>l.defs,probs:()=>l.probs}))}))}
     return CAT=C})}
 const GEN={grade:"العاشر",key:null,sel:new Set(),nm:10,ns:3,np:0,mm:1,ms:2,mp:3,keep:false};
 const cnt=(l,k)=>{l._c=l._c||{};return l._c[k]!=null?l._c[k]:(l._c[k]=l[k]().length)};

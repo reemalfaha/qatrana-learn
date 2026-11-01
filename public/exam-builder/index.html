@@ -10,6 +10,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="../forms/forms.css">
 <style>
+.m{font-family:"Cambria Math","Times New Roman",serif;font-size:1.08em;unicode-bidi:isolate;direction:ltr;white-space:nowrap}
+.m i{font-style:italic}.m .mw{font-size:.85em;padding:0 .25em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.86em;line-height:1.15;margin:0 .12em}
+.fr>span:first-child{border-bottom:1.3px solid currentColor;padding:0 .2em}.fr>span{padding:0 .2em}
+.sq{white-space:nowrap}.sq>span{border-top:1.3px solid currentColor;padding:0 .1em;margin-right:.05em}
+.ov{border-top:1.3px solid currentColor}sup{font-size:.7em;line-height:0}
 .tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding-bottom:4px}
 .tabs button{flex:none;font:700 14px var(--f);border:1.5px solid var(--ln);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer}
 .tabs button[aria-current="true"]{background:var(--w);color:#fff;border-color:var(--w)}
@@ -82,6 +88,7 @@ pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wr
 </div></div>
 <main id="app"></main>
 <div id="toast" class="toast noprint" hidden></div>
+<script src="math/mathlib.js"></script>
 <script src="../feel/qrcode.js"></script>
 <script src="../teachers/qclass.js"></script>
 <script>
@@ -115,6 +122,7 @@ function norm(s){return String(s||"").replace(/[ً-ْـ]/g,"").replace(/[إأآ�
 function rng(seed){let x=0;for(const c of seed)x=(x*31+c.charCodeAt(0))>>>0;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296}}
 function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function groupsOf(ex,ver){const r=rng(ex.id+"B");return ORDER.map(t=>{let qs=ex.qs.filter(q=>q.t===t&&q.q.trim());if(ver==="B"){qs=shuffle(qs,r).map(q=>{if(q.t!=="mcq")return q;const idx=shuffle(q.opts.map((_,i)=>i).filter(i=>q.opts[i].trim()),r);return{...q,opts:idx.map(i=>q.opts[i]),a:idx.indexOf(q.a)}})}return{t,qs}}).filter(g=>g.qs.length)}
+function R(s){s=String(s==null?"":s);if(!s.includes("$")&&!s.includes("\n"))return s;const e=document.createElement("span");e.innerHTML=s.split("\n").map(l=>window.ML&&ML.T?ML.T(l):l.replace(/\$/g,"")).join("<br>");return e}
 function blank(s){return String(s).replace(/_{2,}|\.{4,}|…+/g,"________")}
 /* ---------- state ---------- */
 let tab="list";
@@ -142,7 +150,7 @@ function vList(){
   return box}
 /* ---------- info ---------- */
 function vInfo(ex){
-  const m=ex.meta;const f=(k,l,ph)=>h("label",{class:"f"},l,h("input",{class:"in",value:m[k]||"",placeholder:ph||"",oninput:e=>{m[k]=e.target.value;save()}}));
+  const m=ex.meta;const f=(k,l,ph)=>h("label",{class:"f"},l,h("input",{class:"in",value:m[k]||"",placeholder:ph||"",oninput:e=>{m[k]=e.target.value;m.auto=false;save()}}));
   return h("div",{class:"card stack"},h("h2",{style:"margin:0"},"معلومات الامتحان"),
     h("div",{class:"row"},f("title","عنوان الامتحان","مثال: اختبار الوحدة الأولى"),f("subject","المبحث","الأحياء"),f("grade","الصف والشعبة","العاشر")),
     h("div",{class:"row"},f("school","المدرسة"),f("teacher","اسم المعلمة"),f("term","الفصل")),
@@ -202,47 +210,67 @@ function vQs(ex){
   ex.qs.forEach((q,i)=>box.append(qCard(ex,q,i)));
   if(ex.qs.length)box.append(h("button",{class:"btn gold",onclick:()=>nav("prev")},"معاينة الورقة ←"));
   return box}
-/* ---------- auto generator (from the platform's lesson data) ---------- */
-let SCID=null;
+/* ---------- auto generator (science + math + Arabic from the platform's data) ---------- */
+let CAT=null;
 const SFILES=["g8-sci","g9-bio","g9-chem","g9-earth","g9-phys","g10-bio","g10-chem","g10-earth","g10-phys"];
-function loadSci(){if(SCID)return Promise.resolve(SCID);window.SCI={data:{},add(g,k,o){(this.data[g]=this.data[g]||{})[k]=o}};
-  return Promise.all(SFILES.map(f=>new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="../science/data/"+f+".js";sc.onload=res;sc.onerror=()=>rej(new Error(f));document.head.append(sc)}))).then(()=>SCID=window.SCI.data)}
-const GEN={grade:"العاشر",key:null,sel:new Set(),nm:10,ns:3,mm:1,ms:2,keep:false};
-function lessonsOf(g,k){const o=SCID[g]&&SCID[g][k];return o?(o.units||[]).map(u=>({u,ls:(u.lessons||[])})):[]}
+const MFILES=["m8u1","m8u2","m8u3","m8u4","m9u1","m9u2","m9u3","m9u4","m10u1","m10u2","m10u3","m10u4"];
+function loadScript(src){return new Promise((res,rej)=>{const sc=document.createElement("script");sc.src=src;sc.onload=res;sc.onerror=()=>rej(new Error(src));document.head.append(sc)})}
+function loadCat(){if(CAT)return Promise.resolve(CAT);
+  window.SCI={data:{},add(g,k,o){(this.data[g]=this.data[g]||{})[k]=o}};window.CONFIG=window.CONFIG||{};
+  const sci=Promise.all(SFILES.map(f=>loadScript("../science/data/"+f+".js")));
+  const math=loadScript("math/mgeo.js").then(()=>Promise.all(MFILES.map(f=>loadScript("math/"+f+".js"))));
+  const ar=fetch("data/arabic.json").then(r=>r.json());
+  return Promise.all([sci,math,ar]).then(([,,A])=>{
+    const C={};const sub=(g,k,name)=>{C[g]=C[g]||{};return C[g][k]=C[g][k]||{name,units:[]}};
+    for(const g in SCI.data)for(const k in SCI.data[g]){const o=SCI.data[g][k];sub(g,k,o.name).units=(o.units||[]).map(u=>({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map(l=>({id:l.id,title:l.title,info:(l.quiz||[]).length+" سؤال",
+      mcq:()=>(l.quiz||[]).filter(x=>x.q&&x.o&&x.o.length>=2).map(x=>({q:x.q,o:x.o,a:x.a})),
+      defs:()=>(l.points||[]).filter(p=>p[0]&&p[1]).map(p=>({q:"وضّحي المقصود بـ: "+p[0]+".",a:p[1]})),probs:()=>[]}))}))}
+    (window.MUNITS||[]).forEach(u=>{sub(u.grade,"math","الرياضيات").units.push({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map(l=>{
+      const draw=(n,fn)=>{const out=[],seen=new Set(),gs=l.gens||[];for(let i=0;i<n*4&&out.length<n&&gs.length;i++){try{const x=gs[i%gs.length].f();if(!x||x.fig||x.svg||!x.o||x.o.length<2||seen.has(x.q))continue;seen.add(x.q);out.push(fn(x))}catch(e){}}return out};
+      return{id:u.id+"-"+l.id,title:l.title,info:"أسئلة متجدّدة",
+        mcq:()=>[...((l.recall&&l.recall.qs)||[]).map(x=>({q:x.q,o:x.o,a:x.a})),...draw(14,x=>({q:x.q,o:x.o,a:x.a,shuf:1}))],
+        defs:()=>((l.sum&&l.sum.rules)||[]).filter(r=>r[0]&&r[1]).map(r=>({q:"اشرحي باختصار: "+r[0]+".",a:r[1]})),
+        probs:()=>[...(l.ex&&l.ex.q?[{q:l.ex.q,a:(l.ex.steps||[]).join("\n")}]:[]),...draw(10,x=>({q:x.q,a:(x.steps||[]).join("\n")}))]}})})});
+    for(const g in A){const o=sub(g,"ar","اللغة العربية");o.units=A[g].map(u=>({id:u.id,n:u.n,title:u.title,lessons:u.lessons.map(l=>({id:l.id,title:l.title,info:l.mcq.length+" سؤال",mcq:()=>l.mcq,defs:()=>l.defs,probs:()=>l.probs}))}))}
+    return CAT=C})}
+const GEN={grade:"العاشر",key:null,sel:new Set(),nm:10,ns:3,np:0,mm:1,ms:2,mp:3,keep:false};
+const cnt=(l,k)=>{l._c=l._c||{};return l._c[k]!=null?l._c[k]:(l._c[k]=l[k]().length)};
+function lessonsOf(g,k){const o=CAT[g]&&CAT[g][k];return o?o.units.map(u=>({u,ls:u.lessons})):[]}
 function pullQs(){
   const all=lessonsOf(GEN.grade,GEN.key).flatMap(x=>x.ls).filter(l=>GEN.sel.has(l.id));
   const r=Math.random;const rr=(lists,n)=>{const L=lists.map(a=>shuffle(a,r));const out=[];let i=0;while(out.length<n&&L.some(a=>a.length)){const a=L[i%L.length];if(a.length)out.push(a.shift());i++}return out};
-  const mc=rr(all.map(l=>(l.quiz||[]).filter(q=>q.q&&q.o&&q.o.length>=2)),GEN.nm).map(x=>({id:uid(),t:"mcq",q:x.q,opts:x.o.slice(0,4),a:x.a,m:GEN.mm,lines:3}));
-  const sh=rr(all.map(l=>(l.points||[]).filter(p=>p[0]&&p[1])),GEN.ns).map(p=>({id:uid(),t:"short",q:"وضّحي المقصود بـ: "+p[0]+".",opts:[],a:p[1],m:GEN.ms,lines:3}));
-  return{qs:[...mc,...sh],lessons:all}}
+  const mc=rr(all.map(l=>l.mcq()),GEN.nm).map(x=>{let o=x.o.slice(0,4),a=x.a;if(x.shuf){const idx=shuffle(o.map((_,i)=>i),r);o=idx.map(i=>o[i]);a=idx.indexOf(a)}return{id:uid(),t:"mcq",q:x.q,opts:o,a,m:GEN.mm,lines:3}});
+  const sh=rr(all.map(l=>l.defs()),GEN.ns).map(x=>({id:uid(),t:"short",q:x.q,opts:[],a:x.a,m:GEN.ms,lines:3}));
+  const pr=rr(all.map(l=>l.probs()),GEN.np).map(x=>({id:uid(),t:"essay",q:x.q,opts:[],a:x.a,m:GEN.mp,lines:5}));
+  return{qs:[...mc,...sh,...pr],lessons:all}}
 function vGen(ex){
-  const box=h("div",{class:"card stack"},h("h2",{style:"margin:0"},"⚡ تجهيز الامتحان تلقائيًا"),h("p",{class:"muted",style:"margin:0"},"اختاري الصف والمبحث والدروس وعدد الأسئلة، والمنصة تسحب الأسئلة من دروس الكتاب وتجهّز الامتحان. بعدها طبعيه أو عدّلي عليه."));
+  const box=h("div",{class:"card stack"},h("h2",{style:"margin:0"},"⚡ تجهيز الامتحان تلقائيًا"),h("p",{class:"muted",style:"margin:0"},"اختاري الصف والمبحث والدروس وعدد الأسئلة، والمنصة تسحب الأسئلة من دروس منصاتنا وتجهّز الامتحان. بعدها طبعيه أو عدّلي عليه."));
   const body=h("div",{class:"stack"},h("div",{class:"muted"},"⏳ جارٍ تحميل أسئلة الدروس…"));box.append(body);
-  loadSci().then(()=>{
+  loadCat().then(()=>{
     function paint(){body.replaceChildren();
-      const gr=["الثامن","التاسع","العاشر"].filter(g=>SCID[g]);if(!SCID[GEN.grade])GEN.grade=gr[0];
-      const keys=Object.keys(SCID[GEN.grade]);if(!GEN.key||!keys.includes(GEN.key)){GEN.key=keys[0];GEN.sel=new Set()}
+      const gr=["الثامن","التاسع","العاشر"].filter(g=>CAT[g]);if(!CAT[GEN.grade])GEN.grade=gr[0];
+      const keys=Object.keys(CAT[GEN.grade]);if(!GEN.key||!keys.includes(GEN.key)){GEN.key=keys[0];GEN.sel=new Set()}
       const gsel=h("select",{class:"in",onchange:e=>{GEN.grade=e.target.value;GEN.key=null;GEN.sel=new Set();paint()}},gr.map(g=>h("option",{value:g,selected:g===GEN.grade},"الصف "+g)));
-      const ksel=h("select",{class:"in",onchange:e=>{GEN.key=e.target.value;GEN.sel=new Set();paint()}},keys.map(k=>h("option",{value:k,selected:k===GEN.key},SCID[GEN.grade][k].name)));
+      const ksel=h("select",{class:"in",onchange:e=>{GEN.key=e.target.value;GEN.sel=new Set();paint()}},keys.map(k=>h("option",{value:k,selected:k===GEN.key},CAT[GEN.grade][k].name)));
       body.append(h("div",{class:"row"},h("label",{class:"f"},"الصف",gsel),h("label",{class:"f"},"المبحث",ksel)));
-      const tot=h("div",{class:"sum"});const upd=()=>{const all=lessonsOf(GEN.grade,GEN.key).flatMap(x=>x.ls).filter(l=>GEN.sel.has(l.id));tot.replaceChildren(h("span",{},"دروس محددة: ",h("b",{},all.length)),h("span",{},"أسئلة متاحة: ",h("b",{},all.reduce((s,l)=>s+(l.quiz||[]).length,0))),h("span",{},"مصطلحات للتعريف: ",h("b",{},all.reduce((s,l)=>s+(l.points||[]).length,0))))};
+      const tot=h("div",{class:"sum"});const upd=()=>{const all=lessonsOf(GEN.grade,GEN.key).flatMap(x=>x.ls).filter(l=>GEN.sel.has(l.id));const sm=k=>all.reduce((s,l)=>s+cnt(l,k),0);tot.replaceChildren(h("span",{},"دروس محددة: ",h("b",{},all.length)),h("span",{},"اختيار من متعدد: ",h("b",{},sm("mcq"))),h("span",{},"تعريفات: ",h("b",{},sm("defs"))),h("span",{},"مسائل ومقالي: ",h("b",{},sm("probs"))))};
       lessonsOf(GEN.grade,GEN.key).forEach(({u,ls})=>{
         const all=h("input",{type:"checkbox",onchange:e=>{ls.forEach(l=>e.target.checked?GEN.sel.add(l.id):GEN.sel.delete(l.id));body.querySelectorAll('input[data-u="'+u.id+'"]').forEach(c=>c.checked=e.target.checked);upd()}});
-        body.append(h("div",{class:"card",style:"padding:10px"},h("label",{class:"so",style:"background:var(--soft)"},all,h("b",{},"الوحدة "+(u.n||"")+": "+u.title)),
-          ls.map(l=>h("label",{class:"so"},h("input",{type:"checkbox","data-u":u.id,checked:GEN.sel.has(l.id),onchange:e=>{e.target.checked?GEN.sel.add(l.id):GEN.sel.delete(l.id);upd()}}),h("span",{style:"flex:1"},l.title),h("span",{class:"muted small"},(l.quiz||[]).length+" سؤال")))))});
+        body.append(h("div",{class:"card",style:"padding:10px"},h("label",{class:"so",style:"background:var(--soft)"},all,h("b",{},(u.n?(/^\d+$/.test(String(u.n))?"الوحدة "+u.n+": ":u.n+": "):"")+u.title)),
+          ls.map(l=>h("label",{class:"so"},h("input",{type:"checkbox","data-u":u.id,checked:GEN.sel.has(l.id),onchange:e=>{e.target.checked?GEN.sel.add(l.id):GEN.sel.delete(l.id);upd()}}),h("span",{style:"flex:1"},l.title),h("span",{class:"muted small"},l.info)))))});
       body.append(tot);upd();
       const num=(k,l,mx)=>h("label",{class:"f"},l,h("input",{class:"in",type:"number",min:0,max:mx||60,step:k[0]==="m"?"0.5":"1",value:GEN[k],oninput:e=>GEN[k]=+e.target.value||0}));
-      body.append(h("div",{class:"row"},num("nm","عدد أسئلة الاختيار من متعدد"),num("mm","علامة كل سؤال اختيار"),num("ns","عدد أسئلة «وضّحي المقصود بـ»"),num("ms","علامة كل سؤال تعريف")));
+      body.append(h("div",{class:"row"},num("nm","عدد أسئلة الاختيار من متعدد"),num("mm","علامة كل سؤال اختيار"),num("ns","عدد أسئلة التعريف والشرح"),num("ms","علامة كل سؤال تعريف"),num("np","عدد المسائل / المقالي"),num("mp","علامة كل مسألة")));
       if(ex.qs.length)body.append(h("label",{class:"so"},h("input",{type:"checkbox",checked:GEN.keep,onchange:e=>GEN.keep=e.target.checked}),"أبقي أسئلة الامتحان الحالي وأضيفي عليها (وإلا تُستبدل)"));
       body.append(h("button",{class:"btn gold",onclick:()=>{
         if(!GEN.sel.size)return toast("اختاري درسًا واحدًا على الأقل");
-        const r=pullQs();if(!r.qs.length)return toast("لا أسئلة متاحة في هذه الدروس");
+        const r=pullQs();if(!r.qs.length)return toast("لا أسئلة متاحة بهذه الاختيارات");
         if(ex.qs.length&&!GEN.keep&&!confirm("سيتم استبدال أسئلة الامتحان الحالي. متابعة؟"))return;
         ex.qs=GEN.keep?[...ex.qs,...r.qs]:r.qs;const m=ex.meta;
-        if(!m.subject)m.subject=SCID[GEN.grade][GEN.key].name;if(!m.grade)m.grade="الصف "+GEN.grade;
-        if(!m.title||m.title==="اختبار قصير")m.title="اختبار: "+r.lessons[0].title+(r.lessons.length>1?" وغيره":"");
+        if(!m.subject||m.auto)m.subject=CAT[GEN.grade][GEN.key].name;if(!m.grade||m.auto)m.grade="الصف "+GEN.grade;
+        if(!m.title||m.title==="اختبار قصير"||m.auto){m.title="اختبار: "+r.lessons[0].title+(r.lessons.length>1?" وغيره":"");m.auto=true}
         save();toast("جُهّز الامتحان: "+r.qs.length+" سؤال");nav("prev")}},"⚡ جهّزي الامتحان"));
-      body.append(h("p",{class:"muted small",style:"margin:0"},"الأسئلة مأخوذة من دروس المنصة (الصفوف 8–10 علوم). بعد التجهيز تقدرين تبدّلين أي سؤال أو تضيفين أسئلتك، وتطبعين الورقة مع المفتاح."))}
+      body.append(h("p",{class:"muted small",style:"margin:0"},"المصدر: أسئلة منصات القطرانة (العلوم 8–10، الرياضيات 8–10، اللغة العربية 9–10). أسئلة الرياضيات تتجدّد في كل مرة. بعد التجهيز تقدرين تبدّلين أي سؤال أو تضيفين أسئلتك، وتطبعين الورقة مع المفتاح."))}
     paint()}).catch(()=>{body.replaceChildren(h("p",{},"تعذّر تحميل بيانات الدروس. تأكدي من الاتصال وأعيدي المحاولة."))});
   return box}
 /* ---------- bank ---------- */
@@ -272,12 +300,12 @@ function paper(ex,ver,key){
   if(m.instr&&!key)P.append(h("div",{class:"pin"},m.instr));
   gs.forEach((g,gi)=>{const T=TYPES[g.t];const sub=g.qs.reduce((x,q)=>x+(+q.m||0),0);
     const sec=h("div",{class:"pg"},h("h3",{},h("span",{},"السؤال "+ORD[gi]+": "+T.inst),h("span",{style:"white-space:nowrap"},"("+sub+" علامة)")));
-    g.qs.forEach(q=>{n++;const el=h("div",{class:"pq"},h("div",{class:"qt"},h("span",{class:"n"},(g.t==="tf"?"( ) ":"")+n+")"),h("span",{},g.t==="fill"?blank(q.q):q.q),h("span",{class:"m"},"["+q.m+"]")));
-      if(g.t==="mcq"){const os=q.opts.map((o,i)=>({o,i})).filter(x=>x.o.trim());const long=os.some(x=>x.o.length>28);el.append(h("div",{class:"po"+(long?" one":"")},os.map((x,k)=>h("div",{class:key&&x.i===q.a?"ok":""},LET[k]+") "+x.o))));
+    g.qs.forEach(q=>{n++;const el=h("div",{class:"pq"},h("div",{class:"qt"},h("span",{class:"n"},(g.t==="tf"?"( ) ":"")+n+")"),h("span",{},R(g.t==="fill"?blank(q.q):q.q)),h("span",{class:"m"},"["+q.m+"]")));
+      if(g.t==="mcq"){const os=q.opts.map((o,i)=>({o,i})).filter(x=>x.o.trim());const long=os.some(x=>x.o.length>28);el.append(h("div",{class:"po"+(long?" one":"")},os.map((x,k)=>h("div",{class:key&&x.i===q.a?"ok":""},LET[k]+") ",R(x.o)))));
         if(key){const k=os.findIndex(x=>x.i===q.a)}}
       else if(g.t==="tf"&&key)el.append(h("span",{class:"key-a"},q.a?"✓ صح":"✗ خطأ"));
-      else if(g.t==="fill"&&key)el.append(h("span",{class:"key-a"},String(q.a||"—").split("|")[0]));
-      else if((g.t==="short"||g.t==="essay")){if(key){if(q.a)el.append(h("span",{class:"key-a"},q.a))}else for(let i=0;i<(q.lines||3);i++)el.append(h("div",{class:"ln"}))}
+      else if(g.t==="fill"&&key)el.append(h("span",{class:"key-a"},R(String(q.a||"—").split("|")[0])));
+      else if((g.t==="short"||g.t==="essay")){if(key){if(q.a)el.append(h("span",{class:"key-a"},R(q.a)))}else for(let i=0;i<(q.lines||3);i++)el.append(h("div",{class:"ln"}))}
       sec.append(el)});
     P.append(sec)});
   P.append(h("div",{class:"endn"},"انتهت الأسئلة، مع أطيب التمنيات بالتوفيق"));
@@ -322,9 +350,9 @@ async function studentMode(code){
   const form=h("div",{class:"stack",style:"margin-top:14px"});
   form.append(h("label",{class:"f"},"اسمك",name));
   const els=[];
-  d.q.forEach((x,i)=>{const [t,q,opts,a,m]=x;const box=h("div",{class:"card sq"});box.append(h("div",{class:"qt"},(i+1)+") "+(t==="fill"?blank(q):q)+"  ",h("span",{class:"muted small"},"["+m+"]")));
+  d.q.forEach((x,i)=>{const [t,q,opts,a,m]=x;const box=h("div",{class:"card sq"});box.append(h("div",{class:"qt"},(i+1)+") ",R(t==="fill"?blank(q):q),"  ",h("span",{class:"muted small"},"["+m+"]")));
     const fbk=h("div",{class:"fb"});
-    if(t==="mcq")(opts||[]).forEach((o,k)=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=k}),LET[k]+") "+o)));
+    if(t==="mcq")(opts||[]).forEach((o,k)=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=k}),LET[k]+") ",R(o))));
     else if(t==="tf")[["صح",true],["خطأ",false]].forEach(([l,v])=>box.append(h("label",{class:"so"},h("input",{type:"radio",name:"q"+i,onchange:()=>A[i]=v}),l)));
     else if(t==="fill")box.append(h("input",{class:"in",placeholder:"إجابتك",oninput:e=>A[i]=e.target.value}));
     else box.append(h("textarea",{class:"in",placeholder:"اكتبي إجابتك",oninput:e=>A[i]=e.target.value}));
@@ -341,7 +369,7 @@ async function studentMode(code){
         fbk.className="fb "+(ok?"ok":"no");fbk.textContent=ok?"✓ إجابة صحيحة":("✗ "+(d.k&&t==="fill"?"الإجابة: "+String(a).split("|")[0]:"غير صحيحة"));
         box.querySelectorAll("input").forEach(z=>z.disabled=true);
         lines.push((i+1)+") "+(ok?"✓":"✗"))}
-      else{manual+=+m;box.querySelectorAll("textarea").forEach(z=>z.disabled=true);fbk.className="fb";fbk.textContent="تصحّحها معلمتك."+(d.k&&model?" الإجابة النموذجية: "+model:"");lines.push((i+1)+") "+(A[i]||"—"))}});
+      else{manual+=+m;box.querySelectorAll("textarea").forEach(z=>z.disabled=true);fbk.className="fb";fbk.textContent="تصحّحها معلمتك.";if(d.k&&model){fbk.append(" الإجابة النموذجية: ",R(model))}lines.push((i+1)+") "+(A[i]||"—"))}});
     const txt="نتيجة: "+d.t+"\nالاسم: "+name.value.trim()+"\nالعلامة الآلية: "+got+" من "+auto+(manual?"\nأسئلة تنتظر التصحيح ("+manual+" علامة):":"")+"\n"+lines.join("\n");
     resBox.hidden=false;resBox.append(h("div",{class:"res"},got+" من "+auto),h("p",{class:"muted",style:"text-align:center;margin:0"},manual?"هذه علامة الأسئلة الموضوعية. بقية العلامات ("+manual+") بعد تصحيح معلمتك.":"أحسنتِ، سُلّمت إجاباتك."),
       h("a",{class:"btn",href:"https://wa.me/?text="+encodeURIComponent(txt),target:"_blank",rel:"noopener"},"📤 أرسلي نتيجتك لمعلمتك عبر واتساب"));

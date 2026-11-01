@@ -118,12 +118,12 @@ function groupsOf(ex,ver){const r=rng(ex.id+"B");return ORDER.map(t=>{let qs=ex.
 function blank(s){return String(s).replace(/_{2,}|\.{4,}|…+/g,"________")}
 /* ---------- state ---------- */
 let tab="list";
-const TABS=[["list","امتحاناتي"],["info","المعلومات"],["qs","الأسئلة"],["bank","بنك أسئلتي"],["prev","معاينة وطباعة"],["share","رابط للطالبات"]];
+const TABS=[["list","امتحاناتي"],["info","المعلومات"],["gen","⚡ تجهيز تلقائي"],["qs","الأسئلة"],["bank","بنك أسئلتي"],["prev","معاينة وطباعة"],["share","رابط للطالبات"]];
 function nav(t){tab=t;render();window.scrollTo(0,0)}
 function shell(body){return[h("div",{class:"tabs noprint",role:"tablist"},TABS.map(([k,n])=>h("button",{"aria-current":k===tab?"true":"false",onclick:()=>nav(k)},n))),body]}
 function render(){app.replaceChildren();const ex=cur();let v;
   if(tab==="list")v=vList();else if(!ex){tab="list";v=vList()}
-  else v=({info:vInfo,qs:vQs,bank:vBank,prev:vPrev,share:vShare})[tab](ex);
+  else v=({info:vInfo,gen:vGen,qs:vQs,bank:vBank,prev:vPrev,share:vShare})[tab](ex);
   app.append(...shell(v))}
 /* ---------- list ---------- */
 function vList(){
@@ -149,7 +149,7 @@ function vInfo(ex){
     h("div",{class:"row"},f("date","التاريخ","2026/11/07"),f("time","الزمن","45 دقيقة")),
     h("label",{class:"f"},"تعليمات تظهر أعلى الورقة (اختياري)",h("textarea",{class:"in",oninput:e=>{m.instr=e.target.value;save()}},m.instr||"")),
     h("label",{class:"so",style:"cursor:pointer"},h("input",{type:"checkbox",checked:m.showAns!==false,onchange:e=>{m.showAns=e.target.checked;save()}}),"في رابط الطالبات: إظهار الإجابات الصحيحة بعد التسليم"),
-    h("button",{class:"btn",onclick:()=>nav("qs")},"التالي: الأسئلة ←"))}
+    h("button",{class:"btn",onclick:()=>nav("gen")},"التالي: تجهيز الأسئلة ←"))}
 /* ---------- questions ---------- */
 function qCard(ex,q,i){
   const n=ex.qs.length;const T=TYPES[q.t];
@@ -201,6 +201,49 @@ function vQs(ex){
   if(!ex.qs.length)box.append(h("div",{class:"card muted"},"لا توجد أسئلة بعد. اضغطي على نوع السؤال أعلاه، أو استخدمي الإضافة السريعة، أو اسحبي من بنك أسئلتك."));
   ex.qs.forEach((q,i)=>box.append(qCard(ex,q,i)));
   if(ex.qs.length)box.append(h("button",{class:"btn gold",onclick:()=>nav("prev")},"معاينة الورقة ←"));
+  return box}
+/* ---------- auto generator (from the platform's lesson data) ---------- */
+let SCID=null;
+const SFILES=["g8-sci","g9-bio","g9-chem","g9-earth","g9-phys","g10-bio","g10-chem","g10-earth","g10-phys"];
+function loadSci(){if(SCID)return Promise.resolve(SCID);window.SCI={data:{},add(g,k,o){(this.data[g]=this.data[g]||{})[k]=o}};
+  return Promise.all(SFILES.map(f=>new Promise((res,rej)=>{const sc=document.createElement("script");sc.src="../science/data/"+f+".js";sc.onload=res;sc.onerror=()=>rej(new Error(f));document.head.append(sc)}))).then(()=>SCID=window.SCI.data)}
+const GEN={grade:"العاشر",key:null,sel:new Set(),nm:10,ns:3,mm:1,ms:2,keep:false};
+function lessonsOf(g,k){const o=SCID[g]&&SCID[g][k];return o?(o.units||[]).map(u=>({u,ls:(u.lessons||[])})):[]}
+function pullQs(){
+  const all=lessonsOf(GEN.grade,GEN.key).flatMap(x=>x.ls).filter(l=>GEN.sel.has(l.id));
+  const r=Math.random;const rr=(lists,n)=>{const L=lists.map(a=>shuffle(a,r));const out=[];let i=0;while(out.length<n&&L.some(a=>a.length)){const a=L[i%L.length];if(a.length)out.push(a.shift());i++}return out};
+  const mc=rr(all.map(l=>(l.quiz||[]).filter(q=>q.q&&q.o&&q.o.length>=2)),GEN.nm).map(x=>({id:uid(),t:"mcq",q:x.q,opts:x.o.slice(0,4),a:x.a,m:GEN.mm,lines:3}));
+  const sh=rr(all.map(l=>(l.points||[]).filter(p=>p[0]&&p[1])),GEN.ns).map(p=>({id:uid(),t:"short",q:"وضّحي المقصود بـ: "+p[0]+".",opts:[],a:p[1],m:GEN.ms,lines:3}));
+  return{qs:[...mc,...sh],lessons:all}}
+function vGen(ex){
+  const box=h("div",{class:"card stack"},h("h2",{style:"margin:0"},"⚡ تجهيز الامتحان تلقائيًا"),h("p",{class:"muted",style:"margin:0"},"اختاري الصف والمبحث والدروس وعدد الأسئلة، والمنصة تسحب الأسئلة من دروس الكتاب وتجهّز الامتحان. بعدها طبعيه أو عدّلي عليه."));
+  const body=h("div",{class:"stack"},h("div",{class:"muted"},"⏳ جارٍ تحميل أسئلة الدروس…"));box.append(body);
+  loadSci().then(()=>{
+    function paint(){body.replaceChildren();
+      const gr=["الثامن","التاسع","العاشر"].filter(g=>SCID[g]);if(!SCID[GEN.grade])GEN.grade=gr[0];
+      const keys=Object.keys(SCID[GEN.grade]);if(!GEN.key||!keys.includes(GEN.key)){GEN.key=keys[0];GEN.sel=new Set()}
+      const gsel=h("select",{class:"in",onchange:e=>{GEN.grade=e.target.value;GEN.key=null;GEN.sel=new Set();paint()}},gr.map(g=>h("option",{value:g,selected:g===GEN.grade},"الصف "+g)));
+      const ksel=h("select",{class:"in",onchange:e=>{GEN.key=e.target.value;GEN.sel=new Set();paint()}},keys.map(k=>h("option",{value:k,selected:k===GEN.key},SCID[GEN.grade][k].name)));
+      body.append(h("div",{class:"row"},h("label",{class:"f"},"الصف",gsel),h("label",{class:"f"},"المبحث",ksel)));
+      const tot=h("div",{class:"sum"});const upd=()=>{const all=lessonsOf(GEN.grade,GEN.key).flatMap(x=>x.ls).filter(l=>GEN.sel.has(l.id));tot.replaceChildren(h("span",{},"دروس محددة: ",h("b",{},all.length)),h("span",{},"أسئلة متاحة: ",h("b",{},all.reduce((s,l)=>s+(l.quiz||[]).length,0))),h("span",{},"مصطلحات للتعريف: ",h("b",{},all.reduce((s,l)=>s+(l.points||[]).length,0))))};
+      lessonsOf(GEN.grade,GEN.key).forEach(({u,ls})=>{
+        const all=h("input",{type:"checkbox",onchange:e=>{ls.forEach(l=>e.target.checked?GEN.sel.add(l.id):GEN.sel.delete(l.id));body.querySelectorAll('input[data-u="'+u.id+'"]').forEach(c=>c.checked=e.target.checked);upd()}});
+        body.append(h("div",{class:"card",style:"padding:10px"},h("label",{class:"so",style:"background:var(--soft)"},all,h("b",{},"الوحدة "+(u.n||"")+": "+u.title)),
+          ls.map(l=>h("label",{class:"so"},h("input",{type:"checkbox","data-u":u.id,checked:GEN.sel.has(l.id),onchange:e=>{e.target.checked?GEN.sel.add(l.id):GEN.sel.delete(l.id);upd()}}),h("span",{style:"flex:1"},l.title),h("span",{class:"muted small"},(l.quiz||[]).length+" سؤال")))))});
+      body.append(tot);upd();
+      const num=(k,l,mx)=>h("label",{class:"f"},l,h("input",{class:"in",type:"number",min:0,max:mx||60,step:k[0]==="m"?"0.5":"1",value:GEN[k],oninput:e=>GEN[k]=+e.target.value||0}));
+      body.append(h("div",{class:"row"},num("nm","عدد أسئلة الاختيار من متعدد"),num("mm","علامة كل سؤال اختيار"),num("ns","عدد أسئلة «وضّحي المقصود بـ»"),num("ms","علامة كل سؤال تعريف")));
+      if(ex.qs.length)body.append(h("label",{class:"so"},h("input",{type:"checkbox",checked:GEN.keep,onchange:e=>GEN.keep=e.target.checked}),"أبقي أسئلة الامتحان الحالي وأضيفي عليها (وإلا تُستبدل)"));
+      body.append(h("button",{class:"btn gold",onclick:()=>{
+        if(!GEN.sel.size)return toast("اختاري درسًا واحدًا على الأقل");
+        const r=pullQs();if(!r.qs.length)return toast("لا أسئلة متاحة في هذه الدروس");
+        if(ex.qs.length&&!GEN.keep&&!confirm("سيتم استبدال أسئلة الامتحان الحالي. متابعة؟"))return;
+        ex.qs=GEN.keep?[...ex.qs,...r.qs]:r.qs;const m=ex.meta;
+        if(!m.subject)m.subject=SCID[GEN.grade][GEN.key].name;if(!m.grade)m.grade="الصف "+GEN.grade;
+        if(!m.title||m.title==="اختبار قصير")m.title="اختبار: "+r.lessons[0].title+(r.lessons.length>1?" وغيره":"");
+        save();toast("جُهّز الامتحان: "+r.qs.length+" سؤال");nav("prev")}},"⚡ جهّزي الامتحان"));
+      body.append(h("p",{class:"muted small",style:"margin:0"},"الأسئلة مأخوذة من دروس المنصة (الصفوف 8–10 علوم). بعد التجهيز تقدرين تبدّلين أي سؤال أو تضيفين أسئلتك، وتطبعين الورقة مع المفتاح."))}
+    paint()}).catch(()=>{body.replaceChildren(h("p",{},"تعذّر تحميل بيانات الدروس. تأكدي من الاتصال وأعيدي المحاولة."))});
   return box}
 /* ---------- bank ---------- */
 let bankQ="",bankSel=new Set();

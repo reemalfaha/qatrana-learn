@@ -83,6 +83,7 @@ pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wr
 <main id="app"></main>
 <div id="toast" class="toast noprint" hidden></div>
 <script src="../feel/qrcode.js"></script>
+<script src="../teachers/qclass.js"></script>
 <script>
 "use strict";
 const $=s=>document.querySelector(s);
@@ -305,7 +306,22 @@ async function studentMode(code){
   app.append(hero,form,btn,resBox,h("p",{class:"muted small",style:"text-align:center"},"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"))}
 /* ---------- boot ---------- */
 const m=location.hash.match(/^#s=(.+)$/);
-if(m)studentMode(m[1]);else{if(S.cur&&!cur())S.cur=S.exams[0]?.id||null;render()}
+const ROSTER="../teachers/roster.enc.json";
+async function gate(){
+  const start=()=>{if(S.cur&&!cur())S.cur=S.exams[0]?.id||null;render()};
+  const box=h("div",{class:"card stack",style:"max-width:460px;margin:30px auto"},h("div",{class:"muted"},"⏳ جارٍ التحقق…"));app.replaceChildren(box);
+  try{
+    if(await QClass.resume(ROSTER))return start();
+    const keys=await QClass.keys(ROSTER);box.replaceChildren();
+    const who=h("select",{class:"in"},Object.entries(keys).map(([id,k])=>h("option",{value:id},k.label)));
+    try{const l=localStorage.getItem("qclass.last");if(l&&keys[l])who.value=l}catch(e){}
+    const pin=h("input",{class:"in",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمزكِ السرّي في بوابة المعلّمات"}),err=h("div",{class:"small",style:"color:#B3261E"});
+    const go=async()=>{err.textContent="⏳";try{await QClass.signIn(ROSTER,who.value,pin.value.trim());try{localStorage.setItem("qclass.last",who.value)}catch(e){}start()}catch(e){err.textContent="الرمز غير صحيح.";pin.value=""}};
+    pin.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();go()}});
+    box.append(h("h2",{style:"margin:0"},"🔒 مصمّم الامتحانات للمعلّمات فقط"),h("p",{class:"muted",style:"margin:0"},"ادخلي برمزك السرّي في بوابة المعلّمات."),who,pin,h("button",{class:"btn",onclick:go},"🔓 دخول"),err);
+  }catch(e){box.replaceChildren(h("p",{},"تعذّر التحقق الآن. تأكدي من الاتصال بالإنترنت وأعيدي المحاولة."),h("a",{class:"btn g",href:"../teachers/"},"بوابة المعلمات"))}
+}
+if(m)studentMode(m[1]);else gate();
 </script>
 </body>
 </html>

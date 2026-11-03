@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>وضع السبّورة · الرياضيات</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--ok:#2F7D4F;--no:#B3261E;--soft:#F6ECE6;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;--soft:#2c1d22;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;--soft:#2c1d22;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.8 var(--f)}
+.top{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;border-bottom:4px solid var(--g)}
+.top .in{max-width:1100px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.top b{font:700 22px var(--fd)}.top a{color:var(--g2);font-weight:700}
+main{max-width:1100px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 40px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:18px;padding:16px;margin:10px 0}
+h2{font:700 22px var(--fd);margin:0 0 6px}
+button{font:700 16px var(--f);border:0;border-radius:14px;padding:11px 22px;min-height:46px;background:var(--w);color:#fff;cursor:pointer}
+button.alt{background:var(--soft);color:var(--w)}button.ok{background:var(--ok)}button.no{background:var(--no)}button.gold{background:var(--g);color:#2b1a00}
+select,input[type=number]{font:600 16px var(--f);border:1.5px solid var(--ln);border-radius:12px;padding:9px 12px;min-height:44px;background:var(--card);color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.muted{color:var(--mut);font-size:.9rem}
+.lsn{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;cursor:pointer}.lsn:hover{background:var(--soft)}.lsn input{width:20px;height:20px}
+.u{margin:8px 0;border:1px solid var(--ln);border-radius:14px;padding:8px}.u>label{font-weight:700;background:var(--soft)}
+.q{font-size:clamp(1.4rem,3.2vw,2.3rem);font-weight:600;line-height:2}
+.opt{display:flex;gap:14px;align-items:center;width:100%;text-align:right;background:var(--card);color:var(--ink);border:2px solid var(--ln);font-size:clamp(1.2rem,2.6vw,1.9rem);margin:8px 0;font-weight:600}
+.opt .l{background:var(--soft);color:var(--w);border-radius:50%;width:2.2em;height:2.2em;display:flex;align-items:center;justify-content:center;flex:none}
+.opt.right{border-color:var(--ok);background:rgba(47,125,79,.15)}.opt.wrong{border-color:var(--no);background:rgba(179,38,30,.15)}
+.pick{font:700 clamp(2rem,6vw,4rem) var(--fd);color:var(--w);text-align:center;min-height:1.4em}
+.sol{background:rgba(47,125,79,.1);border:1px solid var(--ok);border-radius:14px;padding:12px 16px;font-size:clamp(1.1rem,2.2vw,1.6rem);line-height:2.1}
+.tally{display:flex;gap:18px;font-size:1.3rem}.tally b{font-size:1.8rem}
+.flash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(4rem,16vw,10rem);color:#fff;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9;font-weight:700}.flash.on{opacity:.92}
+.tag{background:var(--soft);color:var(--w);border-radius:8px;padding:0 10px;font-size:.85rem}
+.m{font-family:"Cambria Math","Times New Roman",serif;font-size:1.08em;unicode-bidi:isolate;direction:ltr;white-space:nowrap}.m i{font-style:italic}.m .mw{font-size:.85em;padding:0 .25em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.86em;line-height:1.15;margin:0 .12em}.fr>span:first-child{border-bottom:1.3px solid currentColor;padding:0 .2em}.fr>span{padding:0 .2em}
+.sq{white-space:nowrap}.sq>span{border-top:1.3px solid currentColor;padding:0 .1em;margin-right:.05em}.ov{border-top:1.3px solid currentColor}sup{font-size:.7em;line-height:0}
+.fgw{text-align:center;margin:6px 0}.fgw svg{max-width:min(420px,100%);max-height:40vh;width:100%;height:auto}
+footer{text-align:center;color:var(--mut);font-size:.82rem;padding:14px}
+</style></head><body>
+<header class="top"><div class="in"><b>وضع السبّورة · الرياضيات</b><a href="../teachers/">← بوابة المعلّمات</a></div></header>
+<main id="app"></main><div class="flash" id="fl"></div>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+<script src="../exam-builder/math/mathlib.js"></script><script src="../exam-builder/math/mgeo.js"></script>
+<script>
+const $=id=>document.getElementById(id),app=$("app");
+const MFILES=["m8u1","m8u2","m8u3","m8u4","m9u1","m9u2","m9u3","m9u4","m10u1","m10u2","m10u3","m10u4"];
+const el=(t,a={},...k)=>{const e=document.createElement(t);for(const x in a){if(x==="class")e.className=a[x];else if(x.startsWith("on"))e.addEventListener(x.slice(2),a[x]);else if(a[x]===true)e.setAttribute(x,"");else if(a[x]!==false)e.setAttribute(x,a[x])}k.flat().forEach(c=>e.append(c&&c.nodeType?c:document.createTextNode(c==null?"":c)));return e};
+const R=s=>{const e=document.createElement("span");e.innerHTML=String(s==null?"":s).split("\n").map(l=>ML.T(l)).join("<br>");return e};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const load=src=>new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(src);document.head.append(s)});
+let G={grade:"الثامن",sel:new Set(),mode:"mcq",n:10,cls:30},S={};
+function flash(ok){const f=$("fl");f.style.background=ok?"var(--ok)":"var(--no)";f.textContent=ok?"✔ صحيح":"✘ خطأ";f.classList.add("on");setTimeout(()=>f.classList.remove("on"),900)}
+function setup(){app.replaceChildren();
+ const U=(window.MUNITS||[]).filter(u=>u.grade===G.grade);
+ const gs=el("select",{onchange:e=>{G.grade=e.target.value;G.sel=new Set();setup()}},["الثامن","التاسع","العاشر"].map(g=>el("option",{value:g,selected:g===G.grade},"الصف "+g)));
+ const ms=el("select",{onchange:e=>G.mode=e.target.value},el("option",{value:"mcq",selected:G.mode==="mcq"},"اختيار من متعدد"),el("option",{value:"solve",selected:G.mode==="solve"},"مسائل تُحلّ على السبّورة (بدون خيارات)"));
+ const c=el("div",{class:"card"},el("h2",{},"جهّزي الحصة"),el("p",{class:"muted"},"تُعرض الأسئلة بخطّ كبير على السبّورة، وتُختار الطالبة بالرقم (لا تُحفظ أي أسماء). الطالبة تحلّ على السبّورة وأنتِ تعرضين الحل وتحكمين، أو تضغط الخيار مباشرةً فيظهر الصحيح والخطأ. الأسئلة تتجدّد في كل مرة."),
+  el("div",{class:"row"},gs,ms,el("label",{},"عدد الأسئلة: ",el("input",{type:"number",min:1,max:60,value:G.n,style:"width:84px",onchange:e=>G.n=Math.max(1,+e.target.value||10)})),el("label",{},"عدد الطالبات: ",el("input",{type:"number",min:1,max:60,value:G.cls,style:"width:84px",onchange:e=>G.cls=Math.max(1,+e.target.value||30)}))));
+ U.forEach(u=>{const ls=u.lessons||[];const all=el("input",{type:"checkbox",onchange:e=>{ls.forEach(l=>e.target.checked?G.sel.add(u.id+"-"+l.id):G.sel.delete(u.id+"-"+l.id));setup()}});all.checked=ls.length&&ls.every(l=>G.sel.has(u.id+"-"+l.id));
+  c.append(el("div",{class:"u"},el("label",{class:"lsn"},all,el("span",{},(u.n?"الوحدة "+u.n+": ":"")+u.title)),ls.map(l=>{const k=u.id+"-"+l.id,i=el("input",{type:"checkbox",onchange:e=>{e.target.checked?G.sel.add(k):G.sel.delete(k)}});i.checked=G.sel.has(k);return el("label",{class:"lsn"},i,el("span",{},l.title))})))});
+ c.append(el("p"),el("button",{class:"gold",onclick:start},"ابدئي الحصة ←"));app.append(c)}
+function build(){const out=[],seen=new Set(),L=[];(window.MUNITS||[]).filter(u=>u.grade===G.grade).forEach(u=>(u.lessons||[]).forEach(l=>{if(G.sel.has(u.id+"-"+l.id))L.push(l)}));
+ for(let i=0;i<G.n*8&&out.length<G.n&&L.length;i++){const l=L[i%L.length],gens=l.gens||[];
+  if(G.mode==="mcq"&&i<L.length&&l.recall&&l.recall.qs&&l.recall.qs.length&&Math.random()<.3){const r=l.recall.qs[Math.random()*l.recall.qs.length|0];if(r&&r.o&&!seen.has(r.q)){seen.add(r.q);out.push({q:r.q,o:r.o,a:r.a,steps:[],lesson:l.title});continue}}
+  if(!gens.length)continue;let x;try{x=gens[Math.random()*gens.length|0].f()}catch(e){continue}
+  if(!x||!x.q||seen.has(x.q))continue;if(G.mode==="mcq"&&!(x.o&&x.o.length>1))continue;seen.add(x.q);
+  out.push({q:x.q,o:x.o,a:x.a||0,steps:x.steps||[],fig:x.fig,lesson:l.title})}
+ return out}
+async function start(){if(!G.sel.size){alert("اختاري درسًا واحدًا على الأقل");return}
+ S={list:build(),i:0,ok:0,no:0,used:[]};if(!S.list.length){app.prepend(el("div",{class:"card"},"لا أسئلة بهذه الاختيارات."));return}show()}
+function fig(x){if(!x.fig)return null;let e=typeof x.fig==="function"?x.fig():x.fig;if(typeof e==="string"){const d=el("div",{class:"fgw"});d.innerHTML=e;return d}if(e&&e.nodeType){return el("div",{class:"fgw"},e.cloneNode?e.cloneNode(true):e)}return null}
+function show(){app.replaceChildren();
+ if(S.i>=S.list.length){app.append(el("div",{class:"card"},el("h2",{},"انتهت الأسئلة"),el("p",{class:"pick"},"✔ "+S.ok+"   ✘ "+S.no),el("button",{onclick:setup},"حصة جديدة")));return}
+ const q=S.list[S.i];let done=false;
+ const pick=el("div",{class:"pick"},"");
+ const pbtn=el("button",{class:"alt",onclick:()=>{const free=[];for(let k=1;k<=G.cls;k++)if(!S.used.includes(k))free.push(k);if(!free.length){S.used=[];return pbtn.click()}
+  let t=0;const iv=setInterval(()=>{pick.textContent="؟ "+(1+Math.random()*G.cls|0);if(++t>14){clearInterval(iv);const r=free[Math.random()*free.length|0];S.used.push(r);pick.textContent="الطالبة رقم "+r}},80)}},"🎡 مَن تجيب؟");
+ const tl=el("div",{class:"tally"});const upd=()=>tl.replaceChildren(el("span",{},"✔ ",el("b",{},S.ok)),el("span",{},"✘ ",el("b",{},S.no))),next=el("button",{hidden:true,onclick:()=>{S.i++;show()}},"السؤال التالي ←");upd();
+ const head=el("div",{class:"row",style:"justify-content:space-between"},tl,el("span",{class:"muted"},"سؤال "+(S.i+1)+" من "+S.list.length),pbtn);
+ const card=el("div",{class:"card"},el("span",{class:"tag"},q.lesson),el("p",{class:"q"},R(q.q)));const f=fig(q);if(f)card.append(f);
+ const sol=el("div");const mark=ok=>{if(done)return;done=true;ok?S.ok++:S.no++;flash(ok);upd();next.hidden=false};
+ const showSol=()=>{const ans=q.o&&q.o[q.a]!=null?el("div",{},el("b",{},"الجواب: "),R(q.o[q.a])):"";sol.replaceChildren(el("div",{class:"sol"},ans,q.steps&&q.steps.length?el("div",{},el("b",{},"الحل: "),R(q.steps.join("\n"))):""))};
+ const judge=()=>el("div",{class:"row",style:"margin-top:10px"},el("button",{class:"ok",onclick:()=>mark(true)},"✔ حلّها صحيح"),el("button",{class:"no",onclick:()=>mark(false)},"✘ حلّها خطأ"));
+ const rv=el("button",{class:"alt",onclick:()=>{showSol();rv.hidden=true;if(bs)bs.forEach(b=>{if(b._k===q.a)b.classList.add("right")});sol.append(judge())}},"اعرضي الحل (الطالبة حلّت على السبّورة)");
+ let bs=null;
+ if(G.mode==="mcq"&&q.o){const order=shuffle(q.o.map((_,i)=>i)),LT=["أ","ب","ج","د"];let me=null;
+  bs=order.map((k,j)=>{const b=el("button",{class:"opt",onclick:()=>{if(done)return;me=b;bs.forEach(x=>{if(x._k===q.a)x.classList.add("right");else if(x===me)x.classList.add("wrong")});mark(k===q.a);showSol();rv.hidden=true}},el("span",{class:"l"},LT[j]),R(q.o[k]));b._k=k;return b});
+  card.append(...bs,el("p",{class:"muted"},"إما أن تضغط الطالبة على الخيار مباشرةً، أو تحلّ على السبّورة ثم تعرضين الحل وتحكمين عليه."))}
+ card.append(rv);app.append(head,pick,card,sol,next)}
+Promise.all(MFILES.map(f=>load("../exam-builder/math/"+f+".js"))).then(setup).catch(e=>app.append(el("div",{class:"card"},"تعذّر تحميل أسئلة الدروس. تأكدي من الاتصال وأعيدي المحاولة.")));
+</script></body></html>

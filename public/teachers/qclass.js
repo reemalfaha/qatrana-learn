@@ -2,8 +2,8 @@
    أسماء الطالبات مشفّرة (AES-GCM)، ولكل معلّمة رمز سرّي خاص يفتح مبحثها فقط.
    تقسيم الفرق · تقييم الحصة · سجلّ التقييم · كشف الأسماء.  تصميمُ المنصّة وتنفيذُها: نوال بني عطية */
 var QClass=(function(){
-const LS="qclass.v1",SS="qclass.ses",DEV="qclass.dev",DEV_EXP=Date.parse("2026-10-31T00:00:00+03:00");
-function saveSes(a){try{sessionStorage.setItem(SS,JSON.stringify(a));if(Date.now()<DEV_EXP)localStorage.setItem(DEV,JSON.stringify({a,exp:DEV_EXP}));}catch(e){}}
+const LS="qclass.v1",SS="qclass.ses",DEV="qclass.dev",REM=180*864e5;
+function saveSes(a){try{sessionStorage.setItem(SS,JSON.stringify(a));localStorage.setItem(DEV,JSON.stringify({a,exp:Date.now()+REM}));}catch(e){}}
 function loadSes(){try{const s=JSON.parse(sessionStorage.getItem(SS)||"null");if(s)return s;const d=JSON.parse(localStorage.getItem(DEV)||"null");if(d&&Date.now()<d.exp)return d.a;localStorage.removeItem(DEV);}catch(e){}return null;}
 function clearSes(){try{sessionStorage.removeItem(SS);localStorage.removeItem(DEV);}catch(e){}}
 const CR=[["p","🙋","مشاركة",1],["a","✅","إجابة صحيحة",1],["t","🤝","عمل الفريق",1],["h","📘","الواجب",1],["b","⭐","انضباط",1],["w","⚠️","تنبيه",-1]];
@@ -49,7 +49,7 @@ function login(){const F=FILE;const sel=h("select",{class:"qc-in","aria-label":"
   const enter=async()=>{const v=pin.value.trim();if(!v)return;err.textContent="⏳ جارٍ الفتح…";try{await unlock(sel.value,v);try{localStorage.setItem("qclass.last",sel.value);saveSes([sel.value,v]);}catch(e){}view={v:"home"};draw();}catch(e){err.textContent="الرمز غير صحيح لهذه المعلّمة.";pin.value="";}};
   pin.addEventListener("keydown",e=>{if(e.key==="Enter")enter();});
   ROOT.append(h("div",{class:"qc-card qc-login"},h("div",{class:"qc-big"},"👥"),h("h2",{},OPT.wheel?"🎡 دولاب الأسماء: مَن تجيب؟":"صفّي: الفرق وتقييم الحصة"),h("p",{class:"qc-mut"},"لكل معلّمة رمز سرّي خاص يفتح شعب مبحثها فقط. أسماء الطالبات محفوظة مشفّرة."),
-    h("label",{class:"qc-lbl"},"المعلّمة",sel),h("label",{class:"qc-lbl"},"الرمز السرّي",pin),h("button",{class:"qc-btn",onclick:enter},"🔓 فتح"),err));}
+    h("label",{class:"qc-lbl"},"المعلّمة",sel),h("label",{class:"qc-lbl"},"الرمز السرّي",pin),h("p",{class:"qc-mut qc-small"},"✔ يبقى دخولك محفوظًا على هذا الجهاز لمدة ٦ أشهر، أو حتى تضغطي «خروج». لا تستخدمي هذا الخيار على جهاز مشترك."),h("button",{class:"qc-btn",onclick:enter},"🔓 فتح"),err));}
 function logout(){TEA=null;R=null;clearSes();view={v:"home"};if(OPT&&OPT.onLogout)OPT.onLogout();else draw();}
 function home(){const S=mySubj();if((OPT.only||OPT.wheel)&&!OPT._auto&&S.length===1){const cs=classesFor(S[0].k);if(cs.length===1){OPT._auto=true;go({v:"class",s:S[0].k,c:cs[0],t:"eval"});return;}}if(!S.length){ROOT.append(h("div",{class:"qc-card qc-mut"},"لا يوجد لهذا الرمز مبحث في هذه المنصّة."));return;}
   S.forEach(s=>{const gr=h("div",{class:"qc-grid"});classesFor(s.k).forEach(ck=>{const [g,sc]=ck.split("|"),ev=Object.keys(C.evals[s.k+"#"+ck]||{}).length;

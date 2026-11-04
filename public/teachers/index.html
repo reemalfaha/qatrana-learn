@@ -95,7 +95,7 @@ async function login(){tb.innerHTML="";const keys=await QClass.keys(ROSTER);cons
       h("div",{class:"feats"},F("🎡","دولاب الفرق"),F("✅","تقييم الحصة والسجلّ"),F("📖","الكتاب على السبّورة"),F("🎒","حقيبة الدرس"),F("🧪","مختبر تجارب الكتاب"),F("📈","نتائج الطالبات")),
       h("div",{class:"org"},h("b",{},"مدرسة القطرانة الثانوية للبنات"),"مديرية التربية والتعليم للواء القطرانة")),
     h("section",{class:"lcard"},h("div",{class:"ic"},"👩‍🏫"),h("div",{},h("h2",{},"الدخول إلى البوابة"),h("div",{class:"hint"},"اختاري اسمكِ واكتبي رمزكِ السرّي؛ تُفتح لكِ أدوات مبحثكِ فقط.")),
-      h("label",{},"المعلّمة",sel),h("label",{},h("span",{},"الرمز السرّي ",h("span",{class:"hint"},"· لا تشاركيه مع أحد")),h("div",{class:"pinw"},pin,eye)),
+      h("label",{},"المعلّمة",sel),h("label",{},h("span",{},"الرمز السرّي ",h("span",{class:"hint"},"· لا تشاركيه مع أحد")),h("div",{class:"pinw"},pin,eye)),h("p",{class:"hint"},"✔ يبقى دخولك محفوظًا على هذا الجهاز ٦ أشهر أو حتى «خروج». لا تستخدميه على جهاز مشترك."),
       h("button",{class:"btn",onclick:go},"🔓 الدخول الآمن"),err,
       h("div",{class:"safe"},"🔒","أسماء الطالبات محفوظة في سجلّ مشفّر، ولا تُحفظ أي أرقام وطنية."))));}
 function dash(){const T=S.teacher;tb.innerHTML="";tb.append(h("button",{class:"btn g",onclick:()=>{QClass.signOut();S=null;login();}},"🔒 خروج"));

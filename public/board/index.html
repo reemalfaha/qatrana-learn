@@ -34,6 +34,11 @@ select,input[type=number]{font:600 16px var(--f);border:1.5px solid var(--ln);bo
 .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.86em;line-height:1.15;margin:0 .12em}.fr>span:first-child{border-bottom:1.3px solid currentColor;padding:0 .2em}.fr>span{padding:0 .2em}
 .sq{white-space:nowrap}.sq>span{border-top:1.3px solid currentColor;padding:0 .1em;margin-right:.05em}.ov{border-top:1.3px solid currentColor}sup{font-size:.7em;line-height:0}
 .fgw{text-align:center;margin:6px 0}.fgw svg{max-width:min(420px,100%);max-height:40vh;width:100%;height:auto}
+.tm{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.tm .d{font:700 clamp(2.6rem,9vw,5.5rem) var(--fd);color:var(--w);min-width:3.2em;text-align:center;direction:ltr;font-variant-numeric:tabular-nums;border:3px solid var(--g);border-radius:18px;padding:0 18px;background:var(--card)}
+.tm .d.low{color:#b26a00;border-color:#b26a00}.tm .d.end{color:#fff;background:var(--no);border-color:var(--no);animation:bl .6s infinite alternate}
+@keyframes bl{to{opacity:.55}}
+.tm button{min-width:56px;padding:9px 16px}
 footer{text-align:center;color:var(--mut);font-size:.82rem;padding:14px}
 </style></head><body>
 <header class="top"><div class="in"><b>وضع السبّورة · الرياضيات</b><a href="../teachers/">← بوابة المعلّمات</a></div></header>
@@ -47,14 +52,24 @@ const el=(t,a={},...k)=>{const e=document.createElement(t);for(const x in a){if(
 const R=s=>{const e=document.createElement("span");e.innerHTML=String(s==null?"":s).split("\n").map(l=>ML.T(l)).join("<br>");return e};
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const load=src=>new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(src);document.head.append(s)});
-let G={grade:"الثامن",sel:new Set(),mode:"mcq",n:10,cls:30},S={};
+let G={grade:"الثامن",sel:new Set(),mode:"mcq",n:10,cls:30,time:150,auto:true},S={},TI=null;
 function flash(ok){const f=$("fl");f.style.background=ok?"var(--ok)":"var(--no)";f.textContent=ok?"✔ صحيح":"✘ خطأ";f.classList.add("on");setTimeout(()=>f.classList.remove("on"),900)}
-function setup(){app.replaceChildren();
+function beep(n){try{const A=new(window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=A.createOscillator(),g=A.createGain();o.frequency.value=880;o.connect(g);g.connect(A.destination);const t=A.currentTime+i*.35;g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)}}catch(e){}}
+function mkTimer(){clearInterval(TI);if(!G.time)return{box:null,start(){}};let left=G.time,run=false,warned=false,began=false;
+ const d=el("div",{class:"d"},""),fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+ const paint=()=>{d.textContent=fmt(Math.max(0,left));d.className="d"+(left<=0?" end":left<=10?" low":"")};
+ const tick=()=>{if(!run)return;left--;if(left===10&&!warned){warned=true;beep(1)}if(left<=0){left=0;run=false;clearInterval(TI);beep(3);pb.textContent="▶ ابدئي"}paint()};
+ const go=()=>{if(left<=0)return;if(run){run=false;clearInterval(TI);pb.textContent="▶ استئناف"}else{run=true;began=true;clearInterval(TI);TI=setInterval(tick,1000);pb.textContent="⏸ إيقاف"}};
+ const pb=el("button",{class:"gold",onclick:go},"▶ ابدئي");
+ const add=n=>()=>{left=Math.max(0,left+n);if(left>10)warned=false;paint()};
+ const box=el("div",{class:"tm"},pb,el("button",{class:"alt",onclick:add(-30)},"−30ث"),d,el("button",{class:"alt",onclick:add(30)},"+30ث"),el("button",{class:"alt",onclick:()=>{run=false;clearInterval(TI);left=G.time;warned=false;pb.textContent="▶ ابدئي";paint()}},"↺ إعادة"));
+ paint();return{box,start(){if(!run&&left>0&&!began)go()},stop(){run=false;clearInterval(TI)}}}
+function setup(){clearInterval(TI);app.replaceChildren();
  const U=(window.MUNITS||[]).filter(u=>u.grade===G.grade);
  const gs=el("select",{onchange:e=>{G.grade=e.target.value;G.sel=new Set();setup()}},["الثامن","التاسع","العاشر"].map(g=>el("option",{value:g,selected:g===G.grade},"الصف "+g)));
  const ms=el("select",{onchange:e=>G.mode=e.target.value},el("option",{value:"mcq",selected:G.mode==="mcq"},"اختيار من متعدد"),el("option",{value:"solve",selected:G.mode==="solve"},"مسائل تُحلّ على السبّورة (بدون خيارات)"));
  const c=el("div",{class:"card"},el("h2",{},"جهّزي الحصة"),el("p",{class:"muted"},"تُعرض الأسئلة بخطّ كبير على السبّورة، وتُختار الطالبة بالرقم (لا تُحفظ أي أسماء). الطالبة تحلّ على السبّورة وأنتِ تعرضين الحل وتحكمين، أو تضغط الخيار مباشرةً فيظهر الصحيح والخطأ. الأسئلة تتجدّد في كل مرة."),
-  el("div",{class:"row"},gs,ms,el("label",{},"عدد الأسئلة: ",el("input",{type:"number",min:1,max:60,value:G.n,style:"width:84px",onchange:e=>G.n=Math.max(1,+e.target.value||10)})),el("label",{},"عدد الطالبات: ",el("input",{type:"number",min:1,max:60,value:G.cls,style:"width:84px",onchange:e=>G.cls=Math.max(1,+e.target.value||30)}))));
+  el("div",{class:"row"},gs,ms,el("label",{},"عدد الأسئلة: ",el("input",{type:"number",min:1,max:60,value:G.n,style:"width:84px",onchange:e=>G.n=Math.max(1,+e.target.value||10)})),el("label",{},"عدد الطالبات: ",el("input",{type:"number",min:1,max:60,value:G.cls,style:"width:84px",onchange:e=>G.cls=Math.max(1,+e.target.value||30)}))),el("div",{class:"row",style:"margin-top:10px"},el("label",{},"وقت الحل: ",el("select",{onchange:e=>G.time=+e.target.value},[[0,"بدون عدّاد"],[60,"دقيقة واحدة"],[150,"دقيقتان ونصف"],[240,"أربع دقائق"]].map(([v,t])=>el("option",{value:v,selected:v===G.time},t)))),el("label",{class:"lsn"},el("input",{type:"checkbox",checked:G.auto,onchange:e=>G.auto=e.target.checked}),el("span",{},"يبدأ العدّاد تلقائيًا عند اختيار الطالبة"))));
  U.forEach(u=>{const ls=u.lessons||[];const all=el("input",{type:"checkbox",onchange:e=>{ls.forEach(l=>e.target.checked?G.sel.add(u.id+"-"+l.id):G.sel.delete(u.id+"-"+l.id));setup()}});all.checked=ls.length&&ls.every(l=>G.sel.has(u.id+"-"+l.id));
   c.append(el("div",{class:"u"},el("label",{class:"lsn"},all,el("span",{},(u.n?"الوحدة "+u.n+": ":"")+u.title)),ls.map(l=>{const k=u.id+"-"+l.id,i=el("input",{type:"checkbox",onchange:e=>{e.target.checked?G.sel.add(k):G.sel.delete(k)}});i.checked=G.sel.has(k);return el("label",{class:"lsn"},i,el("span",{},l.title))})))});
  c.append(el("p"),el("button",{class:"gold",onclick:start},"ابدئي الحصة ←"));app.append(c)}
@@ -68,16 +83,16 @@ function build(){const out=[],seen=new Set(),L=[];(window.MUNITS||[]).filter(u=>
 async function start(){if(!G.sel.size){alert("اختاري درسًا واحدًا على الأقل");return}
  S={list:build(),i:0,ok:0,no:0,used:[]};if(!S.list.length){app.prepend(el("div",{class:"card"},"لا أسئلة بهذه الاختيارات."));return}show()}
 function fig(x){if(!x.fig)return null;let e=typeof x.fig==="function"?x.fig():x.fig;if(typeof e==="string"){const d=el("div",{class:"fgw"});d.innerHTML=e;return d}if(e&&e.nodeType){return el("div",{class:"fgw"},e.cloneNode?e.cloneNode(true):e)}return null}
-function show(){app.replaceChildren();
+function show(){clearInterval(TI);app.replaceChildren();
  if(S.i>=S.list.length){app.append(el("div",{class:"card"},el("h2",{},"انتهت الأسئلة"),el("p",{class:"pick"},"✔ "+S.ok+"   ✘ "+S.no),el("button",{onclick:setup},"حصة جديدة")));return}
- const q=S.list[S.i];let done=false;
+ const q=S.list[S.i];let done=false;const T=mkTimer();
  const pick=el("div",{class:"pick"},"");
  const pbtn=el("button",{class:"alt",onclick:()=>{const free=[];for(let k=1;k<=G.cls;k++)if(!S.used.includes(k))free.push(k);if(!free.length){S.used=[];return pbtn.click()}
-  let t=0;const iv=setInterval(()=>{pick.textContent="؟ "+(1+Math.random()*G.cls|0);if(++t>14){clearInterval(iv);const r=free[Math.random()*free.length|0];S.used.push(r);pick.textContent="الطالبة رقم "+r}},80)}},"🎡 مَن تجيب؟");
+  let t=0;const iv=setInterval(()=>{pick.textContent="؟ "+(1+Math.random()*G.cls|0);if(++t>14){clearInterval(iv);const r=free[Math.random()*free.length|0];S.used.push(r);pick.textContent="الطالبة رقم "+r;if(G.auto)T.start()}},80)}},"🎡 مَن تجيب؟");
  const tl=el("div",{class:"tally"});const upd=()=>tl.replaceChildren(el("span",{},"✔ ",el("b",{},S.ok)),el("span",{},"✘ ",el("b",{},S.no))),next=el("button",{hidden:true,onclick:()=>{S.i++;show()}},"السؤال التالي ←");upd();
  const head=el("div",{class:"row",style:"justify-content:space-between"},tl,el("span",{class:"muted"},"سؤال "+(S.i+1)+" من "+S.list.length),pbtn);
  const card=el("div",{class:"card"},el("span",{class:"tag"},q.lesson),el("p",{class:"q"},R(q.q)));const f=fig(q);if(f)card.append(f);
- const sol=el("div");const mark=ok=>{if(done)return;done=true;ok?S.ok++:S.no++;flash(ok);upd();next.hidden=false};
+ const sol=el("div");const mark=ok=>{if(done)return;done=true;if(T.stop)T.stop();ok?S.ok++:S.no++;flash(ok);upd();next.hidden=false};
  const showSol=()=>{const ans=q.o&&q.o[q.a]!=null?el("div",{},el("b",{},"الجواب: "),R(q.o[q.a])):"";sol.replaceChildren(el("div",{class:"sol"},ans,q.steps&&q.steps.length?el("div",{},el("b",{},"الحل: "),R(q.steps.join("\n"))):""))};
  const judge=()=>el("div",{class:"row",style:"margin-top:10px"},el("button",{class:"ok",onclick:()=>mark(true)},"✔ حلّها صحيح"),el("button",{class:"no",onclick:()=>mark(false)},"✘ حلّها خطأ"));
  const rv=el("button",{class:"alt",onclick:()=>{showSol();rv.hidden=true;if(bs)bs.forEach(b=>{if(b._k===q.a)b.classList.add("right")});sol.append(judge())}},"اعرضي الحل (الطالبة حلّت على السبّورة)");
@@ -85,6 +100,6 @@ function show(){app.replaceChildren();
  if(G.mode==="mcq"&&q.o){const order=shuffle(q.o.map((_,i)=>i)),LT=["أ","ب","ج","د"];let me=null;
   bs=order.map((k,j)=>{const b=el("button",{class:"opt",onclick:()=>{if(done)return;me=b;bs.forEach(x=>{if(x._k===q.a)x.classList.add("right");else if(x===me)x.classList.add("wrong")});mark(k===q.a);showSol();rv.hidden=true}},el("span",{class:"l"},LT[j]),R(q.o[k]));b._k=k;return b});
   card.append(...bs,el("p",{class:"muted"},"إما أن تضغط الطالبة على الخيار مباشرةً، أو تحلّ على السبّورة ثم تعرضين الحل وتحكمين عليه."))}
- card.append(rv);app.append(head,pick,card,sol,next)}
+ card.append(rv);app.append(head,pick,...(T.box?[T.box]:[]),card,sol,next)}
 Promise.all(MFILES.map(f=>load("../exam-builder/math/"+f+".js"))).then(setup).catch(e=>app.append(el("div",{class:"card"},"تعذّر تحميل أسئلة الدروس. تأكدي من الاتصال وأعيدي المحاولة.")));
 </script></body></html>

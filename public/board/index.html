@@ -40,8 +40,10 @@ select,input[type=number]{font:600 16px var(--f);border:1.5px solid var(--ln);bo
 @keyframes bl{to{opacity:.55}}
 .tm button{min-width:56px;padding:9px 16px}
 footer{text-align:center;color:var(--mut);font-size:.82rem;padding:14px}
+select{max-width:100%}html{overflow-x:hidden}
+.zm{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border-radius:14px;padding:3px 6px}.zm button{background:var(--g);color:#2b1a00;padding:4px 14px;min-height:40px;font-size:18px}.zm span{min-width:3.2em;text-align:center;font-weight:700}
 </style></head><body>
-<header class="top"><div class="in"><b>وضع السبّورة · الرياضيات</b><a href="../teachers/">← بوابة المعلّمات</a></div></header>
+<header class="top"><div class="in"><b>وضع السبّورة · الرياضيات</b><span class="zm"><button type="button" id="zo" aria-label="تصغير">أ−</button><span id="zv">100%</span><button type="button" id="zi" aria-label="تكبير">أ+</button></span><a href="../teachers/">← بوابة المعلّمات</a></div></header>
 <main id="app"></main><div class="flash" id="fl"></div>
 <footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
 <script src="../exam-builder/math/mathlib.js"></script><script src="../exam-builder/math/mgeo.js"></script>
@@ -102,4 +104,9 @@ function show(){clearInterval(TI);app.replaceChildren();
   card.append(...bs,el("p",{class:"muted"},"إما أن تضغط الطالبة على الخيار مباشرةً، أو تحلّ على السبّورة ثم تعرضين الحل وتحكمين عليه."))}
  card.append(rv);app.append(head,pick,...(T.box?[T.box]:[]),card,sol,next)}
 Promise.all(MFILES.map(f=>load("../exam-builder/math/"+f+".js"))).then(setup).catch(e=>app.append(el("div",{class:"card"},"تعذّر تحميل أسئلة الدروس. تأكدي من الاتصال وأعيدي المحاولة.")));
+
+/* التحكم في حجم الصفحة (يُحفظ على الجهاز) */
+(function(){let z=100;try{z=+localStorage.getItem("board.zoom")||100}catch(e){}const m=document.querySelector("main"),v=document.getElementById("zv");
+ const set=n=>{z=Math.max(60,Math.min(200,n));document.body.style.zoom=z/100;v.textContent=z+"%";try{localStorage.setItem("board.zoom",z)}catch(e){}};
+ document.getElementById("zi").onclick=()=>set(z+10);document.getElementById("zo").onclick=()=>set(z-10);v.onclick=()=>set(100);v.style.cursor="pointer";v.title="إعادة الحجم الأصلي";set(z)})();
 </script></body></html>

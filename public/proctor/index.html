@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>توزيع المراقبات على قاعات الامتحان</title>
+<style>
+:root{--m:#7A1F2E;--g:#B8902A;--bg:#faf6f1;--card:#fff;--line:#e6d9cd;--ink:#2a1a1d;--mut:#75615f;--ok:#2e7d4f;--bad:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Sakkal Majalla','Noto Naskh Arabic','Segoe UI',Tahoma,sans-serif;font-size:18px;line-height:1.7}
+header{background:var(--m);color:#fff;padding:16px;border-bottom:5px solid var(--g);text-align:center}
+header h1{margin:0;font-size:1.5rem}header p{margin:2px 0 0;font-size:.95rem;opacity:.9}
+main{max-width:1000px;margin:0 auto;padding:14px 12px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 14px}
+.card h2{margin:0 0 6px;color:var(--m);font-size:1.25rem}
+.mut{color:var(--mut);font-size:.92rem;margin:2px 0 8px}
+input,select,textarea,button{font:inherit}
+input[type=text],input[type=date],input[type=number],select,textarea{border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff;max-width:100%}
+textarea{width:100%;min-height:110px}
+button{background:var(--m);color:#fff;border:0;border-radius:12px;padding:8px 16px;cursor:pointer;min-height:44px}
+button.alt{background:#fff;color:var(--m);border:1.5px solid var(--m)}
+button.gold{background:var(--g);color:#2b1a00;font-weight:700}
+button.sm{min-height:34px;padding:2px 10px;font-size:.9rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.row>*{min-width:0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th{background:var(--m);color:#fff;padding:5px 8px;white-space:nowrap;font-weight:700}
+td{border:1px solid var(--line);padding:4px 6px;text-align:center}
+td select{border:0;background:transparent;padding:2px;max-width:150px}
+td.dup select{color:var(--bad);font-weight:700}
+.t-row{display:grid;grid-template-columns:1.4fr 1fr auto auto;gap:6px;align-items:center;margin:4px 0}
+.t-row input{width:100%}
+.offs{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 12px;background:#fbf3e4;border-radius:10px;padding:6px 10px;font-size:.92rem}
+.d-row{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:6px;align-items:center;margin:4px 0}
+.d-row input{width:100%}
+.warn{background:#fdecea;border:1px solid #f1b5ae;color:var(--bad);border-radius:10px;padding:6px 10px;margin:6px 0}
+.good{background:#e8f4ec;border:1px solid #b5d8c1;color:var(--ok);border-radius:10px;padding:6px 10px;margin:6px 0}
+.badge{display:inline-block;background:#f3e9d2;border-radius:20px;padding:0 10px;margin:2px;font-size:.92rem}
+footer{text-align:center;color:var(--mut);font-size:.85rem;padding:10px}
+#prt{display:none}
+@media (max-width:560px){.t-row{grid-template-columns:1fr 1fr auto auto}.d-row{grid-template-columns:1fr auto auto}.d-row input[type=date]{grid-column:1/-1}}
+@media print{
+ @page{size:A4 landscape;margin:12mm}
+ header,main,footer{display:none!important}
+ #prt{display:block;font-family:'Sakkal Majalla','Noto Naskh Arabic',serif;font-size:14pt;color:#000}
+ .pg{page-break-after:always}.pg:last-child{page-break-after:auto}
+ .pg h1{color:var(--m);font-size:20pt;text-align:center;margin:0;border-bottom:3px solid var(--g);padding-bottom:4px}
+ .pg h2{text-align:center;font-size:15pt;margin:4px 0 8px;color:#333}
+ .pg table{font-size:12.5pt}.pg th{-webkit-print-color-adjust:exact;print-color-adjust:exact;white-space:normal}.pg table.tt{font-size:11pt}.pg table.tt td:nth-child(2){white-space:nowrap;text-align:right}
+ .pg td{border:1px solid #777;padding:4px 6px}
+ .sig{display:flex;justify-content:space-around;margin-top:16mm;font-size:13pt}
+ .sig div{border-top:1px solid #000;padding-top:4px;min-width:55mm;text-align:center}
+}
+</style>
+</head>
+<body>
+<header><h1>توزيع المراقبات على قاعات الامتحان</h1><p>توزيع عادل وتلقائي · يُحفظ على جهازك فقط</p></header>
+<main id="app"></main>
+<div id="prt"></div>
+<footer>تصميم وتنفيذ: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+<script>
+"use strict";
+const KEY="proctor.v1";
+const DAYN=["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+let S={school:"مدرسة القطرانة الثانوية للبنات",title:"امتحان الثانوية العامة",per:2,reserve:1,teachers:[],halls:[],days:[],plan:null};
+try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.teachers)S=Object.assign(S,j)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const E=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const btn=(t,f,c)=>{const b=E("button",c||"",t);b.type="button";b.onclick=f;return b};
+const norm=s=>String(s||"").replace(/[ً-ْـ]/g,"").replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/^ال/,"").replace(/\s+/g," ").trim();
+const uid=()=>Math.random().toString(36).slice(2,9);
+const dayLabel=d=>{if(!d.date)return d.subject||"يوم";const [y,m,dd]=d.date.split("-").map(Number);const dt=new Date(y,m-1,dd);return DAYN[dt.getDay()]+" "+dd+"/"+m};
+const app=document.getElementById("app");
+
+/* ---------- خوارزمية التوزيع ---------- */
+function eligible(t,d){if((t.off||[]).includes(d.id))return false;const a=norm(t.subject),b=norm(d.subject);if(a&&b&&(a===b||a.includes(b)||b.includes(a)))return false;return true}
+function buildOnce(){
+ const cnt={},hallC={},pairC={},plan={},short=[];S.teachers.forEach(t=>{cnt[t.id]=0});
+ const inc=(o,k)=>{o[k]=(o[k]||0)+1};
+ for(const d of S.days){
+  const pool=S.teachers.filter(t=>eligible(t,d)).map(t=>t.id),used=new Set(),slots=[];
+  const halls=S.halls.slice();for(let i=halls.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[halls[i],halls[j]]=[halls[j],halls[i]]}
+  const P={halls:{},reserve:[]};
+  const pick=(hall,mates)=>{let best=null,bc=1e9;for(const id of pool){if(used.has(id))continue;let c=cnt[id]*10+Math.random()*4;if(hall)c+=(hallC[id+"|"+hall]||0)*6;for(const m of mates)c+=(pairC[[id,m].sort().join("|")]||0)*6;if(c<bc){bc=c;best=id}}
+   if(best){used.add(best)}return best};
+  for(const h of halls){const got=[];for(let k=0;k<S.per;k++){const id=pick(h,got.filter(Boolean));got.push(id||null)}P.halls[h]=got}
+  for(const h of halls){const got=P.halls[h].filter(Boolean);got.forEach(id=>{cnt[id]++;inc(hallC,id+"|"+h)});for(let a=0;a<got.length;a++)for(let b=a+1;b<got.length;b++)inc(pairC,[got[a],got[b]].sort().join("|"))}
+  for(let k=0;k<S.reserve;k++){const id=pick(null,[]);P.reserve.push(id||null)}
+  const need=S.halls.length*S.per,have=Math.min(pool.length,need);if(pool.length<need)short.push({d:d.id,need,have:pool.length});
+  plan[d.id]=P}
+ const v=Object.values(cnt),mx=Math.max(0,...v),mn=Math.min(...(v.length?v:[0]));
+ let rep=0;Object.values(hallC).forEach(n=>{if(n>1)rep+=n-1});Object.values(pairC).forEach(n=>{if(n>1)rep+=n-1});
+ return{plan,short,score:(mx-mn)*100+rep}}
+function distribute(){let best=null;for(let i=0;i<300;i++){const r=buildOnce();if(!best||r.score<best.score)best=r}S.plan=best.plan;S.short=best.short;save()}
+function counts(){const c={};S.teachers.forEach(t=>c[t.id]={n:0,r:0});if(!S.plan)return c;for(const d of S.days){const P=S.plan[d.id];if(!P)continue;Object.values(P.halls).forEach(a=>a.forEach(id=>{if(c[id])c[id].n++}));P.reserve.forEach(id=>{if(c[id])c[id].r++})}return c}
+const tname=id=>{const t=S.teachers.find(x=>x.id===id);return t?t.name:"—"};
+
+/* ---------- الواجهة ---------- */
+function render(){app.replaceChildren(infoCard(),teachersCard(),hallsCard(),daysCard(),runCard());if(S.plan)app.append(resultCard(),summaryCard());app.append(backupCard())}
+function infoCard(){const c=E("div","card");c.append(E("h2","","١) بيانات الامتحان"));
+ const a=E("input");a.type="text";a.value=S.school;a.placeholder="اسم المدرسة";a.style.width="100%";a.oninput=()=>{S.school=a.value;save()};
+ const b=E("input");b.type="text";b.value=S.title;b.placeholder="اسم الامتحان";b.style.width="100%";b.oninput=()=>{S.title=b.value;save()};
+ const r=E("div","row");const rs=E("select");[0,1,2,3].forEach(n=>rs.append(new Option(n+" احتياط لكل يوم",n)));rs.value=S.reserve;rs.onchange=()=>{S.reserve=+rs.value;save()};
+ r.append(E("span","","في كل قاعة: مراقبتان · "),rs);c.append(a,E("div","",""),b,r);return c}
+function teachersCard(){const c=E("div","card");c.append(E("h2","","٢) المعلمات المراقبات ("+S.teachers.length+")"),E("p","mut","الصقي الأسماء، كل اسم في سطر. وإن أردتِ استثناء المعلمة من مراقبة مبحثها اكتبي المبحث بعد شرطة: «سعاد أحمد - رياضيات»."));
+ const ta=E("textarea");ta.placeholder="سعاد أحمد - رياضيات\nمنى خالد - لغة عربية\nهدى سالم";
+ c.append(ta,btn("إضافة الأسماء",()=>{ta.value.split("\n").map(x=>x.trim()).filter(Boolean).forEach(l=>{const m=l.split(/\s*[-–—:،,|\t]\s*/);const name=m[0].replace(/^\d+[.)\-\s]*/,"").trim();if(!name)return;if(S.teachers.some(t=>norm(t.name)===norm(name)))return;S.teachers.push({id:uid(),name,subject:(m[1]||"").trim(),off:[]})});S.plan=null;save();render()}));
+ const list=E("div");S.teachers.forEach(t=>{const r=E("div","t-row");const n=E("input");n.type="text";n.value=t.name;n.oninput=()=>{t.name=n.value;save()};const s=E("input");s.type="text";s.value=t.subject;s.placeholder="المبحث";s.oninput=()=>{t.subject=s.value;save()};
+  const ob=btn("إعفاء"+((t.off||[]).length?" ("+t.off.length+")":""),()=>{t._open=!t._open;render()},"alt sm");
+  r.append(n,s,ob,btn("✕",()=>{S.teachers=S.teachers.filter(x=>x!==t);S.plan=null;save();render()},"alt sm"));
+  if(t._open){const o=E("div","offs");if(!S.days.length)o.append(E("span","","أضيفي أيام الامتحان أولًا."));o.append(E("b","","لا تراقب في: "));S.days.forEach(d=>{const l=E("label");const cb=E("input");cb.type="checkbox";cb.checked=(t.off||[]).includes(d.id);cb.onchange=()=>{t.off=t.off||[];if(cb.checked)t.off.push(d.id);else t.off=t.off.filter(x=>x!==d.id);save();ob.textContent="إعفاء"+(t.off.length?" ("+t.off.length+")":"")};l.append(cb,document.createTextNode(" "+dayLabel(d)+(d.subject?" · "+d.subject:"")));o.append(l)});r.append(o)}
+  list.append(r)});c.append(list);return c}
+function hallsCard(){const c=E("div","card");c.append(E("h2","","٣) القاعات ("+S.halls.length+")"),E("p","mut","اسم كل قاعة في سطر، أو اكتبي عدد القاعات واضغطي «توليد»."));
+ const ta=E("textarea");ta.style.minHeight="80px";ta.value=S.halls.join("\n");ta.onchange=()=>{S.halls=[...new Set(ta.value.split("\n").map(x=>x.trim()).filter(Boolean))];S.plan=null;save();render()};
+ const n=E("input");n.type="number";n.min=1;n.max=40;n.placeholder="العدد";n.style.width="90px";
+ const r=E("div","row");r.append(n,btn("توليد",()=>{const k=Math.min(40,+n.value||0);if(!k)return;S.halls=Array.from({length:k},(_,i)=>"قاعة "+(i+1));S.plan=null;save();render()},"alt"));c.append(ta,r);return c}
+function daysCard(){const c=E("div","card");c.append(E("h2","","٤) أيام الامتحان ("+S.days.length+")"),E("p","mut","لكل يوم: التاريخ والمبحث. معلمة المبحث تُستثنى تلقائيًا من مراقبة يوم مبحثها."));
+ S.days.forEach((d,i)=>{const r=E("div","d-row");const dt=E("input");dt.type="date";dt.value=d.date||"";dt.onchange=()=>{d.date=dt.value;save();render()};const sb=E("input");sb.type="text";sb.value=d.subject||"";sb.placeholder="المبحث";sb.oninput=()=>{d.subject=sb.value;save()};
+  r.append(dt,sb,E("span","mut",d.date?dayLabel(d):""),btn("✕",()=>{S.days=S.days.filter(x=>x!==d);S.teachers.forEach(t=>t.off=(t.off||[]).filter(x=>x!==d.id));S.plan=null;save();render()},"alt sm"));c.append(r)});
+ c.append(btn("+ إضافة يوم",()=>{let nx="";const last=S.days[S.days.length-1];if(last&&last.date){const [y,m,dd]=last.date.split("-").map(Number);const t=new Date(y,m-1,dd+1);while(t.getDay()===5||t.getDay()===6)t.setDate(t.getDate()+1);nx=t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0")}S.days.push({id:uid(),date:nx,subject:""});S.plan=null;save();render()},"alt"));return c}
+function runCard(){const c=E("div","card");c.append(E("h2","","٥) التوزيع"));const need=S.halls.length*S.per+S.reserve;
+ c.append(E("p","mut","المطلوب كل يوم: "+S.halls.length+" قاعة × "+S.per+" = "+S.halls.length*S.per+" مراقبة"+(S.reserve?" + "+S.reserve+" احتياط":"")+" · عدد المعلمات: "+S.teachers.length));
+ const m=E("div");const prob=[];if(!S.teachers.length)prob.push("أضيفي المعلمات.");if(!S.halls.length)prob.push("أضيفي القاعات.");if(!S.days.length)prob.push("أضيفي أيام الامتحان.");
+ S.days.forEach(d=>{const k=S.teachers.filter(t=>eligible(t,d)).length;if(S.teachers.length&&S.halls.length&&k<S.halls.length*S.per)prob.push(dayLabel(d)+(d.subject?" ("+d.subject+")":"")+": المتاحات "+k+" والمطلوب "+S.halls.length*S.per+".")});
+ if(prob.length){const w=E("div","warn");prob.forEach(p=>w.append(E("div","",p)));m.append(w)}
+ c.append(m,btn(S.plan?"🔄 إعادة التوزيع من جديد":"✨ وزّعي المراقبات",()=>{if(!S.teachers.length||!S.halls.length||!S.days.length)return;if(S.plan&&!confirm2(c))return;distribute();render();document.getElementById("res").scrollIntoView({behavior:"smooth"})},"gold"));return c}
+function confirm2(c){if(c.dataset.ok){delete c.dataset.ok;return true}c.dataset.ok=1;const w=E("div","warn","إعادة التوزيع تمحو التعديلات اليدوية. اضغطي الزر مرة ثانية للتأكيد.");c.append(w);setTimeout(()=>{delete c.dataset.ok;w.remove()},5000);return false}
+function cellSelect(d,get,set){const td=E("td");const s=E("select");s.append(new Option("—",""));S.teachers.forEach(t=>{const ok=eligible(t,d);s.append(new Option((ok?"":"⚠ ")+t.name,t.id))});s.value=get()||"";s.onchange=()=>{set(s.value||null);save();render()};td.append(s);return td}
+function dupSet(d){const P=S.plan[d.id],seen={},dup=new Set();[...Object.values(P.halls).flat(),...P.reserve].forEach(id=>{if(!id)return;if(seen[id])dup.add(id);seen[id]=1});return dup}
+function resultCard(){const c=E("div","card");c.id="res";c.append(E("h2","","جدول المراقبات"),E("p","mut","تستطيعين تعديل أي خانة يدويًا. الاسم بالأحمر يعني أنه مكرر في اليوم نفسه، و⚠ تعني معلمة معفاة أو معلمة المبحث."));
+ if(S.short&&S.short.length){const w=E("div","warn");S.short.forEach(x=>{const d=S.days.find(q=>q.id===x.d);if(d)w.append(E("div","",dayLabel(d)+": المتاحات "+x.have+" من "+x.need+"، بقيت خانات فارغة."))});c.append(w)}
+ const w=E("div","scroll"),t=E("table"),hr=E("tr");["اليوم","المبحث",...S.halls,...Array.from({length:S.reserve},(_,i)=>"احتياط"+(S.reserve>1?" "+(i+1):""))].forEach(x=>hr.append(E("th","",x)));t.append(hr);
+ S.days.forEach(d=>{const P=S.plan[d.id];if(!P)return;const dup=dupSet(d);for(let k=0;k<S.per;k++){const r=E("tr");if(k===0){const a=E("td","",dayLabel(d));a.rowSpan=S.per;a.style.whiteSpace="nowrap";const b=E("td","",d.subject||"");b.rowSpan=S.per;r.append(a,b)}
+   S.halls.forEach(h=>{P.halls[h]=P.halls[h]||Array(S.per).fill(null);const td=cellSelect(d,()=>P.halls[h][k],v=>{P.halls[h][k]=v});if(dup.has(P.halls[h][k]))td.className="dup";r.append(td)});
+   if(k===0)P.reserve.forEach((id,i)=>{const td=cellSelect(d,()=>P.reserve[i],v=>{P.reserve[i]=v});td.rowSpan=S.per;if(dup.has(id))td.className="dup";r.append(td)});
+   t.append(r)}});
+ w.append(t);const r=E("div","row");r.append(btn("🖨 الجدول العام",()=>print1("all"),"gold"),btn("🖨 كشف يومي بالتواقيع",()=>print1("daily"),"alt"),btn("🖨 جدول كل معلمة",()=>print1("teachers"),"alt"));c.append(w,r);return c}
+function summaryCard(){const c=E("div","card");c.append(E("h2","","عدد المراقبات لكل معلمة"));const cn=counts();const v=S.teachers.map(t=>cn[t.id].n),mx=Math.max(0,...v),mn=Math.min(...(v.length?v:[0]));
+ c.append(E("div",mx-mn<=1?"good":"warn",mx-mn<=1?"التوزيع عادل: الفرق بين أكثر معلمة وأقل معلمة لا يزيد على مراقبة واحدة.":"الفرق بين أكثر معلمة ("+mx+") وأقل معلمة ("+mn+") أكبر من مراقبة واحدة، بسبب الإعفاءات أو التعديل اليدوي."));
+ const b=E("div");S.teachers.slice().sort((a,b)=>cn[b.id].n-cn[a.id].n).forEach(t=>b.append(E("span","badge",t.name+": "+cn[t.id].n+(cn[t.id].r?" + "+cn[t.id].r+" احتياط":""))));c.append(b);return c}
+function backupCard(){const c=E("div","card");c.append(E("h2","","حفظ ونقل البيانات"),E("p","mut","البيانات محفوظة على هذا الجهاز فقط ولا تُرسل إلى أي خادم. لنقلها إلى جهاز آخر انسخي النص والصقيه هناك."));
+ const ta=E("textarea");ta.style.minHeight="60px";ta.placeholder="الصقي هنا نسخة محفوظة ثم اضغطي «استرجاع»";const m=E("span","mut","");
+ const r=E("div","row");r.append(btn("نسخ البيانات",async()=>{const x=JSON.stringify(S);ta.value=x;ta.select();try{await navigator.clipboard.writeText(x);m.textContent="تم النسخ ✔"}catch(e){m.textContent="انسخي النص من المربع."}},"alt"),btn("استرجاع",()=>{try{const j=JSON.parse(ta.value);if(!j.teachers)throw 0;S=Object.assign(S,j);save();render()}catch(e){m.textContent="النص غير صالح."}},"alt"),btn("مسح الكل",function(){if(this.dataset.ok){localStorage.removeItem(KEY);location.reload()}else{this.dataset.ok=1;this.textContent="اضغطي مرة ثانية للتأكيد"}},"alt"),m);c.append(ta,r);return c}
+
+/* ---------- الطباعة ---------- */
+function print1(kind){const root=document.getElementById("prt");root.replaceChildren();
+ const T=(heads,rows)=>{const t=E("table"),hr=E("tr");heads.forEach(x=>hr.append(E("th","",x)));t.append(hr);rows.forEach(rw=>{const r=E("tr");rw.forEach(x=>{const td=E("td","",x==null?"":String(x));r.append(td)});t.append(r)});return t};
+ const sig=()=>{const s=E("div","sig");s.append(E("div","","رئيسة القاعة / منسقة الامتحان"),E("div","","مديرة المدرسة"));return s};
+ const head=(pg,sub)=>{pg.append(E("h1","",S.school),E("h2","",S.title+" — "+sub))};
+ if(kind==="all"){const pg=E("div","pg");head(pg,"جدول توزيع المراقبات");
+  const rows=S.days.map(d=>{const P=S.plan[d.id];return[dayLabel(d),d.subject||"",...S.halls.map(h=>(P.halls[h]||[]).map(tname).join(" + ")),...(S.reserve?[P.reserve.map(tname).join("، ")]:[])]});
+  pg.append(T(["اليوم","المبحث",...S.halls,...(S.reserve?["الاحتياط"]:[])],rows),sig());root.append(pg)}
+ if(kind==="daily"){S.days.forEach(d=>{const P=S.plan[d.id],pg=E("div","pg");head(pg,"كشف المراقبة ليوم "+dayLabel(d)+(d.subject?" · مبحث "+d.subject:""));const rows=[];
+   S.halls.forEach(h=>(P.halls[h]||[]).forEach((id,k)=>rows.push([k===0?h:"",tname(id),"","",""])));P.reserve.forEach(id=>rows.push(["احتياط",tname(id),"","",""]));
+   pg.append(T(["القاعة","المراقبة","وقت الحضور","التوقيع","ملاحظات"],rows),sig());root.append(pg)})}
+ if(kind==="teachers"){const pg=E("div","pg");head(pg,"جدول المراقبة لكل معلمة");const cn=counts();
+  const rows=S.teachers.map((t,i)=>[i+1,t.name,...S.days.map(d=>{const P=S.plan[d.id];for(const h of S.halls)if((P.halls[h]||[]).includes(t.id))return h;if(P.reserve.includes(t.id))return"احتياط";return"—"}),cn[t.id].n]);
+  const tt=T(["م","المعلمة",...S.days.map(d=>dayLabel(d)+(d.subject?" · "+d.subject:"")),"المجموع"],rows);tt.className="tt";pg.append(tt,sig());root.append(pg)}
+ setTimeout(()=>window.print(),150)}
+render();
+</script>
+</body>
+</html>

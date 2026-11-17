@@ -24,6 +24,7 @@ button:disabled{opacity:.45;cursor:default}
 .tabs{display:flex;gap:8px;margin:0 0 12px}
 .tabs button{flex:1;background:#fff;color:var(--m);border:1.5px solid var(--m)}
 .tabs button[aria-current="true"]{background:var(--m);color:#fff}
+.tabs.sub{flex-wrap:wrap}.tabs.sub button{flex:1 1 auto;border-color:var(--g);color:#6b5210;min-height:40px;padding:4px 12px;font-size:.95rem}.tabs.sub button[aria-current="true"]{background:var(--g);color:#2b1a00}
 .day{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid var(--ln);border-radius:14px;padding:10px 12px;margin:8px 0;background:#fff}
 .day .d{background:#f6ece6;border-radius:10px;padding:4px 10px;text-align:center;font-size:.85rem;color:var(--m);font-weight:700;min-width:74px}
 .day b{display:block}.day small{color:var(--mut)}
@@ -52,7 +53,7 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:10px}
 </style>
 </head>
 <body>
-<header><h1>الاستعداد للامتحانات النهائية</h1><p>الرياضيات · الصفوف الثامن والتاسع والعاشر</p><a href="../">↩ منصة القطرانة</a></header>
+<header><h1>الاستعداد للامتحانات النهائية</h1><p>الرياضيات · اللغة العربية · العلوم — الصفوف الثامن والتاسع والعاشر</p><a href="../">↩ منصة القطرانة</a></header>
 <main id="app"><div class="card">جارٍ التحميل…</div></main>
 <footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
 <script src="../exam-builder/math/mathlib.js"></script>
@@ -61,9 +62,11 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:10px}
 /* ===== إعدادات تغيّرها المعلمة ===== */
 const START="2026-11-22";      // أول يوم في خطة المراجعة (أحد)
 const GRADES=[["8","الثامن"],["9","التاسع"],["10","العاشر"]];
+const SCIF={"8":[["sci","العلوم","g8-sci"]],"9":[["bio","العلوم الحياتية","g9-bio"],["chem","الكيمياء","g9-chem"],["phys","الفيزياء","g9-phys"],["earth","علوم الأرض","g9-earth"]],"10":[["bio","العلوم الحياتية","g10-bio"],["chem","الكيمياء","g10-chem"],["phys","الفيزياء","g10-phys"],["earth","علوم الأرض","g10-earth"]]};
+const subjects=g=>[["math","الرياضيات"],["ar","اللغة العربية"],...SCIF[g].map(x=>[x[0],x[1]])];
 const KEY="finals.v1";
 const DAYN=["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-let S={grade:"8",name:"",done:{},stats:{}};
+let S={grade:"8",subj:"math",name:"",done:{},stats:{}};
 try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.done)S=Object.assign(S,j)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const app=document.getElementById("app");
@@ -72,63 +75,77 @@ const H=(t,c,html)=>{const e=document.createElement(t);if(c)e.className=c;e.inne
 const btn=(t,f,c)=>{const b=E("button",c||"",t);b.type="button";b.onclick=f;return b};
 const R=s=>{s=String(s==null?"":s);return s.split("\n").map(l=>window.ML&&ML.T?ML.T(l):l.replace(/\$/g,"")).join("<br>")};
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const loadScript=src=>new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)});
-const units=()=>(window.MUNITS||[]).filter(u=>u.id.startsWith("m"+S.grade+"u")).sort((a,b)=>a.n-b.n);
+const LOADED={};const loadScript=src=>LOADED[src]||(LOADED[src]=new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)}));
+const gname=()=>GRADES.find(x=>x[0]===S.grade)[1];
+const sname=()=>(subjects(S.grade).find(x=>x[0]===S.subj)||["",""])[1];
 const dateOf=i=>{const [y,m,d]=START.split("-").map(Number);const t=new Date(y,m-1,d);let k=0;while(k<i){t.setDate(t.getDate()+1);if(t.getDay()!==5&&t.getDay()!==6)k++}return DAYN[t.getDay()]+" "+t.getDate()+"/"+(t.getMonth()+1)};
 
-/* ===== سحب الأسئلة ===== */
-function drawLesson(u,l,n,seen){const out=[],gs=l.gens||[];for(let i=0;i<n*6&&out.length<n&&gs.length;i++){try{const x=gs[Math.floor(Math.random()*gs.length)].f();if(!x||!x.o||x.o.length<3||seen.has(x.q))continue;let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;
-   seen.add(x.q);const idx=shuffle(x.o.map((_,k)=>k));out.push({q:x.q,o:idx.map(k=>x.o[k]),a:idx.indexOf(x.a||0),steps:x.steps||[],fig,lid:u.id+"-"+l.id,lt:l.title,ut:u.title})}catch(e){}}return out}
-function drawUnits(us,total){const seen=new Set(),ls=[];us.forEach(u=>(u.lessons||[]).forEach(l=>{if((l.gens||[]).length)ls.push([u,l])}));if(!ls.length)return[];
- const out=[];let i=0;const order=shuffle(ls);while(out.length<total&&i<total*4){const [u,l]=order[i%order.length];out.push(...drawLesson(u,l,1,seen));i++}return out.slice(0,total)}
-function drawWeak(total){const ls=[];units().forEach(u=>(u.lessons||[]).forEach(l=>{if((l.gens||[]).length){const st=S.stats[u.id+"-"+l.id];ls.push([u,l,st&&st.t>=2?st.ok/st.t:.6])}}));ls.sort((a,b)=>a[2]-b[2]);const weak=ls.slice(0,Math.max(3,Math.ceil(ls.length/3)));
- const seen=new Set(),out=[];let i=0;while(out.length<total&&i<total*4){const [u,l]=weak[i%weak.length];out.push(...drawLesson(u,l,1,seen));i++}return out.slice(0,total)}
+/* ===== بنوك الأسئلة: كل مادة تُحوَّل إلى وحدات، ولكل درس دالة draw(n,seen) ===== */
+const BANK={};          // BANK["8.math"]=[{n,label,title,lessons:[{id,title,size,draw}]}]
+const mk=(q,o,a,steps,fig,L,U)=>{const idx=shuffle(o.map((_,k)=>k));return{q,o:idx.map(k=>o[k]),a:idx.indexOf(a),steps:steps||[],fig:fig||"",lid:L.id,lt:L.title,ut:U.title}};
+function staticLesson(id,title,list,U,why){const L={id,title,size:list.length};L.draw=(n,seen)=>{const out=[];for(const x of shuffle(list)){if(out.length>=n)break;if(!x.o||x.o.length<3||seen.has(x.q))continue;seen.add(x.q);out.push(mk(x.q,x.o,x.a||0,x[why]?[x[why]]:[],"",L,U))}return out};return L}
+const ORD=["الأولى","الثانية","الثالثة","الرابعة","الخامسة","السادسة"];
+window.SCI={_:{},add(g,k,o){this._[g+"."+k]=o}};
+let ARABIC=null;
+async function loadBank(){const key=S.grade+"."+S.subj;if(BANK[key])return BANK[key];let us=[];
+ if(S.subj==="math"){await loadScript("../exam-builder/math/mgeo.js");await Promise.all([1,2,3,4].map(n=>loadScript("../exam-builder/math/m"+S.grade+"u"+n+".js").catch(()=>{})));
+  us=(window.MUNITS||[]).filter(u=>u.id.startsWith("m"+S.grade+"u")).sort((a,b)=>a.n-b.n).map(u=>{const U={n:u.n,label:u.unit,title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{const gs=l.gens||[];if(!gs.length)return;const L={id:u.id+"-"+l.id,title:l.title,size:99};
+    L.draw=(n,seen)=>{const out=[];for(let i=0;i<n*6&&out.length<n;i++){try{const x=gs[Math.floor(Math.random()*gs.length)].f();if(!x||!x.o||x.o.length<3||seen.has(x.q))continue;let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;seen.add(x.q);out.push(mk(x.q,x.o,x.a||0,x.steps,fig,L,U))}catch(e){}}return out};U.lessons.push(L)});return U})}
+ else if(S.subj==="ar"){if(!ARABIC)ARABIC=await fetch("../exam-builder/data/arabic.json").then(r=>r.json());
+  us=(ARABIC[gname()]||[]).map((u,i)=>{const U={n:i+1,label:u.n,title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{if((l.mcq||[]).length)U.lessons.push(staticLesson("ar-"+l.id,l.title,l.mcq,U))});return U})}
+ else{const f=SCIF[S.grade].find(x=>x[0]===S.subj);await loadScript("../science/data/"+f[2]+".js");const o=window.SCI._[gname()+"."+S.subj];
+  us=((o&&o.units)||[]).map((u,i)=>{const U={n:u.n||i+1,label:"الوحدة "+(ORD[i]||i+1),title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{if((l.quiz||[]).length)U.lessons.push(staticLesson("sc-"+l.id,l.title,l.quiz,U,"why"))});return U})}
+ us=us.filter(u=>u.lessons.length);return BANK[key]=us}
+function drawUnits(us,total){const seen=new Set(),ls=[];us.forEach(u=>u.lessons.forEach(l=>ls.push(l)));if(!ls.length)return[];const out=[],order=shuffle(ls);let i=0,empty=0;
+ while(out.length<total&&empty<order.length){const got=order[i%order.length].draw(1,seen);if(got.length){out.push(...got);empty=0}else empty++;i++}return out.slice(0,total)}
+function drawWeak(us,total){const ls=[];us.forEach(u=>u.lessons.forEach(l=>{const st=S.stats[l.id];ls.push([l,st&&st.t>=2?st.ok/st.t:.6])}));ls.sort((a,b)=>a[1]-b[1]);const weak=ls.slice(0,Math.max(3,Math.ceil(ls.length/3))).map(x=>x[0]);
+ const seen=new Set(),out=[];let i=0,empty=0;while(out.length<total&&empty<weak.length){const got=weak[i%weak.length].draw(1,seen);if(got.length){out.push(...got);empty=0}else empty++;i++}
+ if(out.length<total)out.push(...drawUnits(us,total-out.length).filter(q=>!out.some(o=>o.q===q.q)));return out.slice(0,total)}
 
 /* ===== الخطة ===== */
-function plan(){const us=units(),p=[];
- p.push({id:"diag",t:"اختبار تشخيصي شامل",s:"20 سؤالًا من كل الوحدات · يحدّد دروسك الضعيفة",make:()=>drawUnits(us,20)});
- us.forEach(u=>p.push({id:"u"+u.n,t:"مراجعة "+u.unit+": "+u.title,s:"15 سؤالًا من دروس الوحدة",make:()=>drawUnits([u],15)}));
- while(p.length<5)p.push({id:"x"+p.length,t:"مراجعة عامة",s:"15 سؤالًا",make:()=>drawUnits(us,15)});
- p.push({id:"weak",t:"علاج الدروس الأضعف",s:"15 سؤالًا من الدروس التي أخطأتِ فيها أكثر",make:()=>drawWeak(15)});
- p.push({id:"mock1",t:"امتحان تجريبي (1)",s:"25 سؤالًا · 40 دقيقة",min:40,make:()=>drawUnits(us,25)});
- p.push({id:"fix",t:"تدريب على أخطاء الامتحان التجريبي",s:"15 سؤالًا من دروسك الأضعف",make:()=>drawWeak(15)});
- p.push({id:"mock2",t:"امتحان تجريبي (2)",s:"25 سؤالًا · 40 دقيقة",min:40,make:()=>drawUnits(us,25)});
- p.push({id:"last",t:"مراجعة أخيرة سريعة",s:"15 سؤالًا من كل الوحدات",make:()=>drawUnits(us,15)});
+function plan(us){const p=[],tot=us.reduce((a,u)=>a+u.lessons.reduce((b,l)=>b+l.size,0),0),cap=n=>Math.min(n,tot);
+ p.push({id:"diag",t:"اختبار تشخيصي شامل",s:cap(20)+" سؤالًا من كل الوحدات · يحدّد دروسك الضعيفة",make:()=>drawUnits(us,20)});
+ us.forEach(u=>{const k=Math.min(15,u.lessons.reduce((b,l)=>b+l.size,0));p.push({id:"u"+u.n,t:"مراجعة "+u.label+": "+u.title,s:k+" سؤالًا من دروس الوحدة",make:()=>drawUnits([u],15)})});
+ p.push({id:"weak",t:"علاج الدروس الأضعف",s:cap(15)+" سؤالًا من الدروس التي أخطأتِ فيها أكثر",make:()=>drawWeak(us,15)});
+ p.push({id:"mock1",t:"امتحان تجريبي (1)",s:cap(25)+" سؤالًا · 40 دقيقة",min:40,make:()=>drawUnits(us,25)});
+ p.push({id:"fix",t:"تدريب على أخطاء الامتحان التجريبي",s:cap(15)+" سؤالًا من دروسك الأضعف",make:()=>drawWeak(us,15)});
+ p.push({id:"mock2",t:"امتحان تجريبي (2)",s:cap(25)+" سؤالًا · 40 دقيقة",min:40,make:()=>drawUnits(us,25)});
+ p.push({id:"last",t:"مراجعة أخيرة سريعة",s:cap(15)+" سؤالًا من كل الوحدات",make:()=>drawUnits(us,15)});
  return p}
-function home(){stopTimer();app.replaceChildren();
+async function home(){stopTimer();if(!subjects(S.grade).some(x=>x[0]===S.subj))S.subj="math";app.replaceChildren();
  const tabs=E("div","tabs");GRADES.forEach(([g,n])=>{const b=btn("الصف "+n,()=>{S.grade=g;save();home()});b.setAttribute("aria-current",S.grade===g);tabs.append(b)});app.append(tabs);
- const us=units();const c=E("div","card");c.append(E("h2","","خطة المراجعة في أسبوعين — رياضيات الصف "+GRADES.find(x=>x[0]===S.grade)[1]),E("p","mut","كل يوم مهمة واحدة. حلّي بالترتيب، وأعيدي أي اختبار لتحسين علامتك: الأسئلة تتغيّر في كل مرة."));
- if(!us.length){c.append(E("p","","تعذّر تحميل أسئلة هذا الصف. حدّثي الصفحة."));app.append(c);return}
- const p=plan(),doneN=p.filter(x=>S.done[S.grade+"."+x.id]!=null).length;const bar=E("div","bar");const i=E("i");i.style.width=Math.round(doneN/p.length*100)+"%";bar.append(i);c.append(E("div","mut","أنجزتِ "+doneN+" من "+p.length),bar);
- p.forEach((x,k)=>{if(k===0)c.append(E("div","wk","الأسبوع الأول"));if(k===5)c.append(E("div","wk","الأسبوع الثاني"));const best=S.done[S.grade+"."+x.id];const r=E("div","day"+(best!=null?" done":""));const mid=E("div");mid.append(E("b","",x.t),E("small","",x.s));
-  const right=E("div");if(best!=null)right.append(E("div","score","✔ "+best+"%"));right.append(btn(best!=null?"أعيدي":"ابدئي",()=>start(x),best!=null?"alt":""));r.append(E("div","d",dateOf(k)),mid,right);c.append(r)});
- app.append(c);
- const st=E("div","card");st.append(E("h2","","مستواي في الدروس"));const rows=[];us.forEach(u=>(u.lessons||[]).forEach(l=>{const s=S.stats[u.id+"-"+l.id];if(s&&s.t)rows.push([u.unit+" · "+l.title,s.t,Math.round(s.ok/s.t*100)])}));
+ const st2=E("div","tabs sub");subjects(S.grade).forEach(([k,n])=>{const b=btn(n,()=>{S.subj=k;save();home()});b.setAttribute("aria-current",S.subj===k);st2.append(b)});app.append(st2);
+ const c=E("div","card");c.append(E("h2","","خطة المراجعة — "+sname()+" · الصف "+gname()),E("p","mut","جارٍ تحميل الأسئلة…"));app.append(c);
+ let us=[];const want=S.grade+"."+S.subj;try{us=await loadBank()}catch(e){}if(want!==S.grade+"."+S.subj)return;
+ c.replaceChildren(E("h2","","خطة المراجعة — "+sname()+" · الصف "+gname()),E("p","mut","كل يوم مهمة واحدة. حلّي بالترتيب، وأعيدي أي اختبار لتحسين علامتك: الأسئلة تتغيّر في كل مرة."));
+ if(!us.length){c.append(E("p","","تعذّر تحميل أسئلة هذه المادة. تأكدي من الاتصال وحدّثي الصفحة."));return}
+ const pre=want+".",p=plan(us),doneN=p.filter(x=>S.done[pre+x.id]!=null).length;const bar=E("div","bar");const i=E("i");i.style.width=Math.round(doneN/p.length*100)+"%";bar.append(i);c.append(E("div","mut","أنجزتِ "+doneN+" من "+p.length),bar);
+ p.forEach((x,k)=>{if(k%5===0)c.append(E("div","wk","الأسبوع "+(["الأول","الثاني","الثالث"][k/5]||k/5+1)));const best=S.done[pre+x.id];const r=E("div","day"+(best!=null?" done":""));const mid=E("div");mid.append(E("b","",x.t),E("small","",x.s));
+  const right=E("div");if(best!=null)right.append(E("div","score","✔ "+best+"%"));right.append(btn(best!=null?"أعيدي":"ابدئي",()=>start(x,pre),best!=null?"alt":""));r.append(E("div","d",dateOf(k)),mid,right);c.append(r)});
+ const st=E("div","card");st.append(E("h2","","مستواي في دروس "+sname()));const rows=[];us.forEach(u=>u.lessons.forEach(l=>{const s=S.stats[l.id];if(s&&s.t)rows.push([u.label+" · "+l.title,s.t,Math.round(s.ok/s.t*100)])}));
  if(!rows.length)st.append(E("p","mut","يظهر هنا مستواك في كل درس بعد أول اختبار."));else{const t=E("table"),hr=E("tr");["الدرس","أسئلة","الإتقان","الحكم"].forEach(x=>hr.append(E("th","",x)));t.append(hr);rows.sort((a,b)=>a[2]-b[2]).forEach(r=>{const tr=E("tr");tr.append(H("td","",R(r[0])),E("td","",r[1]),E("td","",r[2]+"%"));const v=E("td","",r[2]>=75?"متقَن":r[2]>=50?"يحتاج تدريبًا":"ضعيف");v.style.color=r[2]>=75?"var(--ok)":r[2]>=50?"#8a6100":"var(--bad)";v.style.fontWeight=700;tr.append(v);t.append(tr)});st.append(t)}
  app.append(st)}
 
 /* ===== الاختبار ===== */
 let T=null,TM=null;
 function stopTimer(){if(TM){clearInterval(TM);TM=null}}
-function start(item){const qs=item.make();if(!qs.length){alert("تعذّر تجهيز الأسئلة. حدّثي الصفحة.");return}T={item,qs,ans:Array(qs.length).fill(null),i:0,end:item.min?Date.now()+item.min*6e4:0};stopTimer();if(T.end)TM=setInterval(()=>{const el=document.getElementById("tm");const left=T.end-Date.now();if(left<=0){finish();return}if(el)el.textContent="⏱ "+Math.floor(left/6e4)+":"+String(Math.floor(left%6e4/1000)).padStart(2,"0")},500);show();scrollTo(0,0)}
+function start(item,pre){const qs=item.make();if(!qs.length){alert("تعذّر تجهيز الأسئلة. حدّثي الصفحة.");return}T={item,pre,qs,ans:Array(qs.length).fill(null),i:0,end:item.min?Date.now()+item.min*6e4:0};stopTimer();if(T.end)TM=setInterval(()=>{const el=document.getElementById("tm");const left=T.end-Date.now();if(left<=0){finish();return}if(el)el.textContent="⏱ "+Math.floor(left/6e4)+":"+String(Math.floor(left%6e4/1000)).padStart(2,"0")},500);show();scrollTo(0,0)}
 function show(){const q=T.qs[T.i];app.replaceChildren();const c=E("div","card");const top=E("div","row");top.append(E("b","",T.item.t),E("span","mut","السؤال "+(T.i+1)+" من "+T.qs.length));if(T.end){const tm=E("b","","⏱");tm.id="tm";top.append(tm)}c.append(top);
  const bar=E("div","bar");const i=E("i");i.style.width=Math.round(T.i/T.qs.length*100)+"%";bar.append(i);c.append(bar,H("div","q",R(q.q)));if(q.fig)c.append(H("div","fgw",q.fig));
- q.o.forEach((o,k)=>{const b=H("button","opt","<b>"+"أبجد"[k]+")</b> "+R(o));b.type="button";b.setAttribute("aria-pressed",T.ans[T.i]===k);b.onclick=()=>{T.ans[T.i]=k;show()};c.append(b)});
+ q.o.forEach((o,k)=>{const b=H("button","opt","<b>"+"أبجد"[k]+")</b> <bdi>"+R(o)+"</bdi>");b.type="button";b.setAttribute("aria-pressed",T.ans[T.i]===k);b.onclick=()=>{T.ans[T.i]=k;show()};c.append(b)});
  const nav=E("div","row");const prev=btn("→ السابق",()=>{T.i--;show()},"alt");prev.disabled=T.i===0;const left=T.ans.filter(a=>a==null).length;
  const next=T.i<T.qs.length-1?btn("التالي ←",()=>{T.i++;show()}):btn("إنهاء وتصحيح",function(){if(left&&!this.dataset.ok){this.dataset.ok=1;this.textContent="بقي "+left+" بلا إجابة — اضغطي للتأكيد";return}finish()},"gold");nav.append(prev,next);c.append(nav);
  c.append(btn("خروج من الاختبار",function(){if(!this.dataset.ok){this.dataset.ok=1;this.textContent="اضغطي مرة ثانية للخروج (تضيع الإجابات)";return}home()},"alt"));app.append(c)}
 function finish(){stopTimer();const n=T.qs.length;let ok=0;const by={};T.qs.forEach((q,k)=>{const good=T.ans[k]===q.a;if(good)ok++;const s=S.stats[q.lid]=S.stats[q.lid]||{ok:0,t:0};s.t++;if(good)s.ok++;const b=by[q.lid]=by[q.lid]||{t:q.ut+" · "+q.lt,ok:0,n:0};b.n++;if(good)b.ok++});
- const pct=Math.round(ok/n*100),key=S.grade+"."+T.item.id;S.done[key]=Math.max(S.done[key]||0,pct);save();
- app.replaceChildren();const c=E("div","card");c.append(E("h2","",T.item.t+" — النتيجة"),E("div","big",pct+"%"),E("p","",ok+" إجابة صحيحة من "+n));c.lastChild.style.textAlign="center";
+ const pct=Math.round(ok/n*100),key=T.pre+T.item.id;S.done[key]=Math.max(S.done[key]||0,pct);save();
+ app.replaceChildren();const c=E("div","card");c.append(E("h2","",sname()+" · "+T.item.t+" — النتيجة"),E("div","big",pct+"%"),E("p","",ok+" إجابة صحيحة من "+n));c.lastChild.style.textAlign="center";
  const msg=pct>=85?"ممتاز! أنتِ جاهزة لهذا الجزء.":pct>=65?"جيد. راجعي الدروس الأضعف في الجدول ثم أعيدي الاختبار.":"تحتاجين مراجعة. ابدئي بالدروس الأضعف في الجدول واسألي معلمتك.";c.append(E("p","mut",msg));c.lastChild.style.textAlign="center";
- const nm=E("input");nm.type="text";nm.placeholder="اسمك وشعبتك (اختياري)";nm.value=S.name;nm.oninput=()=>{S.name=nm.value;save()};const d=new Date();c.append(nm,E("p","mut","لإرسال نتيجتك لمعلمتك: اكتبي اسمك ثم صوّري هذه الشاشة. التاريخ: "+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()));
+ const nm=E("input");nm.type="text";nm.placeholder="اسمك وشعبتك (اختياري)";nm.value=S.name;nm.oninput=()=>{S.name=nm.value;save()};const d=new Date();c.append(nm,E("p","mut","لإرسال نتيجتك لمعلمتك: اكتبي اسمك ثم صوّري هذه الشاشة. الصف "+gname()+" · التاريخ: "+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()));
  const t=E("table"),hr=E("tr");["الدرس","الصحيح","من"].forEach(x=>hr.append(E("th","",x)));t.append(hr);Object.values(by).sort((a,b)=>a.ok/a.n-b.ok/b.n).forEach(b=>{const tr=E("tr");tr.append(H("td","",R(b.t)),E("td","",b.ok),E("td","",b.n));if(b.ok/b.n<.5)tr.style.background="#fdecea";t.append(tr)});c.append(t);
- const r=E("div","row");r.style.marginTop="10px";r.append(btn("↩ العودة للخطة",home),btn("أعيدي بأسئلة جديدة",()=>start(T.item),"alt"));c.append(r);app.append(c);
- const rv=E("div","card");rv.append(E("h2","","مراجعة الإجابات والحلول"));T.qs.forEach((q,k)=>{const w=E("div",k?"rev":"");w.append(H("div","q",(k+1)+") "+R(q.q)));if(q.fig)w.append(H("div","fgw",q.fig));q.o.forEach((o,j)=>{if(j!==q.a&&j!==T.ans[k])return;const b=H("div","opt "+(j===q.a?"ok":"bad"),(j===q.a?"✔ الإجابة الصحيحة: ":"✘ إجابتك: ")+R(o));w.append(b)});if(T.ans[k]==null)w.append(E("div","mut","لم تُجيبي عن هذا السؤال."));
-  if(q.steps&&q.steps.length&&T.ans[k]!==q.a)w.append(H("div","steps","<b>الحل:</b><br>"+q.steps.map(R).join("<br>")));rv.append(w)});app.append(rv);scrollTo(0,0)}
-
-/* ===== التحميل ===== */
-(async()=>{try{await loadScript("../exam-builder/math/mgeo.js");const fs=[];GRADES.forEach(([g])=>[1,2,3,4].forEach(n=>fs.push("m"+g+"u"+n)));await Promise.all(fs.map(f=>loadScript("../exam-builder/math/"+f+".js").catch(()=>{})));home()}catch(e){app.replaceChildren(E("div","card","تعذّر التحميل. تأكدي من الاتصال وحدّثي الصفحة."))}})();
+ const r=E("div","row");r.style.marginTop="10px";r.append(btn("↩ العودة للخطة",home),btn("أعيدي بأسئلة جديدة",()=>start(T.item,T.pre),"alt"));c.append(r);app.append(c);
+ const rv=E("div","card");rv.append(E("h2","","مراجعة الإجابات والحلول"));T.qs.forEach((q,k)=>{const w=E("div",k?"rev":"");w.append(H("div","q",(k+1)+") "+R(q.q)));if(q.fig)w.append(H("div","fgw",q.fig));q.o.forEach((o,j)=>{if(j!==q.a&&j!==T.ans[k])return;const b=H("div","opt "+(j===q.a?"ok":"bad"),(j===q.a?"✔ الإجابة الصحيحة: ":"✘ إجابتك: ")+"<bdi>"+R(o)+"</bdi>");w.append(b)});if(T.ans[k]==null)w.append(E("div","mut","لم تُجيبي عن هذا السؤال."));
+  if(q.steps&&q.steps.length&&T.ans[k]!==q.a)w.append(H("div","steps","<b>التوضيح:</b><br>"+q.steps.map(R).join("<br>")));rv.append(w)});app.append(rv);scrollTo(0,0)}
+home();
 </script>
 </body>
 </html>

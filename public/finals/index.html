@@ -39,6 +39,9 @@ button:disabled{opacity:.45;cursor:default}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .big{font-size:2.6rem;font-weight:700;color:var(--m);text-align:center;font-family:"El Messiri",var(--f)}
 table{border-collapse:collapse;width:100%;font-size:.92rem}th{background:var(--m);color:#fff;padding:4px 8px}td{border:1px solid var(--ln);padding:4px 8px;text-align:center}td:first-child{text-align:right}
+details.les{border:1px solid var(--ln);border-radius:14px;padding:8px 12px;margin:8px 0;background:#fff}details.les summary{cursor:pointer;min-height:36px}details.les small{color:var(--mut)}
+.bk-h{margin:12px 0 4px;font-weight:700;color:var(--m);border-bottom:2px solid var(--g);padding-bottom:2px}.bk-q{border-top:1px dashed var(--ln);padding:8px 0}.bk-q .q{font-size:1.02rem;margin:2px 0 6px}.bk-o{padding:2px 10px;border-radius:8px;margin:2px 0}
+.ans{display:none}.showans .ans{display:block}.showans .bk-o.right{background:#e8f4ec;border:1px solid var(--ok);font-weight:700}
 .steps{background:#fbf3e4;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:.95rem}
 .rev{border-top:1px dashed var(--ln);padding-top:10px;margin-top:10px}
 input[type=text]{font:inherit;border:1.5px solid var(--ln);border-radius:10px;padding:6px 10px;max-width:100%}
@@ -66,7 +69,7 @@ const SCIF={"8":[["sci","العلوم","g8-sci"]],"9":[["bio","العلوم ال
 const subjects=g=>[["math","الرياضيات"],["ar","اللغة العربية"],...SCIF[g].map(x=>[x[0],x[1]])];
 const KEY="finals.v1";
 const DAYN=["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-let S={grade:"8",subj:"math",name:"",done:{},stats:{}};
+let S={grade:"8",subj:"math",view:"plan",name:"",done:{},stats:{}};
 try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.done)S=Object.assign(S,j)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const app=document.getElementById("app");
@@ -83,18 +86,19 @@ const dateOf=i=>{const [y,m,d]=START.split("-").map(Number);const t=new Date(y,m
 /* ===== بنوك الأسئلة: كل مادة تُحوَّل إلى وحدات، ولكل درس دالة draw(n,seen) ===== */
 const BANK={};          // BANK["8.math"]=[{n,label,title,lessons:[{id,title,size,draw}]}]
 const mk=(q,o,a,steps,fig,L,U)=>{const idx=shuffle(o.map((_,k)=>k));return{q,o:idx.map(k=>o[k]),a:idx.indexOf(a),steps:steps||[],fig:fig||"",lid:L.id,lt:L.title,ut:U.title}};
-function staticLesson(id,title,list,U,why){const L={id,title,size:list.length};L.draw=(n,seen)=>{const out=[];for(const x of shuffle(list)){if(out.length>=n)break;if(!x.o||x.o.length<3||seen.has(x.q))continue;seen.add(x.q);out.push(mk(x.q,x.o,x.a||0,x[why]?[x[why]]:[],"",L,U))}return out};return L}
+function staticLesson(id,title,list,U,why,sa){const L={id,title,size:list.length,list,why,sa:sa||[]};L.draw=(n,seen)=>{const out=[];for(const x of shuffle(list)){if(out.length>=n)break;if(!x.o||x.o.length<3||seen.has(x.q))continue;seen.add(x.q);out.push(mk(x.q,x.o,x.a||0,x[why]?[x[why]]:[],"",L,U))}return out};return L}
 const ORD=["الأولى","الثانية","الثالثة","الرابعة","الخامسة","السادسة"];
 window.SCI={_:{},add(g,k,o){this._[g+"."+k]=o}};
+window.FB={_:{},add(o){Object.assign(this._,o)}};   // بنك الأسئلة المتوقعة الإضافي (finals/bank/*.js)
 let ARABIC=null;
 async function loadBank(){const key=S.grade+"."+S.subj;if(BANK[key])return BANK[key];let us=[];
  if(S.subj==="math"){await loadScript("../exam-builder/math/mgeo.js");await Promise.all([1,2,3,4].map(n=>loadScript("../exam-builder/math/m"+S.grade+"u"+n+".js").catch(()=>{})));
-  us=(window.MUNITS||[]).filter(u=>u.id.startsWith("m"+S.grade+"u")).sort((a,b)=>a.n-b.n).map(u=>{const U={n:u.n,label:u.unit,title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{const gs=l.gens||[];if(!gs.length)return;const L={id:u.id+"-"+l.id,title:l.title,size:99};
+  us=(window.MUNITS||[]).filter(u=>u.id.startsWith("m"+S.grade+"u")).sort((a,b)=>a.n-b.n).map(u=>{const U={n:u.n,label:u.unit,title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{const gs=l.gens||[];if(!gs.length)return;const L={id:u.id+"-"+l.id,title:l.title,size:99,gen:1,sa:[]};
     L.draw=(n,seen)=>{const out=[];for(let i=0;i<n*6&&out.length<n;i++){try{const x=gs[Math.floor(Math.random()*gs.length)].f();if(!x||!x.o||x.o.length<3||seen.has(x.q))continue;let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;seen.add(x.q);out.push(mk(x.q,x.o,x.a||0,x.steps,fig,L,U))}catch(e){}}return out};U.lessons.push(L)});return U})}
  else if(S.subj==="ar"){if(!ARABIC)ARABIC=await fetch("../exam-builder/data/arabic.json").then(r=>r.json());
-  us=(ARABIC[gname()]||[]).map((u,i)=>{const U={n:i+1,label:u.n,title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{if((l.mcq||[]).length)U.lessons.push(staticLesson("ar-"+l.id,l.title,l.mcq,U))});return U})}
- else{const f=SCIF[S.grade].find(x=>x[0]===S.subj);await loadScript("../science/data/"+f[2]+".js");const o=window.SCI._[gname()+"."+S.subj];
-  us=((o&&o.units)||[]).map((u,i)=>{const U={n:u.n||i+1,label:"الوحدة "+(ORD[i]||i+1),title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{if((l.quiz||[]).length)U.lessons.push(staticLesson("sc-"+l.id,l.title,l.quiz,U,"why"))});return U})}
+  us=(ARABIC[gname()]||[]).map((u,i)=>{const U={n:i+1,label:u.n,title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{if((l.mcq||[]).length)U.lessons.push(staticLesson("ar-"+l.id,l.title,l.mcq,U,null,[...(l.defs||[]).map(d=>["وضّحي المقصود بـ: "+d.q,d.a]),...(l.probs||[]).map(d=>[d.q,d.a])]))});return U})}
+ else{const f=SCIF[S.grade].find(x=>x[0]===S.subj);await loadScript("../science/data/"+f[2]+".js");await loadScript("bank/"+f[2]+".js").catch(()=>{});const o=window.SCI._[gname()+"."+S.subj];
+  us=((o&&o.units)||[]).map((u,i)=>{const U={n:u.n||i+1,label:"الوحدة "+(ORD[i]||i+1),title:u.title,lessons:[]};(u.lessons||[]).forEach(l=>{const x=window.FB._[l.id]||{},all=[...(l.quiz||[]),...(x.mcq||[]).map(m=>({q:m[0],o:m.slice(1,5),a:0,why:m[5]}))];if(all.length)U.lessons.push(staticLesson("sc-"+l.id,l.title,all,U,"why",x.sa))});return U})}
  us=us.filter(u=>u.lessons.length);return BANK[key]=us}
 function drawUnits(us,total){const seen=new Set(),ls=[];us.forEach(u=>u.lessons.forEach(l=>ls.push(l)));if(!ls.length)return[];const out=[],order=shuffle(ls);let i=0,empty=0;
  while(out.length<total&&empty<order.length){const got=order[i%order.length].draw(1,seen);if(got.length){out.push(...got);empty=0}else empty++;i++}return out.slice(0,total)}
@@ -115,8 +119,10 @@ function plan(us){const p=[],tot=us.reduce((a,u)=>a+u.lessons.reduce((b,l)=>b+l.
 async function home(){stopTimer();if(!subjects(S.grade).some(x=>x[0]===S.subj))S.subj="math";app.replaceChildren();
  const tabs=E("div","tabs");GRADES.forEach(([g,n])=>{const b=btn("الصف "+n,()=>{S.grade=g;save();home()});b.setAttribute("aria-current",S.grade===g);tabs.append(b)});app.append(tabs);
  const st2=E("div","tabs sub");subjects(S.grade).forEach(([k,n])=>{const b=btn(n,()=>{S.subj=k;save();home()});b.setAttribute("aria-current",S.subj===k);st2.append(b)});app.append(st2);
- const c=E("div","card");c.append(E("h2","","خطة المراجعة — "+sname()+" · الصف "+gname()),E("p","mut","جارٍ تحميل الأسئلة…"));app.append(c);
+ const vw=E("div","tabs");[["plan","🗓 خطة المراجعة"],["bank","📚 بنك الأسئلة المتوقعة"]].forEach(([k,n])=>{const b=btn(n,()=>{S.view=k;save();home()});b.setAttribute("aria-current",(S.view||"plan")===k);vw.append(b)});app.append(vw);
+ const c=E("div","card");c.append(E("h2","",(S.view==="bank"?"بنك الأسئلة المتوقعة — ":"خطة المراجعة — ")+sname()+" · الصف "+gname()),E("p","mut","جارٍ تحميل الأسئلة…"));app.append(c);
  let us=[];const want=S.grade+"."+S.subj;try{us=await loadBank()}catch(e){}if(want!==S.grade+"."+S.subj)return;
+ if(S.view==="bank"){bankView(c,us,want+".");return}
  c.replaceChildren(E("h2","","خطة المراجعة — "+sname()+" · الصف "+gname()),E("p","mut","كل يوم مهمة واحدة. حلّي بالترتيب، وأعيدي أي اختبار لتحسين علامتك: الأسئلة تتغيّر في كل مرة."));
  if(!us.length){c.append(E("p","","تعذّر تحميل أسئلة هذه المادة. تأكدي من الاتصال وحدّثي الصفحة."));return}
  const pre=want+".",p=plan(us),doneN=p.filter(x=>S.done[pre+x.id]!=null).length;const bar=E("div","bar");const i=E("i");i.style.width=Math.round(doneN/p.length*100)+"%";bar.append(i);c.append(E("div","mut","أنجزتِ "+doneN+" من "+p.length),bar);
@@ -125,6 +131,17 @@ async function home(){stopTimer();if(!subjects(S.grade).some(x=>x[0]===S.subj))S
  const st=E("div","card");st.append(E("h2","","مستواي في دروس "+sname()));const rows=[];us.forEach(u=>u.lessons.forEach(l=>{const s=S.stats[l.id];if(s&&s.t)rows.push([u.label+" · "+l.title,s.t,Math.round(s.ok/s.t*100)])}));
  if(!rows.length)st.append(E("p","mut","يظهر هنا مستواك في كل درس بعد أول اختبار."));else{const t=E("table"),hr=E("tr");["الدرس","أسئلة","الإتقان","الحكم"].forEach(x=>hr.append(E("th","",x)));t.append(hr);rows.sort((a,b)=>a[2]-b[2]).forEach(r=>{const tr=E("tr");tr.append(H("td","",R(r[0])),E("td","",r[1]),E("td","",r[2]+"%"));const v=E("td","",r[2]>=75?"متقَن":r[2]>=50?"يحتاج تدريبًا":"ضعيف");v.style.color=r[2]>=75?"var(--ok)":r[2]>=50?"#8a6100":"var(--bad)";v.style.fontWeight=700;tr.append(v);t.append(tr)});st.append(t)}
  app.append(st)}
+
+/* ===== بنك الأسئلة المتوقعة: الكتاب مقسّمًا إلى أسئلة لكل درس ===== */
+function bankView(c,us,pre){const tot=us.reduce((a,u)=>a+u.lessons.reduce((b,l)=>b+(l.gen?0:l.size+l.sa.length),0),0);
+ c.replaceChildren(E("h2","","بنك الأسئلة المتوقعة — "+sname()+" · الصف "+gname()),E("p","mut","الكتاب مقسّم إلى أسئلة متوقعة لكل درس. افتحي الدرس، حاولي الإجابة، ثم اضغطي «أظهري الإجابات»."+(tot?" عدد الأسئلة: "+tot+".":"")));
+ us.forEach(u=>{c.append(E("div","wk",u.label+": "+u.title));u.lessons.forEach(l=>{const d=E("details","les");const sm=E("summary");sm.append(H("b","",R(l.title)),E("small","",l.gen?" · أسئلة متجدّدة":" · "+l.size+" اختيار من متعدد"+(l.sa.length?" + "+l.sa.length+" مقالي":"")));d.append(sm);
+   const body=E("div");d.append(body);let built=false;d.ontoggle=()=>{if(!d.open||built)return;built=true;fill()};
+   const fill=()=>{body.replaceChildren();let show=false;const list=l.gen?l.draw(10,new Set()).map(q=>({q:q.q,o:q.o,a:q.a,w:(q.steps||[]).join("\n"),fig:q.fig})):l.list.map((x,i)=>{const n=x.o.length,r=(i*3+1)%n,a0=x.a||0;return{q:x.q,o:x.o.map((_,k)=>x.o[(k+r)%n]),a:((a0-r)%n+n)%n,w:l.why&&x[l.why]||""}});
+    const bar=E("div","row");const tg=btn("👁 أظهري الإجابات",()=>{show=!show;tg.textContent=show?"🙈 أخفي الإجابات":"👁 أظهري الإجابات";body.classList.toggle("showans",show)},"alt");bar.append(tg,btn("📝 اختبريني في هذا الدرس",()=>start({id:"L."+l.id,t:"اختبار درس: "+l.title.replace(/\$/g,""),make:()=>l.draw(10,new Set())},pre)));if(l.gen)bar.append(btn("🔄 أسئلة جديدة",()=>{built=true;fill()},"alt"));body.append(bar);
+    if(list.length)body.append(E("div","bk-h","أولًا: اختيار من متعدد"));list.forEach((x,i)=>{const w=E("div","bk-q");w.append(H("div","q",(i+1)+") "+R(x.q)));if(x.fig)w.append(H("div","fgw",x.fig));x.o.forEach((o,k)=>{const li=H("div","bk-o"+(k===x.a?" right":""),"<b>"+"أبجد"[k]+")</b> <bdi>"+R(o)+"</bdi>");w.append(li)});if(x.w)w.append(H("div","steps ans","<b>التوضيح:</b> "+R(x.w)));body.append(w)});
+    if(l.sa.length){body.append(E("div","bk-h","ثانيًا: أسئلة مقالية متوقعة"));l.sa.forEach((x,i)=>{const w=E("div","bk-q");w.append(H("div","q",(i+1)+") "+R(x[0])),H("div","steps ans","<b>الإجابة النموذجية:</b> "+R(x[1])));body.append(w)})}};
+   c.append(d)})})}
 
 /* ===== الاختبار ===== */
 let T=null,TM=null;

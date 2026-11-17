@@ -35,15 +35,29 @@ function poolOf(l){if(l._pool)return l._pool;const P=[];const L=l._l||{};const r
   else if(l._kind==="math"){((L.recall&&L.recall.qs)||[]).forEach(x=>addM({q:x.q,o:x.o,a:x.a},0));((L.sum&&L.sum.rules)||[]).filter(z=>z[0]&&z[1]).forEach(z=>P.push({k:"short",lv:1,q:"اشرحي باختصار: "+z[0]+".",a:z[1]}));
     if(L.ex&&L.ex.q)P.push({k:"calc",lv:2,q:L.ex.q,a:(L.ex.steps||[]).join("\n")});
     l._gens={};(L.gens||[]).forEach(g=>{const lv=Math.min(3,Math.max(1,+g.lv||2));(l._gens[lv]=l._gens[lv]||[]).push(g)})}
+  else if(l._kind==="g11"){const TX="\u2063";const svgOf=g=>{try{return g&&window.G11K?g11svg(G11K.svgPlot(g)):""}catch(e){return ""}};
+    ((window.G11&&G11.book)||[]).flatMap(b=>b.items).filter(it=>it.lid===L.id).forEach(it=>{if(it.og||it.onl)return;const fig=svgOf(it.g);
+      if(it.t==="mcq"&&it.o&&it.o.length>=2)P.push({k:"mcq",lv:lvOf(it.q,1),q:TX+it.q,o:it.o.slice(0,4).map(z=>TX+z),a:0,shuf:1,fig});
+      else if(it.t!=="mcq"&&(it.sol||[]).length)P.push({k:"calc",lv:lvOf(it.q,2),q:TX+it.q,a:TX+it.sol.join("\n"),fig})});
+    l._gens={};(L.gens||[]).forEach(g=>{const lv=Math.min(3,Math.max(1,+g.lvl||2));(l._gens[lv]=l._gens[lv]||[]).push(g)})}
   return l._pool=P}
+const G11CSS=".gl{stroke:#e3d6d8;stroke-width:1}.ax{stroke:#333;stroke-width:1.3}.cv{fill:none;stroke:#7A1F2E;stroke-width:2.6;stroke-linejoin:round}.sg{stroke:#7A1F2E;stroke-width:5}.dc{fill:#7A1F2E;stroke:#7A1F2E;stroke-width:2}.do{fill:#fff;stroke:#7A1F2E;stroke-width:2.2}.tl{font:11px Arial,sans-serif;fill:#555;text-anchor:middle}.al{font:italic 13px serif;fill:#333}";function g11svg(x){return x?String(x).replace(/(<svg[^>]*>)/,"$1<style>"+G11CSS+"</style>"):""}
+function genG11(l,lv,k){const TX="\u2063";const gs=(l._gens||{})[lv]||[];if(!gs.length)return null;for(let i=0;i<20;i++){try{const g=gs[Math.floor(Math.random()*gs.length)];const x=g.f();if(!x||!x.q)continue;
+    let q=String(x.q),fig="";const m=q.match(/<div class=.gwrap.>[\s\S]*<\/div>/);if(m){fig=g11svg(m[0].replace(/^<div[^>]*>/,"").replace(/<\/div>$/,""));q=q.replace(m[0],"")}
+    if(k==="mcq"&&x.o&&x.o.length>=2)return{k,lv,q:TX+q,o:x.o.map(z=>TX+z),a:x.a,fig};
+    if(k==="calc")return{k,lv,q:TX+q.replace(/\s*(هو|هي|تساوي|يساوي):?\s*$/,"؟").replace(/:\s*$/,"."),a:TX+(x.s||[]).join("\n")+(x.o?"\nالناتج: "+x.o[x.a]:""),fig};
+    if((k==="tf"||k==="fill")&&x.o){const z=k==="tf"?toTF({q,o:x.o,a:x.a},Math.random):toFill({q,o:x.o,a:x.a});if(z)return{k,lv,q:TX+z.q,a:typeof z.a==="string"?TX+z.a:z.a,fig}}}catch(e){}}return null}
 function genMath(l,lv,k){const gs=(l._gens||{})[lv]||[];if(!gs.length)return null;for(let i=0;i<20;i++){try{const g=gs[Math.floor(Math.random()*gs.length)];const x=g.f();if(!x)continue;
     let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;
     if(k==="mcq"){if(!x.o||x.o.length<2)continue;return{k,lv,q:x.q,o:x.o.slice(0,4),a:x.a,shuf:1,fig}}
     if(k==="calc")return{k,lv,q:x.q,a:(x.steps||[]).join("\n"),fig};
     if((k==="tf"||k==="fill")&&x.o){const z=k==="tf"?toTF(x,Math.random):toFill(x);if(z)return{k,lv,q:z.q,a:z.a,fig}}}catch(e){}}return null}
-const avail=(l,lv,ks)=>{const P=poolOf(l);let n=P.filter(x=>x.lv===lv&&ks.includes(x.k)&&(!SP.fig||x.fig)).length;if(l._kind==="math"&&(l._gens||{})[lv]&&ks.some(k=>["mcq","tf","fill","calc"].includes(k)))return Infinity;return n};
+const avail=(l,lv,ks)=>{const P=poolOf(l);let n=P.filter(x=>x.lv===lv&&ks.includes(x.k)&&(!SP.fig||x.fig)).length;if((l._kind==="math"||l._kind==="g11")&&(l._gens||{})[lv]&&ks.some(k=>["mcq","tf","fill","calc"].includes(k)))return Infinity;return n};
 /* ---------- حالة التصميم ---------- */
 const SP={grade:"العاشر",key:null,sel:new Set(),w:{},basis:"pages",pct:[30,40,20,10],cnt:{mcq:20,tf:0,fill:0,def:2,expl:2,short:0,calc:0,fig:0,essay:0},mk:{mcq:1,tf:1,fill:1,def:2,expl:2,short:2,calc:3,fig:2,essay:4},M:null,fig:false};
+function fitMarks(Tg){const ks=KORDER.filter(k=>SP.cnt[k]>0);const cur=ks.reduce((s,k)=>s+SP.cnt[k]*SP.mk[k],0);if(!cur)return;const f=Tg/cur;ks.forEach(k=>SP.mk[k]=Math.max(.5,Math.round(SP.mk[k]*f*2)/2));
+  for(let g=0;g<40;g++){const d=Tg-ks.reduce((s,k)=>s+SP.cnt[k]*SP.mk[k],0);if(Math.abs(d)<1e-9)break;const k=ks.find(k=>Math.abs(SP.cnt[k]*.5)<=Math.abs(d)+1e-9&&(d>0||SP.mk[k]>.5));if(!k)break;SP.mk[k]+=d>0?.5:-.5}
+  const d=Tg-ks.reduce((s,k)=>s+SP.cnt[k]*SP.mk[k],0);toast(Math.abs(d)<1e-9?"✓ وُزّعت العلامات":"تعذّرت المطابقة التامة؛ عدّلي عدد الأسئلة أو العلامات يدويًّا")}
 function pagesOf(l){return l._pages||1}
 /* توزيع بأكبر باقٍ */
 function LR(N,ws){const W=ws.reduce((a,b)=>a+b,0)||1;const raw=ws.map(w=>N*w/W);const f=raw.map(Math.floor);let d=N-f.reduce((a,b)=>a+b,0);raw.map((v,i)=>[v-f[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(d>0){f[i]++;d--}});return f}
@@ -59,7 +73,12 @@ function vSpec(ex){
   const body=h("div",{class:"stack"},h("div",{class:"card muted"},"⏳ جارٍ تحميل بنوك الأسئلة…"));box.append(body);
   loadCat().then(()=>{
     function paint(){body.replaceChildren();
-      const gr=["الثامن","التاسع","العاشر"].filter(g=>CAT[g]);if(!CAT[SP.grade])SP.grade=gr[0];const keys=Object.keys(CAT[SP.grade]);if(!SP.key||!keys.includes(SP.key)){SP.key=keys[0];SP.sel=new Set();SP.M=null}
+      const gr=["الثامن","التاسع","العاشر","الحادي عشر"].filter(g=>CAT[g]);if(!CAT[SP.grade])SP.grade=gr[0];const keys=Object.keys(CAT[SP.grade]);if(!SP.key||!keys.includes(SP.key)){SP.key=keys[0];SP.sel=new Set();SP.M=null}
+      /* 0) بيانات الامتحان */
+      const m=ex.meta;const mf=(k,l,ph,t)=>h("label",{class:"f"},l,h("input",{class:"in",type:t||"text",value:m[k]||"",placeholder:ph||"",oninput:e=>{m[k]=e.target.value;save();if(k==="total")updT&&updT()}}));
+      body.append(h("div",{class:"card stack"},h("h3",{style:"margin:0"},"بيانات الامتحان"),h("div",{class:"row"},mf("title","عنوان الامتحان","امتحان الشهر الأول"),mf("teacher","اسم المعلمة"),mf("grade","الصف والشعبة","العاشر (أ)")),
+        h("div",{class:"row"},mf("date","التاريخ","2026/12/01"),mf("time","الزمن","45 دقيقة"),mf("total","العلامة الكلية للامتحان","30","number"))));
+      let updT=null;
       /* 1) المبحث والدروس */
       const c1=h("div",{class:"card stack"},h("h3",{style:"margin:0"},"١) المبحث والدروس ووزن كل درس"));
       c1.append(h("div",{class:"row"},h("label",{class:"f"},"الصف",h("select",{class:"in",onchange:e=>{SP.grade=e.target.value;SP.key=null;paint()}},gr.map(g=>h("option",{value:g,selected:g===SP.grade},"الصف "+g)))),
@@ -75,8 +94,10 @@ function vSpec(ex){
       body.append(c1);
       /* 2) طبيعة الأسئلة */
       const c2=h("div",{class:"card stack"},h("h3",{style:"margin:0"},"٢) طبيعة الأسئلة وعددها وعلاماتها"));
-      const tot=h("div",{class:"sum"});const updT=()=>{const N=KORDER.reduce((s,k)=>s+(SP.cnt[k]||0),0),Mk=KORDER.reduce((s,k)=>s+(SP.cnt[k]||0)*(SP.mk[k]||0),0);tot.replaceChildren(h("span",{},"عدد الأسئلة: ",h("b",{},N)),h("span",{},"مجموع العلامات: ",h("b",{},Mk)))};
-      const allL=lessonsOf(SP.grade,SP.key).flatMap(x=>x.ls);const kAv=k=>allL.reduce((s,l)=>s+(l._kind==="math"&&["mcq","tf","fill","calc"].includes(k)?1e6:poolOf(l).filter(x=>x.k===k).length),0);
+      const tot=h("div",{class:"sum"});updT=()=>{const N=KORDER.reduce((s,k)=>s+(SP.cnt[k]||0),0),Mk=KORDER.reduce((s,k)=>s+(SP.cnt[k]||0)*(SP.mk[k]||0),0),Tg=+ex.meta.total||0;
+        tot.replaceChildren(h("span",{},"عدد الأسئلة: ",h("b",{},N)),h("span",{},"مجموع العلامات: ",h("b",{style:Tg&&Tg!==Mk?"color:#B3261E":""},Mk)),Tg?h("span",{},Tg===Mk?"✓ تطابق العلامة الكلية":"العلامة الكلية المطلوبة "+Tg+" (الفرق "+(Tg-Mk)+")"):null,
+          Tg&&Tg!==Mk&&Mk?h("button",{class:"btn sm gold",onclick:()=>{fitMarks(Tg);paint()}},"⚖️ وزّعي العلامات لتطابق "+Tg):null)};
+      const allL=lessonsOf(SP.grade,SP.key).flatMap(x=>x.ls);const kAv=k=>allL.reduce((s,l)=>s+((l._kind==="math"||l._kind==="g11")&&["mcq","tf","fill","calc"].includes(k)?1e6:poolOf(l).filter(x=>x.k===k).length),0);
       KORDER.forEach(k=>{const av=kAv(k);if(!av){SP.cnt[k]=0;return}c2.append(h("div",{class:"row",style:"align-items:end"},h("div",{class:"f",style:"flex:2;font-weight:700;align-self:center"},KINDS[k],h("div",{class:"muted small",style:"font-weight:400"},av>=1e6?"متجدّدة":"في بنك المبحث: "+av)),
         h("label",{class:"f"},"العدد",h("input",{class:"in",type:"number",min:0,max:80,value:SP.cnt[k],oninput:e=>{SP.cnt[k]=+e.target.value||0;SP.M=null;updT()}})),
         h("label",{class:"f"},"علامة السؤال",h("input",{class:"in",type:"number",min:0,step:.5,value:SP.mk[k],oninput:e=>{SP.mk[k]=+e.target.value||0;updT()}}))))});
@@ -114,14 +135,14 @@ function pickBySpec(ex){const ls=selLessons();const M=SP.M;const ks=KORDER.filte
   const quota={};ks.forEach(k=>quota[k]=SP.cnt[k]);const used=new Set();const out=[];let short=0;const r=Math.random;
   const take=(l,lv)=>{const P=shuffle(poolOf(l).filter(x=>x.lv===lv&&!used.has(x.q+x.k)&&quota[x.k]>0),r);if(SP.fig)P.sort((a,b)=>(b.fig?1:0)-(a.fig?1:0));
     const order=ks.filter(k=>quota[k]>0).sort((a,b)=>quota[b]/SP.cnt[b]-quota[a]/SP.cnt[a]);
-    for(const k of order){const x=P.find(z=>z.k===k);if(x)return x;if(l._kind==="math"){const g=genMath(l,lv,k);if(g&&!used.has(g.q+g.k))return g}}return null};
+    for(const k of order){const x=P.find(z=>z.k===k);if(x)return x;if(l._kind==="math"||l._kind==="g11"){const g=l._kind==="g11"?genG11(l,lv,k):genMath(l,lv,k);if(g&&!used.has(g.q+g.k))return g}}return null};
   const cells=[];ls.forEach((l,i)=>LV.forEach((_,j)=>{for(let c=0;c<M[i][j];c++)cells.push([l,j])}));
   shuffle(cells,r).forEach(([l,j])=>{let x=take(l,j);if(!x)for(const d of [1,-1,2,-2,3,-3]){const jj=j+d;if(jj<0||jj>3)continue;x=take(l,jj);if(x)break}
     if(!x){short++;return}used.add(x.q+x.k);quota[x.k]--;out.push({x,l})});
   ex.qs=out.map(({x,l})=>{let o=x.o?x.o.slice(0,4):[],a=x.a;if(x.k==="mcq"&&x.shuf){const idx=shuffle(o.map((_,i)=>i),r);o=idx.map(i=>o[i]);a=idx.indexOf(a)}
     return{id:uid(),t:x.k,q:x.q,opts:x.k==="mcq"?o:[],a:x.k==="fill"?String(a):a,m:SP.mk[x.k],lines:x.k==="essay"||x.k==="calc"?5:x.k==="def"?2:3,fig:x.fig||"",lv:x.lv,ls:l.title,lsid:l.id}});
   ex.spec={basis:SP.basis,rows:ls.map(l=>({id:l.id,title:l.title,w:SP.w[SP.basis+":"+l.id]||0})),pct:SP.pct.slice()};
-  const m=ex.meta;m.subject=CAT[SP.grade][SP.key].name;m.grade="الصف "+SP.grade;if(!m.title||m.title==="اختبار قصير")m.title="امتحان "+m.subject;
+  const m=ex.meta;m.subject=CAT[SP.grade][SP.key].name;if(!m.grade||/^الصف \S+$/.test(m.grade))m.grade="الصف "+SP.grade;if(!m.title||m.title==="اختبار قصير")m.title="امتحان "+m.subject;
   return{short}}
 /* ---------- جدول المواصفات للطباعة (من أسئلة الامتحان الفعلية) ---------- */
 function specData(ex,ver){const gs=groupsOf(ex,ver||"A");const num={};let n=0;gs.forEach(g=>g.qs.forEach(q=>{num[q.id]=++n}));
@@ -145,10 +166,28 @@ function specPaper(ex,ver){const D=specData(ex,ver),m=ex.meta;const P=h("div",{c
   return P}
 
 /* ---------- تنزيل Word ---------- */
-let DX=null;function loadDocx(){return DX?Promise.resolve(DX):loadScript("lib/docx.umd.js").then(()=>DX=window.docx)}
+let DX=null;function loadDocx(){return DX?Promise.resolve(DX):loadScript((window.EXB||"")+"lib/docx.umd.js").then(()=>DX=window.docx)}
 const FONT="Sakkal Majalla",WINE="7A1F2E",GOLD="B8902A";
+function texRuns(t,base){const D=DX,out=[];const SY={"\\cdot":"·","\\times":"×","\\le":"≤","\\leq":"≤","\\ge":"≥","\\geq":"≥","\\ne":"≠","\\neq":"≠","\\infty":"∞","\\pi":"π","\\to":"→","\\cup":"∪","\\cap":"∩","\\in":"∈","\\theta":"θ","\\circ":"°","\\pm":"±","\\Rightarrow":"⇒","\\varnothing":"∅","\\emptyset":"∅","\\alpha":"α","\\beta":"β","\\Delta":"Δ","\\{":"{","\\}":"}","\\%":"%","\\,":" ","\\;":" ","\\quad":"  ","\\ ":" ","\\lim":"lim","\\sin":"sin","\\cos":"cos","\\tan":"tan","\\sec":"sec","\\csc":"csc","\\cot":"cot","\\ln":"ln","\\log":"log","\\mid":"|","\\vert":"|","\\neg":"¬","\\approx":"≈"};
+  let i=0;const grp=()=>{while(t[i]===" ")i++;if(t[i]==="{"){let d=1,j=i+1;for(;j<t.length;j++){if(t[j]==="{")d++;else if(t[j]==="}"){d--;if(!d)break}}const g=t.slice(i+1,j);i=j+1;return g}if(t[i]==="\\"){const mm=t.slice(i).match(/^\\([a-zA-Z]+|.)/);if(mm){i+=mm[0].length;return mm[0]}}const c=t[i++];return c===undefined?"":c};
+  const SUP={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","-":"⁻","+":"⁺","n":"ⁿ","x":"ˣ","(":"⁽",")":"⁾"};const flat=x=>{const r=texRuns(x,base);return r.map(z=>z.superScript?([...z.__t].every(c=>SUP[c])?[...z.__t].map(c=>SUP[c]).join(""):"^("+z.__t+")"):z.subScript?"_"+z.__t:z.__t).join("")};const push=(txt,st)=>{if(!txt)return;const r=new D.TextRun({...base,text:txt,rightToLeft:false,superScript:st&&st.sup,subScript:st&&st.sub});r.__t=txt;out.push(r)};
+  while(i<t.length){const c=t[i];
+    if(c==="\\"){const m=t.slice(i).match(/^\\([a-zA-Z]+|.)/);if(!m){i++;continue}const cmd="\\"+m[1];i+=m[0].length;
+      if(cmd==="\\frac"||cmd==="\\dfrac"||cmd==="\\tfrac"){const a=flat(grp()),b=flat(grp());push((a.length>1?"("+a+")":a)+"/"+(b.length>1?"("+b+")":b))}
+      else if(cmd==="\\sqrt"){let n="";if(t[i]==="["){const j=t.indexOf("]",i);n=t.slice(i+1,j);i=j+1}push((n==="3"?"∛":n?n+"√":"√")+"("+flat(grp())+")")}
+      else if(cmd==="\\text"||cmd==="\\mathrm"||cmd==="\\textbf"||cmd==="\\operatorname"){const g=grp();const r=new D.TextRun({...base,text:g,rightToLeft:/[\u0600-\u06FF]/.test(g)});r.__t=g;out.push(r)}
+      else if(cmd==="\\mathbb"){const g=grp();push(g==="R"?"ℝ":g==="Z"?"ℤ":g==="N"?"ℕ":g)}
+      else if(cmd==="\\left"||cmd==="\\right"||cmd==="\\big"||cmd==="\\Big"){if(t[i]==="\\"){const m2=t.slice(i).match(/^\\([a-zA-Z]+|.)/)||["\\",""];i+=m2[0].length;push(SY["\\"+m2[1]]!=null?SY["\\"+m2[1]]:m2[1])}else{const ch=t[i++];if(ch!==".")push(ch)}}
+      else if(cmd==="\\begin"||cmd==="\\end"){grp()}else if(cmd==="\\\\"){push(" ؛ ")}
+      else if(cmd==="\\displaystyle"||cmd==="\\limits"||cmd==="\\nolimits"){}
+      else push(SY[cmd]!=null?SY[cmd]:m[1])}
+    else if(c==="^"||c==="_"){i++;const g=flat(grp());push(g,c==="^"?{sup:1}:{sub:1})}
+    else if(c==="{"||c==="}"){i++}else if(c==="&"){i++;push(" ")}
+    else{let j=i;while(j<t.length&&!"\\^_{}&".includes(t[j]))j++;push(t.slice(i,j));i=j}}
+  return out}
 function runsOf(str,o){const D=DX;o=o||{};const out=[];const base={font:FONT,size:o.size||28,bold:o.bold,color:o.color};
-  const s=String(str==null?"":str);if(!s.includes("$")){s.split("\n").forEach((ln,i)=>{if(i)out.push(new D.TextRun({...base,break:1,text:""}));out.push(new D.TextRun({...base,text:ln,rightToLeft:true}))});return out}
+  const s=String(str==null?"":str);
+  if(s[0]==="\u2063"){s.slice(1).split("\n").forEach((ln,li)=>{if(li)out.push(new D.TextRun({...base,break:1,text:""}));ln.replace(/<[^>]+>/g,"").split("$").forEach((p,k)=>{if(!p)return;if(k%2)out.push(new D.TextRun({...base,text:"\u2066"}),...texRuns(p,{...base,font:"Cambria Math"}),new D.TextRun({...base,text:"\u2069"}));else out.push(new D.TextRun({...base,text:p,rightToLeft:true}))})});return out}if(!s.includes("$")){s.split("\n").forEach((ln,i)=>{if(i)out.push(new D.TextRun({...base,break:1,text:""}));out.push(new D.TextRun({...base,text:ln,rightToLeft:true}))});return out}
   const el=document.createElement("span");el.innerHTML=s.split("\n").map(l=>window.ML&&ML.T?ML.T(l):l).join("<br>");
   const walk=(n,st)=>{if(n.nodeType===3){if(n.nodeValue)out.push(new D.TextRun({...base,text:n.nodeValue,rightToLeft:!st.ltr,italics:st.i,superScript:st.sup,subScript:st.sub}));return}
     if(n.nodeType!==1)return;const tg=n.tagName,c=n.className||"";if(tg==="BR"){out.push(new D.TextRun({...base,break:1,text:""}));return}

@@ -60,6 +60,10 @@ pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wr
 .ln{border-bottom:1px dotted #777;height:26px}
 .key-a{background:#fbf4de;border-radius:6px;padding:0 8px;display:inline-block;margin-top:2px}
 .pf{margin-top:14px;border-top:1px solid #B8902A;padding-top:4px;display:flex;justify-content:space-between;font-size:9.5pt;color:#555}
+.spt{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}.spt th,.spt td{border:1px solid var(--ln);padding:4px;text-align:center}.spt th{background:var(--w);color:#fff;font:700 13px var(--f)}
+.spt input{width:58px;min-height:34px;text-align:center;border:1.5px solid var(--ln);border-radius:8px;font:700 15px var(--f);background:var(--card);color:var(--ink)}.spt .av{font-size:11px;color:var(--mut,#777)}.spt .ft td{font-weight:700;background:var(--soft)}
+.spp{border-collapse:collapse;width:100%;font-size:10.5pt;margin-top:8px}.spp th,.spp td{border:1px solid #7A1F2E;padding:3px 4px;text-align:center}.spp th{background:#7A1F2E;color:#fff;font-weight:700}.spp .tl{text-align:right}.spp .qn{font-size:9.5pt;max-width:120px}.spp .ft td{background:#fbf4de;font-weight:700}
+.paper.land{max-width:297mm}.sig{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;font-weight:700;font-size:11pt;text-align:center}
 .endn{text-align:center;font-weight:700;margin-top:10px;color:#7A1F2E}
 /* student */
 .sq{margin-bottom:12px}
@@ -74,6 +78,8 @@ pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wr
 @media (max-width:640px){.paper{min-width:0;padding:8mm}.ph{grid-template-columns:1fr;text-align:center}.ph .l{text-align:center}}
 @media print{
   @page{size:A4;margin:10mm}
+  @page land{size:A4 landscape;margin:8mm}
+  .paper.land{page:land}
   body{background:#fff!important}
   .noprint,.top,.tabs,.toast{display:none!important}
   main{padding:0!important;max-width:none!important}
@@ -92,6 +98,7 @@ pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wr
 <script src="math/mathlib.js"></script>
 <script src="../feel/qrcode.js"></script>
 <script src="../teachers/qclass.js"></script>
+<script src="spec.js"></script>
 <script>
 "use strict";
 const $=s=>document.querySelector(s);
@@ -128,12 +135,12 @@ function figEl(svg){const d=document.createElement("div");d.className="fgw";d.in
 function blank(s){return String(s).replace(/_{2,}|\.{4,}|…+/g,"________")}
 /* ---------- state ---------- */
 let tab="list";
-const TABS=[["list","امتحاناتي"],["info","المعلومات"],["gen","⚡ تجهيز تلقائي"],["qs","الأسئلة"],["bank","بنك أسئلتي"],["prev","معاينة وطباعة"],["share","رابط للطالبات"]];
+const TABS=[["list","امتحاناتي"],["info","المعلومات"],["spec","📊 جدول المواصفات"],["gen","⚡ تجهيز تلقائي"],["qs","الأسئلة"],["bank","بنك أسئلتي"],["prev","معاينة وطباعة"],["share","رابط للطالبات"]];
 function nav(t){tab=t;render();window.scrollTo(0,0)}
 function shell(body){return[h("div",{class:"tabs noprint",role:"tablist"},TABS.map(([k,n])=>h("button",{"aria-current":k===tab?"true":"false",onclick:()=>nav(k)},n))),body]}
 function render(){app.replaceChildren();const ex=cur();let v;
   if(tab==="list")v=vList();else if(!ex){tab="list";v=vList()}
-  else v=({info:vInfo,gen:vGen,qs:vQs,bank:vBank,prev:vPrev,share:vShare})[tab](ex);
+  else v=({info:vInfo,spec:vSpec,gen:vGen,qs:vQs,bank:vBank,prev:vPrev,share:vShare})[tab](ex);
   app.append(...shell(v))}
 /* ---------- list ---------- */
 function vList(){
@@ -214,26 +221,28 @@ function vQs(ex){
   return box}
 /* ---------- auto generator (science + math + Arabic from the platform's data) ---------- */
 let CAT=null;
+const FBFILES=["g8-sci","g9-bio","g9-chem"];
 const SFILES=["g8-sci","g9-bio","g9-chem","g9-earth","g9-phys","g10-bio","g10-chem","g10-earth","g10-phys"];
 const MFILES=["m8u1","m8u2","m8u3","m8u4","m9u1","m9u2","m9u3","m9u4","m10u1","m10u2","m10u3","m10u4"];
 function loadScript(src){return new Promise((res,rej)=>{const sc=document.createElement("script");sc.src=src;sc.onload=res;sc.onerror=()=>rej(new Error(src));document.head.append(sc)})}
 function loadCat(){if(CAT)return Promise.resolve(CAT);
   window.SCI={data:{},add(g,k,o){(this.data[g]=this.data[g]||{})[k]=o}};window.CONFIG=window.CONFIG||{};
-  const sci=Promise.all(SFILES.map(f=>loadScript("../science/data/"+f+".js")));
+  window.FB=window.FB||{_:{},add(o){Object.assign(this._,o)}};
+  const sci=Promise.all(SFILES.map(f=>loadScript("../science/data/"+f+".js")).concat(FBFILES.map(f=>loadScript("../finals/bank/"+f+".js").catch(()=>0))));
   const math=loadScript("math/mgeo.js").then(()=>Promise.all(MFILES.map(f=>loadScript("math/"+f+".js"))));
   const ar=fetch("data/arabic.json").then(r=>r.json());
   return Promise.all([sci,math,ar]).then(([,,A])=>{
     const C={};const sub=(g,k,name)=>{C[g]=C[g]||{};return C[g][k]=C[g][k]||{name,units:[]}};
-    for(const g in SCI.data)for(const k in SCI.data[g]){const o=SCI.data[g][k];sub(g,k,o.name).units=(o.units||[]).map(u=>({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map(l=>({id:l.id,title:l.title,info:(l.quiz||[]).length+" سؤال",
+    for(const g in SCI.data)for(const k in SCI.data[g]){const o=SCI.data[g][k];sub(g,k,o.name).units=(o.units||[]).map(u=>({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map(l=>({id:l.id,title:l.title,_l:l,_kind:"sci",_pages:(m=>m?Math.max(1,+m[2]-+m[1]+1):1)(String(l.pages||"").match(/(\d+)\D+(\d+)/)),info:(l.quiz||[]).length+" سؤال",
       mcq:()=>(l.quiz||[]).filter(x=>x.q&&x.o&&x.o.length>=2).map(x=>({q:x.q,o:x.o,a:x.a})),
       defs:()=>(l.points||[]).filter(p=>p[0]&&p[1]).map(p=>({q:"وضّحي المقصود بـ: "+p[0]+".",a:p[1]})),probs:()=>[]}))}))}
-    (window.MUNITS||[]).forEach(u=>{sub(u.grade,"math","الرياضيات").units.push({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map(l=>{
+    (window.MUNITS||[]).forEach(u=>{sub(u.grade,"math","الرياضيات").units.push({id:u.id,n:u.n,title:u.title,lessons:(u.lessons||[]).map((l,li,LA)=>{
       const draw=(n,fn)=>{const out=[],seen=new Set(),gs=l.gens||[];for(let i=0;i<n*4&&out.length<n&&gs.length;i++){try{const x=gs[i%gs.length].f();if(!x||!x.o&&fn.needsO||seen.has(x.q))continue;let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;if(x.o&&x.o.length<2&&fn.needsO)continue;seen.add(x.q);out.push(fn(x,fig))}catch(e){}}return out};
-      return{id:u.id+"-"+l.id,title:l.title,info:"أسئلة متجدّدة",
+      return{id:u.id+"-"+l.id,title:l.title,_l:l,_kind:"math",_pages:(LA[li+1]&&LA[li+1].page&&l.page)?Math.max(1,LA[li+1].page-l.page):6,info:"أسئلة متجدّدة",
         mcq:()=>[...((l.recall&&l.recall.qs)||[]).map(x=>({q:x.q,o:x.o,a:x.a})),...draw(14,Object.assign((x,fig)=>({q:x.q,o:x.o,a:x.a,shuf:1,fig}),{needsO:1}))],
         defs:()=>((l.sum&&l.sum.rules)||[]).filter(r=>r[0]&&r[1]).map(r=>({q:"اشرحي باختصار: "+r[0]+".",a:r[1]})),
         probs:()=>[...(l.ex&&l.ex.q?[{q:l.ex.q,a:(l.ex.steps||[]).join("\n")}]:[]),...draw(10,(x,fig)=>({q:x.q,a:(x.steps||[]).join("\n"),fig}))]}})})});
-    for(const g in A){const o=sub(g,"ar","اللغة العربية");o.units=A[g].map(u=>({id:u.id,n:u.n,title:u.title,lessons:u.lessons.map(l=>({id:l.id,title:l.title,info:l.mcq.length+" سؤال",mcq:()=>l.mcq.map(x=>({q:x.q,o:x.o,a:x.a,shuf:1})),defs:()=>l.defs,probs:()=>l.probs}))}))}
+    for(const g in A){const o=sub(g,"ar","اللغة العربية");o.units=A[g].map(u=>({id:u.id,n:u.n,title:u.title,lessons:u.lessons.map(l=>({id:l.id,title:l.title,_l:l,_kind:"ar",_periods:2,info:l.mcq.length+" سؤال",mcq:()=>l.mcq.map(x=>({q:x.q,o:x.o,a:x.a,shuf:1})),defs:()=>l.defs,probs:()=>l.probs}))}))}
     return CAT=C})}
 const GEN={grade:"العاشر",key:null,sel:new Set(),nm:10,ns:3,np:0,mm:1,ms:2,mp:3,keep:false};
 const cnt=(l,k)=>{l._c=l._c||{};return l._c[k]!=null?l._c[k]:(l._c[k]=l[k]().length)};
@@ -321,9 +330,14 @@ function vPrev(ex){
   box.append(h("div",{class:"bar2 noprint"},
     h("button",{class:"btn",onclick:()=>window.print()},"🖨️ طباعة / حفظ PDF"),
     h("button",{class:"btn g",onclick:()=>{pv.ver=pv.ver==="A"?"B":"A";render()}},"النسخة: "+pv.ver+" (بدّلي)"),
-    h("button",{class:"btn g",onclick:()=>{pv.key=!pv.key;render()}},pv.key?"عرض ورقة الطالبة":"عرض مفتاح الإجابة")));
+    h("button",{class:"btn g",onclick:()=>{pv.key=!pv.key;pv.spec=false;render()}},pv.key?"عرض ورقة الطالبة":"عرض مفتاح الإجابة"),
+    h("button",{class:"btn g",onclick:()=>{pv.spec=!pv.spec;render()}},pv.spec?"عرض الامتحان":"📊 جدول المواصفات")));
+  box.append(h("div",{class:"bar2 noprint"},h("b",{},"تنزيل Word:"),
+    h("button",{class:"btn gold sm",onclick:()=>wordDownload(ex,pv.ver,"exam")},"📄 ورقة الامتحان"),
+    h("button",{class:"btn gold sm",onclick:()=>wordDownload(ex,pv.ver,"key")},"🔑 الإجابة النموذجية + جدول المواصفات"),
+    h("button",{class:"btn g sm",onclick:()=>wordDownload(ex,pv.ver,"spec")},"📊 جدول المواصفات وحده")));
   box.append(h("p",{class:"muted small noprint"},"النسخة ب ترتّب الأسئلة والخيارات بشكل مختلف لتقليل النقل، ومفتاحها يتغيّر معها. من نافذة الطباعة اختاري «حفظ كـ PDF» لإرسالها على واتساب."));
-  box.append(h("div",{class:"paperwrap"},paper(ex,pv.ver,pv.key)));return box}
+  box.append(h("div",{class:"paperwrap"},pv.spec?specPaper(ex,pv.ver):paper(ex,pv.ver,pv.key)));return box}
 /* ---------- share ---------- */
 async function enc(o){const j=JSON.stringify(o);try{if(window.CompressionStream){const cs=new CompressionStream("deflate-raw");const w=cs.writable.getWriter();w.write(new TextEncoder().encode(j));w.close();const b=new Uint8Array(await new Response(cs.readable).arrayBuffer());let s="";b.forEach(x=>s+=String.fromCharCode(x));return"z"+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}}catch(e){}
   return"p"+encodeURIComponent(j)}
@@ -382,7 +396,7 @@ async function studentMode(code){
 const m=location.hash.match(/^#s=(.+)$/);
 const ROSTER="../teachers/roster.enc.json";
 async function gate(){
-  const start=()=>{if(S.cur&&!cur())S.cur=S.exams[0]?.id||null;render()};
+  const start=()=>{if(S.cur&&!cur())S.cur=S.exams[0]?.id||null;if(location.hash==="#spec"){const e=newExam();e.meta.title="امتحان حسب جدول المواصفات";S.exams.unshift(e);S.cur=e.id;save();tab="spec";history.replaceState(null,"",location.pathname)}render()};
   const box=h("div",{class:"card stack",style:"max-width:460px;margin:30px auto"},h("div",{class:"muted"},"⏳ جارٍ التحقق…"));app.replaceChildren(box);
   try{
     if(await QClass.resume(ROSTER))return start();

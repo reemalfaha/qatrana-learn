@@ -253,5 +253,58 @@ gens:[
    return{q,...o,s:kind==="comp"?["قاعدة السلسلة: "+$("f'(x)=g'(h(x))\\cdot h'(x)"),$("f'("+c+")=g'(h("+c+"))\\cdot h'("+c+")=g'("+hc+")\\cdot("+hp+")"),"= "+$("("+gp+")("+hp+")="+v)]:["قاعدة سلسلة القوّة: "+$("f'(x)="+n+"(h(x))^{"+(n-1)+"}h'(x)"),$("f'("+c+")="+n+"("+hc+")^{"+(n-1)+"}("+hp+")="+v)],chk:()=>true}}}
 ]});
 
+
+/* ===== إضافات: المدى والقيم العظمى والصغرى من قاعدة الاقتران + أسئلة رسوم بيانية ===== */
+const LS3=id=>U.lessons.find(l=>l.id===id);
+const INF="\\infty";const S=v=>String(v);
+const quadCS=(a,h,k)=>[a,-2*a*h,a*h*h+k];
+LS3("u3l3").gens.push(
+ {id:"rng-quad",lvl:2,t:"مدى اقتران تربيعي من قاعدته",f(){const a=rnz(-3,3),h=ri(-4,4),k=ri(-6,6);if(h===k)return null;const cs=quadCS(a,h,k);
+   const R=a>0?"["+k+" , "+INF+")":"(-"+INF+" , "+k+"]";const W=a>0?"(-"+INF+" , "+k+"]":"["+k+" , "+INF+")";
+   const o=opts($(R),[$(W),$(a>0?"["+h+" , "+INF+")":"(-"+INF+" , "+h+"]"),$("\\mathbb{R}"),$(a>0?"("+k+" , "+INF+")":"(-"+INF+" , "+k+")")]);if(!o)return null;
+   return{q:"مدى الاقتران "+$("f(x)="+P(cs))+" هو:",...o,s:[$("f'(x)="+P([2*a,-2*a*h])+"=0\\Rightarrow x="+h),"إشارة "+$("f'")+": "+(a>0?"− ثم + ⇐ قيمة صغرى":"+ ثم − ⇐ قيمة عظمى")+" عند "+$("x="+h),$("f("+h+")="+k)+" وهي "+(a>0?"أصغر":"أكبر")+" قيمة للاقتران","المدى "+$(R)],chk:()=>PV(cs,h).v===k}}},
+ {id:"ext-quad-val",lvl:1,t:"نوع القيمة القصوى وقيمتها من القاعدة",f(){const a=rnz(-3,3),h=ri(-4,4),k=ri(-7,7);const cs=quadCS(a,h,k);const f0=PV(cs,0).v;if(new Set([k,h,f0,-k]).size<4)return null;
+   const typ=a>0?"صغرى":"عظمى",oth=a>0?"عظمى":"صغرى";
+   const o=opts("قيمة "+typ+" تساوي "+$(S(k)),["قيمة "+oth+" تساوي "+$(S(k)),"قيمة "+typ+" تساوي "+$(S(h)),"قيمة "+typ+" تساوي "+$(S(f0)),"قيمة "+oth+" تساوي "+$(S(-k))]);if(!o)return null;
+   return{q:"للاقتران "+$("f(x)="+P(cs))+" قيمة قصوى واحدة، هي:",...o,s:[$("f'(x)="+P([2*a,-2*a*h]))+" ⇐ القيمة الحرجة "+$("x="+h),$("f''(x)="+(2*a))+(a>0?" > 0 ⇐ صغرى":" < 0 ⇐ عظمى"),"القيمة: "+$("f("+h+")="+k)+" (انتبهي: القيمة هي "+$("y")+" لا "+$("x")+")"],chk:()=>PV(cs,h).v===k}}},
+ {id:"rng-int-q",lvl:3,t:"مدى اقتران تربيعي على فترة مغلقة",f(){const a=rnz(-2,2),h=ri(-3,3),k=ri(-5,5);const cs=quadCS(a,h,k);const lo=h-ri(-1,3),hi=lo+ri(2,5);
+   const fl=PV(cs,lo).v,fh=PV(cs,hi).v,inside=h>=lo&&h<=hi;const vals=[fl,fh].concat(inside?[k]:[]);const m=Math.min(...vals),Mx=Math.max(...vals);if(m===Mx)return null;
+   const R="["+m+" , "+Mx+"]";const o=opts($(R),[$("["+Math.min(fl,fh)+" , "+Math.max(fl,fh)+"]"),$(a>0?"["+k+" , "+INF+")":"(-"+INF+" , "+k+"]"),$("["+lo+" , "+hi+"]"),$("["+m+" , "+(Mx+Math.abs(a))+"]")]);if(!o)return null;
+   return{q:"مدى الاقتران "+$("f(x)="+P(cs))+" في الفترة "+$("["+lo+" , "+hi+"]")+" هو:",...o,s:[$("f'(x)="+P([2*a,-2*a*h])+"=0\\Rightarrow x="+h)+(inside?" وهي داخل الفترة":" وهي خارج الفترة فنهملها"),"نحسب القيم: "+$("f("+lo+")="+fl)+" ، "+$("f("+hi+")="+fh)+(inside?" ، "+$("f("+h+")="+k):""),"أصغر قيمة "+$(S(m))+" وأكبر قيمة "+$(S(Mx))+" ⇐ المدى "+$(R)],chk:()=>true}}},
+ {id:"abs-ext",lvl:3,t:"القيمة العظمى أو الصغرى المطلقة على فترة مغلقة",f(){const p=ri(-3,1),q=p+pick([2,4]);const lead=pick([1,-1]);const cs=[...cubicFromRoots(p,q,lead),ri(-5,5)];
+   const lo=p-ri(1,2),hi=q+ri(0,2);const xs=[lo,p,q,hi].filter((v,i,A)=>A.indexOf(v)===i);const V=xs.map(x=>PV(cs,x).v);if(new Set(V).size<V.length)return null;const askMax=pick([true,false]);
+   const best=askMax?Math.max(...V):Math.min(...V);const loc=PV(cs,askMax?(lead>0?p:q):(lead>0?q:p)).v;
+   const o=opts($(S(best)),[$(S(askMax?Math.min(...V):Math.max(...V))),...V.filter(v=>v!==best).map(v=>$(S(v))),$(S(loc)),$(S(-best))]);if(!o)return null;
+   return{q:"القيمة "+(askMax?"العظمى":"الصغرى")+" المطلقة للاقتران "+$("f(x)="+P(cs))+" في الفترة "+$("["+lo+" , "+hi+"]")+" هي:",...o,
+   s:[$("f'(x)="+P(dpoly(cs))+"="+(3*lead)+"("+M.xm(p)+")("+M.xm(q)+")")+" ⇐ القيم الحرجة "+$(p+" , "+q),"نحسب قيم الاقتران عند القيم الحرجة وطرفي الفترة: "+xs.map((x,i)=>$("f("+x+")="+V[i])).join(" ، "),(askMax?"أكبرها ":"أصغرها ")+$(S(best))+" ⇐ هي القيمة "+(askMax?"العظمى":"الصغرى")+" المطلقة","تنبيه: قد تقع القيمة المطلقة عند طرف الفترة لا عند القيمة المحلية"],chk:()=>true}}},
+ {id:"rng-cubic-int",lvl:3,t:"مدى اقتران تكعيبي على فترة مغلقة",f(){const p=ri(-3,1),q=p+2;const lead=pick([1,-1]);const cs=[...cubicFromRoots(p,q,lead),ri(-4,4)];const lo=p-pick([1,2]),hi=q+pick([1,2]);
+   const xs=[lo,p,q,hi];const V=xs.map(x=>PV(cs,x).v);const m=Math.min(...V),Mx=Math.max(...V);const R="["+m+" , "+Mx+"]";const fl=V[0],fh=V[3];
+   const o=opts($(R),[$("["+Math.min(V[1],V[2])+" , "+Math.max(V[1],V[2])+"]"),$("\\mathbb{R}"),$("["+lo+" , "+hi+"]"),$("["+(-Mx)+" , "+(-m)+"]"),$("["+Math.min(fl,fh)+" , "+Math.max(fl,fh)+"]")]);if(!o)return null;
+   return{q:"مدى الاقتران "+$("f(x)="+P(cs))+" في الفترة "+$("["+lo+" , "+hi+"]")+" هو:",...o,s:["القيم الحرجة: "+$(p+" , "+q)+" (أصفار "+$("f'(x)="+P(dpoly(cs)))+")",xs.map((x,i)=>$("f("+x+")="+V[i])).join(" ، "),"المدى من أصغر قيمة إلى أكبرها: "+$(R)],chk:()=>true}}},
+ {id:"ext-graph",lvl:1,t:"القيم القصوى وفترات التزايد من الرسم",f(){const p=ri(-2,0),q=p+2;const lead=pick([1,-1]);const cs=[...cubicFromRoots(p,q,lead),ri(-1,2)];const fp=PV(cs,p).v,fq=PV(cs,q).v;if(Math.abs(fp)>6||Math.abs(fq)>6)return null;
+   const ex=ex0=>"("+cs[0]+")*x^3+("+cs[1]+")*x^2+("+cs[2]+")*x+("+cs[3]+")";const s_=svg({x:[p-2,q+2],y:[Math.min(fp,fq)-3,Math.max(fp,fq)+3],p:[["f",ex(),p-1.6,q+1.6,"a","a"]]});if(!s_)return null;
+   const kind=pick(["max","min","dec"]);const xmax=lead>0?p:q,xmin=lead>0?q:p,vmax=PV(cs,xmax).v,vmin=PV(cs,xmin).v;
+   if(kind==="dec"){const R=lead>0?$("("+p+" , "+q+")"):$("(-"+INF+" , "+p+")")+" و "+$("("+q+" , "+INF+")");const W=lead>0?$("(-"+INF+" , "+p+")")+" و "+$("("+q+" , "+INF+")"):$("("+p+" , "+q+")");
+     const o=opts(R,[W,$("("+vmin+" , "+vmax+")"),$("(-"+INF+" , "+q+")")]);if(!o)return null;
+     return{q:"اعتمادًا على التمثيل البياني لمنحنى "+$("f(x)")+" ، الاقتران متناقص في:"+s_,...o,s:["المنحنى ينزل (من اليسار إلى اليمين) "+(lead>0?"بين القمة والقاع":"قبل القاع وبعد القمة"),"الفترات تُكتب بقيم "+$("x")+" لا "+$("y")],chk:()=>true}}
+   const v=kind==="max"?vmax:vmin;const o=opts($(S(v)),[$(S(kind==="max"?vmin:vmax)),$(S(kind==="max"?xmax:xmin)),$(S(-v))]);if(!o)return null;
+   return{q:"اعتمادًا على التمثيل البياني لمنحنى "+$("f(x)")+" ، القيمة "+(kind==="max"?"العظمى":"الصغرى")+" المحلية هي:"+s_,...o,s:[(kind==="max"?"القمة":"القاع")+" عند النقطة "+$("("+(kind==="max"?xmax:xmin)+" , "+v+")"),"القيمة القصوى هي الإحداثي "+$("y")+" : "+$(S(v))],chk:()=>true}}}
+);
+LS3("u3l1").gens.push(
+ {id:"lim-graph-1s",lvl:2,t:"النهاية من جهة واحدة وقيمة الاقتران من الرسم",f(){const c=ri(-2,2),a=pick([1,-1]),L1=ri(-3,3),m2=pick([-1,1,2]),L2=L1+pick([-3,-2,2,3]),fc=pick([L1,L2,L1+1]);
+   const s_=svg({x:[c-4,c+4],y:[Math.min(L1,L2)-4,Math.max(L1,L2)+4],p:[["f",a+"*(x-("+c+"))^2+("+L1+")",c-3,c,"a","o"],["f",m2+"*(x-("+c+"))+("+L2+")",c,c+3.5,"o","a"],["p",c,fc,"c"]]});if(!s_)return null;
+   const ask=pick(["L","R","V"]);const v=ask==="L"?L1:ask==="R"?L2:fc;const qq=ask==="L"?lim(c+"^-","f(x)"):ask==="R"?lim(c+"^+","f(x)"):"f("+c+")";
+   const o=opts($(S(v)),[$(S(L1)),$(S(L2)),$(S(fc)),$("\\text{غير موجودة}"),$(S(c))].filter(z=>z!==$(S(v))));if(!o)return null;
+   return{q:"اعتمادًا على التمثيل البياني، قيمة "+$(qq)+" هي:"+s_,...o,s:[ask==="V"?"قيمة الاقتران تُقرأ من النقطة المظلّلة عند "+$("x="+c):"نتتبّع المنحنى من "+(ask==="L"?"اليسار":"اليمين")+" نحو "+$("x="+c)+" دون النظر إلى النقطة المظلّلة","الناتج "+$(S(v))],chk:()=>true}}},
+ {id:"cont-graph",lvl:2,t:"الاتصال من التمثيل البياني",f(){const c=ri(-2,2),k=ri(-2,3),m=pick([1,-1,2]);const typ=pick(["ok","hole","jump","undef"]);const Lv=m*c+k;
+   const fl=m+"*x+("+k+")";const P_=[];let st;
+   if(typ==="jump"){const k2=k+pick([-2,2]);P_.push(["f",fl,c-4,c,"a","c"],["f",m+"*x+("+k2+")",c,c+4,"o","a"]);st=["من اليسار "+Lv+" ومن اليمين "+(m*c+k2)+" ⇐ النهاية غير موجودة"]}
+   else{P_.push(["f",fl,c-4,c,"a",typ==="ok"?"":"o"],["f",fl,c,c+4,typ==="ok"?"":"o","a"]);if(typ==="hole")P_.push(["p",c,Lv+pick([-2,2]),"c"]);if(typ==="ok")P_.push(["p",c,Lv,"c"]);
+     st=typ==="ok"?["النهاية "+Lv+" وتساوي قيمة الاقتران"]:typ==="hole"?["النهاية "+Lv+" لكن النقطة المظلّلة في مكان آخر ⇐ النهاية ≠ قيمة الاقتران"]:["دائرة مفرغة ولا توجد نقطة مظلّلة ⇐ الاقتران غير معرّف عند "+c]}
+   const s_=svg({x:[c-4,c+4],y:[Lv-6,Lv+6],p:P_});if(!s_)return null;
+   const R={ok:"متّصل",hole:"غير متّصل؛ النهاية لا تساوي قيمة الاقتران",jump:"غير متّصل؛ النهاية غير موجودة",undef:"غير متّصل؛ الاقتران غير معرّف"};const o=opts(R[typ],Object.values(R).filter(z=>z!==R[typ]));if(!o)return null;
+   return{q:"اعتمادًا على التمثيل البياني، الاقتران عند "+$("x="+c)+" :"+s_,...o,s:[...st,"شروط الاتصال: معرّف، والنهاية موجودة، والنهاية = قيمة الاقتران"],chk:()=>true}}}
+);
+
 (window.G11=window.G11||{units:[]}).units.push(U);
 })();

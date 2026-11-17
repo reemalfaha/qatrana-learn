@@ -83,11 +83,16 @@ function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getE
   c.append(H("div","q",it.q));
   if(it.g)c.append(H("div","gwrap",svgPlot(it.g)));if(it.nl)c.append(H("div","gwrap",svgLine(it.nl)));
   const fb=el("div",{class:"fbk"}),sol=el("div",{class:"sol",hidden:true});
-  sol.append(el("b",{},"الحل:"),...(it.sol||[]).map(s=>H("div","st",s)));
-  if(it.t==="self"&&it.a)sol.append(H("div","st",it.a));
-  if(it.ag)sol.append(el("div",{class:"mut"},"التمثيل البياني:"),H("div","gwrap",svgPlot(it.ag)));
+  const steps=(it.sol||[]).slice();if(it.t==="self"&&it.a&&!steps.includes(it.a))steps.push(it.a);
+  const sl=el("ol",{class:"stp"});let shown=0;
+  const extra=el("div",{hidden:true});if(it.sol_nl)extra.append(el("div",{class:"mut"},"التمثيل على خط الأعداد:"),H("div","gwrap",svgLine(it.sol_nl)));if(it.ag)extra.append(el("div",{class:"mut"},"التمثيل البياني:"),H("div","gwrap",svgPlot(it.ag)));
+  const nextB=el("button",{class:"btn sm"},"الخطوة التالية ▸"),allB=el("button",{class:"btn sm alt"},"اعرضي كل الخطوات");
+  const reveal=n=>{while(shown<n&&shown<steps.length){const li=el("li",{},el("b",{class:"sn"},"الخطوة "+(shown+1)),H("div","",steps[shown]));sl.append(li);math(li);shown++}
+   const done=shown>=steps.length;nextB.hidden=allB.hidden=done;extra.hidden=!done;if(done)nextB.textContent="";else nextB.textContent="الخطوة التالية ("+(shown+1)+" من "+steps.length+") ▸"};
+  nextB.onclick=()=>reveal(shown+1);allB.onclick=()=>reveal(1e9);
+  sol.append(el("b",{},"🪜 الحل خطوة بخطوة:"),sl,el("div",{class:"row"},nextB,allB),extra);
   const mark=v=>{PR[it.id]=v;save();badge.className="kst "+(v===1?"ok":"no");badge.textContent=v===1?"✔":"✘"};
-  const showSol=()=>{sol.hidden=false;math(sol)};
+  const showSol=(all)=>{sol.hidden=false;reveal(all?1e9:Math.max(1,shown))};
   const inputs=[];
   const inp=(ph)=>{const i=el("input",{type:"text",dir:"ltr",autocomplete:"off",autocapitalize:"off",spellcheck:"false",placeholder:ph,class:"kin"});i.addEventListener("focus",()=>last=i);i.addEventListener("keydown",e=>{if(e.key==="Enter")check()});inputs.push(i);return i};
   let check=()=>{};
@@ -109,9 +114,9 @@ function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getE
     i.classList.add(good?"ok":"no");mark(good?1:0);fb.replaceChildren(el("span",{class:good?"fb ok":"fb no"},good?"✔ أحسنتِ! مجموعة الحل صحيحة":"✘ مجموعة الحل غير صحيحة، راجعي الحلول (وتذكّري إمكانية عدم وجود حل)"))}}
   else if(it.t==="self"){c.append(el("p",{class:"mut"},"حلّي في دفترك، ثم اعرضي الحل وقيّمي إجابتك:"));
    const y=el("button",{class:"btn sm",hidden:true,onclick:()=>{mark(1);fb.replaceChildren(el("span",{class:"fb ok"},"✔ رائع!"))}},"✔ حلّي صحيح"),n=el("button",{class:"btn sm alt",hidden:true,onclick:()=>{mark(0);fb.replaceChildren(el("span",{class:"fb no"},"راجعي الحل وأعيدي المحاولة لاحقًا"))}},"✘ أحتاج مراجعة");
-   c.append(el("div",{class:"row"},el("button",{class:"btn sm gold",onclick:()=>{showSol();y.hidden=false;n.hidden=false}},"👁 اعرضي الحل"),y,n))}
+   c.append(el("div",{class:"row"},el("button",{class:"btn sm gold",onclick:()=>{showSol(true);y.hidden=false;n.hidden=false}},"👁 اعرضي الحل"),y,n))}
   if(inputs.length){c.append(el("div",{class:"keys"},...KEYS.map(k=>el("button",{type:"button",class:"key",onmousedown:e=>e.preventDefault(),onclick:()=>{const t=last&&c.contains(last)?last:inputs[0];const a=t.selectionStart??t.value.length,b=t.selectionEnd??a;t.value=t.value.slice(0,a)+k+t.value.slice(b);t.focus();t.setSelectionRange(a+k.length,a+k.length)}},k==="sqrt("?"√":k))))}
-  if(it.t!=="self")c.append(el("div",{class:"row"},it.t!=="mcq"?el("button",{class:"btn sm",onclick:()=>check()},"تحقّقي ✓"):"",el("button",{class:"btn sm alt",onclick:()=>sol.hidden?showSol():sol.hidden=true},"💡 الحل")));
+  if(it.t!=="self")c.append(el("div",{class:"row"},it.t!=="mcq"?el("button",{class:"btn sm",onclick:()=>check()},"تحقّقي ✓"):"",el("button",{class:"btn sm alt",onclick:()=>sol.hidden?showSol():sol.hidden=true},"🪜 الحل خطوة بخطوة")));
   c.append(fb,sol);app.append(c)});
  if(!list.length)app.append(el("p",{class:"card"},"لا أسئلة في هذا القسم."));
  const i=groups.findIndex(g=>g[0]===gid);

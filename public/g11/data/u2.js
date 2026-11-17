@@ -206,5 +206,33 @@ gens:[
    return{q:"قاعدة الاقتران الممثّل بيانيًّا في الشكل الآتي هي:<div class='gwrap'>"+svg+"</div>",...o,s:["أقرأ من الشكل: القيمة العظمى "+Math.abs(a)+" ⇐ السعة "+$("|a|="+String(Math.abs(a)).replace("0.5","\\frac{1}{2}")),"طول الدورة من الشكل "+$(P)+" ⇐ "+$("|b|=\\frac{2\\pi}{"+P+"}="+(bT(b)||"1")),"المنحنى يبدأ من "+(f==="sin"?"الصفر":(a>0?"قيمة عظمى":"قيمة صغرى"))+" عند "+$("x=0")+" ⇐ اقتران "+(f==="sin"?"جيب":"جيب تمام")+(a<0?" منعكس":""),"القاعدة: "+right],chk:()=>true}}}
 ]});
 
+/* ===== أسئلة إضافية على المدى والقيم العظمى والصغرى للاقترانات الجيبية ===== */
+(function(){const L3=U.lessons[2];const iv=(lo,hi)=>"["+lo+" , "+hi+"]";
+ const SVG=(ex,a,d,span)=>window.G11K&&window.G11K.svgPlot?"<div class='gwrap'>"+window.G11K.svgPlot({x:[-0.3,span+0.3],y:[Math.min(d-Math.abs(a),-1)-1,Math.max(d+Math.abs(a),1)+1],xpi:true,ys:1,p:[["f",ex,0,span,"","a"]]})+"</div>":null;
+ const A=()=>pick([1,2,3,4,5,-2,-3,-4]),D=()=>ri(-4,5),B=()=>pick([1,2,3]),Fn=()=>pick(["sin","cos"]);
+ L3.gens.push(
+ {id:"range",lvl:1,t:"مدى الاقتران الجيبي",f(){const a=A(),b=B(),d=D(),f=Fn();const m=Math.abs(a);const R=$(iv(d-m,d+m));
+   const o=opts(R,[$(iv(-m,m)),$(iv(d-1,d+1)),$(iv(Math.min(a,d),Math.max(a,d))),$(iv(d,d+m)),$("\\mathbb{R}")]);if(!o)return null;
+   return{q:"مدى الاقتران "+$("g(x)="+sinT(a,f,b,0,1,d))+" هو:",...o,s:["مدى "+$("\\"+f+"(bx)")+" هو "+$("[-1 , 1]")+" مهما كانت "+$("b"),"نضرب في "+$("a="+a)+": القيم من "+$(String(-m))+" إلى "+$(String(m))+(a<0?" (الانعكاس لا يغيّر المدى)":""),"نضيف "+$("d="+d)+": من "+$((d-m)+"")+" إلى "+$((d+m)+""),"المدى "+R+" ، أي "+$("[d-|a| , d+|a|]")],chk:()=>true}}},
+ {id:"range-graph",lvl:2,t:"المدى من التمثيل البياني",f(){const a=pick([1,2,3,-2]),b=pick([1,2]),d=ri(-2,3),f=Fn();const ex=a+"*"+f+"("+b+"*x)+("+d+")";const svg=SVG(ex,a,d,2*PI);if(!svg)return null;const m=Math.abs(a);const R=$(iv(d-m,d+m));
+   const o=opts(R,[$(iv(-m,m)),$(iv(d-m,d)),$(iv(0,d+m)),$("[0 , 2\\pi]"),$("\\mathbb{R}")]);if(!o)return null;
+   return{q:"مدى الاقتران الممثّل بيانيًّا في الشكل الآتي هو:"+svg,...o,s:["المدى قيم "+$("y")+" التي يأخذها المنحنى؛ نقرأها من المحور "+$("y"),"أعلى نقطة على المنحنى عند "+$("y="+(d+m))+" وأدنى نقطة عند "+$("y="+(d-m)),"الاقتران يأخذ كل القيم بينهما، فالمدى "+R+" (وليس مجال الرسم على المحور "+$("x")+")"],chk:()=>true}}},
+ {id:"maxmin-find",lvl:3,t:"إيجاد السعة وخط الوسط من القيمتين العظمى والصغرى",f(){const m=ri(1,6),d=ri(-3,6);const M=d+m,mn=d-m;const ask=pick(["amp","mid"]);const right=ask==="amp"?$(String(m)):$("y="+d);
+   const o=opts(right,ask==="amp"?[$(String(M-mn)),$(String(M+mn)),$(String(M)),$(String(d))]:[$("y="+(M-mn)),$("y="+m),$("y="+M),$("y="+(M+mn))]);if(!o)return null;
+   return{q:"اقتران جيبي قيمته العظمى "+$(String(M))+" وقيمته الصغرى "+$(String(mn))+". "+(ask==="amp"?"سعته هي:":"معادلة خط الوسط لمنحناه هي:"),...o,s:["السعة نصف المسافة بين القيمتين: "+$("\\frac{"+M+"-("+mn+")}{2}="+m),"خط الوسط في المنتصف بينهما: "+$("y=\\frac{"+M+"+("+mn+")}{2}="+d),"إذن "+(ask==="amp"?"السعة "+right:"خط الوسط "+right)],chk:()=>M-mn===2*m}}},
+ {id:"max-x",lvl:3,t:"قيمة x التي يأخذ عندها الاقتران قيمته العظمى",f(){const f=Fn(),a=pick([1,2,3,-1,-2]),b=pick([1,2]),askMax=pick([true,false]);const want=(askMax?1:-1)*Math.sign(a);
+   let un,ud;if(f==="sin")[un,ud]=want>0?[1,2]:[3,2];else[un,ud]=want>0?[0,1]:[1,1];/* bx = u ⇐ x = u/b */const xn=un,xd=ud*b;const X=pf(xn,xd)==="0"?"0":pf(xn,xd);
+   const right=$("x="+X);const alts=[[1,2],[3,2],[0,1],[1,1],[1,4],[3,4]].map(([n,d])=>"$x="+(pf(n,d*b)==="0"?"0":pf(n,d*b))+"$");const o=opts(right,alts);if(!o)return null;const Y=askMax?Math.abs(a):-Math.abs(a);
+   return{q:"في الفترة "+$("[0 , "+(b===1?"2\\pi":"\\pi")+")")+"، يأخذ الاقتران "+$("y="+sinT(a,f,b,0,1,0))+" قيمته "+(askMax?"العظمى":"الصغرى")+" عندما:",...o,s:["القيمة "+(askMax?"العظمى":"الصغرى")+" "+$("="+Y)+" وتحدث عندما "+$("\\"+f+"("+(b===1?"":b)+"x)="+want),"أي عندما "+$((b===1?"":b)+"x="+pf(un,ud)),"إذن "+right],chk:()=>{const x=xn*PI/xd;return Math.abs(a*Math[f](b*x)-Y)<1e-9}}}},
+ {id:"max-count",lvl:3,t:"عدد مرات بلوغ القيمة العظمى في دورة الاقتران الرئيس",f(){const b=pick([1,2,3,4]),f=Fn(),a=pick([1,2,3]);const n=b;
+   const o=opts($(String(n)),[$(String(n+1)),$(String(2*n)),$(String(Math.max(1,n-1))),$("0")]);if(!o)return null;
+   return{q:"كم مرة يبلغ الاقتران "+$("y="+sinT(a,f,b,0,1,0))+" قيمته العظمى في الفترة "+$("[0 , 2\\pi)")+"؟",...o,s:["طول الدورة "+$("\\frac{2\\pi}{"+b+"}"+(perT(b)?"="+perT(b):"")),"عدد الدورات الكاملة في "+$("[0 , 2\\pi)")+" هو "+$("\\frac{2\\pi}{"+(perT(b)||"")+"}="+b),"في كل دورة قيمة عظمى واحدة ⇐ "+n+" "+(n===1?"مرة":"مرات")],chk:()=>true}}},
+ {id:"max-word",lvl:3,t:"القيمة العظمى والصغرى في مسألة حياتية",f(){const kind=pick(["wheel","tide","temp"]);const a=pick([5,8,10,12,15,20,25]),d=a+pick([2,3,5,8,10]),p=pick([10,12,20,24,30]);const askMax=pick([true,false]);const v=askMax?d+a:d-a;
+   const ctx={wheel:["ارتفاع راكب في عجلة دوّارة بالأمتار","h(t)","t بالثواني"],tide:["عمق الماء في ميناء بالأمتار","D(t)","t بالساعات"],temp:["درجة حرارة مدينة بالسلسيوس","T(t)","t بالساعات"]}[kind];
+   const sgn=pick([1,-1]),f=Fn();const expr=ctx[1]+"="+d+(sgn>0?"+":"-")+a+"\\"+f+"\\left(\\frac{\\pi}{"+(p/2)+"}t\\right)";
+   const o=opts($(String(v)),[$(String(askMax?d-a:d+a)),$(String(d)),$(String(a)),$(String(v+p))]);if(!o)return null;
+   return{q:"يمثّل الاقتران "+$(expr)+" "+ctx[0]+"، حيث "+$(ctx[2].split(" ")[0])+" "+ctx[2].split(" ").slice(1).join(" ")+". "+(askMax?"أكبر":"أقل")+" قيمة لهذا الاقتران هي:",...o,s:["خط الوسط "+$(String(d))+" والسعة "+$(String(a))+" (الإشارة لا تؤثّر في السعة)","القيمة العظمى "+$(d+"+"+a+"="+(d+a))+" والصغرى "+$(d+"-"+a+"="+(d-a)),"إذن "+(askMax?"أكبر":"أقل")+" قيمة "+$(String(v))],chk:()=>true}}}
+ );})();
+
 (window.G11=window.G11||{units:[]}).units.push(U);
 })();

@@ -212,5 +212,62 @@ gens:[
    return{q:"تجزئة "+$("\\frac{"+poly(num)+"}{"+M.par(xm(a))+M.par(xm(b))+"}")+" هي:",...o,s:["درجة البسط تساوي درجة المقام، فأقسم أولًا: الناتج 1 والباقي "+$(poly([A+B,-A*b-B*a])),"ثم أجزّئ الباقي: "+$("A="+A+",\\ B="+B)],chk:()=>[0.41,3.3].every(x=>Math.abs(ev(num,x).v/((x-a)*(x-b))-(1+A/(x-a)+B/(x-b)))<1e-9)}}}
 ]});
 
+/* ===== أسئلة إضافية على المجال والمدى (من التمثيلات البيانية) ===== */
+(function(){const L1=U.lessons[0];const SV=(spec)=>window.G11K&&window.G11K.svgPlot?"<div class='gwrap'>"+window.G11K.svgPlot(spec)+"</div>":null;
+ const nf=v=>v===Infinity?"\\infty":v===-Infinity?"-\\infty":Number.isInteger(v)?String(v):(v<0?"-":"")+"\\frac{"+Math.round(Math.abs(v)*2)+"}{2}";
+ function uni(list){list=list.map(o=>({...o})).sort((p,q)=>p.lo-q.lo||(q.lc-p.lc));const out=[];
+  for(const iv of list){const l=out[out.length-1];
+   if(l&&(iv.lo<l.hi||(iv.lo===l.hi&&(l.hc||iv.lc)))){if(iv.hi>l.hi){l.hi=iv.hi;l.hc=iv.hc}else if(iv.hi===l.hi)l.hc=l.hc||iv.hc;if(iv.lo===l.lo)l.lc=l.lc||iv.lc}
+   else if(l&&iv.lo===l.hi&&iv.lo===iv.hi&&!l.hc){out.push(iv)}else out.push(iv)}
+  return out}
+ function tex(list){if(!list.length)return"\\varnothing";if(list.length===1&&list[0].lo===-Infinity&&list[0].hi===Infinity)return"\\mathbb{R}";
+  /* اتحاد فترتين مفتوحتين عند نقطة واحدة = R - {p} */
+  if(list.length===2&&list[0].lo===-Infinity&&list[1].hi===Infinity&&list[0].hi===list[1].lo&&!list[0].hc&&!list[1].lc)return"\\mathbb{R}-\\{"+nf(list[0].hi)+"\\}";
+  const pts=list.filter(i=>i.lo===i.hi),ivs=list.filter(i=>i.lo!==i.hi);const parts=ivs.map(i=>(i.lc&&i.lo>-Infinity?"[":"(")+nf(i.lo)+" , "+nf(i.hi)+(i.hc&&i.hi<Infinity?"]":")"));
+  if(pts.length)parts.push("\\{"+pts.map(p=>nf(p.lo)).join(" , ")+"\\}");return parts.join(" \\cup ")}
+ const tog=list=>list.map(i=>({...i,lc:i.lo===-Infinity?false:!i.lc,hc:i.hi===Infinity?false:!i.hc}));
+ const hull=list=>[{lo:list[0].lo,hi:list[list.length-1].hi,lc:list[0].lc,hc:list[list.length-1].hc}];
+ const ex=(m,k)=>(m===0?"":m===1?"x":m===-1?"-x":m===0.5?"x/2":m===-0.5?"-x/2":m+"*x")+(k===0?(m===0?"0":""):(k>0&&m!==0?"+":"")+k);
+ const lt=(m,k)=>M.lin(m===0.5?M.fr(1,2):m===-0.5?M.fr(-1,2):m,k);
+ /* بناء اقتران متشعّب من قطعتين مستقيمتين مع نهايات (سهم / دائرة مظلّلة / مفرّغة) */
+ function build(){for(let g=0;g<60;g++){const b=ri(-2,2);const a=pick([-Infinity,b-ri(2,4)]),c=pick([Infinity,b+ri(2,4)]);const gap=pick([0,0,1]);const b2=gap?b+ri(1,2):b;if(c!==Infinity&&c<=b2)continue;
+   const P=[];const mk=(lo,hi)=>{const m=pick([-2,-1,0,1,2,0.5,-0.5]);const ref=Number.isFinite(lo)?lo:hi;let k=ri(-3,3)-Math.round(m*ref);if(Math.abs(m)===0.5&&((Number.isFinite(lo)&&lo%2)||(Number.isFinite(hi)&&hi%2)))return null;return{m,k,lo,hi}};
+   const p1=mk(a,b),p2=mk(b2,c);if(!p1||!p2)continue;
+   const t1=Number.isFinite(a)?pick(["c","o"]):"a",j=pick(["c","o"]),t3=Number.isFinite(c)?pick(["c","o"]):"a";
+   p1.ta=t1;p1.tb=gap?pick(["c","o"]):j;p2.ta=gap?pick(["c","o"]):(j==="c"?"o":"c");p2.tb=t3;
+   const y=(p,x)=>p.m*x+p.k;let okY=true;for(const p of[p1,p2])for(const x of[p.lo,p.hi])if(Number.isFinite(x)&&Math.abs(y(p,x))>5)okY=false;if(!okY)continue;
+   if(!gap&&y(p1,b)===y(p2,b)&&p1.m===p2.m)continue;
+   const dom=uni([{lo:a,hi:b,lc:t1==="c",hc:p1.tb==="c"},{lo:b2,hi:c,lc:p2.ta==="c",hc:t3==="c"}]);
+   const yr=p=>{if(p.m===0)return{lo:p.k,hi:p.k,lc:true,hc:true};const A=Number.isFinite(p.lo)?y(p,p.lo):(p.m>0?-Infinity:Infinity),B=Number.isFinite(p.hi)?y(p,p.hi):(p.m>0?Infinity:-Infinity);
+    const ia=p.ta==="c",ib=p.tb==="c";return A<B?{lo:A,hi:B,lc:ia,hc:ib}:{lo:B,hi:A,lc:ib,hc:ia}};
+   const rng=uni([yr(p1),yr(p2)]);const X0=Number.isFinite(a)?Math.min(a-1,-5):-6,X1=Number.isFinite(c)?Math.max(c+1,5):6;
+   const spec={x:[X0,X1],y:[-6,6],p:[["f",ex(p1.m,p1.k),Number.isFinite(a)?a:X0,b,t1,p1.tb],["f",ex(p2.m,p2.k),b2,Number.isFinite(c)?c:X1,p2.ta,t3]]};
+   return{p1,p2,dom,rng,spec,a,b,b2,c}}return null}
+ const endW=t=>t==="c"?"دائرة مظلّلة (ضمن المجموعة)":t==="o"?"دائرة مفرّغة (ليست ضمن المجموعة)":"سهم (يستمر بلا نهاية)";
+ L1.gens.push(
+ {id:"dom-graph",lvl:2,t:"المجال من التمثيل البياني",f(){const G=build();if(!G)return null;const svg=SV(G.spec);if(!svg)return null;const R=tex(G.dom);
+   const o=opts($(R),[$(tex(tog(G.dom))),$(tex(G.rng)),$(tex(hull(G.dom))),$("\\mathbb{R}"),$(tex(uni(G.dom.map(i=>({...i,lc:true,hc:true})))))],()=>null);if(!o)return null;
+   return{q:"مجال الاقتران الممثّل بيانيًّا في الشكل هو:"+svg,...o,s:["المجال: قيم "+$("x")+" التي يغطّيها التمثيل؛ نقرأ من اليسار إلى اليمين على المحور "+$("x"),"القطعة الأولى تبدأ بـ"+endW(G.p1.ta)+(Number.isFinite(G.a)?" عند "+$("x="+G.a):"")+" وتنتهي بـ"+endW(G.p1.tb)+" عند "+$("x="+G.b),"القطعة الثانية تبدأ بـ"+endW(G.p2.ta)+" عند "+$("x="+G.b2)+" وتنتهي بـ"+endW(G.p2.tb)+(Number.isFinite(G.c)?" عند "+$("x="+G.c):""),"نجمع الفترتين: المجال "+$(R)],chk:()=>true}}},
+ {id:"rng-graph",lvl:3,t:"المدى من التمثيل البياني",f(){const G=build();if(!G)return null;const svg=SV(G.spec);if(!svg)return null;const R=tex(G.rng);
+   const o=opts($(R),[$(tex(tog(G.rng))),$(tex(G.dom)),$(tex(hull(G.rng))),$("\\mathbb{R}"),$(tex(uni(G.rng.map(i=>({...i,lc:true,hc:true})))))],()=>null);if(!o)return null;
+   const yd=p=>p.m===0?"قطعة أفقية تعطي القيمة "+$("y="+p.k)+" فقط":"قيم "+$("y")+" عليها من "+$(nf(Number.isFinite(p.lo)?p.m*p.lo+p.k:(p.m>0?-Infinity:Infinity)))+" إلى "+$(nf(Number.isFinite(p.hi)?p.m*p.hi+p.k:(p.m>0?Infinity:-Infinity)));
+   return{q:"مدى الاقتران الممثّل بيانيًّا في الشكل هو:"+svg,...o,s:["المدى: قيم "+$("y")+" التي يغطّيها التمثيل؛ نقرأ من الأسفل إلى الأعلى على المحور "+$("y"),"القطعة الأولى: "+yd(G.p1)+" (مع مراعاة الدوائر المظلّلة والمفرّغة)","القطعة الثانية: "+yd(G.p2),"نجمع القيم (ونحذف المكرّر): المدى "+$(R)],chk:()=>true}}},
+ {id:"rng-abs-graph",lvl:1,t:"مدى اقتران القيمة المطلقة من تمثيله",f(){const a=pick([1,2,-1,-2,0.5,-0.5]),h=ri(-3,3),k=ri(-3,3);const svg=SV({x:[-6,6],y:[-6,6],p:[["f",(a===0.5?"0.5":a===-0.5?"-0.5":a)+"*abs(x"+(h>=0?"-"+h:"+"+(-h))+")+"+k,-6,6,"a","a"]]});if(!svg)return null;
+   const R=a>0?"[ "+k+" , \\infty)":"(-\\infty , "+k+"]";const o=opts($(R),[$(a>0?"("+k+" , \\infty)":"(-\\infty , "+k+")"),$(a>0?"(-\\infty , "+k+"]":"[ "+k+" , \\infty)"),$("\\mathbb{R}"),$(a>0?"[ "+h+" , \\infty)":"(-\\infty , "+h+"]")]);if(!o)return null;
+   return{q:"مدى الاقتران الممثّل بيانيًّا في الشكل هو:"+svg,...o,s:["نحدّد الرأس من الشكل: "+$("("+h+","+k+")"),"الشكل مفتوح "+(a>0?"للأعلى ⇐ أصغر قيمة لـ "+$("y")+" هي "+k:"للأسفل ⇐ أكبر قيمة لـ "+$("y")+" هي "+k),"الرأس نقطة على المنحنى فالقيمة "+k+" ضمن المدى (قوس مغلق)","المدى "+$(R)+"، والمجال "+$("\\mathbb{R}")],chk:()=>true}}},
+ {id:"rng-pw-alg",lvl:3,t:"مدى اقتران متشعّب من قاعدته",f(){for(let g=0;g<40;g++){const c=ri(-2,3);const m1=pick([1,2,-1,-2,0]),m2=pick([1,2,-1,-2,0]);const k1=ri(-4,4),k2=ri(-4,4);const lc=pick([true,false]);
+   const y1=m1*c+k1,y2=m2*c+k2;const p1={m:m1,k:k1,lo:-Infinity,hi:c,ta:"a",tb:lc?"o":"c"},p2={m:m2,k:k2,lo:c,hi:Infinity,ta:lc?"c":"o",tb:"a"};
+   const yr=p=>{if(p.m===0)return{lo:p.k,hi:p.k,lc:true,hc:true};const A=Number.isFinite(p.lo)?p.m*p.lo+p.k:(p.m>0?-Infinity:Infinity),B=Number.isFinite(p.hi)?p.m*p.hi+p.k:(p.m>0?Infinity:-Infinity);const ia=p.ta==="c",ib=p.tb==="c";return A<B?{lo:A,hi:B,lc:ia,hc:ib}:{lo:B,hi:A,lc:ib,hc:ia}};
+   const r=uni([yr(p1),yr(p2)]);const R=tex(r);if(R==="\\mathbb{R}"&&Math.random()<.6)continue;
+   const q="مدى الاقتران "+$("f(x)="+M.cases([[lt(m1,k1),lc?"x<"+c:"x\\le "+c],[lt(m2,k2),lc?"x\\ge "+c:"x>"+c]]))+" هو:";
+   const o=opts($(R),[$(tex(tog(r))),$(tex(hull(r))),$("\\mathbb{R}"),$(tex(uni([yr(p1)]))),$(tex(uni([yr(p2)])))],()=>null);if(!o)continue;
+   const d=(p,i,cond)=>p.m===0?"القاعدة "+i+" ثابتة: القيمة "+$(String(p.k)):"القاعدة "+i+": عندما "+$(cond)+" يكون "+$(lt(p.m,p.k))+" "+(((p.m>0)===(i===1))?"أقل":"أكبر")+" من "+$(String(i===1?y1:y2))+(((i===1&&!lc)||(i===2&&lc))?" أو يساويه":"")+" ⇐ "+$(tex(uni([yr(p)])));
+   return{q,...o,s:["نجد قيم كل قاعدة على فترتها، بدءًا من قيمتها عند نقطة التشعّب "+$("x="+c),d(p1,1,lc?"x<"+c:"x\\le "+c),d(p2,2,lc?"x\\ge "+c:"x>"+c),"المدى اتحاد المجموعتين: "+$(R)],chk:()=>true}}return null}},
+ {id:"dom-pw-alg",lvl:2,t:"مجال اقتران متشعّب بثلاث قواعد",f(){const a=ri(-6,-2),b=ri(-1,1),c=ri(2,5);const t=[pick([true,false]),pick([true,false])];const openL=pick([true,false]);
+   const c1=(openL?a+"<":a+"\\le ")+" x"+(t[0]?"<":"\\le ")+b,c2=b+(t[0]?"\\le ":"<")+" x"+(t[1]?"<":"\\le ")+c,c3="x"+(t[1]?"\\ge ":">")+c;
+   const R=(openL?"(":"[")+a+" , \\infty)";const o=opts($(R),[$((openL?"[":"(")+a+" , \\infty)"),$("\\mathbb{R}"),$((openL?"(":"[")+a+" , "+c+"]"),$("["+c+" , \\infty)")]);if(!o)return null;
+   return{q:"مجال الاقتران "+$("f(x)="+M.cases([["x^{2}",c1],["3",c2],["2x-1",c3]]))+" هو:",...o,s:["المجال هو اتحاد الفترات المكتوبة بجانب القواعد","الفترات متتالية بلا فجوات: من "+$(String(a))+" ("+(openL?"غير مشمول":"مشمول")+") إلى ما لا نهاية","المجال "+$(R)],chk:()=>true}}}
+ );})();
+
 (window.G11=window.G11||{units:[]}).units.push(U);
 })();

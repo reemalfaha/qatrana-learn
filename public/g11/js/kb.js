@@ -3,19 +3,19 @@
 "use strict";
 /* ---------- محلّل تعابير رياضية بسيط (x، أعداد، + - * / ^، أقواس، |..|، sqrt، abs، ضرب ضمني) ---------- */
 function norm(s){return String(s).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
- .replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/[−–—]/g,"-").replace(/\*\*/g,"^").replace(/²/g,"^2").replace(/³/g,"^3").replace(/√/g,"sqrt")
+ .replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/[−–—]/g,"-").replace(/\*\*/g,"^").replace(/²/g,"^2").replace(/³/g,"^3").replace(/√/g,"sqrt").replace(/π/g,"pi")
  .replace(/X/g,"x").replace(/٫/g,".").replace(/\s+/g,"").replace(/\)\(/g,")*(")}
-function compile(src){const s=norm(src);if(!s)throw 0;const T=[],re=/(\d+\.?\d*|\.\d+)|(sqrt|abs)|(x)|([-+*/^()|])/y;let i=0;
+function compile(src){const s=norm(src);if(!s)throw 0;const T=[],re=/(\d+\.?\d*|\.\d+)|(sqrt|abs|sin|cos|tan|pi)|(x)|([-+*/^()|])/y;let i=0;
  while(i<s.length){re.lastIndex=i;const m=re.exec(s);if(!m)throw 0;T.push(m[0]);i=re.lastIndex}
  let p=0,absd=0;const pk=()=>T[p],nx=()=>T[p++];
- const starts=t=>t!==undefined&&(/^[\d.]/.test(t)||t==="x"||t==="("||t==="sqrt"||t==="abs"||(t==="|"&&absd===0));
+ const starts=t=>t!==undefined&&(/^[\d.]/.test(t)||t==="x"||t==="("||t==="sqrt"||t==="abs"||t==="sin"||t==="cos"||t==="tan"||t==="pi"||(t==="|"&&absd===0));
  function E(){let a=Tm();while(pk()==="+"||pk()==="-"){const o=nx(),b=Tm(),A=a;a=o==="+"?x=>A(x)+b(x):x=>A(x)-b(x)}return a}
  function Tm(){let a=U();for(;;){const t=pk();if(t==="*"||t==="/"){nx();const b=U(),A=a;a=t==="*"?x=>A(x)*b(x):x=>A(x)/b(x)}else if(starts(t)){const b=Pw(),A=a;a=x=>A(x)*b(x)}else return a}}
  function U(){if(pk()==="-"){nx();const a=U();return x=>-a(x)}if(pk()==="+"){nx();return U()}return Pw()}
  function Pw(){const a=At();if(pk()==="^"){nx();const b=U();return x=>Math.pow(a(x),b(x))}return a}
- function At(){const t=nx();if(t===undefined)throw 0;if(/^[\d.]/.test(t)){const v=parseFloat(t);return()=>v}if(t==="x")return x=>x;
+ function At(){const t=nx();if(t===undefined)throw 0;if(/^[\d.]/.test(t)){const v=parseFloat(t);return()=>v}if(t==="x")return x=>x;if(t==="pi")return()=>Math.PI;
   if(t==="("){const a=E();if(nx()!==")")throw 0;return a}
-  if(t==="sqrt"||t==="abs"){const f=t==="sqrt"?Math.sqrt:Math.abs;let a;if(pk()==="("){nx();a=E();if(nx()!==")")throw 0}else a=Pw();return x=>f(a(x))}
+  if(t==="sqrt"||t==="abs"||t==="sin"||t==="cos"||t==="tan"){const f={sqrt:Math.sqrt,abs:Math.abs,sin:Math.sin,cos:Math.cos,tan:Math.tan}[t];let a;if(pk()==="("){nx();a=E();if(nx()!==")")throw 0}else a=Pw();return x=>f(a(x))}
   if(t==="|"){absd++;const a=E();absd--;if(nx()!=="|")throw 0;return x=>Math.abs(a(x))}throw 0}
  const f=E();if(p!==T.length)throw 0;return f}
 const PTS=[-2.7,-1.3,-0.45,0.6,1.9,3.4,5.1,7.3];
@@ -30,14 +30,15 @@ let MID=0;
 function svgPlot(g,w){w=w||300;const [x0,x1]=g.x,[y0,y1]=g.y,pad=22;const ar=(y1-y0)/(x1-x0);const W=w,H=Math.max(170,Math.min(340,w*ar*1.0));
  const sx=v=>pad+(v-x0)/(x1-x0)*(W-2*pad),sy=v=>H-pad-(v-y0)/(y1-y0)*(H-2*pad);const id="ar"+(++MID);
  let o=`<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}" class="gp" role="img" aria-label="تمثيل بياني"><defs><marker id="${id}" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--m)"/></marker><marker id="${id}k" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--ink)"/></marker><clipPath id="${id}c"><rect x="${pad-3}" y="${pad-3}" width="${W-2*pad+6}" height="${H-2*pad+6}"/></clipPath></defs>`;
- const stx=nice(x1-x0),sty=nice(y1-y0);
+ const PI=Math.PI,xpi=!!g.xpi,stx=xpi?((x1-x0)>5*PI?PI:(x1-x0)>2.2*PI?PI/2:PI/4):nice(x1-x0),sty=g.ys||nice(y1-y0);
+ const pil=v=>{const k=Math.round(v/(PI/4));if(k===0)return"0";let n=k,d=4;const gg=(a,b)=>b?gg(b,a%b):Math.abs(a);const q=gg(n,d);n/=q;d/=q;return(n<0?"-":"")+(Math.abs(n)===1?"":Math.abs(n))+"π"+(d===1?"":"/"+d)};const xl=v=>xpi?pil(v):(Math.round(v*100)/100);
  for(let v=Math.ceil(x0/stx)*stx;v<=x1;v+=stx)o+=`<line x1="${sx(v)}" y1="${pad}" x2="${sx(v)}" y2="${H-pad}" class="gl"/>`;
  for(let v=Math.ceil(y0/sty)*sty;v<=y1;v+=sty)o+=`<line x1="${pad}" y1="${sy(v)}" x2="${W-pad}" y2="${sy(v)}" class="gl"/>`;
  const ax=Math.min(Math.max(0,y0),y1),ay=Math.min(Math.max(0,x0),x1);
  o+=`<line x1="${pad-8}" y1="${sy(ax)}" x2="${W-pad+8}" y2="${sy(ax)}" class="ax" marker-start="url(#${id}k)" marker-end="url(#${id}k)"/><line x1="${sx(ay)}" y1="${H-pad+8}" x2="${sx(ay)}" y2="${pad-8}" class="ax" marker-start="url(#${id}k)" marker-end="url(#${id}k)"/>`;
  o+=`<text x="${W-pad+4}" y="${sy(ax)-6}" class="al">x</text><text x="${sx(ay)+6}" y="${pad-6}" class="al">y</text>`;
- for(let v=Math.ceil(x0/stx)*stx;v<=x1;v+=stx)if(v!==ay)o+=`<text x="${sx(v)}" y="${sy(ax)+13}" class="tl">${v}</text>`;
- for(let v=Math.ceil(y0/sty)*sty;v<=y1;v+=sty)if(v!==ax)o+=`<text x="${sx(ay)-4}" y="${sy(v)+4}" class="tl" text-anchor="end">${v}</text>`;
+ for(let v=Math.ceil(x0/stx)*stx;v<=x1;v+=stx)if(Math.abs(v-ay)>1e-9)o+=`<text x="${sx(v)}" y="${sy(ax)+13}" class="tl">${xl(v)}</text>`;
+ for(let v=Math.ceil(y0/sty)*sty;v<=y1;v+=sty)if(Math.abs(v-ax)>1e-9)o+=`<text x="${sx(ay)-4}" y="${sy(v)+4}" class="tl" text-anchor="end">${Math.round(v*100)/100}</text>`;
  o+=`<text x="${sx(ay)-4}" y="${sy(ax)+13}" class="tl" text-anchor="end">0</text><g clip-path="url(#${id}c)">`;
  const dots=[];
  for(const pc of g.p){if(pc[0]==="p"){dots.push([pc[1],pc[2],pc[3]]);continue}

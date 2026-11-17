@@ -46,7 +46,7 @@ const go=h=>{if(location.hash==="#"+h)route();else location.hash=h};
 /* ===== الرئيسية ===== */
 function home(){const nEx=ALL.reduce((a,k)=>a+LES[k].L.examples.length,0),nCards=ALL.reduce((a,k)=>a+LES[k].L.cards.length,0);
  app.append(el("section",{class:"hero"},el("div",{},el("h1",{},"رياضيات الأول الثانوي الأكاديمي"),
-   el("p",{},"دروس مختصرة وبطاقات مراجعة، وبنك أسئلة متجدّد بثلاثة مستويات وحلول خطوة بخطوة، وامتحانات تجريبية بوقت، ومنشئ اختبارات للطباعة، وسبورة للحل بالقلم."),
+   el("p",{class:"mut",style:"margin:0 0 6px;font-weight:700;color:var(--g)"},"إعداد المعلمتين: نوال بني عطية وختام بني عطية"),el("p",{},"دروس مختصرة وبطاقات مراجعة، وبنك أسئلة متجدّد بثلاثة مستويات وحلول خطوة بخطوة، وامتحانات تجريبية بوقت، ومنشئ اختبارات للطباعة، وسبورة للحل بالقلم."),
    el("div",{class:"row"},el("a",{class:"btn",href:"#lessons"},"📘 ابدئي من الدروس"),el("a",{class:"btn gold",href:"#mock"},"⏱ امتحان تجريبي"),el("a",{class:"btn alt",href:"#builder"},"🖨 اكتبي اختبارًا واطبعيه"))),
   el("div",{class:"stats"},...[[UNITS.length+" من 3","وحدات متاحة"],[ALL.length,"دروس متاحة"],[nGens(),"نوعًا من الأسئلة المتجدّدة"],[nCards+nEx,"بطاقة ومثالًا محلولًا"]].map(([b,s])=>el("div",{class:"stat"},el("b",{},String(b)),el("span",{},s))))));
  const tools=[["#ideas","🎯","اختبار الأفكار","سؤال على كل فكرة يمكن أن ترد في الامتحان، لكل درس"],["#wiz","🏛️","امتحان يحاكي الوزاري","امتحان إلكتروني بعلامة من 100 وتحليل للأخطاء وخطة علاجية"],["#kb","📖","أسئلة الكتاب","أمثلة الكتاب وأسئلته وكتاب التمارين، بتصحيح ذاتي فوري"],["#bank","🗂","بنك الأسئلة","كل درس بثلاثة مستويات، مع الحل خطوة بخطوة"],["#quick","⚡","اختبار سريع","10 أسئلة منوّعة ونتيجة فورية"],["#mock","⏱","امتحان تجريبي","20 سؤالًا في 40 دقيقة يحاكي الامتحان"],["#builder","🖨","منشئ الاختبارات","اختبار مطبوع A4 بنموذجين وورقة إجابة ومفتاح"],["#board","✏️","السبورة","سؤال في كل صفحة وفراغ للحل بالقلم"],["#me","📊","ملفّي","مستواك في كل درس وسجل امتحاناتك"]];
@@ -140,7 +140,7 @@ function builder(){const P=LS.get("g11.bld",{school:"مدرسة القطرانة
  if(Object.keys(P.cnt).length===0){}}
 function printExam(Q,P){const root=document.getElementById("prt");root.replaceChildren();const vers=P.ver===2?[["أ",Q],["ب",shuffle(Q).map(q=>{const idx=shuffle([0,1,2,3]);return{...q,o:idx.map(i=>q.o[i]),a:idx.indexOf(q.a)}})]]:[["",Q]];
  const head=(v,sub)=>el("div",{class:"sh"},el("div",{class:"l"},"المملكة الأردنية الهاشمية",el("br"),"وزارة التربية والتعليم",el("br"),P.dir||""),el("div",{class:"c"},el("h1",{},P.title||"اختبار"),el("div",{},"الرياضيات · الصف الحادي عشر الأكاديمي"+(v?" · نموذج ("+v+")":"")),sub?el("b",{},sub):""),el("div",{class:"l",style:"text-align:left"},P.school||"",el("br"),"التاريخ: "+(P.date||"……/……/……"),el("br"),"المدة: "+(P.time||"")));
- const foot=()=>el("div",{class:"pfoot"},"المعلمة: "+(P.teacher||"……………")+" · منصة رياضيات الأول الثانوي");
+ const foot=()=>el("div",{class:"pfoot"},"المعلمة: "+(P.teacher||"……………")+" · منصة رياضيات الأول الثانوي — إعداد المعلمتين: نوال بني عطية وختام بني عطية");
  vers.forEach(([v,L])=>{const s=el("div",{class:"sheet"},head(v),el("div",{class:"info"},el("span",{},"اسم الطالبة: ……………………………………"),el("span",{},"الشعبة: ………"),el("span",{},"العلامة: ……… / "+L.length)));
   if(P.mode==="mcq")s.append(el("p",{style:"margin:0 0 6px"},el("b",{},"اختاري رمز الإجابة الصحيحة في كل مما يأتي، ثم ظلّليه في ورقة الإجابة:")));
   L.forEach((q,k)=>{const long=q.o.some(o=>o.replace(/\$[^$]*\$/g,"xxxxxx").length>26||/cases|frac/.test(o));const d=el("div",{class:"pq"},H("div","",el("b",{},(k+1)+") ").outerHTML+q.q));

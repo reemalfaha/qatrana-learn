@@ -121,7 +121,7 @@ function wiz(arg){const U=window.G11U,{el,H,math,LS,go}=U;const app=document.get
   L.forEach(b=>t.append(el("tr",{},el("td",{},b.t),el("td",{},b.ok+"/"+b.n),el("td",{},b.p+"%"),el("td",{},Object.values(b.miss).map(m=>m.gt).join("، ")||"—"))));s.append(el("h3",{},"الأداء حسب الدرس"),t);
   const weak=L.filter(b=>b.p<80);s.append(el("h3",{},"الخطة العلاجية"));
   s.append(weak.length?el("ol",{},...weak.map((b,i)=>el("li",{},"اليوم "+(i+1)+" — "+b.t+": مراجعة البطاقات والأمثلة المحلولة، ثم تدريب على: "+(Object.values(b.miss).map(m=>m.gt).join("، ")||"أسئلة الدرس")+"، ثم اختبار تحقّق."))):el("p",{},"أداء متقَن؛ يُقترح التدريب على الأسئلة الصعبة ومهارات التفكير العليا."));
-  s.append(el("div",{class:"pfoot"},"توقيع المعلمة: ……………………    توقيع ولي الأمر: ……………………"));root.append(s);math(root);setTimeout(()=>window.print(),300)}
+  s.append(el("div",{class:"pfoot"},"توقيع المعلمة: ……………………    توقيع ولي الأمر: ……………………",el("br"),"منصة رياضيات الأول الثانوي — إعداد المعلمتين: نوال بني عطية وختام بني عطية"));root.append(s);math(root);setTimeout(()=>window.print(),300)}
 }
 window.G11X=window.G11X||{};window.G11X.wiz=wiz;
 })();

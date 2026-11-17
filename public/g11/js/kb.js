@@ -5,15 +5,15 @@
 function norm(s){return String(s).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
  .replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/[−–—]/g,"-").replace(/\*\*/g,"^").replace(/²/g,"^2").replace(/³/g,"^3").replace(/√/g,"sqrt").replace(/π/g,"pi")
  .replace(/X/g,"x").replace(/٫/g,".").replace(/\s+/g,"").replace(/\)\(/g,")*(")}
-function compile(src){const s=norm(src);if(!s)throw 0;const T=[],re=/(\d+\.?\d*|\.\d+)|(sqrt|abs|sin|cos|tan|pi)|(x)|([-+*/^()|])/y;let i=0;
+function compile(src){const s=norm(src);if(!s)throw 0;const T=[],re=/(\d+\.?\d*|\.\d+)|(sqrt|abs|sin|cos|tan|pi)|(x|t|r|u)|([-+*/^()|])/y;let i=0;
  while(i<s.length){re.lastIndex=i;const m=re.exec(s);if(!m)throw 0;T.push(m[0]);i=re.lastIndex}
  let p=0,absd=0;const pk=()=>T[p],nx=()=>T[p++];
- const starts=t=>t!==undefined&&(/^[\d.]/.test(t)||t==="x"||t==="("||t==="sqrt"||t==="abs"||t==="sin"||t==="cos"||t==="tan"||t==="pi"||(t==="|"&&absd===0));
+ const starts=t=>t!==undefined&&(/^[\d.]/.test(t)||t==="x"||t==="t"||t==="r"||t==="u"||t==="("||t==="sqrt"||t==="abs"||t==="sin"||t==="cos"||t==="tan"||t==="pi"||(t==="|"&&absd===0));
  function E(){let a=Tm();while(pk()==="+"||pk()==="-"){const o=nx(),b=Tm(),A=a;a=o==="+"?x=>A(x)+b(x):x=>A(x)-b(x)}return a}
  function Tm(){let a=U();for(;;){const t=pk();if(t==="*"||t==="/"){nx();const b=U(),A=a;a=t==="*"?x=>A(x)*b(x):x=>A(x)/b(x)}else if(starts(t)){const b=Pw(),A=a;a=x=>A(x)*b(x)}else return a}}
  function U(){if(pk()==="-"){nx();const a=U();return x=>-a(x)}if(pk()==="+"){nx();return U()}return Pw()}
  function Pw(){const a=At();if(pk()==="^"){nx();const b=U();return x=>Math.pow(a(x),b(x))}return a}
- function At(){const t=nx();if(t===undefined)throw 0;if(/^[\d.]/.test(t)){const v=parseFloat(t);return()=>v}if(t==="x")return x=>x;if(t==="pi")return()=>Math.PI;
+ function At(){const t=nx();if(t===undefined)throw 0;if(/^[\d.]/.test(t)){const v=parseFloat(t);return()=>v}if(t==="x"||t==="t"||t==="r"||t==="u")return x=>x;if(t==="pi")return()=>Math.PI;
   if(t==="("){const a=E();if(nx()!==")")throw 0;return a}
   if(t==="sqrt"||t==="abs"||t==="sin"||t==="cos"||t==="tan"){const f={sqrt:Math.sqrt,abs:Math.abs,sin:Math.sin,cos:Math.cos,tan:Math.tan}[t];let a;if(pk()==="("){nx();a=E();if(nx()!==")")throw 0}else a=Pw();return x=>f(a(x))}
   if(t==="|"){absd++;const a=E();absd--;if(nx()!=="|")throw 0;return x=>Math.abs(a(x))}throw 0}
@@ -109,7 +109,7 @@ function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getE
   else if(it.t==="num"||it.t==="expr"){const rows=it.f.map(f=>{const i=inp(f.k==="n"?"-3/4":f.k==="f"?"(x-1)(x+2)":"3x^2-2x+1");return [f,i,el("label",{class:"kf"},H("span","kl",f.lb),i)]});
    c.append(el("div",{class:"kfs"},...rows.map(r=>r[2])));
    check=()=>{let all=true,any=false;rows.forEach(([f,i])=>{i.classList.remove("ok","no");const s=i.value.trim();if(!s){all=false;return}any=true;let good=false;
-     try{if(f.a==="U")good=/غير|undef|∞/.test(s);else if(f.k==="r1")good=Math.abs(val(f.a)-val(s))<=0.051;else if(f.k==="cd"||f.k==="cr"){const P=f.k==="cd"?360:2*Math.PI,v=val(s),b0=val(f.a),q=(v-b0)/P;good=Math.abs(q-Math.round(q))<1e-6&&Math.round(q)!==0&&(f.sg==="p"?v>0:v<0)}else if(f.k==="n")good=close(val(f.a),val(s));else{good=same(compile(f.a),compile(s));if(good&&f.k==="f"){const cnt=t=>(norm(t).match(/\(/g)||[]).length;good=cnt(s)>=Math.max(1,cnt(f.a)-(/^-?\(/.test(norm(f.a))?0:0))}}}catch(_){good=false}
+     try{if(f.a==="U")good=/غير|undef|∞/.test(s);else if(f.k==="r1")good=Math.abs(val(f.a)-val(s))<=0.051;else if(f.k==="r2")good=Math.abs(val(f.a)-val(s))<=0.0051;else if(f.k==="cd"||f.k==="cr"){const P=f.k==="cd"?360:2*Math.PI,v=val(s),b0=val(f.a),q=(v-b0)/P;good=Math.abs(q-Math.round(q))<1e-6&&Math.round(q)!==0&&(f.sg==="p"?v>0:v<0)}else if(f.k==="n")good=close(val(f.a),val(s));else{good=same(compile(f.a),compile(s));if(good&&f.k==="f"){const cnt=t=>(norm(t).match(/\(/g)||[]).length;good=cnt(s)>=Math.max(1,cnt(f.a)-(/^-?\(/.test(norm(f.a))?0:0))}}}catch(_){good=false}
      i.classList.add(good?"ok":"no");if(!good)all=false});
     if(!any){fb.replaceChildren(el("span",{class:"mut"},"اكتبي إجابتك أولًا."));return}
     mark(all?1:0);fb.replaceChildren(el("span",{class:all?"fb ok":"fb no"},all?"✔ أحسنتِ! كل الإجابات صحيحة":"✘ المربّع الأحمر يحتاج مراجعة"+(rows.some(r=>r[0].k==="f")?" (اكتبي التحليل في صورة حاصل ضرب عوامل)":"")))}}

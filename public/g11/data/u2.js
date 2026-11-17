@@ -80,7 +80,7 @@ gens:[
    return{q:"مساحة قطاع دائري زاويته المركزية "+$(pf(n,dd))+" في دائرة طول نصف قطرها "+$(r+"\\text{ cm}")+" (لأقرب جزء من عشرة):",...o,s:[$("A=\\frac{1}{2}r^{2}\\theta=\\frac{1}{2}("+r+")^{2}\\left("+pf(n,dd)+"\\right)"),$("\\approx "+A+"\\text{ cm}^{2}")],chk:()=>Math.abs(A-r*r*th/2)<0.06}}},
  {id:"sector-th",lvl:3,t:"إيجاد الزاوية المركزية من المساحة",f(){const r=pick([2,3,4,5,6,8,10,12,24]);const [n,dd]=pick([[1,6],[1,4],[1,3],[1,2],[2,3],[3,4],[1,1],[3,2]]);const A=r*r*n/(2*dd);if(!Number.isInteger(A*1))return null;
    const right=$(pf(n,dd));const o=opts(right,[$(pf(2*n,dd)),$(pf(n,2*dd)),$(fr(2*A,r)),$(pf(n,dd*2+1))]);if(!o)return null;
-   return{q:"قطاع دائري نصف قطره "+$(r+"\\text{ cm}")+" ومساحته "+$("\\frac{"+(r*r*n)+"\\pi}{"+(2*dd)+"}\\text{ cm}^{2}").replace("\\frac{"+(r*r*n)+"\\pi}{1}",(r*r*n)+"\\pi")+". قياس زاويته المركزية بالراديان هو:",...o,s:[$("A=\\frac{1}{2}r^{2}\\theta\\Rightarrow\\theta=\\frac{2A}{r^{2}}"),"بالتعويض والتبسيط: "+$("\\theta="+pf(n,dd))],chk:()=>true}}},
+   return{q:"قطاع دائري نصف قطره "+$(r+"\\text{ cm}")+" ومساحته "+$(pf(r*r*n,2*dd)+"\\text{ cm}^{2}")+". قياس زاويته المركزية بالراديان هو:",...o,s:[$("A=\\frac{1}{2}r^{2}\\theta\\Rightarrow\\theta=\\frac{2A}{r^{2}}"),"بالتعويض والتبسيط: "+$("\\theta="+pf(n,dd))],chk:()=>true}}},
  {id:"speed",lvl:3,t:"السرعة الزاوية والسرعة الخطية",f(){const r=ri(2,20),n=ri(2,15),t=pick([1,2,3,5,10,15,30,60]);const w=2*n/t;const kind=pick(["w","v"]);
    const wT=pf(2*n,t),vT=pf(2*n*r,t);const right=kind==="w"?$(wT+"\\text{ rad/s}"):$(vT+"\\text{ cm/s}");
    const o=opts(right,kind==="w"?[$(pf(n,t)+"\\text{ rad/s}"),$(pf(2*t,n)+"\\text{ rad/s}"),$(vT+"\\text{ rad/s}"),$(pf(4*n,t)+"\\text{ rad/s}")]:[$(wT+"\\text{ cm/s}"),$(pf(n*r,t)+"\\text{ cm/s}"),$(pf(4*n*r,t)+"\\text{ cm/s}"),$(pf(2*n*r*r,t)+"\\text{ cm/s}")]);if(!o)return null;
@@ -134,7 +134,7 @@ gens:[
  {id:"signs",lvl:1,t:"إشارات الاقترانات في الأرباع",f(){const q=ri(1,4);const pos={1:FN,2:["sin","csc"],3:["tan","cot"],4:["cos","sec"]}[q];const askPos=pick([true,false]);
    const yes=askPos?pos:FN.filter(f=>!pos.includes(f));if(!yes.length)return null;const fn=pick(yes);const no=FN.filter(f=>!yes.includes(f));if(no.length<3)return null;
    const o=opts($(FNT(fn)+"\\theta"),shuffle(no).map(f=>$(FNT(f)+"\\theta")));if(!o)return null;
-   return{q:"إذا وقع ضلع انتهاء الزاوية "+$("\\theta")+" في الربع "+QN[q]+"، فأيّ الاقترانات الآتية قيمته "+(askPos?"موجبة":"سالبة")+"؟",...o,s:["في الربع "+QN[q]+": "+({1:"x>0 ، y>0",2:"x<0 ، y>0",3:"x<0 ، y<0",4:"x>0 ، y<0"}[q]).replace(/(.*)/,"$$$1$$"),"الاقترانات الموجبة فيه: "+pos.map(f=>$(FNT(f))).join(" ، "),"إذن "+$(FNT(fn)+"\\theta")+" "+(askPos?"موجب":"سالب")],chk:()=>true}}},
+   return{q:"إذا وقع ضلع انتهاء الزاوية "+$("\\theta")+" في الربع "+QN[q]+"، فأيّ الاقترانات الآتية قيمته "+(askPos?"موجبة":"سالبة")+"؟",...o,s:["في الربع "+QN[q]+": "+$({1:"x>0,\\ y>0",2:"x<0,\\ y>0",3:"x<0,\\ y<0",4:"x>0,\\ y<0"}[q]),"الاقترانات الموجبة فيه: "+pos.map(f=>$(FNT(f))).join(" ، "),"إذن "+$(FNT(fn)+"\\theta")+" "+(askPos?"موجب":"سالب")],chk:()=>true}}},
  {id:"given",lvl:3,t:"إيجاد اقتران بمعلومية اقتران آخر والربع",f(){const [a,b,c]=pick(TRIP);const q=ri(2,4);const sx=q===2||q===3?-1:1,sy=q===3||q===4?-1:1;const x=sx*a,y=sy*b;
    const giv=pick(["sin","cos","tan"]),ask=pick(FN.filter(f=>f!==giv));const val={sin:fr(y,c),cos:fr(x,c),tan:fr(y,x),csc:fr(c,y),sec:fr(c,x),cot:fr(x,y)};
    const cond={sin:"\\cos\\theta"+(sx>0?">0":"<0"),cos:"\\sin\\theta"+(sy>0?">0":"<0"),tan:"\\sin\\theta"+(sy>0?">0":"<0")}[giv];
@@ -153,7 +153,8 @@ gens:[
 const bT=b=>b===1?"":b===0.5?"\\frac{1}{2}":b===1/3?"\\frac{1}{3}":String(b);
 const perT=b=>{const m={1:"2\\pi",2:"\\pi",3:"\\frac{2\\pi}{3}",4:"\\frac{\\pi}{2}",6:"\\frac{\\pi}{3}",0.5:"4\\pi"};return m[b]||(Math.abs(b-1/3)<1e-9?"6\\pi":null)};
 const cT=(n,d)=>pf(n,d);
-function sinT(a,f,b,cn,cd,d){let s=(a===1?"":a===-1?"-":String(a))+"\\"+f+"\\left("+bT(b)+"x";if(cn){s=(a===1?"":a===-1?"-":String(a))+"\\"+f+(b===1?"\\left(x":"\\left("+bT(b)+"\\left(x")+(cn>0?"-":"+")+cT(Math.abs(cn),cd)+(b===1?"":"\\right)")}s+="\\right)";if(d)s+=(d>0?"+":"")+d;return s}
+const aT=a=>a===1?"":a===-1?"-":a===0.5?"\\frac{1}{2}":a===-0.5?"-\\frac{1}{2}":String(a);
+function sinT(a,f,b,cn,cd,d){let s;if(cn)s=aT(a)+"\\"+f+(b===1?"\\left(x":"\\left("+bT(b)+"\\left(x")+(cn>0?"-":"+")+cT(Math.abs(cn),cd)+(b===1?"":"\\right)")+"\\right)";else if(b===1)s=aT(a)+"\\"+f+" x";else s=aT(a)+"\\"+f+"\\left("+bT(b)+"x\\right)";if(d)s+=(d>0?"+":"")+d;return s}
 U.lessons.push({id:"u2l3",n:3,title:"تمثيل الاقترانات الجيبية بيانيًّا",en:"Graphing Sinusoidal Functions",page:76,
 idea:"تمثيل اقتران الجيب وجيب التمام بيانيًّا، وتمثيل منحنيات الاقترانات الجيبية الناتجة من تحويل هندسي أو أكثر لمنحنى الاقترانين الرئيسين.",
 terms:["الاقتران الدوري","الدورة","طول الدورة","السعة","الاقترانات الجيبية","خط الوسط"],
@@ -173,8 +174,8 @@ examples:[
  {q:"أمثّل "+$("g(x)=2+\\cos x"),s:["انسحاب رأسي لمنحنى "+$("\\cos x")+" وحدتين للأعلى","خط الوسط "+$("y=2")+"، القيمة العظمى 3 والصغرى 1"]}],
 gens:[
  {id:"amp",lvl:1,t:"سعة الاقتران الجيبي",f(){const a=pick([2,3,4,5,-2,-3,-4,0.5,-0.5]),b=pick([1,2,3,0.5]),d=pick([0,1,2,-1,-3,4]),f=pick(["sin","cos"]);const A=Math.abs(a);
-   const AT=A===0.5?"\\frac{1}{2}":String(A);const o=opts($(AT),[$(String(a===A?2*A:a).replace("0.5","\\frac{1}{2}")),$(String(d)),$(bT(b)||"1"),$(String(A+Math.abs(d)))],()=>$(String(ri(1,9))));if(!o)return null;
-   return{q:"سعة الاقتران "+$("g(x)="+sinT(a,f,b,0,1,d))+" هي:",...o,s:["الصورة العامة "+$("a\\"+f+"(bx-c)+d")+" ، هنا "+$("a="+String(a).replace("0.5","\\frac{1}{2}")),"السعة "+$("=|a|="+AT)],chk:()=>A>0}}},
+   const AT=aT(A)||"1";const o=opts($(AT),[$(a===A?String(2*A).replace(/^1$/,"1"):aT(a)),$(String(d)),$(bT(b)||"1"),$(String(A+Math.abs(d)))],()=>$(String(ri(1,9))));if(!o)return null;
+   return{q:"سعة الاقتران "+$("g(x)="+sinT(a,f,b,0,1,d))+" هي:",...o,s:["الصورة العامة "+$("a\\"+f+"(bx-c)+d")+" ، هنا "+$("a="+(aT(a)==="-"?"-1":aT(a)||"1")),"السعة "+$("=|a|="+AT)],chk:()=>A>0}}},
  {id:"period",lvl:1,t:"طول دورة الاقتران الجيبي",f(){const b=pick([1,2,3,4,6,0.5,1/3]),a=pick([1,2,3,-2]),f=pick(["sin","cos"]),d=pick([0,1,-2]);const P=perT(b);if(!P)return null;
    const o=opts($(P),[$(perT(b===1?2:b===2?4:b===0.5?1:b===4?2:b===3?6:b===6?3:3)||"3\\pi"),$("\\pi"),$("2\\pi"),$("4\\pi"),$("\\frac{\\pi}{2}")].filter(z=>z!=="$"+P+"$"));if(!o)return null;
    return{q:"طول دورة الاقتران "+$("g(x)="+sinT(a,f,b,0,1,d))+" هو:",...o,s:["الصورة العامة "+$("a\\"+f+"(bx-c)+d")+" ، هنا "+$("b="+(bT(b)||"1")),"طول الدورة "+$("=\\frac{2\\pi}{|b|}="+P)],chk:()=>true}}},
@@ -184,7 +185,7 @@ gens:[
  {id:"maxmin",lvl:2,t:"القيمة العظمى والصغرى للاقتران الجيبي",f(){const a=pick([2,3,4,-2,-3,-5]),b=pick([1,2,3]),d=ri(-4,6),f=pick(["sin","cos"]);const askMax=pick([true,false]);const A=Math.abs(a);const v=askMax?d+A:d-A;
    const o=opts($(String(v)),[$(String(askMax?d-A:d+A)),$(String(askMax?a+d:d-a)),$(String(A)),$(String(d))]);if(!o)return null;
    return{q:"القيمة "+(askMax?"العظمى":"الصغرى")+" للاقتران "+$("g(x)="+sinT(a,f,b,0,1,d))+" هي:",...o,s:["خط الوسط "+$("y="+d)+" والسعة "+$("|a|="+A),"القيمة "+(askMax?"العظمى":"الصغرى")+" "+$("=d"+(askMax?"+":"-")+"|a|="+d+(askMax?"+":"-")+A+"="+v)],chk:()=>true}}},
- {id:"transf",lvl:2,t:"وصف التحويلات الهندسية",f(){const f=pick(["sin","cos"]);const a=pick([2,3,-1,-2,1]);const [cn,cd]=pick([[1,2],[1,3],[1,4],[-1,2],[-1,6],[1,1]]);const d=rnz(-4,4);
+ {id:"transf",lvl:2,t:"وصف التحويلات الهندسية",f(){const f=pick(["sin","cos"]);const a=pick([2,3,-1,-2,1]);const [cn,cd]=pick([[1,2],[1,3],[1,4],[-1,2],[-1,6],[1,6]]);const d=rnz(-4,4);
    const sh=(cn>0?"انسحاب أفقي بمقدار ":"انسحاب أفقي بمقدار ")+"$"+cT(Math.abs(cn),cd)+"$"+(cn>0?" إلى اليمين":" إلى اليسار");const vs=" ، وانسحاب رأسي "+Math.abs(d)+(Math.abs(d)===1?" وحدة":" وحدات")+(d>0?" للأعلى":" للأسفل");
    const st=Math.abs(a)!==1?"توسيع رأسي بمعامل "+Math.abs(a)+" ، ":"";const rf=a<0?"انعكاس حول المحور x ، ":"";
    const right=rf+st+sh+vs;const flip=s=>s.replace("إلى اليمين","§").replace("إلى اليسار","إلى اليمين").replace("§","إلى اليسار");const flv=s=>s.replace("للأعلى","§").replace("للأسفل","للأعلى").replace("§","للأسفل");
@@ -200,7 +201,7 @@ gens:[
     s:["القيمة "+(askMax?"العظمى":"الصغرى")+" "+$("="+Y)+" وتحدث عندما "+$("\\"+f+"\\left(x"+(cn>0?"-":"+")+cT(Math.abs(cn),cd)+"\\right)="+want),"أي عندما "+$("x"+(cn>0?"-":"+")+cT(Math.abs(cn),cd)+"="+pf(un,ud)),"إذن "+$("x="+X)+" والنقطة "+right],chk:()=>{const x=xn*PI/xd;const y=a*Math[f](x-cn*PI/cd);return Math.abs(y-Y)<1e-9}}}},
  {id:"graph-id",lvl:3,t:"قاعدة الاقتران من تمثيله البياني",f(){if(!G())return null;const f=pick(["sin","cos"]),a=pick([1,2,3,0.5,-2]),b=pick([1,2,0.5]);const P=perT(b);
    const ex=(a<0?"-":"")+(Math.abs(a)===1?"":Math.abs(a))+f+"("+b+"*x)";const svg=window.G11K.svgPlot({x:[-0.3,b===0.5?4*PI+0.3:2*PI+0.3],y:[-Math.abs(a)-1,Math.abs(a)+1],xpi:true,ys:Math.abs(a)>=2?1:0.5,p:[["f",ex,0,b===0.5?4*PI:2*PI,"","a"]]});
-   const T=(A,F,B)=>$("y="+sinT(A,F,B,0,1,0).replace("0.5","\\frac{1}{2}"));
+   const T=(A,F,B)=>$("y="+sinT(A,F,B,0,1,0));
    const right=T(a,f,b);const o=opts(right,[T(a,f==="sin"?"cos":"sin",b),T(a,f,b===1?2:b===2?0.5:1),T(-a,f,b),T(a===0.5?2:a*2,f,b)]);if(!o)return null;
    return{q:"قاعدة الاقتران الممثّل بيانيًّا في الشكل الآتي هي:<div class='gwrap'>"+svg+"</div>",...o,s:["أقرأ من الشكل: القيمة العظمى "+Math.abs(a)+" ⇐ السعة "+$("|a|="+String(Math.abs(a)).replace("0.5","\\frac{1}{2}")),"طول الدورة من الشكل "+$(P)+" ⇐ "+$("|b|=\\frac{2\\pi}{"+P+"}="+(bT(b)||"1")),"المنحنى يبدأ من "+(f==="sin"?"الصفر":(a>0?"قيمة عظمى":"قيمة صغرى"))+" عند "+$("x=0")+" ⇐ اقتران "+(f==="sin"?"جيب":"جيب تمام")+(a<0?" منعكس":""),"القاعدة: "+right],chk:()=>true}}}
 ]});

@@ -55,7 +55,7 @@ function home(){const nEx=ALL.reduce((a,k)=>a+LES[k].L.examples.length,0),nCards
 function lessonsList(root){UNITS.forEach(U=>{const c=el("section",{class:"card unit"},el("h2",{},"الوحدة "+U.n+": "+U.title),el("p",{class:"mut"},U.en));
   U.lessons.forEach(L=>{const p=pct(ST[L.id]);c.append(el("a",{class:"les",href:"#l/"+L.id},el("span",{class:"row"},el("span",{class:"n"},String(L.n)),el("span",{},el("b",{},L.title),el("br"),el("span",{class:"mut"},L.gens.length+" نوعًا من الأسئلة · "+L.examples.length+" أمثلة محلولة · ص "+L.page))),
    el("span",{class:"row"},p==null?el("span",{class:"mut"},"لم تبدئي"):el("span",{class:"mut"},"إتقان "+p+"%"),el("span",{class:"bar"},el("i",{style:"width:"+(p||0)+"%"})))))});root.append(c)});
- SOON.forEach(S=>root.append(el("section",{class:"card unit soon"},el("h2",{},"الوحدة "+S.n+": "+S.title),el("p",{class:"mut"},"قيد الإعداد: "+S.lessons.join("، ")))))}
+ SOON.filter(S=>!UNITS.some(u=>u.n===S.n)).forEach(S=>root.append(el("section",{class:"card unit soon"},el("h2",{},"الوحدة "+S.n+": "+S.title),el("p",{class:"mut"},"قيد الإعداد: "+S.lessons.join("، ")))))}
 function lessons(){app.append(el("h1",{},"الدروس"));lessonsList(app)}
 
 /* ===== صفحة الدرس ===== */

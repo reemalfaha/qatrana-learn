@@ -50,6 +50,11 @@ function svgPlot(g,w){w=w||300;const [x0,x1]=g.x,[y0,y1]=g.y,pad=22;const ar=(y1
   if(ea==="c"||ea==="o")dots.push([a,f(a),ea]);if(eb==="c"||eb==="o")dots.push([b,f(b),eb])}
  dots.forEach(([a,b,k])=>{if(isFinite(b))o+=`<circle cx="${sx(a)}" cy="${sy(b)}" r="4.2" class="${k==="o"?"do":"dc"}"/>`});
  return o+"</g></svg>"}
+function svgAngle(deg,w){w=w||220;const H=w,c=w/2,R=w*0.38,id="ag"+(++MID);const rad=deg*Math.PI/180;const ex=c+R*Math.cos(rad),ey=c-R*Math.sin(rad);
+ let o=`<svg xmlns="${NS}" viewBox="0 0 ${w} ${H}" class="gp" role="img" aria-label="زاوية في الوضع القياسي"><defs><marker id="${id}" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--m)"/></marker><marker id="${id}k" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--ink)"/></marker></defs>`;
+ o+=`<line x1="10" y1="${c}" x2="${w-10}" y2="${c}" class="ax" marker-start="url(#${id}k)" marker-end="url(#${id}k)"/><line x1="${c}" y1="${H-10}" x2="${c}" y2="10" class="ax" marker-start="url(#${id}k)" marker-end="url(#${id}k)"/><text x="${w-14}" y="${c-6}" class="al">x</text><text x="${c+6}" y="16" class="al">y</text>`;
+ const pts=[],N=Math.max(24,Math.ceil(Math.abs(deg)/6));for(let i=0;i<=N;i++){const a=rad*i/N,rr=14+(Math.abs(a)/(2*Math.PI))*7;pts.push((c+rr*Math.cos(a)).toFixed(1)+","+(c-rr*Math.sin(a)).toFixed(1))}
+ o+=`<polyline points="${pts.join(" ")}" fill="none" stroke="var(--g)" stroke-width="2" marker-end="url(#${id})"/><line x1="${c}" y1="${c}" x2="${ex}" y2="${ey}" class="cv" marker-end="url(#${id})"/><text x="${c+30}" y="${c+(Math.sin(rad)>0?18:-8)}" class="tl" style="font-size:12px">${deg}°</text>`;return o+"</svg>"}
 function svgLine(n,w){w=w||300;const a=n.a,b=n.b,H=54,pad=18,sx=v=>pad+(v-a)/(b-a)*(w-2*pad),y=24;const id="nl"+(++MID);const st=b-a>24?5:b-a>12?2:1;
  let o=`<svg xmlns="${NS}" viewBox="0 0 ${w} ${H}" class="gp nl" role="img" aria-label="خط الأعداد"><defs><marker id="${id}" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--ink)"/></marker><marker id="${id}m" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--m)"/></marker></defs>`;
  o+=`<line x1="${pad-10}" y1="${y}" x2="${w-pad+10}" y2="${y}" class="ax" marker-start="url(#${id})" marker-end="url(#${id})"/>`;
@@ -65,16 +70,17 @@ const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=M
 function perm(id,n){const a=[...Array(n).keys()];let h=hash(id);for(let i=n-1;i>0;i--){h=Math.imul(h^h>>>13,1103515245)+12345>>>0;const j=h%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 
 function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getElementById("app");
- const B=(G11.book||[])[0];if(!B){app.append(el("p",{},"لا توجد أسئلة بعد."));return}
+ const BK=G11.book||[];const B=BK.length?{meta:{groups:BK.flatMap(b=>b.meta.groups),src:Object.assign({},...BK.map(b=>b.meta.src))},items:BK.flatMap(b=>b.items)}:null;if(!B){app.append(el("p",{},"لا توجد أسئلة بعد."));return}
  const PR=LS.get("g11.kb",{});const save=()=>LS.set("g11.kb",PR);
  const groups=B.meta.groups;gid=groups.some(g=>g[0]===gid)?gid:LS.get("g11.kbg",groups[0][0]);LS.set("g11.kbg",gid);src=src||"all";
  const all=B.items.filter(i=>i.lid===gid);const SRC=[["all","الكل"],["ex","أمثلة الكتاب"],["chk","أتحقق من فهمي"],["pr","أتدرّب وأحلّ المسائل"],["wb","كتاب التمارين"]].filter(([k])=>k==="all"||all.some(i=>i.src===k));
  const list=src==="all"?all:all.filter(i=>i.src===src);
  const ok=B.items.filter(i=>PR[i.id]===1).length;
- app.append(el("div",{class:"card"},el("h1",{},"📖 أسئلة الكتاب — الوحدة 1"),
+ app.append(el("div",{class:"card"},el("h1",{},"📖 أسئلة الكتاب — الوحدة "+gid.slice(1,2)),
   el("p",{class:"mut"},"أمثلة كتاب الطالب وأسئلة «أتحقق من فهمي» و«أتدرّب وأحلّ المسائل» وكتاب التمارين، تحلّينها هنا وتُصحَّح فورًا. اكتبي الإجابة ثم اضغطي «تحقّقي»، وتستطيعين عرض الحل في أي وقت."),
   el("div",{class:"row between"},el("span",{class:"chip"},"أنجزتِ "+ok+" من "+B.items.length),el("span",{class:"bar",style:"flex:1;max-width:340px"},el("i",{style:"width:"+Math.round(ok/B.items.length*100)+"%"})))));
- app.append(el("div",{class:"tabs kbg"},...groups.map(([k,t])=>{const n=B.items.filter(i=>i.lid===k),d=n.filter(i=>PR[i.id]===1).length;return el("button",{"aria-pressed":k===gid?"true":"false",onclick:()=>go("kb/"+k)},t,el("small",{}," ("+d+"/"+n.length+")"))})));
+ const units=[...new Set(groups.map(g=>g[0].slice(0,2)))];if(units.length>1)app.append(el("div",{class:"tabs"},...units.map(u=>el("button",{"aria-pressed":gid.startsWith(u)?"true":"false",onclick:()=>go("kb/"+groups.find(g=>g[0].startsWith(u))[0])},"الوحدة "+u.slice(1)))));
+ app.append(el("div",{class:"tabs kbg"},...groups.filter(g=>g[0].startsWith(gid.slice(0,2))).map(([k,t])=>{const n=B.items.filter(i=>i.lid===k),d=n.filter(i=>PR[i.id]===1).length;return el("button",{"aria-pressed":k===gid?"true":"false",onclick:()=>go("kb/"+k)},t,el("small",{}," ("+d+"/"+n.length+")"))})));
  if(SRC.length>2)app.append(el("div",{class:"tabs sm"},...SRC.map(([k,t])=>el("button",{"aria-pressed":k===src?"true":"false",onclick:()=>go("kb/"+gid+"/"+k)},t))));
  let last=null;
  const KEYS=["x","^","(",")","|","/","sqrt(",","];
@@ -82,11 +88,11 @@ function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getE
   const badge=el("b",{class:"kst "+(PR[it.id]===1?"ok":PR[it.id]===0?"no":"")},st());
   c.append(el("div",{class:"row between"},el("span",{},el("span",{class:"chip"},it.lab),el("span",{class:"mut"}," "+B.meta.src[it.src]+" · ص "+it.pg)),badge));
   c.append(H("div","q",it.q));
-  if(it.g)c.append(H("div","gwrap",svgPlot(it.g)));if(it.nl)c.append(H("div","gwrap",svgLine(it.nl)));
+  if(it.g)c.append(H("div","gwrap",it.g.ang!=null?svgAngle(it.g.ang):svgPlot(it.g)));if(it.nl)c.append(H("div","gwrap",svgLine(it.nl)));
   const fb=el("div",{class:"fbk"}),sol=el("div",{class:"sol",hidden:true});
   const steps=(it.sol||[]).slice();if(it.t==="self"&&it.a&&!steps.includes(it.a))steps.push(it.a);
   const sl=el("ol",{class:"stp"});let shown=0;
-  const extra=el("div",{hidden:true});if(it.sol_nl)extra.append(el("div",{class:"mut"},"التمثيل على خط الأعداد:"),H("div","gwrap",svgLine(it.sol_nl)));if(it.ag)extra.append(el("div",{class:"mut"},"التمثيل البياني:"),H("div","gwrap",svgPlot(it.ag)));
+  const extra=el("div",{hidden:true});if(it.sol_nl)extra.append(el("div",{class:"mut"},"التمثيل على خط الأعداد:"),H("div","gwrap",svgLine(it.sol_nl)));if(it.ag)extra.append(el("div",{class:"mut"},"التمثيل البياني:"),H("div","gwrap",it.ag.ang!=null?svgAngle(it.ag.ang):svgPlot(it.ag)));
   const nextB=el("button",{class:"btn sm"},"الخطوة التالية ▸"),allB=el("button",{class:"btn sm alt"},"اعرضي كل الخطوات");
   const reveal=n=>{while(shown<n&&shown<steps.length){const li=el("li",{},el("b",{class:"sn"},"الخطوة "+(shown+1)),H("div","",steps[shown]));sl.append(li);math(li);shown++}
    const done=shown>=steps.length;nextB.hidden=allB.hidden=done;extra.hidden=!done;if(done)nextB.textContent="";else nextB.textContent="الخطوة التالية ("+(shown+1)+" من "+steps.length+") ▸"};
@@ -103,7 +109,7 @@ function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getE
   else if(it.t==="num"||it.t==="expr"){const rows=it.f.map(f=>{const i=inp(f.k==="n"?"-3/4":f.k==="f"?"(x-1)(x+2)":"3x^2-2x+1");return [f,i,el("label",{class:"kf"},H("span","kl",f.lb),i)]});
    c.append(el("div",{class:"kfs"},...rows.map(r=>r[2])));
    check=()=>{let all=true,any=false;rows.forEach(([f,i])=>{i.classList.remove("ok","no");const s=i.value.trim();if(!s){all=false;return}any=true;let good=false;
-     try{if(f.k==="n")good=close(val(f.a),val(s));else{good=same(compile(f.a),compile(s));if(good&&f.k==="f"){const cnt=t=>(norm(t).match(/\(/g)||[]).length;good=cnt(s)>=Math.max(1,cnt(f.a)-(/^-?\(/.test(norm(f.a))?0:0))}}}catch(_){good=false}
+     try{if(f.a==="U")good=/غير|undef|∞/.test(s);else if(f.k==="r1")good=Math.abs(val(f.a)-val(s))<=0.051;else if(f.k==="cd"||f.k==="cr"){const P=f.k==="cd"?360:2*Math.PI,v=val(s),b0=val(f.a),q=(v-b0)/P;good=Math.abs(q-Math.round(q))<1e-6&&Math.round(q)!==0&&(f.sg==="p"?v>0:v<0)}else if(f.k==="n")good=close(val(f.a),val(s));else{good=same(compile(f.a),compile(s));if(good&&f.k==="f"){const cnt=t=>(norm(t).match(/\(/g)||[]).length;good=cnt(s)>=Math.max(1,cnt(f.a)-(/^-?\(/.test(norm(f.a))?0:0))}}}catch(_){good=false}
      i.classList.add(good?"ok":"no");if(!good)all=false});
     if(!any){fb.replaceChildren(el("span",{class:"mut"},"اكتبي إجابتك أولًا."));return}
     mark(all?1:0);fb.replaceChildren(el("span",{class:all?"fb ok":"fb no"},all?"✔ أحسنتِ! كل الإجابات صحيحة":"✘ المربّع الأحمر يحتاج مراجعة"+(rows.some(r=>r[0].k==="f")?" (اكتبي التحليل في صورة حاصل ضرب عوامل)":"")))}}
@@ -123,5 +129,5 @@ function kb(gid,src){const {el,H,math,LS,go}=window.G11U;const app=document.getE
  const i=groups.findIndex(g=>g[0]===gid);
  app.append(el("div",{class:"row between"},i>0?el("button",{class:"btn alt",onclick:()=>go("kb/"+groups[i-1][0])},"→ "+groups[i-1][1]):el("span"),i<groups.length-1?el("button",{class:"btn",onclick:()=>go("kb/"+groups[i+1][0])},groups[i+1][1]+" ←"):el("span")));
 }
-window.G11X=window.G11X||{};window.G11X.kb=kb;window.G11K={compile,same,val,svgPlot,svgLine};
+window.G11X=window.G11X||{};window.G11X.kb=kb;window.G11K={compile,same,val,svgPlot,svgLine,svgAngle};
 })();

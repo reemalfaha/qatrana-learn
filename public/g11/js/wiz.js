@@ -8,7 +8,7 @@ const grade=p=>p>=90?["ممتاز","ok"]:p>=80?["جيد جدًا","ok"]:p>=70?["
 const today=()=>{const d=new Date();return d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()};
 
 /* بناء الامتحان وفق جدول مواصفات: توزيع متساوٍ على الدروس، 30% سهل · 50% متوسط · 20% صعب، وأسئلة من الكتاب */
-function build(lids,n){const U=window.G11U,B=(G11.book||[])[0];const out=[],seen=new Set();const per=Math.max(1,Math.round(n/lids.length));
+function build(lids,n){const U=window.G11U,B={items:(G11.book||[]).flatMap(b=>b.items)};const out=[],seen=new Set();const per=Math.max(1,Math.round(n/lids.length));
  lids.forEach((lid,li)=>{const k=li===lids.length-1?n-out.length:Math.min(per,n-out.length);if(k<=0)return;
   const nb=Math.round(k*.2),ne=Math.round((k-nb)*.35),nh=Math.round((k-nb)*.2),nm=k-nb-ne-nh;
   const book=B?U.shuffle(B.items.filter(i=>i.lid===lid&&i.t==="mcq"&&i.o&&!i.onl&&!i.og)):[];
@@ -30,8 +30,8 @@ function wiz(arg){const U=window.G11U,{el,H,math,LS,go}=U;const app=document.get
  const c=el("div",{class:"card"});const nm=el("input",{type:"text",value:name,placeholder:"اكتبي اسمك (يظهر في التقرير فقط)",class:"kin",style:"text-align:right;font-family:var(--f)"});
  c.append(el("h2",{},"تعليمات الامتحان"),el("ul",{},...["اقرئي كل سؤال جيدًا، ثم اختاري رمز الإجابة الصحيحة.","تستطيعين التنقّل بين الأسئلة، وتعليم أي سؤال للمراجعة بالعلم 🚩.","تُحفظ إجاباتك تلقائيًّا؛ إذا أُغلقت الصفحة تستطيعين الإكمال.","عند انتهاء الوقت يُسلَّم الامتحان تلقائيًّا.","لا تظهر الإجابات الصحيحة إلا بعد التسليم."].map(t=>el("li",{},t))),el("label",{},el("span",{class:"mut"},"الاسم:"),nm));
  const sel=LS.get("g11.wiz.sel",U.ALL);const box=el("div",{class:"grid g2",style:"margin:10px 0"});const chosen=new Set(sel.filter(x=>U.LES[x]));
- U.ALL.forEach(k=>{const cb=el("input",{type:"checkbox",checked:chosen.has(k)});cb.onchange=()=>{cb.checked?chosen.add(k):chosen.delete(k);LS.set("g11.wiz.sel",[...chosen])};box.append(el("label",{class:"ck"},cb,"الدرس "+U.LES[k].L.n+": "+U.LES[k].L.title))});
- c.append(el("h3",{},"الدروس المشمولة (الوحدة 1)"),box);
+ U.ALL.forEach(k=>{const cb=el("input",{type:"checkbox",checked:chosen.has(k)});cb.onchange=()=>{cb.checked?chosen.add(k):chosen.delete(k);LS.set("g11.wiz.sel",[...chosen])};box.append(el("label",{class:"ck"},cb,"الوحدة "+U.LES[k].U.n+" · الدرس "+U.LES[k].L.n+": "+U.LES[k].L.title))});
+ c.append(el("h3",{},"الدروس المشمولة"),el("div",{class:"row"},...U.UNITS.map(Un=>el("button",{class:"btn sm alt",onclick:()=>{chosen.clear();Un.lessons.forEach(L=>chosen.add(L.id));LS.set("g11.wiz.sel",[...chosen]);box.querySelectorAll("input").forEach((cb,i)=>cb.checked=chosen.has(U.ALL[i]))}},"الوحدة "+Un.n+" فقط")),el("button",{class:"btn sm alt",onclick:()=>{U.ALL.forEach(k=>chosen.add(k));LS.set("g11.wiz.sel",[...chosen]);box.querySelectorAll("input").forEach(cb=>cb.checked=true)}},"كل الوحدات")),box);
  const start=m=>{const lids=[...chosen];if(!lids.length)return;LS.set("g11.wiz.name",nm.value.trim());const M=MODES[m];
   const st={mode:m,lids,qs:build(lids,M.n),ans:[],flag:[],i:0,start:Date.now(),end:Date.now()+M.min*6e4,name:nm.value.trim()};st.ans=Array(st.qs.length).fill(null);st.flag=Array(st.qs.length).fill(false);LS.set("g11.wiz.cur",st);go("wiz/run")};
  c.append(el("div",{class:"grid g2"},...["full","short"].map(m=>el("button",{class:"tool",style:"text-align:right;cursor:pointer;border:2px solid var(--ln)",onclick:()=>start(m)},el("span",{class:"ic"},m==="full"?"🏛️":"⏱"),el("b",{},MODES[m].t),el("span",{class:"mut"},MODES[m].d)))));
@@ -115,7 +115,7 @@ function wiz(arg){const U=window.G11U,{el,H,math,LS,go}=U;const app=document.get
   return c}
 
  function printRep(r,L){const root=document.getElementById("prt");root.replaceChildren();const s=el("div",{class:"sheet"});
-  s.append(el("div",{class:"sh"},el("div",{class:"l"},"المملكة الأردنية الهاشمية",el("br"),"وزارة التربية والتعليم"),el("div",{class:"c"},el("h1",{},"تقرير امتحان يحاكي الامتحان الوزاري"),el("div",{},"الرياضيات · الصف الحادي عشر الأكاديمي · الوحدة الأولى")),el("div",{class:"l",style:"text-align:left"},"مدرسة القطرانة الثانوية للبنات",el("br"),"التاريخ: "+r.d)));
+  s.append(el("div",{class:"sh"},el("div",{class:"l"},"المملكة الأردنية الهاشمية",el("br"),"وزارة التربية والتعليم"),el("div",{class:"c"},el("h1",{},"تقرير امتحان يحاكي الامتحان الوزاري"),el("div",{},"الرياضيات · الصف الحادي عشر الأكاديمي")),el("div",{class:"l",style:"text-align:left"},"مدرسة القطرانة الثانوية للبنات",el("br"),"التاريخ: "+r.d)));
   s.append(el("div",{class:"info"},el("span",{},"اسم الطالبة: "+(r.name||"……………………")),el("span",{},"العلامة: "+r.mark+" / 100"),el("span",{},"التقدير: "+grade(r.mark)[0])));
   const t=el("table",{class:"key",style:"font-family:var(--f)"},el("tr",{},el("th",{},"الدرس"),el("th",{},"الصحيح"),el("th",{},"النسبة"),el("th",{},"المهارات التي تحتاج علاجًا")));
   L.forEach(b=>t.append(el("tr",{},el("td",{},b.t),el("td",{},b.ok+"/"+b.n),el("td",{},b.p+"%"),el("td",{},Object.values(b.miss).map(m=>m.gt).join("، ")||"—"))));s.append(el("h3",{},"الأداء حسب الدرس"),t);

@@ -6,7 +6,7 @@ const LVC=["#2F6FB0","#1F7A4D","#C9822B","#7A1F2E"];
 const KINDS={mcq:"اختيار من متعدد",tf:"صح / خطأ",fill:"املئي الفراغ",def:"وضّحي المقصود",expl:"فسّري تفسيرًا علميًّا دقيقًا",short:"إجابة قصيرة",calc:"مسائل حسابية",fig:"أسئلة الرسومات",essay:"أسئلة مقالية"};
 const KORDER=["mcq","tf","fill","def","expl","short","calc","fig","essay"];
 const unverb=q=>String(q).replace(/^\s*(فسّري|فسّر|فسري|فسر|علّلي|علّل|عللي|علل)\s*[:،]?\s*/,"");const isExpl=q=>/^\s*(فسّري|فسّر|فسري|فسر|علّلي|علّل|عللي|علل)/.test(q);
-const FIG=k=>(window.FIGS&&FIGS[k])||"";
+const FIG=k=>(window.FIGS&&FIGS[k])||"";const BFIG=k=>'<img src="'+(window.EXB||"")+"bookfigs/"+k+'.jpg" alt="">';
 const strip=s=>String(s||"").replace(/[\u064B-\u0652\u0640]/g,"");
 const LVRX=[[3,/استنتج|حلل|قيم |قيمي|اقترح|صمم|أبدي رأي|ابدي رأي|رأيك|برر|توقع|ماذا يحدث لو|ما الذي يحدث لو|وازن|انقد|افترض|ابتكر|اربط بين|الأرجح|كيف يمكن|ما الاستنتاج|أي الاستنتاجات/],
   [2,/احسب|أوجد|أجد|جد |جدي|طبق|ارسم|مثل |مثلي|إذا كان|إذا كانت|إذا علمت|كم يساوي|ما مقدار|ناتج|حل المعادلة|حلي|حل |صنفي|صنف |عيني|استخرجي|أعربي|إعراب|حولي|اكتبي|يكتب|نوع ال|«|﴿|\$|\d+\s*(mL|cm|km|kg|g|N|m|s|°|%|J|W|V)\b|[A-Z][a-z]?[A-Z]/],
@@ -29,8 +29,8 @@ function poolOf(l){if(l._pool)return l._pool;const P=[];const L=l._l||{};const r
     ((window.HL&&HL._[L.id])||[]).forEach(z=>{const t=z[0];
       if(typeof t==="number"){if(z.length>=6)addM({q:z[1],o:[z[2],z[3],z[4],z[5]],a:0,shuf:1},t);else P.push(isExpl(z[1])?{k:"expl",lv:Math.max(1,t),q:unverb(z[1]),a:z[2]}:{k:t>=3?"essay":"short",lv:t,q:z[1],a:z[2]});return}
       if(t==="def")P.push({k:"def",lv:0,q:z[1],a:z[2]});else if(t==="expl")P.push({k:"expl",lv:z[1],q:unverb(z[2]),a:z[3]});
-      else if(t==="calc"||t==="fill")P.push({k:t,lv:z[1],q:z[2],a:z[3]});else if(t==="fig")P.push({k:"fig",lv:z[1],q:z[3],a:z[4],fig:FIG(z[2])});
-      else if(t==="figm")P.push({k:"mcq",lv:z[1],q:z[3],o:[z[4],z[5],z[6],z[7]],a:0,shuf:1,fig:FIG(z[2])})})}
+      else if(t==="calc"||t==="fill")P.push({k:t,lv:z[1],q:z[2],a:z[3]});else if(t==="figb")P.push({k:"fig",lv:z[1],q:z[3],a:z[4],fig:BFIG(z[2])});
+      else if(t==="figbm")P.push({k:"mcq",lv:z[1],q:z[3],o:[z[4],z[5],z[6],z[7]],a:0,shuf:1,fig:BFIG(z[2])})})}
   else if(l._kind==="ar"){(L.mcq||[]).forEach(x=>addM({q:x.q,o:x.o,a:x.a,shuf:1},lvOf(x.q)));(L.defs||[]).forEach(x=>P.push({k:"short",lv:0,q:x.q,a:x.a}));(L.probs||[]).forEach(x=>P.push({k:"essay",lv:lvOf(x.q,1),q:x.q,a:x.a}))}
   else if(l._kind==="math"){((L.recall&&L.recall.qs)||[]).forEach(x=>addM({q:x.q,o:x.o,a:x.a},0));((L.sum&&L.sum.rules)||[]).filter(z=>z[0]&&z[1]).forEach(z=>P.push({k:"short",lv:1,q:"اشرحي باختصار: "+z[0]+".",a:z[1]}));
     if(L.ex&&L.ex.q)P.push({k:"calc",lv:2,q:L.ex.q,a:(L.ex.steps||[]).join("\n")});
@@ -196,11 +196,12 @@ function runsOf(str,o){const D=DX;o=o||{};const out=[];const base={font:FONT,siz
     if(c.split(" ").includes("sq")){[...n.childNodes].forEach(ch=>{if(ch.nodeType===3)out.push(new D.TextRun({...base,text:"√(",rightToLeft:false}));else walk(ch,ns)});out.push(new D.TextRun({...base,text:")",rightToLeft:false}));return}
     [...n.childNodes].forEach(ch=>walk(ch,ns))};walk(el,{});return out}
 const P_=(children,o)=>new DX.Paragraph({bidirectional:true,alignment:o&&o.center?DX.AlignmentType.CENTER:undefined,spacing:{after:o&&o.after!=null?o.after:60},children,keepNext:o&&o.keepNext,shading:o&&o.fill?{type:DX.ShadingType.CLEAR,fill:o.fill,color:"auto"}:undefined,border:o&&o.border});
-function svgPng(svg){return new Promise(res=>{try{const d=new DOMParser().parseFromString(svg,"image/svg+xml").documentElement;if(!d.getAttribute("xmlns"))d.setAttribute("xmlns","http://www.w3.org/2000/svg");
+function svgPng(svg){if(/<img/.test(svg))return imgData(svg);return new Promise(res=>{try{const d=new DOMParser().parseFromString(svg,"image/svg+xml").documentElement;if(!d.getAttribute("xmlns"))d.setAttribute("xmlns","http://www.w3.org/2000/svg");
   let vb=(d.getAttribute("viewBox")||"").split(/[ ,]+/).map(Number);let w=+d.getAttribute("width")||vb[2]||300,hh=+d.getAttribute("height")||vb[3]||200;const sc=900/w;d.setAttribute("width",w*sc);d.setAttribute("height",hh*sc);
   const img=new Image();img.onload=()=>{const c=document.createElement("canvas");c.width=w*sc;c.height=hh*sc;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
     c.toBlob(b=>b.arrayBuffer().then(a=>res({data:new Uint8Array(a),w:Math.min(230,w*1.1),h:Math.min(230,w*1.1)*hh/w})),"image/png")};img.onerror=()=>res(null);
   img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(d))}catch(e){res(null)}})}
+function imgData(html){return new Promise(res=>{try{const src=(html.match(/src="([^"]+)"/)||[])[1];if(!src)return res(null);const img=new Image();img.onload=()=>{fetch(src).then(r=>r.arrayBuffer()).then(a=>{const w=Math.min(320,img.naturalWidth*.6);res({data:new Uint8Array(a),w,h:w*img.naturalHeight/img.naturalWidth})}).catch(()=>res(null))};img.onerror=()=>res(null);img.src=src}catch(e){res(null)}})}
 const noB={top:{style:"none",size:0,color:"FFFFFF"},bottom:{style:"none",size:0,color:"FFFFFF"},left:{style:"none",size:0,color:"FFFFFF"},right:{style:"none",size:0,color:"FFFFFF"}};
 function cell(children,o){o=o||{};return new DX.TableCell({children:Array.isArray(children)?children:[children],width:o.w?{size:o.w,type:DX.WidthType.DXA}:undefined,columnSpan:o.cs,rowSpan:o.rs,shading:o.fill?{type:DX.ShadingType.CLEAR,fill:o.fill,color:"auto"}:undefined,borders:o.nob?noB:undefined,verticalAlign:DX.VerticalAlign.CENTER,margins:{top:40,bottom:40,left:80,right:80}})}
 function headTable(ex,title,sub,wTot){const m=ex.meta,w3=Math.floor(wTot/3);const p=(t,o)=>P_(runsOf(t,{size:22,...o}),{after:0,...o});

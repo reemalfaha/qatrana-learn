@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الاستعداد للامتحانات النهائية · منصة القطرانة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=El+Messiri:wght@600;700&display=swap">
+<style>
+:root{--m:#7A1F2E;--md:#5C1622;--g:#B8902A;--bg:#faf6f1;--card:#fff;--ln:#e6d9cd;--ink:#2a1a1d;--mut:#75615f;--ok:#1c7a4d;--bad:#b3403a;--f:"Cairo","Segoe UI",Tahoma,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:17px;line-height:1.8}
+header{background:linear-gradient(135deg,var(--m),var(--md));color:#fff;padding:18px 16px;border-bottom:5px solid var(--g);text-align:center}
+header h1{margin:0;font-family:"El Messiri",var(--f);font-size:1.5rem}header p{margin:2px 0 0;font-size:.92rem;opacity:.92}
+header a{color:#f5e6c4;font-size:.9rem}
+main{max-width:860px;margin:0 auto;padding:14px 12px 70px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:14px;margin:0 0 14px}
+h2{margin:0 0 6px;color:var(--m);font-family:"El Messiri",var(--f);font-size:1.25rem}
+.mut{color:var(--mut);font-size:.9rem;margin:2px 0 8px}
+button{font:700 1rem var(--f);background:var(--m);color:#fff;border:0;border-radius:12px;padding:8px 16px;min-height:44px;cursor:pointer}
+button.alt{background:#fff;color:var(--m);border:1.5px solid var(--m)}
+button.gold{background:var(--g);color:#2b1a00}
+button:disabled{opacity:.45;cursor:default}
+.tabs{display:flex;gap:8px;margin:0 0 12px}
+.tabs button{flex:1;background:#fff;color:var(--m);border:1.5px solid var(--m)}
+.tabs button[aria-current="true"]{background:var(--m);color:#fff}
+.day{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:1px solid var(--ln);border-radius:14px;padding:10px 12px;margin:8px 0;background:#fff}
+.day .d{background:#f6ece6;border-radius:10px;padding:4px 10px;text-align:center;font-size:.85rem;color:var(--m);font-weight:700;min-width:74px}
+.day b{display:block}.day small{color:var(--mut)}
+.day.done{border-color:#b5d8c1;background:#f1f8f3}
+.wk{margin:14px 0 4px;font-weight:700;color:var(--g)}
+.score{font-weight:700;color:var(--ok);font-size:.9rem;white-space:nowrap}
+.q{font-size:1.12rem;font-weight:600;margin:6px 0 10px}
+.opt{display:block;width:100%;text-align:right;background:#fff;color:var(--ink);border:1.5px solid var(--ln);border-radius:12px;padding:10px 12px;margin:8px 0;font-weight:600}
+.opt[aria-pressed="true"]{border-color:var(--m);background:#f6ece6}
+.opt.ok{border-color:var(--ok);background:#e8f4ec}.opt.bad{border-color:var(--bad);background:#fdecea}
+.bar{height:8px;background:#eadfd6;border-radius:8px;overflow:hidden;margin:6px 0 10px}.bar>i{display:block;height:100%;background:var(--g)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.big{font-size:2.6rem;font-weight:700;color:var(--m);text-align:center;font-family:"El Messiri",var(--f)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}th{background:var(--m);color:#fff;padding:4px 8px}td{border:1px solid var(--ln);padding:4px 8px;text-align:center}td:first-child{text-align:right}
+.steps{background:#fbf3e4;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:.95rem}
+.rev{border-top:1px dashed var(--ln);padding-top:10px;margin-top:10px}
+input[type=text]{font:inherit;border:1.5px solid var(--ln);border-radius:10px;padding:6px 10px;max-width:100%}
+.m{font-family:"Cambria Math","Times New Roman",serif;font-size:1.08em;unicode-bidi:isolate;direction:ltr;white-space:nowrap}
+.m i{font-style:italic}.m .mw{font-size:.85em;padding:0 .25em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.86em;line-height:1.15;margin:0 .12em}
+.fr>span:first-child{border-bottom:1.3px solid currentColor;padding:0 .2em}.fr>span{padding:0 .2em}
+.sq{white-space:nowrap}.sq>span{border-top:1.3px solid currentColor;padding:0 .1em;margin-right:.05em}
+.ov{border-top:1.3px solid currentColor}sup{font-size:.7em;line-height:0}
+.fgw{text-align:center;margin:4px 0 6px}.fgw svg{max-width:300px;width:100%;height:auto}
+footer{text-align:center;color:var(--mut);font-size:.85rem;padding:10px}
+</style>
+</head>
+<body>
+<header><h1>الاستعداد للامتحانات النهائية</h1><p>الرياضيات · الصفوف الثامن والتاسع والعاشر</p><a href="../">↩ منصة القطرانة</a></header>
+<main id="app"><div class="card">جارٍ التحميل…</div></main>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات</footer>
+<script src="../exam-builder/math/mathlib.js"></script>
+<script>
+"use strict";
+/* ===== إعدادات تغيّرها المعلمة ===== */
+const START="2026-11-22";      // أول يوم في خطة المراجعة (أحد)
+const GRADES=[["8","الثامن"],["9","التاسع"],["10","العاشر"]];
+const KEY="finals.v1";
+const DAYN=["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+let S={grade:"8",name:"",done:{},stats:{}};
+try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.done)S=Object.assign(S,j)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const app=document.getElementById("app");
+const E=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const H=(t,c,html)=>{const e=document.createElement(t);if(c)e.className=c;e.innerHTML=html;return e};
+const btn=(t,f,c)=>{const b=E("button",c||"",t);b.type="button";b.onclick=f;return b};
+const R=s=>{s=String(s==null?"":s);return s.split("\n").map(l=>window.ML&&ML.T?ML.T(l):l.replace(/\$/g,"")).join("<br>")};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const loadScript=src=>new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)});
+const units=()=>(window.MUNITS||[]).filter(u=>u.id.startsWith("m"+S.grade+"u")).sort((a,b)=>a.n-b.n);
+const dateOf=i=>{const [y,m,d]=START.split("-").map(Number);const t=new Date(y,m-1,d);let k=0;while(k<i){t.setDate(t.getDate()+1);if(t.getDay()!==5&&t.getDay()!==6)k++}return DAYN[t.getDay()]+" "+t.getDate()+"/"+(t.getMonth()+1)};
+
+/* ===== سحب الأسئلة ===== */
+function drawLesson(u,l,n,seen){const out=[],gs=l.gens||[];for(let i=0;i<n*6&&out.length<n&&gs.length;i++){try{const x=gs[Math.floor(Math.random()*gs.length)].f();if(!x||!x.o||x.o.length<3||seen.has(x.q))continue;let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;
+   seen.add(x.q);const idx=shuffle(x.o.map((_,k)=>k));out.push({q:x.q,o:idx.map(k=>x.o[k]),a:idx.indexOf(x.a||0),steps:x.steps||[],fig,lid:u.id+"-"+l.id,lt:l.title,ut:u.title})}catch(e){}}return out}
+function drawUnits(us,total){const seen=new Set(),ls=[];us.forEach(u=>(u.lessons||[]).forEach(l=>{if((l.gens||[]).length)ls.push([u,l])}));if(!ls.length)return[];
+ const out=[];let i=0;const order=shuffle(ls);while(out.length<total&&i<total*4){const [u,l]=order[i%order.length];out.push(...drawLesson(u,l,1,seen));i++}return out.slice(0,total)}
+function drawWeak(total){const ls=[];units().forEach(u=>(u.lessons||[]).forEach(l=>{if((l.gens||[]).length){const st=S.stats[u.id+"-"+l.id];ls.push([u,l,st&&st.t>=2?st.ok/st.t:.6])}}));ls.sort((a,b)=>a[2]-b[2]);const weak=ls.slice(0,Math.max(3,Math.ceil(ls.length/3)));
+ const seen=new Set(),out=[];let i=0;while(out.length<total&&i<total*4){const [u,l]=weak[i%weak.length];out.push(...drawLesson(u,l,1,seen));i++}return out.slice(0,total)}
+
+/* ===== الخطة ===== */
+function plan(){const us=units(),p=[];
+ p.push({id:"diag",t:"اختبار تشخيصي شامل",s:"20 سؤالًا من كل الوحدات · يحدّد دروسك الضعيفة",make:()=>drawUnits(us,20)});
+ us.forEach(u=>p.push({id:"u"+u.n,t:"مراجعة "+u.unit+": "+u.title,s:"15 سؤالًا من دروس الوحدة",make:()=>drawUnits([u],15)}));
+ while(p.length<5)p.push({id:"x"+p.length,t:"مراجعة عامة",s:"15 سؤالًا",make:()=>drawUnits(us,15)});
+ p.push({id:"weak",t:"علاج الدروس الأضعف",s:"15 سؤالًا من الدروس التي أخطأتِ فيها أكثر",make:()=>drawWeak(15)});
+ p.push({id:"mock1",t:"امتحان تجريبي (1)",s:"25 سؤالًا · 40 دقيقة",min:40,make:()=>drawUnits(us,25)});
+ p.push({id:"fix",t:"تدريب على أخطاء الامتحان التجريبي",s:"15 سؤالًا من دروسك الأضعف",make:()=>drawWeak(15)});
+ p.push({id:"mock2",t:"امتحان تجريبي (2)",s:"25 سؤالًا · 40 دقيقة",min:40,make:()=>drawUnits(us,25)});
+ p.push({id:"last",t:"مراجعة أخيرة سريعة",s:"15 سؤالًا من كل الوحدات",make:()=>drawUnits(us,15)});
+ return p}
+function home(){stopTimer();app.replaceChildren();
+ const tabs=E("div","tabs");GRADES.forEach(([g,n])=>{const b=btn("الصف "+n,()=>{S.grade=g;save();home()});b.setAttribute("aria-current",S.grade===g);tabs.append(b)});app.append(tabs);
+ const us=units();const c=E("div","card");c.append(E("h2","","خطة المراجعة في أسبوعين — رياضيات الصف "+GRADES.find(x=>x[0]===S.grade)[1]),E("p","mut","كل يوم مهمة واحدة. حلّي بالترتيب، وأعيدي أي اختبار لتحسين علامتك: الأسئلة تتغيّر في كل مرة."));
+ if(!us.length){c.append(E("p","","تعذّر تحميل أسئلة هذا الصف. حدّثي الصفحة."));app.append(c);return}
+ const p=plan(),doneN=p.filter(x=>S.done[S.grade+"."+x.id]!=null).length;const bar=E("div","bar");const i=E("i");i.style.width=Math.round(doneN/p.length*100)+"%";bar.append(i);c.append(E("div","mut","أنجزتِ "+doneN+" من "+p.length),bar);
+ p.forEach((x,k)=>{if(k===0)c.append(E("div","wk","الأسبوع الأول"));if(k===5)c.append(E("div","wk","الأسبوع الثاني"));const best=S.done[S.grade+"."+x.id];const r=E("div","day"+(best!=null?" done":""));const mid=E("div");mid.append(E("b","",x.t),E("small","",x.s));
+  const right=E("div");if(best!=null)right.append(E("div","score","✔ "+best+"%"));right.append(btn(best!=null?"أعيدي":"ابدئي",()=>start(x),best!=null?"alt":""));r.append(E("div","d",dateOf(k)),mid,right);c.append(r)});
+ app.append(c);
+ const st=E("div","card");st.append(E("h2","","مستواي في الدروس"));const rows=[];us.forEach(u=>(u.lessons||[]).forEach(l=>{const s=S.stats[u.id+"-"+l.id];if(s&&s.t)rows.push([u.unit+" · "+l.title,s.t,Math.round(s.ok/s.t*100)])}));
+ if(!rows.length)st.append(E("p","mut","يظهر هنا مستواك في كل درس بعد أول اختبار."));else{const t=E("table"),hr=E("tr");["الدرس","أسئلة","الإتقان","الحكم"].forEach(x=>hr.append(E("th","",x)));t.append(hr);rows.sort((a,b)=>a[2]-b[2]).forEach(r=>{const tr=E("tr");tr.append(H("td","",R(r[0])),E("td","",r[1]),E("td","",r[2]+"%"));const v=E("td","",r[2]>=75?"متقَن":r[2]>=50?"يحتاج تدريبًا":"ضعيف");v.style.color=r[2]>=75?"var(--ok)":r[2]>=50?"#8a6100":"var(--bad)";v.style.fontWeight=700;tr.append(v);t.append(tr)});st.append(t)}
+ app.append(st)}
+
+/* ===== الاختبار ===== */
+let T=null,TM=null;
+function stopTimer(){if(TM){clearInterval(TM);TM=null}}
+function start(item){const qs=item.make();if(!qs.length){alert("تعذّر تجهيز الأسئلة. حدّثي الصفحة.");return}T={item,qs,ans:Array(qs.length).fill(null),i:0,end:item.min?Date.now()+item.min*6e4:0};stopTimer();if(T.end)TM=setInterval(()=>{const el=document.getElementById("tm");const left=T.end-Date.now();if(left<=0){finish();return}if(el)el.textContent="⏱ "+Math.floor(left/6e4)+":"+String(Math.floor(left%6e4/1000)).padStart(2,"0")},500);show();scrollTo(0,0)}
+function show(){const q=T.qs[T.i];app.replaceChildren();const c=E("div","card");const top=E("div","row");top.append(E("b","",T.item.t),E("span","mut","السؤال "+(T.i+1)+" من "+T.qs.length));if(T.end){const tm=E("b","","⏱");tm.id="tm";top.append(tm)}c.append(top);
+ const bar=E("div","bar");const i=E("i");i.style.width=Math.round(T.i/T.qs.length*100)+"%";bar.append(i);c.append(bar,H("div","q",R(q.q)));if(q.fig)c.append(H("div","fgw",q.fig));
+ q.o.forEach((o,k)=>{const b=H("button","opt","<b>"+"أبجد"[k]+")</b> "+R(o));b.type="button";b.setAttribute("aria-pressed",T.ans[T.i]===k);b.onclick=()=>{T.ans[T.i]=k;show()};c.append(b)});
+ const nav=E("div","row");const prev=btn("→ السابق",()=>{T.i--;show()},"alt");prev.disabled=T.i===0;const left=T.ans.filter(a=>a==null).length;
+ const next=T.i<T.qs.length-1?btn("التالي ←",()=>{T.i++;show()}):btn("إنهاء وتصحيح",function(){if(left&&!this.dataset.ok){this.dataset.ok=1;this.textContent="بقي "+left+" بلا إجابة — اضغطي للتأكيد";return}finish()},"gold");nav.append(prev,next);c.append(nav);
+ c.append(btn("خروج من الاختبار",function(){if(!this.dataset.ok){this.dataset.ok=1;this.textContent="اضغطي مرة ثانية للخروج (تضيع الإجابات)";return}home()},"alt"));app.append(c)}
+function finish(){stopTimer();const n=T.qs.length;let ok=0;const by={};T.qs.forEach((q,k)=>{const good=T.ans[k]===q.a;if(good)ok++;const s=S.stats[q.lid]=S.stats[q.lid]||{ok:0,t:0};s.t++;if(good)s.ok++;const b=by[q.lid]=by[q.lid]||{t:q.ut+" · "+q.lt,ok:0,n:0};b.n++;if(good)b.ok++});
+ const pct=Math.round(ok/n*100),key=S.grade+"."+T.item.id;S.done[key]=Math.max(S.done[key]||0,pct);save();
+ app.replaceChildren();const c=E("div","card");c.append(E("h2","",T.item.t+" — النتيجة"),E("div","big",pct+"%"),E("p","",ok+" إجابة صحيحة من "+n));c.lastChild.style.textAlign="center";
+ const msg=pct>=85?"ممتاز! أنتِ جاهزة لهذا الجزء.":pct>=65?"جيد. راجعي الدروس الأضعف في الجدول ثم أعيدي الاختبار.":"تحتاجين مراجعة. ابدئي بالدروس الأضعف في الجدول واسألي معلمتك.";c.append(E("p","mut",msg));c.lastChild.style.textAlign="center";
+ const nm=E("input");nm.type="text";nm.placeholder="اسمك وشعبتك (اختياري)";nm.value=S.name;nm.oninput=()=>{S.name=nm.value;save()};const d=new Date();c.append(nm,E("p","mut","لإرسال نتيجتك لمعلمتك: اكتبي اسمك ثم صوّري هذه الشاشة. التاريخ: "+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()));
+ const t=E("table"),hr=E("tr");["الدرس","الصحيح","من"].forEach(x=>hr.append(E("th","",x)));t.append(hr);Object.values(by).sort((a,b)=>a.ok/a.n-b.ok/b.n).forEach(b=>{const tr=E("tr");tr.append(H("td","",R(b.t)),E("td","",b.ok),E("td","",b.n));if(b.ok/b.n<.5)tr.style.background="#fdecea";t.append(tr)});c.append(t);
+ const r=E("div","row");r.style.marginTop="10px";r.append(btn("↩ العودة للخطة",home),btn("أعيدي بأسئلة جديدة",()=>start(T.item),"alt"));c.append(r);app.append(c);
+ const rv=E("div","card");rv.append(E("h2","","مراجعة الإجابات والحلول"));T.qs.forEach((q,k)=>{const w=E("div",k?"rev":"");w.append(H("div","q",(k+1)+") "+R(q.q)));if(q.fig)w.append(H("div","fgw",q.fig));q.o.forEach((o,j)=>{if(j!==q.a&&j!==T.ans[k])return;const b=H("div","opt "+(j===q.a?"ok":"bad"),(j===q.a?"✔ الإجابة الصحيحة: ":"✘ إجابتك: ")+R(o));w.append(b)});if(T.ans[k]==null)w.append(E("div","mut","لم تُجيبي عن هذا السؤال."));
+  if(q.steps&&q.steps.length&&T.ans[k]!==q.a)w.append(H("div","steps","<b>الحل:</b><br>"+q.steps.map(R).join("<br>")));rv.append(w)});app.append(rv);scrollTo(0,0)}
+
+/* ===== التحميل ===== */
+(async()=>{try{await loadScript("../exam-builder/math/mgeo.js");const fs=[];GRADES.forEach(([g])=>[1,2,3,4].forEach(n=>fs.push("m"+g+"u"+n)));await Promise.all(fs.map(f=>loadScript("../exam-builder/math/"+f+".js").catch(()=>{})));home()}catch(e){app.replaceChildren(E("div","card","تعذّر التحميل. تأكدي من الاتصال وحدّثي الصفحة."))}})();
+</script>
+</body>
+</html>

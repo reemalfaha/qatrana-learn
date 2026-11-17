@@ -91,6 +91,13 @@ canvas.ink{position:absolute;inset:0;touch-action:none;z-index:2;pointer-events:
 body.full .top,body.full footer{display:none}body.full main{max-width:none;padding:6px}body.full .bbar{top:0}
 /* الطباعة */
 #prt{display:none}
+.kq .q{margin:.5em 0}.gwrap{display:block;max-width:360px;margin:6px auto}.gwrap svg{width:100%;height:auto;display:block}
+.gp .gl{stroke:var(--ln);stroke-width:1}.gp .ax{stroke:var(--ink);stroke-width:1.3}.gp .cv{fill:none;stroke:var(--m);stroke-width:2.6;stroke-linejoin:round}.gp .sg{stroke:var(--m);stroke-width:5;stroke-linecap:butt}
+.gp .dc{fill:var(--m);stroke:var(--m);stroke-width:2}.gp .do{fill:var(--card);stroke:var(--m);stroke-width:2.2}.gp .tl{font:11px var(--f);fill:var(--mut);text-anchor:middle;direction:ltr}.gp .al{font:italic 13px serif;fill:var(--ink)}
+.opt .gwrap{flex:1;margin:0}.kfs{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:8px 0}.kf{display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:0}.kl{font-weight:600;color:var(--md)}
+.kin{font:600 1.05rem ui-monospace,Consolas,monospace;padding:9px 12px;border:2px solid var(--ln);border-radius:12px;background:var(--card);color:var(--ink);width:100%;text-align:left}.kin:focus{outline:none;border-color:var(--g)}.kin.ok{border-color:var(--ok);background:var(--okb)}.kin.no{border-color:var(--no);background:var(--nob)}
+.keys{display:flex;flex-wrap:wrap;gap:6px;direction:ltr;justify-content:flex-end;margin:4px 0 8px}.key{min-width:40px;padding:6px 10px;border:1px solid var(--ln);border-radius:10px;background:var(--soft);color:var(--m);font:700 1rem ui-monospace,monospace;cursor:pointer}
+.kst{font-size:1.2rem}.kst.ok{color:var(--ok)}.kst.no{color:var(--no)}.fbk{margin:6px 0}.tabs.sm button{font-size:.9rem;padding:6px 12px}.kbg small{font-weight:400;opacity:.8}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:14px;border-top:1px solid var(--ln);margin-top:20px}
 @media (max-width:820px){.hero{grid-template-columns:1fr}nav{display:none;width:100%}nav.open{display:flex}.burger{display:block}.page .ops{grid-template-columns:1fr}.bbar{position:static}}
 @media print{
@@ -113,14 +120,16 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:14px;border-t
  <a class="brand" href="#home"><span class="logo">∑</span><span>الرياضيات · الأول الثانوي<small>المسار الأكاديمي · الفصل الأول</small></span></a>
  <button class="burger" id="burger" aria-label="القائمة">☰ القائمة</button>
  <nav id="nav">
-  <a href="#home" data-r="home">الرئيسية</a><a href="#lessons" data-r="lessons">الدروس</a><a href="#bank" data-r="bank">بنك الأسئلة</a><a href="#quick" data-r="quick">اختبار سريع</a><a href="#mock" data-r="mock">امتحان تجريبي</a><a href="#builder" data-r="builder">منشئ الاختبارات</a><a href="#board" data-r="board">السبورة</a><a href="#me" data-r="me">ملفّي</a>
+  <a href="#home" data-r="home">الرئيسية</a><a href="#lessons" data-r="lessons">الدروس</a><a href="#kb" data-r="kb">أسئلة الكتاب</a><a href="#bank" data-r="bank">بنك الأسئلة</a><a href="#quick" data-r="quick">اختبار سريع</a><a href="#mock" data-r="mock">امتحان تجريبي</a><a href="#builder" data-r="builder">منشئ الاختبارات</a><a href="#board" data-r="board">السبورة</a><a href="#me" data-r="me">ملفّي</a>
  </nav></div></header>
 <main id="app"><div class="card">جارٍ التحميل…</div></main>
 <div id="prt"></div>
-<footer>منصة رياضيات الصف الحادي عشر الأكاديمي · مدرسة القطرانة الثانوية للبنات<br>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · الأسئلة مولّدة وفق أهداف دروس كتاب الطالب (المركز الوطني لتطوير المناهج)</footer>
+<footer>منصة رياضيات الصف الحادي عشر الأكاديمي · مدرسة القطرانة الثانوية للبنات<br>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · الأسئلة المتجدّدة مولّدة وفق أهداف الدروس، و«أسئلة الكتاب» من كتابَي الطالب والتمارين (المركز الوطني لتطوير المناهج)</footer>
 <script src="lib/katex/katex.min.js"></script><script src="lib/katex/auto-render.min.js"></script>
 <script src="js/m.js"></script>
 <script src="data/u1.js"></script>
+<script src="data/b1.js"></script>
+<script src="js/kb.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -98,6 +98,7 @@ pre.ex{background:var(--soft);border-radius:12px;padding:10px;white-space:pre-wr
 <script src="math/mathlib.js"></script>
 <script src="../feel/qrcode.js"></script>
 <script src="../teachers/qclass.js"></script>
+<script src="figs.js"></script>
 <script src="spec.js"></script>
 <script>
 "use strict";
@@ -110,10 +111,14 @@ const TYPES={
   mcq:{n:"اختيار من متعدد",ic:"🔘",c:"#7A1F2E",inst:"اختاري الإجابة الصحيحة فيما يأتي:",m:1},
   tf:{n:"صح / خطأ",ic:"✅",c:"#1F7A4D",inst:"ضعي إشارة (✓) أمام العبارة الصحيحة وإشارة (✗) أمام العبارة الخاطئة:",m:1},
   fill:{n:"إكمال الفراغ",ic:"✏️",c:"#2F6FB0",inst:"أكملي الفراغات الآتية بما يناسبها:",m:1},
+  def:{n:"وضّحي المقصود",ic:"📘",c:"#1F6F78",inst:"وضّحي المقصود بكلٍّ مما يأتي:",m:2},
+  expl:{n:"فسّري تفسيرًا علميًّا",ic:"🔬",c:"#8A4B12",inst:"فسّري كلًّا مما يأتي تفسيرًا علميًّا دقيقًا:",m:2},
   short:{n:"إجابة قصيرة",ic:"📝",c:"#C9822B",inst:"أجيبي عن الأسئلة الآتية بإيجاز:",m:2},
+  calc:{n:"مسائل حسابية",ic:"🧮",c:"#2E5E3A",inst:"حلّي المسائل الآتية، مبيّنةً خطوات الحل:",m:3},
+  fig:{n:"أسئلة الرسومات",ic:"🖼️",c:"#5B4A8A",inst:"ادرسي الأشكال الآتية، ثم أجيبي عمّا يليها:",m:2},
   essay:{n:"سؤال مقالي",ic:"📖",c:"#6B3FA0",inst:"أجيبي عن الأسئلة الآتية:",m:3}
 };
-const ORDER=["mcq","tf","fill","short","essay"];
+const ORDER=["mcq","tf","fill","def","expl","short","calc","fig","essay"];
 /* ---------- storage ---------- */
 const KEY="exb.v1";
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
@@ -123,7 +128,7 @@ const uid=()=>Math.random().toString(36).slice(2,9);
 function newExam(){return{id:uid(),meta:{title:"اختبار قصير",school:"مدرسة القطرانة الثانوية للبنات",teacher:"",subject:"",grade:"",term:"الفصل الدراسي الأول",date:"",time:"",instr:"",showAns:true},qs:[]}}
 function cur(){return S.exams.find(e=>e.id===S.cur)}
 function ensure(){if(!cur()){const e=newExam();S.exams.push(e);S.cur=e.id;save()}return cur()}
-function newQ(t){return{id:uid(),t,q:"",opts:t==="mcq"?["","","",""]:[],a:t==="mcq"?0:t==="tf"?true:"",m:TYPES[t].m,lines:t==="essay"?5:3}}
+function newQ(t){return{id:uid(),t,q:"",opts:t==="mcq"?["","","",""]:[],a:t==="mcq"?0:t==="tf"?true:"",m:TYPES[t].m,lines:t==="essay"||t==="calc"?5:t==="def"?2:3}}
 const marks=ex=>ex.qs.reduce((s,q)=>s+(+q.m||0),0);
 /* ---------- helpers ---------- */
 function norm(s){return String(s||"").replace(/[ً-ْـ]/g,"").replace(/[إأآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/[^؀-ۿa-zA-Z0-9]+/g," ").trim().toLowerCase()}
@@ -221,14 +226,14 @@ function vQs(ex){
   return box}
 /* ---------- auto generator (science + math + Arabic from the platform's data) ---------- */
 let CAT=null;
-const FBFILES=["g8-sci","g9-bio","g9-chem"];
+const FBFILES=["g8-sci","g9-bio","g9-chem"],HLFILES=["hl-g8","hl-g9","hl-g10"];
 const SFILES=["g8-sci","g9-bio","g9-chem","g9-earth","g9-phys","g10-bio","g10-chem","g10-earth","g10-phys"];
 const MFILES=["m8u1","m8u2","m8u3","m8u4","m9u1","m9u2","m9u3","m9u4","m10u1","m10u2","m10u3","m10u4"];
 function loadScript(src){return new Promise((res,rej)=>{const sc=document.createElement("script");sc.src=src;sc.onload=res;sc.onerror=()=>rej(new Error(src));document.head.append(sc)})}
 function loadCat(){if(CAT)return Promise.resolve(CAT);
   window.SCI={data:{},add(g,k,o){(this.data[g]=this.data[g]||{})[k]=o}};window.CONFIG=window.CONFIG||{};
-  window.FB=window.FB||{_:{},add(o){Object.assign(this._,o)}};
-  const sci=Promise.all(SFILES.map(f=>loadScript("../science/data/"+f+".js")).concat(FBFILES.map(f=>loadScript("../finals/bank/"+f+".js").catch(()=>0))));
+  window.FB=window.FB||{_:{},add(o){Object.assign(this._,o)}};window.HL=window.HL||{_:{},add(o){for(const k in o)this._[k]=(this._[k]||[]).concat(o[k])}};
+  const sci=Promise.all(SFILES.map(f=>loadScript("../science/data/"+f+".js")).concat(FBFILES.map(f=>loadScript("../finals/bank/"+f+".js").catch(()=>0)),HLFILES.map(f=>loadScript("data/"+f+".js").catch(()=>0))));
   const math=loadScript("math/mgeo.js").then(()=>Promise.all(MFILES.map(f=>loadScript("math/"+f+".js"))));
   const ar=fetch("data/arabic.json").then(r=>r.json());
   return Promise.all([sci,math,ar]).then(([,,A])=>{
@@ -317,7 +322,7 @@ function paper(ex,ver,key){
         if(key){const k=os.findIndex(x=>x.i===q.a)}}
       else if(g.t==="tf"&&key)el.append(h("span",{class:"key-a"},q.a?"✓ صح":"✗ خطأ"));
       else if(g.t==="fill"&&key)el.append(h("span",{class:"key-a"},R(String(q.a||"—").split("|")[0])));
-      else if((g.t==="short"||g.t==="essay")){if(key){if(q.a)el.append(h("span",{class:"key-a"},R(q.a)))}else for(let i=0;i<(q.lines||3);i++)el.append(h("div",{class:"ln"}))}
+      else if(!["mcq","tf","fill"].includes(g.t)){if(key){if(q.a)el.append(h("span",{class:"key-a"},R(q.a)))}else for(let i=0;i<(q.lines||3);i++)el.append(h("div",{class:"ln"}))}
       sec.append(el)});
     P.append(sec)});
   P.append(h("div",{class:"endn"},"انتهت الأسئلة، مع أطيب التمنيات بالتوفيق"));

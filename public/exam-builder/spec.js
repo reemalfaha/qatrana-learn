@@ -3,8 +3,10 @@
 "use strict";
 const LV=["تذكّر","فهم","تطبيق","مهارات عليا"];
 const LVC=["#2F6FB0","#1F7A4D","#C9822B","#7A1F2E"];
-const KINDS={mcq:"اختيار من متعدد",tf:"صح / خطأ",fill:"إكمال الفراغ",short:"إجابة قصيرة / تعريفات",essay:"مسائل وأسئلة مقالية"};
-const KORDER=["mcq","tf","fill","short","essay"];
+const KINDS={mcq:"اختيار من متعدد",tf:"صح / خطأ",fill:"املئي الفراغ",def:"وضّحي المقصود",expl:"فسّري تفسيرًا علميًّا دقيقًا",short:"إجابة قصيرة",calc:"مسائل حسابية",fig:"أسئلة الرسومات",essay:"أسئلة مقالية"};
+const KORDER=["mcq","tf","fill","def","expl","short","calc","fig","essay"];
+const unverb=q=>String(q).replace(/^\s*(فسّري|فسّر|فسري|فسر|علّلي|علّل|عللي|علل)\s*[:،]?\s*/,"");const isExpl=q=>/^\s*(فسّري|فسّر|فسري|فسر|علّلي|علّل|عللي|علل)/.test(q);
+const FIG=k=>(window.FIGS&&FIGS[k])||"";
 const strip=s=>String(s||"").replace(/[\u064B-\u0652\u0640]/g,"");
 const LVRX=[[3,/استنتج|حلل|قيم |قيمي|اقترح|صمم|أبدي رأي|ابدي رأي|رأيك|برر|توقع|ماذا يحدث لو|ما الذي يحدث لو|وازن|انقد|افترض|ابتكر|اربط بين|الأرجح|كيف يمكن|ما الاستنتاج|أي الاستنتاجات/],
   [2,/احسب|أوجد|أجد|جد |جدي|طبق|ارسم|مثل |مثلي|إذا كان|إذا كانت|إذا علمت|كم يساوي|ما مقدار|ناتج|حل المعادلة|حلي|حل |صنفي|صنف |عيني|استخرجي|أعربي|إعراب|حولي|اكتبي|يكتب|نوع ال|«|﴿|\$|\d+\s*(mL|cm|km|kg|g|N|m|s|°|%|J|W|V)\b|[A-Z][a-z]?[A-Z]/],
@@ -21,22 +23,27 @@ function poolOf(l){if(l._pool)return l._pool;const P=[];const L=l._l||{};const r
   const addM=(x,lv,src)=>{if(!x||!x.q||!x.o||x.o.length<2)return;P.push({k:"mcq",lv,q:x.q,o:x.o.slice(0,4),a:x.a,shuf:x.shuf,fig:x.fig||""});
     const t=toTF(x,r);if(t)P.push({k:"tf",lv,q:t.q,a:t.a});const f=toFill(x);if(f)P.push({k:"fill",lv,q:f.q,a:f.a})};
   if(l._kind==="sci"){(L.quiz||[]).forEach(x=>addM({q:x.q,o:x.o,a:x.a,shuf:1},lvOf(x.q)));
-    (L.points||[]).filter(p=>p[0]&&p[1]).forEach(p=>P.push({k:"short",lv:0,q:"وضّحي المقصود بـ: "+p[0]+".",a:p[1]}));
+    (L.points||[]).filter(p=>p[0]&&p[1]&&p[0].length<40).forEach(p=>P.push({k:"def",lv:0,q:p[0],a:p[1]}));
     const fb=(window.FB&&FB._[L.id])||{};(fb.mcq||[]).forEach(z=>addM({q:z[0],o:[z[1],z[2],z[3],z[4]],a:0,shuf:1},lvOf(z[0])));
-    (fb.sa||[]).forEach(z=>P.push({k:/فسر|علل|قارن|وضح|استنتج|اقترح|توقع/.test(strip(z[0]))?"essay":"short",lv:lvOf(z[0],1),q:z[0],a:z[1]}))}
+    (fb.sa||[]).forEach(z=>P.push(isExpl(z[0])?{k:"expl",lv:1,q:unverb(z[0]),a:z[1]}:{k:/قارن|استنتج|اقترح|توقع/.test(strip(z[0]))?"essay":"short",lv:lvOf(z[0],1),q:z[0],a:z[1]}));
+    ((window.HL&&HL._[L.id])||[]).forEach(z=>{const t=z[0];
+      if(typeof t==="number"){if(z.length>=6)addM({q:z[1],o:[z[2],z[3],z[4],z[5]],a:0,shuf:1},t);else P.push(isExpl(z[1])?{k:"expl",lv:Math.max(1,t),q:unverb(z[1]),a:z[2]}:{k:t>=3?"essay":"short",lv:t,q:z[1],a:z[2]});return}
+      if(t==="def")P.push({k:"def",lv:0,q:z[1],a:z[2]});else if(t==="expl")P.push({k:"expl",lv:z[1],q:unverb(z[2]),a:z[3]});
+      else if(t==="calc"||t==="fill")P.push({k:t,lv:z[1],q:z[2],a:z[3]});else if(t==="fig")P.push({k:"fig",lv:z[1],q:z[3],a:z[4],fig:FIG(z[2])});
+      else if(t==="figm")P.push({k:"mcq",lv:z[1],q:z[3],o:[z[4],z[5],z[6],z[7]],a:0,shuf:1,fig:FIG(z[2])})})}
   else if(l._kind==="ar"){(L.mcq||[]).forEach(x=>addM({q:x.q,o:x.o,a:x.a,shuf:1},lvOf(x.q)));(L.defs||[]).forEach(x=>P.push({k:"short",lv:0,q:x.q,a:x.a}));(L.probs||[]).forEach(x=>P.push({k:"essay",lv:lvOf(x.q,1),q:x.q,a:x.a}))}
   else if(l._kind==="math"){((L.recall&&L.recall.qs)||[]).forEach(x=>addM({q:x.q,o:x.o,a:x.a},0));((L.sum&&L.sum.rules)||[]).filter(z=>z[0]&&z[1]).forEach(z=>P.push({k:"short",lv:1,q:"اشرحي باختصار: "+z[0]+".",a:z[1]}));
-    if(L.ex&&L.ex.q)P.push({k:"essay",lv:2,q:L.ex.q,a:(L.ex.steps||[]).join("\n")});
+    if(L.ex&&L.ex.q)P.push({k:"calc",lv:2,q:L.ex.q,a:(L.ex.steps||[]).join("\n")});
     l._gens={};(L.gens||[]).forEach(g=>{const lv=Math.min(3,Math.max(1,+g.lv||2));(l._gens[lv]=l._gens[lv]||[]).push(g)})}
   return l._pool=P}
 function genMath(l,lv,k){const gs=(l._gens||{})[lv]||[];if(!gs.length)return null;for(let i=0;i<20;i++){try{const g=gs[Math.floor(Math.random()*gs.length)];const x=g.f();if(!x)continue;
     let fig="";if(typeof x.fig==="function"){const e=x.fig();fig=e&&e.outerHTML||""}else if(x.fig&&x.fig.outerHTML)fig=x.fig.outerHTML;
     if(k==="mcq"){if(!x.o||x.o.length<2)continue;return{k,lv,q:x.q,o:x.o.slice(0,4),a:x.a,shuf:1,fig}}
-    if(k==="essay")return{k,lv,q:x.q,a:(x.steps||[]).join("\n"),fig};
+    if(k==="calc")return{k,lv,q:x.q,a:(x.steps||[]).join("\n"),fig};
     if((k==="tf"||k==="fill")&&x.o){const z=k==="tf"?toTF(x,Math.random):toFill(x);if(z)return{k,lv,q:z.q,a:z.a,fig}}}catch(e){}}return null}
-const avail=(l,lv,ks)=>{const P=poolOf(l);let n=P.filter(x=>x.lv===lv&&ks.includes(x.k)&&(!SP.fig||x.fig)).length;if(l._kind==="math"&&(l._gens||{})[lv]&&ks.some(k=>k!=="short"))return Infinity;return n};
+const avail=(l,lv,ks)=>{const P=poolOf(l);let n=P.filter(x=>x.lv===lv&&ks.includes(x.k)&&(!SP.fig||x.fig)).length;if(l._kind==="math"&&(l._gens||{})[lv]&&ks.some(k=>["mcq","tf","fill","calc"].includes(k)))return Infinity;return n};
 /* ---------- حالة التصميم ---------- */
-const SP={grade:"العاشر",key:null,sel:new Set(),w:{},basis:"pages",pct:[30,40,20,10],cnt:{mcq:20,tf:0,fill:0,short:2,essay:2},mk:{mcq:1,tf:1,fill:1,short:2,essay:4},M:null,fig:false};
+const SP={grade:"العاشر",key:null,sel:new Set(),w:{},basis:"pages",pct:[30,40,20,10],cnt:{mcq:20,tf:0,fill:0,def:2,expl:2,short:0,calc:0,fig:0,essay:0},mk:{mcq:1,tf:1,fill:1,def:2,expl:2,short:2,calc:3,fig:2,essay:4},M:null,fig:false};
 function pagesOf(l){return l._pages||1}
 /* توزيع بأكبر باقٍ */
 function LR(N,ws){const W=ws.reduce((a,b)=>a+b,0)||1;const raw=ws.map(w=>N*w/W);const f=raw.map(Math.floor);let d=N-f.reduce((a,b)=>a+b,0);raw.map((v,i)=>[v-f[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{if(d>0){f[i]++;d--}});return f}
@@ -69,11 +76,12 @@ function vSpec(ex){
       /* 2) طبيعة الأسئلة */
       const c2=h("div",{class:"card stack"},h("h3",{style:"margin:0"},"٢) طبيعة الأسئلة وعددها وعلاماتها"));
       const tot=h("div",{class:"sum"});const updT=()=>{const N=KORDER.reduce((s,k)=>s+(SP.cnt[k]||0),0),Mk=KORDER.reduce((s,k)=>s+(SP.cnt[k]||0)*(SP.mk[k]||0),0);tot.replaceChildren(h("span",{},"عدد الأسئلة: ",h("b",{},N)),h("span",{},"مجموع العلامات: ",h("b",{},Mk)))};
-      KORDER.forEach(k=>c2.append(h("div",{class:"row",style:"align-items:end"},h("div",{class:"f",style:"flex:2;font-weight:700;align-self:center"},KINDS[k]),
+      const allL=lessonsOf(SP.grade,SP.key).flatMap(x=>x.ls);const kAv=k=>allL.reduce((s,l)=>s+(l._kind==="math"&&["mcq","tf","fill","calc"].includes(k)?1e6:poolOf(l).filter(x=>x.k===k).length),0);
+      KORDER.forEach(k=>{const av=kAv(k);if(!av){SP.cnt[k]=0;return}c2.append(h("div",{class:"row",style:"align-items:end"},h("div",{class:"f",style:"flex:2;font-weight:700;align-self:center"},KINDS[k],h("div",{class:"muted small",style:"font-weight:400"},av>=1e6?"متجدّدة":"في بنك المبحث: "+av)),
         h("label",{class:"f"},"العدد",h("input",{class:"in",type:"number",min:0,max:80,value:SP.cnt[k],oninput:e=>{SP.cnt[k]=+e.target.value||0;SP.M=null;updT()}})),
-        h("label",{class:"f"},"علامة السؤال",h("input",{class:"in",type:"number",min:0,step:.5,value:SP.mk[k],oninput:e=>{SP.mk[k]=+e.target.value||0;updT()}})))));
+        h("label",{class:"f"},"علامة السؤال",h("input",{class:"in",type:"number",min:0,step:.5,value:SP.mk[k],oninput:e=>{SP.mk[k]=+e.target.value||0;updT()}}))))});
       c2.append(tot,h("label",{class:"so"},h("input",{type:"checkbox",checked:SP.fig,onchange:e=>{SP.fig=e.target.checked;paint()}}),"تفضيل الأسئلة التي فيها رسومات وأشكال (إن توفّرت)"),
-        h("p",{class:"muted small",style:"margin:0"},"أسئلة «صح / خطأ» و«إكمال الفراغ» تُشتقّ آليًّا من أسئلة الاختيار من متعدد المناسبة. المسائل في الرياضيات متجدّدة لا تنفد."));updT();body.append(c2);
+        h("p",{class:"muted small",style:"margin:0"},"تظهر الأنواع المتوفّرة لهذا المبحث فقط. بعض أسئلة «صح / خطأ» و«املئي الفراغ» مشتقّة آليًّا من أسئلة الاختيار من متعدد. مسائل الرياضيات متجدّدة لا تنفد."));updT();body.append(c2);
       /* 3) نسب بلوم */
       const c3=h("div",{class:"card stack"},h("h3",{style:"margin:0"},"٣) نسب مستويات الأهداف (بلوم)"));const ps=h("div",{class:"sum"});const updP=()=>{const s=SP.pct.reduce((a,b)=>a+b,0);ps.replaceChildren(h("span",{},"المجموع: ",h("b",{style:s===100?"":"color:#B3261E"},s+"%")),s===100?"":h("span",{style:"color:#B3261E"},"يجب أن يكون المجموع 100%"))};
       c3.append(h("div",{class:"row"},LV.map((n,j)=>h("label",{class:"f"},n+" %",h("input",{class:"in",type:"number",min:0,max:100,value:SP.pct[j],oninput:e=>{SP.pct[j]=+e.target.value||0;SP.M=null;updP()}})))),ps,
@@ -111,7 +119,7 @@ function pickBySpec(ex){const ls=selLessons();const M=SP.M;const ks=KORDER.filte
   shuffle(cells,r).forEach(([l,j])=>{let x=take(l,j);if(!x)for(const d of [1,-1,2,-2,3,-3]){const jj=j+d;if(jj<0||jj>3)continue;x=take(l,jj);if(x)break}
     if(!x){short++;return}used.add(x.q+x.k);quota[x.k]--;out.push({x,l})});
   ex.qs=out.map(({x,l})=>{let o=x.o?x.o.slice(0,4):[],a=x.a;if(x.k==="mcq"&&x.shuf){const idx=shuffle(o.map((_,i)=>i),r);o=idx.map(i=>o[i]);a=idx.indexOf(a)}
-    return{id:uid(),t:x.k,q:x.q,opts:x.k==="mcq"?o:[],a:x.k==="fill"?String(a):a,m:SP.mk[x.k],lines:x.k==="essay"?5:3,fig:x.fig||"",lv:x.lv,ls:l.title,lsid:l.id}});
+    return{id:uid(),t:x.k,q:x.q,opts:x.k==="mcq"?o:[],a:x.k==="fill"?String(a):a,m:SP.mk[x.k],lines:x.k==="essay"||x.k==="calc"?5:x.k==="def"?2:3,fig:x.fig||"",lv:x.lv,ls:l.title,lsid:l.id}});
   ex.spec={basis:SP.basis,rows:ls.map(l=>({id:l.id,title:l.title,w:SP.w[SP.basis+":"+l.id]||0})),pct:SP.pct.slice()};
   const m=ex.meta;m.subject=CAT[SP.grade][SP.key].name;m.grade="الصف "+SP.grade;if(!m.title||m.title==="اختبار قصير")m.title="امتحان "+m.subject;
   return{short}}

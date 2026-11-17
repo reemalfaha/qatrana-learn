@@ -49,7 +49,7 @@ function home(){const nEx=ALL.reduce((a,k)=>a+LES[k].L.examples.length,0),nCards
    el("p",{},"دروس مختصرة وبطاقات مراجعة، وبنك أسئلة متجدّد بثلاثة مستويات وحلول خطوة بخطوة، وامتحانات تجريبية بوقت، ومنشئ اختبارات للطباعة، وسبورة للحل بالقلم."),
    el("div",{class:"row"},el("a",{class:"btn",href:"#lessons"},"📘 ابدئي من الدروس"),el("a",{class:"btn gold",href:"#mock"},"⏱ امتحان تجريبي"),el("a",{class:"btn alt",href:"#builder"},"🖨 اكتبي اختبارًا واطبعيه"))),
   el("div",{class:"stats"},...[[UNITS.length+" من 3","وحدات متاحة"],[ALL.length,"دروس متاحة"],[nGens(),"نوعًا من الأسئلة المتجدّدة"],[nCards+nEx,"بطاقة ومثالًا محلولًا"]].map(([b,s])=>el("div",{class:"stat"},el("b",{},String(b)),el("span",{},s))))));
- const tools=[["#kb","📖","أسئلة الكتاب","أمثلة الكتاب وأسئلته وكتاب التمارين، بتصحيح ذاتي فوري"],["#bank","🗂","بنك الأسئلة","كل درس بثلاثة مستويات، مع الحل خطوة بخطوة"],["#quick","⚡","اختبار سريع","10 أسئلة منوّعة ونتيجة فورية"],["#mock","⏱","امتحان تجريبي","20 سؤالًا في 40 دقيقة يحاكي الامتحان"],["#builder","🖨","منشئ الاختبارات","اختبار مطبوع A4 بنموذجين وورقة إجابة ومفتاح"],["#board","✏️","السبورة","سؤال في كل صفحة وفراغ للحل بالقلم"],["#me","📊","ملفّي","مستواك في كل درس وسجل امتحاناتك"]];
+ const tools=[["#wiz","🏛️","امتحان يحاكي الوزاري","امتحان إلكتروني بعلامة من 100 وتحليل للأخطاء وخطة علاجية"],["#kb","📖","أسئلة الكتاب","أمثلة الكتاب وأسئلته وكتاب التمارين، بتصحيح ذاتي فوري"],["#bank","🗂","بنك الأسئلة","كل درس بثلاثة مستويات، مع الحل خطوة بخطوة"],["#quick","⚡","اختبار سريع","10 أسئلة منوّعة ونتيجة فورية"],["#mock","⏱","امتحان تجريبي","20 سؤالًا في 40 دقيقة يحاكي الامتحان"],["#builder","🖨","منشئ الاختبارات","اختبار مطبوع A4 بنموذجين وورقة إجابة ومفتاح"],["#board","✏️","السبورة","سؤال في كل صفحة وفراغ للحل بالقلم"],["#me","📊","ملفّي","مستواك في كل درس وسجل امتحاناتك"]];
  app.append(el("div",{class:"grid g3"},...tools.map(([h,ic,t,d])=>el("a",{class:"tool",href:h},el("span",{class:"ic"},ic),el("b",{},t),el("span",{class:"mut"},d)))),el("div",{style:"height:16px"}));
  lessonsList(app)}
 function lessonsList(root){UNITS.forEach(U=>{const c=el("section",{class:"card unit"},el("h2",{},"الوحدة "+U.n+": "+U.title),el("p",{class:"mut"},U.en));
@@ -204,6 +204,6 @@ function me(){app.append(el("h1",{},"📊 ملفّي"),el("p",{class:"mut"},"ت�
  const h=LS.get("g11.hist",[]);if(h.length){const tt=el("table",{class:"t"},el("tr",{},...["التاريخ","الأسئلة","النتيجة"].map(x=>el("th",{},x))));h.slice().reverse().forEach(r=>tt.append(el("tr",{},el("td",{},r.d),el("td",{},String(r.n)),el("td",{},r.p+"%"))));app.append(el("div",{class:"card"},el("h2",{},"الامتحانات التجريبية"),el("div",{class:"scroll"},tt)))}
  app.append(el("button",{class:"btn alt",onclick:function(){if(!this.dataset.ok){this.dataset.ok=1;this.textContent="اضغطي مرة ثانية لمسح كل النتائج";return}ST={};LS.set("g11.st",{});LS.set("g11.hist",[]);route()}},"مسح نتائجي"))}
 
-window.G11U={el,H,math,LS,go};
+window.G11U={el,H,math,LS,go,gen,LES,ALL,rec,shuffle};
 route();
 })();

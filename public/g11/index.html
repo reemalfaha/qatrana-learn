@@ -99,6 +99,11 @@ body.full .top,body.full footer{display:none}body.full main{max-width:none;paddi
 .keys{display:flex;flex-wrap:wrap;gap:6px;direction:ltr;justify-content:flex-end;margin:4px 0 8px}.key{min-width:40px;padding:6px 10px;border:1px solid var(--ln);border-radius:10px;background:var(--soft);color:var(--m);font:700 1rem ui-monospace,monospace;cursor:pointer}
 [hidden]{display:none!important}.stp{margin:8px 0;padding:0;list-style:none;display:grid;gap:8px}.stp li{background:var(--card);border:1px solid var(--ln);border-inline-start:4px solid var(--g);border-radius:10px;padding:8px 12px}.stp .sn{display:block;color:var(--g);font-size:.85rem}
 .kst{font-size:1.2rem}.kst.ok{color:var(--ok)}.kst.no{color:var(--no)}.fbk{margin:6px 0}.tabs.sm button{font-size:.9rem;padding:6px 12px}.kbg small{font-weight:400;opacity:.8}
+.wzp{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;direction:rtl}.wzb{width:40px;height:38px;border-radius:10px;border:1.5px solid var(--ln);background:var(--card);color:var(--ink);font:700 .95rem var(--f);cursor:pointer;position:relative}
+.wzb.ans{background:var(--m);color:#fff;border-color:var(--m)}.wzb.fl::after{content:"🚩";position:absolute;top:-9px;left:-5px;font-size:.75rem}.wzb.cur{outline:3px solid var(--g);outline-offset:1px}
+.wzh{position:sticky;top:64px;z-index:5}.wzm{display:flex;justify-content:center;align-items:baseline;gap:6px;margin:6px 0}.wzm b{font:700 4rem var(--h);line-height:1}.wzm.ok b{color:var(--ok)}.wzm.mid b{color:#8a6100}.wzm.no b{color:var(--no)}
+.wzday{border:1.5px solid var(--ln);border-inline-start:5px solid var(--m);border-radius:14px;padding:12px 14px;margin:10px 0;background:var(--card)}.wzday ol{margin:8px 0;padding-inline-start:22px}.wzday li{margin:4px 0}
+.wzw{border-top:1px dashed var(--ln);padding:12px 0}.wzw details{margin-top:6px}.wzw summary{list-style:none;cursor:pointer}.wzw summary::-webkit-details-marker{display:none}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:14px;border-top:1px solid var(--ln);margin-top:20px}
 @media (max-width:820px){.hero{grid-template-columns:1fr}nav{display:none;width:100%}nav.open{display:flex}.burger{display:block}.page .ops{grid-template-columns:1fr}.bbar{position:static}}
 @media print{
@@ -121,7 +126,7 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:14px;border-t
  <a class="brand" href="#home"><span class="logo">∑</span><span>الرياضيات · الأول الثانوي<small>المسار الأكاديمي · الفصل الأول</small></span></a>
  <button class="burger" id="burger" aria-label="القائمة">☰ القائمة</button>
  <nav id="nav">
-  <a href="#home" data-r="home">الرئيسية</a><a href="#lessons" data-r="lessons">الدروس</a><a href="#kb" data-r="kb">أسئلة الكتاب</a><a href="#bank" data-r="bank">بنك الأسئلة</a><a href="#quick" data-r="quick">اختبار سريع</a><a href="#mock" data-r="mock">امتحان تجريبي</a><a href="#builder" data-r="builder">منشئ الاختبارات</a><a href="#board" data-r="board">السبورة</a><a href="#me" data-r="me">ملفّي</a>
+  <a href="#home" data-r="home">الرئيسية</a><a href="#lessons" data-r="lessons">الدروس</a><a href="#kb" data-r="kb">أسئلة الكتاب</a><a href="#bank" data-r="bank">بنك الأسئلة</a><a href="#quick" data-r="quick">اختبار سريع</a><a href="#wiz" data-r="wiz">امتحان وزاري</a><a href="#mock" data-r="mock">امتحان تجريبي</a><a href="#builder" data-r="builder">منشئ الاختبارات</a><a href="#board" data-r="board">السبورة</a><a href="#me" data-r="me">ملفّي</a>
  </nav></div></header>
 <main id="app"><div class="card">جارٍ التحميل…</div></main>
 <div id="prt"></div>
@@ -131,6 +136,7 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:14px;border-t
 <script src="data/u1.js"></script>
 <script src="data/b1.js"></script>
 <script src="js/kb.js"></script>
+<script src="js/wiz.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

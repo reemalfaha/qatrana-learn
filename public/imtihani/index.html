@@ -409,17 +409,16 @@ const m=location.hash.match(/^#s=(.+)$/);
 const ROSTER="../teachers/roster.enc.json";
 async function gate(){
   const start=()=>{if(S.cur&&!cur())S.cur=S.exams[0]?.id||null;if(location.hash==="#spec"||(!S.exams.length)){const e=newExam();e.meta.title="امتحان حسب جدول المواصفات";S.exams.unshift(e);S.cur=e.id;save();tab="spec";history.replaceState(null,"",location.pathname)}render()};
+  const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,"0")).join("");
   const box=h("div",{class:"card stack",style:"max-width:460px;margin:30px auto"},h("div",{class:"muted"},"⏳ جارٍ التحقق…"));app.replaceChildren(box);
-  try{
-    if(await QClass.resume(ROSTER))return start();
-    const keys=await QClass.keys(ROSTER);box.replaceChildren();
-    const who=h("select",{class:"in"},Object.entries(keys).map(([id,k])=>h("option",{value:id},k.label)));
-    try{const l=localStorage.getItem("qclass.last");if(l&&keys[l])who.value=l}catch(e){}
-    const pin=h("input",{class:"in",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمزكِ السرّي في بوابة المعلّمات"}),err=h("div",{class:"small",style:"color:#B3261E"});
-    const go=async()=>{err.textContent="⏳";try{await QClass.signIn(ROSTER,who.value,pin.value.trim());try{localStorage.setItem("qclass.last",who.value)}catch(e){}start()}catch(e){err.textContent="الرمز غير صحيح.";pin.value=""}};
+  try{const A=await fetch("access.json",{cache:"no-store"}).then(r=>r.json());
+    let saved="";try{saved=localStorage.getItem("imt.ok")||""}catch(e){}
+    if(saved&&A.users.some(u=>u.h===saved))return start();
+    const pin=h("input",{class:"in",type:"password",inputmode:"numeric",autocomplete:"off",placeholder:"رمز الدخول"}),err=h("div",{class:"small",style:"color:#B3261E;min-height:1.2em"});
+    const go=async()=>{const hv=await sha(A.salt+":"+pin.value.trim());if(A.users.some(u=>u.h===hv)){try{localStorage.setItem("imt.ok",hv)}catch(e){}start()}else err.textContent="الرمز غير صحيح"};
     pin.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();go()}});
-    box.append(h("h2",{style:"margin:0"},"🔒 امتحاني: لمعلمات مدرسة القطرانة فقط"),h("p",{class:"muted",style:"margin:0"},"ادخلي برمزك السرّي في بوابة المعلّمات."),who,pin,h("button",{class:"btn",onclick:go},"🔓 دخول"),err);
-  }catch(e){box.replaceChildren(h("p",{},"تعذّر التحقق الآن. تأكدي من الاتصال بالإنترنت وأعيدي المحاولة."),h("a",{class:"btn g",href:"../teachers/"},"بوابة المعلمات"))}
+    box.replaceChildren(h("h2",{style:"margin:0"},"🔒 امتحاني: لمعلمات مدرسة القطرانة فقط"),h("p",{class:"muted",style:"margin:0"},"اكتبي رمز الدخول. يتذكّره جهازك بعد أول مرة."),pin,err,h("button",{class:"btn",onclick:go},"دخول"));
+  }catch(e){box.replaceChildren(h("p",{},"تعذّر التحقق الآن. تأكدي من الاتصال بالإنترنت وأعيدي المحاولة."))}
 }
 if(m)studentMode(m[1]);else gate();
 </script>

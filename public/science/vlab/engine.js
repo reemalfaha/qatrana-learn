@@ -87,7 +87,7 @@ VLab.run=function(def,root){
  function record(){const row={};def.vars.forEach(v=>row[v.k]=fmt(v));def.read(S).forEach(r=>row["r:"+r.label]=r.val+(r.unit?" "+r.unit:""));recs.push(row);if(recs.length>30)recs.shift();LS.set(NBK,nb);drawTable();show("✔️ سُجّلت القراءة رقم "+recs.length);check()}
  function show(t){toast.textContent=t;toast.classList.add("show");clearTimeout(show.t);show.t=setTimeout(()=>toast.classList.remove("show"),2200)}
  function check(){def.challenges.forEach((c,i)=>{if(!done.has(i)&&c.test(S,hist,recs)){done.add(i);chs[i].classList.add("done");beep(880);show("🌟 أحسنتِ! "+c.t)}});
-  const st=Math.round(done.size/def.challenges.length*3);starsEl.innerHTML="<b>"+"★".repeat(st)+"</b>"+"★".repeat(3-st)}
+  const st=Math.round(done.size/def.challenges.length*3);if(st===3&&!check.c3&&check.ready&&window.FX){check.c3=1;FX.confetti();show("🏆 ثلاث نجوم! أنجزتِ كلّ التحدّيات")}check.ready=1;starsEl.innerHTML="<b>"+"★".repeat(st)+"</b>"+"★".repeat(3-st)}
  // الدفتر
  const tblBox=el("div",{class:"tbl"});
  function drawTable(){if(!recs.length){tblBox.replaceChildren(el("p",{style:{color:"var(--muted)"}},"لم تُسجَّل قراءات بعد. افتحي «القراءات» واضغطي «سجّلي القراءة»."));return}
@@ -110,7 +110,7 @@ VLab.run=function(def,root){
  // الحلقة
  const Sm={};def.vars.forEach(v=>Sm[v.k]=S[v.k]);
  let last=performance.now(),t=0,rt=0;
- function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
+ function loop(now){const dt=Math.max(0,Math.min(.05,(now-last)/1000));last=now;t+=dt;
   def.vars.forEach(v=>{if(typeof S[v.k]==="number"&&v.type!=="seg")Sm[v.k]+=(S[v.k]-Sm[v.k])*Math.min(1,dt*6);else Sm[v.k]=S[v.k]});
   ctx.setTransform(1,0,0,1,0,0);bg(ctx);def.draw(ctx,Sm,t,dt,S);wm(ctx);frame(ctx);chip(ctx,def.title);
   if((rt+=dt)>.25){rt=0;if(tab==="r")fillReads()}

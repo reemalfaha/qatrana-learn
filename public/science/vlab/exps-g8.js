@@ -39,7 +39,7 @@ VLab.reg({id:"s8-pressure",icon:"💧",grade:"الصف الثامن",subject:"ا
    else if(d>0.2){const v=Math.sqrt(2*9.8*d/100);const hf=(GROUND-y);
     const pts=[];for(let k=0;k<=40;k++){const tt=k/40*Math.sqrt(2*hf/PX/100/9.8);const px=x+v*tt*100*PX,py=y+.5*9.8*tt*tt*100*PX;pts.push([px,Math.min(py,GROUND)])}
     c.strokeStyle=L.c+".55)";c.lineWidth=3+d*.35;c.lineCap="round";c.beginPath();pts.forEach((p,j)=>j?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();
-    c.fillStyle=L.c+".95)";for(let j=0;j<8;j++){const f=((t*1.6+j/8)%1);const p=pts[Math.floor(f*40)];c.beginPath();c.arc(p[0],p[1],2.5+d*.08,0,7);c.fill()}
+    c.fillStyle=L.c+".95)";for(let j=0;j<8;j++){const f=((t*1.6+j/8)%1+1)%1;const p=pts[Math.min(40,Math.floor(f*40))];c.beginPath();c.arc(p[0],p[1],2.5+d*.08,0,7);c.fill()}
     const e=pts[40];c.fillStyle="rgba(255,255,255,.5)";for(let j=0;j<4;j++){const a=t*8+j*1.7;c.beginPath();c.arc(e[0]+Math.cos(a)*8,e[1]-Math.abs(Math.sin(a))*8,2,0,7);c.fill()}}
    label(c,x-BW/2,y-16,["السفلي","الأوسط","العلوي"][i],"#fff",20);
    // سهم الضغط

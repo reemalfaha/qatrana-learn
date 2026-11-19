@@ -2,10 +2,10 @@
 <title>المختبر الافتراضي · منصّة القطرانة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&family=El+Messiri:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vlab.css"></head><body><div class="wrap">
-<div class="hero"><h1>🔬 المختبر الافتراضي</h1><p>تجارب كتاب الأنشطة كأنّكِ في المختبر: غيّري المتغيّرات، راقبي، سجّلي قراءاتكِ، وأنجزي التحدّيات.</p></div>
+<div class="hero" data-fx="bubbles" data-n="16"><h1>🔬 المختبر الافتراضي</h1><p>تجارب كتاب الأنشطة كأنّكِ في المختبر: غيّري المتغيّرات، راقبي، سجّلي قراءاتكِ، وأنجزي التحدّيات.</p></div>
 <div class="flt" id="flt"></div><div class="exps" id="list"></div>
 <p class="foot"><a href="../" style="color:inherit">← العودة إلى منصّة العلوم</a><br>منصّة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي<br>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</p></div>
-<script src="engine.js"></script><script src="exps-g8.js"></script>
+<script src="../../fx.js"></script><script src="engine.js"></script><script src="exps-g8.js"></script>
 <script>const el=VLab.el;const G=[...new Set(VLab.EXPS.map(e=>e.grade))];let cur="الكل";
 function draw(){const f=document.getElementById("flt");f.replaceChildren(...["الكل",...G].map(x=>el("button",{class:x===cur?"on":"",onclick:()=>{cur=x;draw()}},x)));
 document.getElementById("list").replaceChildren(...VLab.EXPS.filter(e=>cur==="الكل"||e.grade===cur).map(e=>el("a",{class:"exp",href:"lab.html?e="+e.id},el("div",{class:"th"},e.icon),el("div",{class:"bd"},el("span",{class:"tag"},e.grade),el("span",{class:"tag"},e.subject),el("h3",{},e.title),el("small",{},e.unit)))))}draw();</script>

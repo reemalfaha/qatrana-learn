@@ -49,11 +49,15 @@ a.sbj:hover,a.sbj:focus-visible{transform:translateY(-3px);border-color:var(--wi
 .back{font:inherit;font-size:14px;background:none;border:0;color:var(--wine);text-decoration:underline;cursor:pointer;padding:4px 0}
 @media (prefers-color-scheme:dark){.back{color:var(--gold2)}}
 .grid{margin-top:0}
+.more a.star{background:linear-gradient(135deg,var(--wine),#9b2c3f);color:#fff;border-color:var(--gold);box-shadow:0 6px 16px rgba(122,31,46,.3)}
+header{--fx1:#F3DFA8;--fx2:rgba(243,223,168,.45);--fxc:#5C1622;--os:118px}
+header .fx-orbit .ctr{font-family:"El Messiri",serif;font-size:30px}
 footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;padding:18px 16px 22px}
 </style>
 </head>
 <body>
-<header>
+<header data-fx="meteors" data-n="14">
+  <div id="orb"></div>
   <div class="sch">مدرسة القطرانة الثانوية للبنات</div>
   <h1>منصة القطرانة<br>للتعلّم الرقمي</h1>
   <div class="sub">كل موادّك في مكان واحد</div>
@@ -72,7 +76,7 @@ footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;paddi
     <div class="crumb"><button type="button" class="back" data-to="1">تغيير الصف أو الشعبة</button><span id="c3"></span></div>
     <div class="ask"><span class="n">3</span> اختاري المبحث الذي تريدين دراسته 👇</div>
     <div class="grid" id="subjects"></div>
-    <div class="more"><a href="g11/">📐 رياضيات الأول الثانوي</a><a href="finals/">🎯 الاستعداد للامتحانات النهائية</a><a href="exams/">📝 الامتحانات الإلكترونية</a><a href="about/">ℹ️ عن المنصة</a><a href="projects/">📤 ارفعي مشروعكِ</a><a href="https://lab-without-limtss.netlify.app">🔬 مختبر بلا حدود</a></div>
+    <div class="more"><a class="star shimmer" href="science/vlab/">🔬 المختبر الافتراضي الجديد</a><a class="shimmer" href="finals/">🎯 الاستعداد للامتحانات النهائية</a><a href="g11/">📐 رياضيات الأول الثانوي</a><a href="exams/">📝 الامتحانات الإلكترونية</a><a href="about/">ℹ️ عن المنصة</a><a href="projects/">📤 ارفعي مشروعكِ</a><a href="https://lab-without-limtss.netlify.app">🔬 مختبر بلا حدود</a></div>
   </section>
 </main>
 <script>
@@ -102,6 +106,8 @@ function step3(){$("c3").textContent="الصف "+st.g+(SECTIONS(st.g).length>1?"
 document.querySelectorAll(".back").forEach(b=>b.onclick=()=>step1());
 if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else step1();
 </script>
+<script src="fx.js"></script>
+<script>{const c=document.createElement("span");c.textContent="ق";FX.orbit(document.getElementById("orb"),c,["📖","➗","🧪","🌍","🔬","✏️"])}</script>
 <footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية<br><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a></footer>
 </body>
 </html>

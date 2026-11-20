@@ -2,6 +2,6 @@
 <title>المختبر الافتراضي · منصّة القطرانة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&family=El+Messiri:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vlab.css"></head><body><div class="wrap" id="app"></div>
-<script src="../../fx.js"></script><script src="engine.js"></script><script src="exps-g8.js"></script><script src="exps-chem.js"></script>
+<script src="../../fx.js"></script><script src="engine.js"></script><script src="exps-g8.js"></script><script src="exps-chem.js"></script><script src="exps-phys.js"></script><script src="exps-life.js"></script>
 <script>const id=new URLSearchParams(location.search).get("e");const d=VLab.get(id);if(d){document.title=d.title+" · المختبر الافتراضي";(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>VLab.run(d,document.getElementById("app")))}else location.replace("./");</script>
 </body></html>

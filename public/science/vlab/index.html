@@ -5,8 +5,10 @@
 <div class="hero" data-fx="bubbles" data-n="16"><h1>🔬 المختبر الافتراضي</h1><p>تجارب كتاب الأنشطة كأنّكِ في المختبر: غيّري المتغيّرات، راقبي، سجّلي قراءاتكِ، وأنجزي التحدّيات.</p></div>
 <div class="flt" id="flt"></div><div class="exps" id="list"></div>
 <p class="foot"><a href="../" style="color:inherit">← العودة إلى منصّة العلوم</a><br>منصّة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي<br>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</p></div>
-<script src="../../fx.js"></script><script src="engine.js"></script><script src="exps-g8.js"></script>
-<script>const el=VLab.el;const G=[...new Set(VLab.EXPS.map(e=>e.grade))];let cur="الكل";
-function draw(){const f=document.getElementById("flt");f.replaceChildren(...["الكل",...G].map(x=>el("button",{class:x===cur?"on":"",onclick:()=>{cur=x;draw()}},x)));
-document.getElementById("list").replaceChildren(...VLab.EXPS.filter(e=>cur==="الكل"||e.grade===cur).map(e=>el("a",{class:"exp",href:"lab.html?e="+e.id},el("div",{class:"th"},e.icon),el("div",{class:"bd"},el("span",{class:"tag"},e.grade),el("span",{class:"tag"},e.subject),el("h3",{},e.title),el("small",{},e.unit)))))}draw();</script>
+<script src="../../fx.js"></script><script src="engine.js"></script><script src="exps-g8.js"></script><script src="exps-chem.js"></script>
+<script>const el=VLab.el;
+function thumb(e){const c=document.createElement("canvas");c.width=480;c.height=300;c.className="thc";const x=c.getContext("2d");try{const S={};e.vars.forEach(v=>S[v.k]=v.val);if(e.preview)Object.assign(S,e.preview);x.scale(.5,.5);VLab.g.bg(x);e.draw(x,S,1.2,0,S);VLab.g.frame(x)}catch(err){}return el("div",{class:"th"},c)}
+const ORD=["الصف الثامن","الصف التاسع","الصف العاشر"];const G=[...new Set(VLab.EXPS.map(e=>e.grade))].sort((a,b)=>ORD.indexOf(a)-ORD.indexOf(b));const SB=[...new Set(VLab.EXPS.map(e=>e.subject))];let cur="الكل",csb="كل المواد";
+function draw(){const f=document.getElementById("flt");f.replaceChildren(...["الكل",...G].map(x=>el("button",{class:x===cur?"on":"",onclick:()=>{cur=x;draw()}},x)),el("span",{style:"flex-basis:100%"}),...["كل المواد",...SB].map(x=>el("button",{class:x===csb?"on":"",onclick:()=>{csb=x;draw()}},x)));
+document.getElementById("list").replaceChildren(...VLab.EXPS.filter(e=>(cur==="الكل"||e.grade===cur)&&(csb==="كل المواد"||e.subject===csb)).map(e=>el("a",{class:"exp",href:"lab.html?e="+e.id},thumb(e),el("div",{class:"bd"},el("span",{class:"tag"},e.grade),el("span",{class:"tag"},e.subject),el("h3",{},e.title),el("small",{},e.unit)))))}draw();</script>
 </body></html>

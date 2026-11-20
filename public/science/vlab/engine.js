@@ -74,12 +74,13 @@ VLab.run=function(def,root){
  let tab="v";tabV.onclick=()=>{tab="v";tabV.className="on";tabR.className="";drawVars()};tabR.onclick=()=>{tab="r";tabR.className="on";tabV.className="";drawReads()};
  function pctOf(v){return ((S[v.k]-v.min)/(v.max-v.min)*100)+"%"}
  function drawVars(){if(tab!=="v")return;body.replaceChildren(el("p",{class:"hint"},"🎛️ حرّكي المؤشّر وراقبي ما يحدث في التجربة"));
-  def.vars.forEach(v=>{const vv=el("span",{class:"vv"},fmt(v));const box=el("div",{class:"var",style:{"--c":v.c||"#7A1F2E"}},el("div",{class:"hd"},el("span",{class:"lb",style:{color:v.c}},v.label+(v.unit?" ("+v.unit+")":"")),vv));
-   if(v.type==="seg"){const sg=el("div",{class:"seg"});v.opts.forEach(([val,t])=>{const b=el("button",{class:S[v.k]===val?"on":"",onclick:()=>{S[v.k]=val;hist[v.k].add(val);[...sg.children].forEach(x=>x.className="");b.className="on";vv.textContent=fmt(v);check()}},t);sg.append(b)});box.append(sg)}
+  def.vars.forEach(v=>{if(v.hide&&v.hide(S))return;const vv=el("span",{class:"vv"},fmt(v));const box=el("div",{class:"var",style:{"--c":v.c||"#7A1F2E"}},el("div",{class:"hd"},el("span",{class:"lb",style:{color:v.c}},LB(v)+(v.unit?" ("+v.unit+")":"")),vv));
+   if(v.type==="seg"){const sg=el("div",{class:"seg"});v.opts.forEach(([val,t])=>{const b=el("button",{class:S[v.k]===val?"on":"",onclick:()=>{S[v.k]=val;hist[v.k].add(val);if(def.onSeg)def.onSeg(S,v.k);[...sg.children].forEach(x=>x.className="");b.className="on";vv.textContent=fmt(v);if(def.dyn)drawVars();check()}},t);sg.append(b)});box.append(sg)}
    else{const r=el("input",{type:"range",min:v.min,max:v.max,step:v.step||1,value:S[v.k]});r.style.setProperty("--p",pctOf(v));
     r.oninput=()=>{S[v.k]=+r.value;r.style.setProperty("--p",pctOf(v));vv.textContent=fmt(v)};r.onchange=()=>{hist[v.k].add(S[v.k]);check()};
     const tk=el("div",{class:"ticks"});(v.ticks||[v.min,(v.min+v.max)/2,v.max]).slice().sort((a,b)=>a-b).forEach(t=>tk.append(el("span",{},String(t))));box.append(r,tk)}
    body.append(box)})}
+ function LB(v){return typeof v.label==="function"?v.label(S):v.label}
  function fmt(v){if(v.type==="seg")return(v.opts.find(o=>o[0]===S[v.k])||[0,""])[1];return String(S[v.k])}
  let rdBox=null;
  function drawReads(){if(tab!=="r")return;rdBox=el("div",{class:"rd"});body.replaceChildren(el("p",{class:"hint"},"📊 القراءات تتغيّر مباشرة مع المتغيّرات"),rdBox,el("button",{class:"rec",onclick:record},"✍️ سجّلي القراءة في الدفتر"));fillReads()}
@@ -91,7 +92,7 @@ VLab.run=function(def,root){
  // الدفتر
  const tblBox=el("div",{class:"tbl"});
  function drawTable(){if(!recs.length){tblBox.replaceChildren(el("p",{style:{color:"var(--muted)"}},"لم تُسجَّل قراءات بعد. افتحي «القراءات» واضغطي «سجّلي القراءة»."));return}
-  const keys=Object.keys(recs[0]);const lab=k=>k.startsWith("r:")?k.slice(2):(def.vars.find(v=>v.k===k)||{}).label||k;
+  const keys=Object.keys(recs[0]);const lab=k=>k.startsWith("r:")?k.slice(2):(()=>{const v=def.vars.find(v=>v.k===k);return v?LB(v):k})();
   tblBox.replaceChildren(el("table",{},el("tr",{},el("th",{},"#"),...keys.map(k=>el("th",{},lab(k)))),...recs.map((r,i)=>el("tr",{},el("td",{},String(i+1)),...keys.map(k=>el("td",{},r[k]??"—"))))),
    el("button",{class:"qq",style:{border:0,color:"var(--wine)",fontWeight:800},onclick:()=>{recs.length=0;LS.set(NBK,nb);drawTable()}},"🗑 مسح الجدول"))}
  const N=def.notebook;
@@ -107,6 +108,7 @@ VLab.run=function(def,root){
   el("p",{style:{color:"var(--muted)",fontSize:"13px"}},"المصدر: "+def.src+" · "+def.grade+" · "+def.unit)));
  root.replaceChildren(el("div",{class:"labbox"},tb,chbar,stage,panel),nbx,el("p",{class:"foot"},"المختبر الافتراضي · منصّة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي",el("br"),"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"));
  drawVars();drawTable();check();
+ VLab.cur={S,def,set(k,v){const d=def.vars.find(x=>x.k===k);S[k]=v;hist[k]&&hist[k].add(v);if(d&&d.type==="seg"&&def.onSeg)def.onSeg(S,k);S[k]=v;drawVars();check()}};
  // الحلقة
  const Sm={};def.vars.forEach(v=>Sm[v.k]=S[v.k]);
  let last=performance.now(),t=0,rt=0;

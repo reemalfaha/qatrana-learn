@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><script src="/gender.js"></script>
+<meta charset="utf-8"><script src="/gender.js"></script><script src="/ql.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>منصة القطرانة للتعلّم الرقمي</title>
 <meta name="description" content="منصة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي: اللغة العربية والرياضيات والعلوم واللغة الإنجليزية في مكان واحد.">
@@ -52,6 +52,7 @@ a.sbj:hover,a.sbj:focus-visible{transform:translateY(-3px);border-color:var(--wi
 .more a.star{background:linear-gradient(135deg,var(--wine),#9b2c3f);color:#fff;border-color:var(--gold);box-shadow:0 6px 16px rgba(122,31,46,.3)}
 header{--fx1:#F3DFA8;--fx2:rgba(243,223,168,.45);--fxc:#5C1622;--os:118px}
 header .fx-orbit .ctr{font-family:"El Messiri",serif;font-size:30px}
+.qlbox{display:flex;flex-direction:column;gap:8px;margin-top:6px}.qlb,.qlx{background:none;border:1.5px dashed var(--g,#B8902A);border-radius:14px;padding:10px;font:inherit;font-weight:700;color:inherit;cursor:pointer}.qlx{border-style:solid;font-size:13px;padding:6px}.qlin{border:1.5px solid #ccc;border-radius:12px;padding:12px;font:inherit;font-size:20px;text-align:center;letter-spacing:3px}.qlok{background:#e8f4ec;color:#1f5f3b;border-radius:12px;padding:10px;font-weight:700;text-align:center}.qlm{font-weight:700;text-align:center}
 .gchip{position:relative;z-index:2;margin-top:10px;border:1px solid rgba(243,223,168,.5);background:rgba(255,255,255,.1);color:#F3DFA8;border-radius:30px;padding:4px 14px;font:inherit;font-size:13px;cursor:pointer}
 footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;padding:18px 16px 22px}
 </style>
@@ -71,6 +72,7 @@ footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;paddi
   <section id="st1" class="step">
     <div class="ask"><span class="n">1</span> اختاري صفّك</div>
     <div class="opts" id="grades"></div>
+    <div id="qlbox" class="qlbox"></div>
   </section>
   <section id="st2" class="step" hidden>
     <div class="crumb"><button type="button" class="back" data-to="1">→ رجوع</button><span id="c2"></span></div>
@@ -112,10 +114,15 @@ document.querySelectorAll(".back").forEach(b=>b.onclick=()=>step1());
 let GD=null;try{GD=localStorage.getItem("qatrana.gender")}catch(e){}
 function step0(){const box=$("gsel");box.innerHTML="";[["f","👧 أنا طالبة"],["m","👦 أنا طالب"]].forEach(([v,l])=>box.append(btn(l,()=>{QG.set(v)},GD===v)));show(0)}
 {const ch=document.createElement("button");ch.type="button";ch.className="gchip";ch.textContent=GD==="m"?"👦 طالب · تغيير":"👧 طالبة · تغيير";ch.onclick=step0;document.querySelector("header").append(ch)}
+function qlDraw(){const box=$("qlbox");box.innerHTML="";const o=QL.info();
+ if(o){box.append(Object.assign(document.createElement("div"),{className:"qlok",textContent:"🔗 تمّ الربط: "+o.school+" · الصف "+o.grade+" "+o.sec}));const x=btn("إلغاء الربط",()=>{QL.unlink();qlDraw()});x.className="qlx";box.append(x);return}
+ const b=btn("🔑 عندي رمز من معلّمي",()=>{box.innerHTML="";const i=document.createElement("input");i.inputMode="numeric";i.placeholder="اكتبي رمزك هنا";i.className="qlin";const m=document.createElement("div");m.className="qlm";
+  const ok=btn("ربط",async()=>{m.textContent="⏳";try{const r=await QL.link(i.value);qlDraw()}catch(e){m.textContent="⚠️ "+e.message}});ok.className="opt";box.append(i,ok,m);i.focus()});b.className="qlb";box.append(b)}
+qlDraw();
 if(!GD)step0();else if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else step1();
 </script>
 <script src="fx.js"></script>
 <script>{const c=document.createElement("span");c.textContent="ق";FX.orbit(document.getElementById("orb"),c,["📖","➗","🧪","🌍","🔬","✏️"])}</script>
-<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية<br><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a></footer>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية<br><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a> · <a href="schools/" style="color:inherit;opacity:.75">🏫 سجّل مدرستك (للمعلّمين والمعلّمات)</a></footer>
 </body>
 </html>

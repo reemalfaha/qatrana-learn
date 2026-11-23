@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><script src="/gender.js"></script>
+<meta charset="utf-8"><script src="/gender.js"></script><script src="/ql.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>الاستعداد للامتحانات النهائية · منصة القطرانة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -155,7 +155,7 @@ function show(){const q=T.qs[T.i];app.replaceChildren();const c=E("div","card");
  c.append(btn("خروج من الاختبار",function(){if(!this.dataset.ok){this.dataset.ok=1;this.textContent="اضغطي مرة ثانية للخروج (تضيع الإجابات)";return}home()},"alt"));app.append(c)}
 function finish(){stopTimer();const n=T.qs.length;let ok=0;const by={};T.qs.forEach((q,k)=>{const good=T.ans[k]===q.a;if(good)ok++;const s=S.stats[q.lid]=S.stats[q.lid]||{ok:0,t:0};s.t++;if(good)s.ok++;const b=by[q.lid]=by[q.lid]||{t:q.ut+" · "+q.lt,ok:0,n:0};b.n++;if(good)b.ok++});
  const pct=Math.round(ok/n*100),key=T.pre+T.item.id;S.done[key]=Math.max(S.done[key]||0,pct);save();
- app.replaceChildren();const c=E("div","card");c.append(E("h2","",sname()+" · "+T.item.t+" — النتيجة"),E("div","big",pct+"%"),E("p","",ok+" إجابة صحيحة من "+n));c.lastChild.style.textAlign="center";
+ if(window.QL)QL.report({title:T.item.t,subject:sname(),right:ok,total:n});app.replaceChildren();const c=E("div","card");c.append(E("h2","",sname()+" · "+T.item.t+" — النتيجة"),E("div","big",pct+"%"),E("p","",ok+" إجابة صحيحة من "+n));c.lastChild.style.textAlign="center";
  const msg=pct>=85?"ممتاز! أنتِ جاهزة لهذا الجزء.":pct>=65?"جيد. راجعي الدروس الأضعف في الجدول ثم أعيدي الاختبار.":"تحتاجين مراجعة. ابدئي بالدروس الأضعف في الجدول واسألي معلمتك.";c.append(E("p","mut",msg));c.lastChild.style.textAlign="center";
  const nm=E("input");nm.type="text";nm.placeholder="اسمك وشعبتك (اختياري)";nm.value=S.name;nm.oninput=()=>{S.name=nm.value;save()};const d=new Date();c.append(nm,E("p","mut","لإرسال نتيجتك لمعلمتك: اكتبي اسمك ثم صوّري هذه الشاشة. الصف "+gname()+" · التاريخ: "+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()));
  const t=E("table"),hr=E("tr");["الدرس","الصحيح","من"].forEach(x=>hr.append(E("th","",x)));t.append(hr);Object.values(by).sort((a,b)=>a.ok/a.n-b.ok/b.n).forEach(b=>{const tr=E("tr");tr.append(H("td","",R(b.t)),E("td","",b.ok),E("td","",b.n));if(b.ok/b.n<.5)tr.style.background="#fdecea";t.append(tr)});c.append(t);

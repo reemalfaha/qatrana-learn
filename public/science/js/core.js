@@ -44,7 +44,7 @@ function touchStreak(){const t=todayStr();if(S.streak.last===t)return;const y=ne
 function addPts(n,why){S.pts+=n;save();refreshTop();if(why)toast("+"+n+" ★ "+why);checkBadges();}
 
 /* ---------- الإرسال للمعلمة (Google Sheet) ---------- */
-function submit(rec){if(!S.name)return;S.queue.push(Object.assign({name:S.name,section:S.section,grade:CONFIG.SUBJ+" "+S.grade,at:new Date().toISOString()},rec));save();flush();}
+function submit(rec){if(window.QL)QL.report({title:rec.activityTitle||rec.activity,subject:rec.unit,right:rec.score,total:rec.total});if(!S.name)return;S.queue.push(Object.assign({name:S.name,section:S.section,grade:CONFIG.SUBJ+" "+S.grade,at:new Date().toISOString()},rec));save();flush();}
 async function flush(){if(!CONFIG.SCRIPT_URL||!S.queue.length||!navigator.onLine)return;const batch=S.queue.slice(0,20);
   try{await fetch(CONFIG.SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({rows:batch})});S.queue=S.queue.slice(batch.length);save();}catch(e){}}
 addEventListener("online",flush);

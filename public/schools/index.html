@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>سجّل مدرستك · منصّة القطرانة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&family=El+Messiri:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--w:#7A1F2E;--w2:#5C1622;--g:#B8902A;--g2:#F3DFA8;--bg:#FBF7F3;--card:#fff;--ink:#2B1218;--mut:#76606A;--ln:#ead9cf;--soft:#f6ece6;--ok:#1f8f5b;--f:"Noto Naskh Arabic",system-ui,Tahoma,sans-serif;--fd:"El Messiri","Noto Naskh Arabic",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160e11;--card:#22171b;--ink:#f6e9ec;--mut:#c4abb3;--ln:#3b2a30;--soft:#2b1d22;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--f)}
+header{background:linear-gradient(135deg,var(--w2),var(--w) 60%,#9b2c3f);color:#fff;border-bottom:4px solid var(--g);padding:22px max(16px,env(safe-area-inset-left,0px)) 18px;text-align:center}
+header h1{font:700 26px var(--fd);margin:0}header p{margin:4px 0 0;color:var(--g2);font-size:14px}
+main{max-width:860px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-left,0px)) 40px}
+.card{background:var(--card);border:1.5px solid var(--ln);border-radius:18px;padding:16px;margin:0 0 14px}
+h2{font:700 20px var(--fd);color:var(--w);margin:0 0 10px}@media (prefers-color-scheme:dark){h2{color:var(--g2)}}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button{flex:1;min-width:120px;border:1.5px solid var(--ln);background:var(--card);border-radius:14px;padding:10px;font:700 15px var(--f);color:inherit;cursor:pointer}
+.tabs button.on{background:var(--w);color:#fff;border-color:transparent}
+label{display:block;font-weight:700;margin:10px 0 4px;font-size:14px}input,select,textarea{width:100%;border:1.5px solid var(--ln);border-radius:12px;padding:10px;font:inherit;background:var(--card);color:var(--ink)}
+textarea{min-height:140px}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.btn{display:inline-block;border:0;border-radius:14px;padding:11px 18px;font:700 16px var(--f);cursor:pointer;background:linear-gradient(135deg,var(--w),#9b2c3f);color:#fff;margin-top:12px}
+.btn.alt{background:var(--soft);color:var(--ink);border:1.5px solid var(--ln)}.btn.gold{background:linear-gradient(135deg,var(--g),#d9b453);color:#2b1218}
+.msg{margin-top:10px;font-weight:700}.msg.e{color:#b3261e}.msg.o{color:var(--ok)}
+.hint{color:var(--mut);font-size:14px;margin:6px 0}
+.code{font:800 26px/1 monospace;letter-spacing:4px;background:var(--soft);border:2px dashed var(--g);border-radius:12px;padding:10px 16px;display:inline-block;direction:ltr}
+.tbl{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th{background:var(--w);color:#fff;padding:6px}td{border:1px solid var(--ln);padding:6px;text-align:center}td.n{text-align:right}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{border:1.5px solid var(--ln);background:var(--card);border-radius:20px;padding:4px 12px;font:700 14px var(--f);cursor:pointer;color:inherit}.chip.on{background:var(--g);color:#2b1218;border-color:transparent}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.sc{border:2px solid var(--w);border-radius:14px;padding:10px;text-align:center;break-inside:avoid}.sc b{display:block;font-size:17px}.sc .c{font:800 24px monospace;letter-spacing:3px;color:var(--w);direction:ltr}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:10px 16px 24px}
+@media print{header,.noprint,footer{display:none!important}body{background:#fff}.card{border:0;padding:0}.sc{border-color:#7A1F2E}}
+</style></head><body>
+<header><h1>🏫 سجّل مدرستك</h1><p>منصّة القطرانة للتعلّم الرقمي · مجانية لكل المدارس</p></header>
+<main id="app"></main>
+<footer>منصّة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي<br>تصميمُ المنصّة وتنفيذُها: نوال بني عطية</footer>
+<script>
+const $=s=>document.querySelector(s);const app=$("#app");
+const E=(t,a={},...k)=>{const e=document.createElement(t);for(const x in a){if(x==="class")e.className=a[x];else if(x.startsWith("on"))e.addEventListener(x.slice(2),a[x]);else e.setAttribute(x,a[x])}k.flat().forEach(c=>c!=null&&e.append(c.nodeType?c:document.createTextNode(c)));return e};
+const SUBJ={ar:"اللغة العربية",en:"اللغة الإنجليزية",math:"الرياضيات",sci:"العلوم",soc:"الاجتماعيات",isl:"التربية الإسلامية",voc:"المهني والثقافة المالية",other:"أخرى / إدارة"};
+const GR=["الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر"];
+const LS={get(k){try{return JSON.parse(sessionStorage.getItem(k))}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const unb=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+let TOKEN=null,ME=null,NK=null,STU=[];
+async function kdf(pass,user){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:new TextEncoder().encode("qatrana-names|"+user),iterations:150000,hash:"SHA-256"},k,{name:"AES-GCM",length:256},true,["encrypt","decrypt"])}
+async function enc(n,K=NK){const iv=crypto.getRandomValues(new Uint8Array(12));return b64(iv)+"."+b64(await crypto.subtle.encrypt({name:"AES-GCM",iv},K,new TextEncoder().encode(n)))}
+async function dec(s){try{const[i,c]=s.split(".");return new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:unb(i)},NK,unb(c)))}catch(e){return"؟"}}
+async function api(path,body,method){const r=await fetch("/api/ql/"+path,{method:method||(body?"POST":"GET"),headers:Object.assign({"content-type":"application/json"},TOKEN?{authorization:"Bearer "+TOKEN}:{}),body:body?JSON.stringify(body):undefined});
+ let j={};try{j=await r.json()}catch(e){}if(r.status===401&&TOKEN){logout();throw new Error("انتهت الجلسة، سجّل الدخول من جديد")}if(!r.ok)throw new Error(j.error||"حدث خطأ، حاول مرّة أخرى");return j}
+function field(lb,inp,hint){return E("div",{},E("label",{},lb),inp,hint?E("div",{class:"hint"},hint):null)}
+const inp=(t="text",ph="")=>E("input",{type:t,placeholder:ph,autocomplete:"off"});
+const subjSel=()=>{const s=E("select");for(const k in SUBJ)s.append(E("option",{value:k},SUBJ[k]));return s};
+async function enter(j,pass,user){TOKEN=j.token;ME=j.me;NK=await kdf(pass,user);const raw=await crypto.subtle.exportKey("raw",NK);LS.set("ql.s",{t:TOKEN,k:b64(raw),me:ME});dash()}
+async function restore(){const s=LS.get("ql.s");if(!s)return false;TOKEN=s.t;ME=s.me;try{NK=await crypto.subtle.importKey("raw",unb(s.k),"AES-GCM",true,["encrypt","decrypt"]);const j=await api("me");ME=j.me;dash();return true}catch(e){logout(true);return false}}
+function logout(silent){TOKEN=null;ME=null;NK=null;LS.del("ql.s");if(!silent)start()}
+
+/* ===== الدخول والتسجيل ===== */
+function start(tab="login"){app.replaceChildren();
+ const tabs=[["login","🔑 الدخول"],["join","👩‍🏫 انضمام معلّم/ة"],["school","🏫 تسجيل مدرسة جديدة"]];
+ app.append(E("div",{class:"card"},E("h2",{},"منصّة تعليمية مجانية لمدرستك"),
+  E("p",{},"دروس تفاعلية، ومختبر افتراضي، وبنوك أسئلة، وامتحانات للصفوف 8–10. سجّل مدرستك مرّة واحدة، ثم ينضمّ معلّموها برمز المدرسة، ويضيف كلّ معلّم/ة طلبته فيحصل كلّ طالب/ة على رمز يربط نتائجه بمعلّمه."),
+  E("p",{class:"hint"},"🔒 لا ترى أيّ مدرسة بيانات مدرسة أخرى، وأسماء الطلبة تُحفظ مشفّرة لا يقرؤها إلا معلّمهم.")));
+ const tb=E("div",{class:"tabs noprint"});tabs.forEach(([k,l])=>tb.append(E("button",{class:k===tab?"on":"",onclick:()=>start(k)},l)));app.append(tb);
+ const c=E("div",{class:"card"}),msg=E("div",{class:"msg"});app.append(c);
+ const err=e=>{msg.className="msg e";msg.textContent="⚠️ "+e.message};
+ if(tab==="login"){const u=inp("text","مثال: amal.k"),p=inp("password");
+  c.append(E("h2",{},"الدخول"),field("اسم المستخدم",u),field("كلمة السر",p),E("button",{class:"btn",onclick:async()=>{try{const j=await api("teacher/login",{username:u.value,password:p.value});await enter(j,p.value,u.value.trim().toLowerCase())}catch(e){err(e)}}},"دخول"),msg)}
+ if(tab==="join"){const code=inp("text","مثال: K7QZ3M"),n=inp("text","الاسم الذي يظهر لزملائك"),s=subjSel(),u=inp("text","بالإنجليزية، مثال: amal.k"),p=inp("password"),p2=inp("password");code.style.direction="ltr";
+  c.append(E("h2",{},"انضمام معلّم/ة إلى مدرسة مسجّلة"),field("رمز المدرسة",code,"تحصل عليه من مسؤول المنصّة في مدرستك."),field("الاسم",n),field("المبحث",s),field("اسم المستخدم",u),
+   E("div",{class:"row"},field("كلمة السر (6 أحرف على الأقل)",p),field("تأكيد كلمة السر",p2)),
+   E("p",{class:"hint"},"⚠️ احفظ كلمة السر جيّدًا: أسماء طلبتك مشفّرة بها، ولا يمكن استرجاعها إن نُسيت."),
+   E("button",{class:"btn",onclick:async()=>{try{if(p.value!==p2.value)throw new Error("كلمتا السر غير متطابقتين");const j=await api("teacher/join",{code:code.value,name:n.value,subject:s.value,username:u.value,password:p.value});await enter(j,p.value,u.value.trim().toLowerCase())}catch(e){err(e)}}},"انضمام"),msg)}
+ if(tab==="school"){const sn=inp("text","مثال: مدرسة الأمل الأساسية المختلطة"),dr=inp("text","مثال: مديرية التربية والتعليم للواء القطرانة"),n=inp("text"),s=subjSel(),u=inp("text","بالإنجليزية"),p=inp("password"),p2=inp("password");s.value="other";
+  c.append(E("h2",{},"تسجيل مدرسة جديدة"),E("p",{class:"hint"},"يُنشئ هذا حساب «مسؤول المنصّة» في المدرسة، ويعطيك رمزًا تشاركه مع معلّمي مدرستك فقط."),
+   field("اسم المدرسة",sn),field("المديرية",dr),field("اسم المسؤول/ة",n),field("المبحث",s),field("اسم المستخدم",u),
+   E("div",{class:"row"},field("كلمة السر",p),field("تأكيد كلمة السر",p2)),
+   E("button",{class:"btn gold",onclick:async()=>{try{if(p.value!==p2.value)throw new Error("كلمتا السر غير متطابقتين");const j=await api("school/register",{school:sn.value,dir:dr.value,name:n.value,subject:s.value,username:u.value,password:p.value});await enter(j,p.value,u.value.trim().toLowerCase())}catch(e){err(e)}}},"تسجيل المدرسة"),msg)}}
+
+/* ===== لوحة المعلّم ===== */
+let VIEW="students",FG="",FS="";
+async function dash(){app.replaceChildren(E("div",{class:"card"},"⏳ جارٍ التحميل…"));
+ try{const j=await api("students");STU=await Promise.all(j.students.map(async s=>Object.assign(s,{name:await dec(s.enc)})))}catch(e){app.replaceChildren(E("div",{class:"card msg e"},e.message));return}
+ render()}
+function render(){app.replaceChildren();
+ app.append(E("div",{class:"card top"},E("div",{},E("h2",{style:"margin:0"},"🏫 "+ME.school),E("div",{class:"hint"},(ME.name||ME.username)+" · "+(SUBJ[ME.subject]||"")+(ME.admin?" · مسؤول/ة المنصّة":""))),
+  E("button",{class:"btn alt noprint",onclick:()=>logout()},"خروج")));
+ if(ME.admin&&ME.schoolCode)app.append(E("div",{class:"card noprint"},E("b",{},"رمز مدرستك لانضمام المعلّمين: "),E("span",{class:"code"},ME.schoolCode),E("p",{class:"hint"},"شاركه مع معلّمي مدرستك فقط (لا تنشره في مجموعات عامّة). ينضمّون من تبويب «انضمام معلّم/ة».")));
+ const tb=E("div",{class:"tabs noprint"});[["students","👥 طلبتي"],["add","➕ إضافة طلبة"],["cards","🖨 بطاقات الرموز"],["guide","📘 دليل الطلبة"]].concat(ME.admin?[["teachers","👩‍🏫 معلّمو المدرسة"]]:[]).forEach(([k,l])=>tb.append(E("button",{class:k===VIEW?"on":"",onclick:()=>{VIEW=k;render()}},l)));app.append(tb);
+ ({students:vStudents,add:vAdd,cards:vCards,guide:vGuide,teachers:vTeachers})[VIEW]()}
+function filters(){const groups=[...new Set(STU.map(s=>s.grade+"|"+s.sec))];const box=E("div",{class:"chips noprint"});
+ [["",""]].concat(groups.map(g=>g.split("|"))).forEach(([g,s])=>box.append(E("button",{class:"chip"+(FG===g&&FS===s?" on":""),onclick:()=>{FG=g;FS=s;render()}},g?("الصف "+g+(s?" · "+s:"")):"الكل")));return box}
+const shown=()=>STU.filter(s=>!FG||(s.grade===FG&&s.sec===FS));
+function vStudents(){const c=E("div",{class:"card"});app.append(c);
+ if(!STU.length){c.append(E("h2",{},"لا يوجد طلبة بعد"),E("p",{},"ابدأ من تبويب «➕ إضافة طلبة»."));return}
+ c.append(E("h2",{},"طلبتي ونتائجهم"),E("p",{class:"hint"},"تصل النتائج تلقائيًّا عندما يحلّ الطالب/ة اختبارات المنصّة بعد إدخال رمزه في الصفحة الرئيسية."),filters());
+ const t=E("table",{},E("tr",{},E("th",{},"#"),E("th",{},"الاسم"),E("th",{},"الصف"),E("th",{},"الرمز"),E("th",{},"المحاولات"),E("th",{},"المعدّل"),E("th",{},"آخر نشاط"),E("th",{class:"noprint"},"")));
+ shown().forEach((s,i)=>t.append(E("tr",{},E("td",{},String(i+1)),E("td",{class:"n"},s.name),E("td",{},s.grade+" "+s.sec),E("td",{style:"direction:ltr;font-family:monospace"},s.code),E("td",{},String(s.n)),E("td",{},s.avg==null?"—":s.avg+"%"),
+  E("td",{},s.last?new Date(s.last).toLocaleDateString("ar-JO"):"—"),E("td",{class:"noprint"},E("button",{class:"chip",onclick:()=>detail(s)},"التفاصيل"),E("button",{class:"chip",onclick:async()=>{if(!delOk(s))return;await api("students/del",{ids:[s.id]});dash()}},"حذف")))));
+ c.append(E("div",{class:"tbl"},t),E("button",{class:"btn alt noprint",onclick:()=>print()},"🖨 طباعة الجدول"))}
+const pend={};function delOk(s){if(pend[s.id]){delete pend[s.id];return true}pend[s.id]=1;alertMsg("اضغط «حذف» مرّة ثانية لتأكيد حذف "+s.name+" ونتائجه.");setTimeout(()=>delete pend[s.id],5000);return false}
+function alertMsg(t){const m=E("div",{class:"card msg e"},t);app.prepend(m);setTimeout(()=>m.remove(),4000)}
+async function detail(s){const j=await api("attempts?sid="+s.id);const c=E("div",{class:"card"});
+ c.append(E("h2",{},"نتائج "+s.name),E("button",{class:"btn alt noprint",onclick:render},"→ رجوع"));
+ if(!j.attempts.length)c.append(E("p",{},"لا توجد محاولات بعد."));else{const t=E("table",{},E("tr",{},E("th",{},"التاريخ"),E("th",{},"الاختبار"),E("th",{},"المبحث/الوحدة"),E("th",{},"النتيجة")));
+  j.attempts.forEach(a=>t.append(E("tr",{},E("td",{},new Date(a.ts).toLocaleDateString("ar-JO")),E("td",{class:"n"},a.title),E("td",{},a.subject),E("td",{},a.right+"/"+a.total+" ("+Math.round(100*a.right/a.total)+"%)"))));c.append(E("div",{class:"tbl"},t))}
+ app.replaceChildren(c)}
+function vAdd(){const g=E("select");GR.forEach(x=>g.append(E("option",{value:x},"الصف "+x)));g.value="الثامن";const sc=inp("text","مثال: أ");sc.value="أ";
+ const gd=E("select");[["","مختلط / غير محدد"],["f","طالبات"],["m","طلاب"]].forEach(([v,l])=>gd.append(E("option",{value:v},l)));
+ const ta=E("textarea",{placeholder:"اسم في كلّ سطر\nمثال:\nسارة أحمد محمد\nليان خالد علي"});const msg=E("div",{class:"msg"});
+ app.append(E("div",{class:"card"},E("h2",{},"إضافة طلبة"),E("div",{class:"row"},field("الصف",g),field("الشعبة",sc),field("الجنس",gd)),field("أسماء الطلبة",ta,"حتى 60 اسمًا في المرّة. تُشفَّر الأسماء في جهازك قبل الإرسال."),
+  E("button",{class:"btn",onclick:async()=>{try{const names=ta.value.split(/\n+/).map(x=>x.trim()).filter(Boolean).slice(0,60);if(!names.length)throw new Error("اكتب اسمًا واحدًا على الأقل");
+   msg.className="msg";msg.textContent="⏳ جارٍ الإضافة…";const list=await Promise.all(names.map(async n=>({enc:await enc(n),g:gd.value})));const j=await api("students/add",{grade:g.value,sec:sc.value.trim(),names:list});
+   msg.className="msg o";msg.textContent="✔ أُضيف "+j.added.length+" طالبًا/طالبة. اطبع بطاقات الرموز من تبويب «بطاقات الرموز».";ta.value="";const ST=STU;await dash();VIEW="cards";FG=g.value;FS=sc.value.trim();render()}catch(e){msg.className="msg e";msg.textContent="⚠️ "+e.message}}},"إضافة وإنشاء الرموز"),msg))}
+function vCards(){const c=E("div",{class:"card"});app.append(c);c.append(E("h2",{class:"noprint"},"بطاقات رموز الطلبة"),E("p",{class:"hint noprint"},"اطبع البطاقات وقصّها، وأعطِ كلّ طالب/ة بطاقته يدويًّا. لا ترسل الرموز في مجموعات عامّة."),filters(),E("button",{class:"btn gold noprint",onclick:()=>print()},"🖨 طباعة البطاقات"));
+ const g=E("div",{class:"cards"});shown().forEach(s=>g.append(E("div",{class:"sc"},E("div",{class:"hint"},ME.school),E("b",{},s.name),E("div",{},"الصف "+s.grade+" "+s.sec),E("div",{class:"c"},s.code),E("div",{class:"hint"},"ادخل منصّة القطرانة ← «عندي رمز» ← اكتب الرمز"))));c.append(g)}
+function vGuide(){const url=location.origin+"/";app.append(E("div",{class:"card"},E("h2",{},"دليل الطلبة"),
+ E("ol",{},E("li",{},"افتح المنصّة: ",E("b",{style:"direction:ltr;display:inline-block"},url)),E("li",{},"اختر «أنا طالب» أو «أنا طالبة»، ثمّ اضغط «🔑 عندي رمز من معلّمي» واكتب رمزك."),E("li",{},"اختر صفّك ومادّتك، وحلّ الاختبارات والتدريبات."),E("li",{},"تصل نتائجك إلى معلّمك تلقائيًّا.")),
+ E("p",{class:"hint"},"المحتوى متاح حاليًّا للصفوف الثامن والتاسع والعاشر: العلوم والرياضيات واللغة العربية، والمختبر الافتراضي، والاستعداد للامتحانات النهائية.")))}
+async function vTeachers(){const c=E("div",{class:"card"},E("h2",{},"معلّمو المدرسة"));app.append(c);try{const j=await api("school/teachers");const t=E("table",{},E("tr",{},E("th",{},"الاسم"),E("th",{},"اسم المستخدم"),E("th",{},"المبحث"),E("th",{},"عدد الطلبة")));
+ j.teachers.forEach(x=>t.append(E("tr",{},E("td",{class:"n"},(x.name||"—")+(x.admin?" ⭐":"")),E("td",{style:"direction:ltr"},x.username),E("td",{},SUBJ[x.subject]||""),E("td",{},String(x.students)))));c.append(E("div",{class:"tbl"},t))}catch(e){c.append(E("p",{class:"msg e"},e.message))}}
+restore().then(ok=>{if(!ok)start()});
+</script></body></html>

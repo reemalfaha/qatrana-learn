@@ -16,7 +16,7 @@ V3.canvasTex=canvasTex;
 /* لوحة نصّية في المشهد (تتّجه دائمًا للكاميرا) */
 function label(text,o={}){const f=o.size||46;const c=document.createElement("canvas");const x=c.getContext("2d");x.font="700 "+f+"px 'Cairo','El Messiri',sans-serif";const w=Math.ceil(x.measureText(text).width)+44;c.width=w;c.height=f+30;
  x.font="700 "+f+"px 'Cairo','El Messiri',sans-serif";x.fillStyle=o.bg||"rgba(30,12,18,.86)";x.beginPath();x.roundRect?x.roundRect(0,0,w,c.height,18):x.rect(0,0,w,c.height);x.fill();x.strokeStyle="rgba(243,223,168,.7)";x.lineWidth=3;x.stroke();
- x.fillStyle=o.color||"#fff";x.textAlign="center";x.textBaseline="middle";x.direction="rtl";x.fillText(text,w/2,c.height/2+2);
+ x.fillStyle=o.color||"#fff";x.textAlign="center";x.textBaseline="middle";x.direction=o.ltr||/^[\d.\-+]/.test(text)?"ltr":"rtl";x.fillText(text,w/2,c.height/2+2);
  const tx=new T.CanvasTexture(c);tx.colorSpace=T.SRGBColorSpace;const sp=new T.Sprite(new T.SpriteMaterial({map:tx,depthTest:false,transparent:true}));const s=o.scale||.0022;sp.scale.set(w*s,c.height*s,1);sp.renderOrder=20;return sp}
 V3.label=label;
 /* ---------- أدوات زجاجية ---------- */

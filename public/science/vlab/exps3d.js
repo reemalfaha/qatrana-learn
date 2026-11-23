@@ -175,4 +175,113 @@ VLab.reg({id:"c10-molecules3d",three:1,icon:"🧬",grade:"الصف العاشر"
   questions:[{q:"لماذا جزيء الماء منحنٍ وليس خطّيًّا؟",a:"لأنّ على ذرّة الأكسجين زوجين غير رابطين يتنافران مع الزوجين الرابطين فيدفعان ذرّتي الهيدروجين إلى الأسفل."},{q:"لماذا زاوية الأمونيا (107°) أصغر من زاوية الميثان (109.5°)؟",a:"لأنّ الزوج غير الرابط على النيتروجين يتنافر بقوّة أكبر مع الأزواج الرابطة فيقرّبها من بعضها."},
    {q:"ما نوع الرابطة بين ذرّتي الكربون في الإيثين والإيثاين؟",a:"ثنائية في الإيثين C₂H₄، وثلاثية في الإيثاين C₂H₂."},{q:"لماذا جزيء CO₂ خطّي؟",a:"لأنّ ذرّة الكربون المركزية ليس عليها أزواج غير رابطة، فتتّجه الرابطتان الثنائيتان في اتّجاهين متعاكسين."}],
   concl:"يتحدّد شكل الجزيء بتنافر أزواج الإلكترونات (الرابطة وغير الرابطة) حول الذرّة المركزية، فتبتعد عن بعضها أكبر مسافة ممكنة."}});
+
+/* ======================= 4) الكواشف ثلاثية الأبعاد ======================= */
+const CH=VLab.CHEM||{},PH=VLab.PHYS||{};
+const icol=(i,p)=>{const st=CH.ICOL[i];for(let k=0;k<st.length-1;k++){const[a,c1]=st[k],[b,c2]=st[k+1];if(p<=b){const f=Math.max(0,(p-a)/(b-a));return new T.Color("#"+c1).lerp(new T.Color("#"+c2),f)}}return new T.Color("#"+st[st.length-1][1])};
+const TST={ind:null,map:{}};
+const BASEC={lem:"#f6efb0",vin:"#f4ecd8",cola:"#6b3a1e",milk:"#fbfaf4",dw:"#eef4f8",bs:"#f5f5f2",soap:"#eef2f3",amm:"#eef4f8"};
+VLab.reg({id:"c9-indicator3d",three:1,icon:"🧪",grade:"الصف التاسع",subject:"الكيمياء",unit:"الوحدة 2: الحموض والقواعد",src:"كتاب الطالب ص45",
+ title:"الكواشف في مختبر ثلاثي الأبعاد",question:"كيف نستخدم الكواشف لتصنيف المواد المنزلية إلى حمضية وقاعدية ومتعادلة؟",view:{th:0,ph:1.25,r:4.4,min:2,max:6.5},target:[.15,.75,0],
+ vars:[{k:"i",label:"الكاشف",type:"seg",val:"cab",c:"#2b7bd6",opts:[["cab","الملفوف الأحمر"],["lit","تبّاع الشمس"],["php","الفينولفثالين"],["uni","الكاشف العامّ"]]},
+  {k:"s",label:"الأنبوب المختار (أو انقري الأنبوب)",type:"seg",val:"lem",c:"#7A1F2E",opts:()=>Object.keys(CH.SBS).map(k=>[k,CH.SBS[k][0]])},
+  {k:"d",label:"قطرات الكاشف في الأنبوب المختار",unit:"قطرة",min:0,max:5,step:1,val:0,c:"#B8902A",ticks:[0,1,2,3,4,5]}],
+ onSeg(S,k){if(k==="i"){TST.map={};S.d=0}if(k==="s")S.d=TST.map[S.s]||0},
+ read(s){const p=CH.SBS[s.s][1];const n=Object.values(TST.map).filter(x=>x>0).length;return[{label:"لون المحلول",val:s.d?CH.CNAME(s.i,p):"أضيفي قطرات"},{label:"التصنيف",val:s.d?(p<6.5?"حمضية":p<=7.5?"متعادلة":"قاعدية"):"—"},{label:"pH تقريبي",val:s.d&&s.i==="uni"?p.toFixed(1):"يظهر مع الكاشف العامّ"},{label:"أنابيب مختبرة",val:n+" من 8"}]},
+ build(c,S){const{scene}=c;const W={tubes:{}};
+  const rack=new T.Group();scene.add(rack);const wood=M.std("#8a5a36",{roughness:.6});
+  const top=new T.Mesh(new T.BoxGeometry(2.6,.06,.36),wood);top.position.y=.55;rack.add(top);const bot=new T.Mesh(new T.BoxGeometry(2.6,.05,.36),wood);bot.position.y=.04;rack.add(bot);
+  [-1.27,1.27].forEach(x=>{const l=new T.Mesh(new T.BoxGeometry(.06,.6,.36),wood);l.position.set(x,.3,0);rack.add(l)});
+  Object.keys(CH.SBS).forEach((k,i)=>{const t=V3.tube({r:.085,h:.85,level:.45,color:BASEC[k]});const x=-1.05+i*.3;t.g.position.set(x,.06,0);rack.add(t.g);t.g.userData.tap="tube:"+k;c.taps.push(t.g);
+   const lb=V3.label(CH.SBS[k][0],{size:30});lb.scale.multiplyScalar(.75);lb.position.set(x,-.12,.3);rack.add(lb);W.tubes[k]={t,lb,x}});
+  W.drop=new T.Group();scene.add(W.drop);const bulb=new T.Mesh(new T.SphereGeometry(.07,24,16),M.std("#2b2b30",{roughness:.4}));bulb.position.y=.42;W.drop.add(bulb);
+  const pip=new T.Mesh(new T.CylinderGeometry(.03,.008,.42,20,1,true),M.glass());pip.position.y=.17;W.drop.add(pip);W.pl=new T.Mesh(new T.CylinderGeometry(.022,.006,.2,16),M.liquid("#8e4fb0"));W.pl.position.y=.1;W.drop.add(W.pl);
+  W.drops=V3.drops(scene,"#8e4fb0",6);
+  W.bottle=new T.Group();scene.add(W.bottle);const bt=new T.Mesh(new T.CylinderGeometry(.16,.16,.42,32),M.glass({color:"#d9a066",transmission:.6}));bt.position.y=.21;W.bottle.add(bt);
+  W.bl=new T.Mesh(new T.CylinderGeometry(.145,.145,.3,32),M.liquid("#8e4fb0"));W.bl.position.y=.16;W.bottle.add(W.bl);const cap=new T.Mesh(new T.CylinderGeometry(.09,.1,.08,24),M.std("#222"));cap.position.y=.46;W.bottle.add(cap);W.bottle.position.set(1.65,0,.25);
+  W.blbl=V3.label("الكاشف",{size:32});W.blbl.position.set(1.65,.75,.25);scene.add(W.blbl);
+  W.strip=V3.canvasTex(800,120,(x,w,h)=>{for(let i=0;i<14;i++){x.fillStyle="#"+new T.Color().copy(icol("uni",i+.5)).getHexString();x.fillRect(w-(i+1)*w/14,20,w/14+1,60)}x.fillStyle="#fff";x.font="700 26px Cairo";x.textAlign="center";x.direction="ltr";[0,7,14].forEach(v=>x.fillText(v,v===0?w-20:v===14?20:w/2,110))});
+  const st=new T.Mesh(new T.PlaneGeometry(2.2,.33),new T.MeshBasicMaterial({map:W.strip,toneMapped:false}));st.position.set(0,1.6,-1.6);scene.add(st);const sl=V3.label("حمضي ← متعادل → قاعدي",{size:34});sl.position.set(0,1.88,-1.6);scene.add(sl);
+  W.mark=new T.Mesh(new T.ConeGeometry(.05,.12,16),M.std("#fff"));W.mark.rotation.x=Math.PI;scene.add(W.mark);W.prev=0;return W},
+ tap(name){if(name.startsWith("tube:"))set("s",name.slice(5))},
+ update(c,W,s,t,dt,S){if(TST.ind!==S.i){TST.ind=S.i;TST.map={}}TST.map[S.s]=S.d;
+  const ic=icol(S.i,S.i==="php"?12:S.i==="lit"?7:6);const icB=S.i==="php"?new T.Color("#f4f4f4"):S.i==="uni"?new T.Color("#4a7a2a"):S.i==="lit"?new T.Color("#7a4ac0"):new T.Color("#7a3fa0");W.bl.material.color.copy(icB);W.pl.material.color.copy(icB);W.drops.color("#"+icB.getHexString());
+  for(const k in W.tubes){const o=W.tubes[k],dd=TST.map[k]||0,p=CH.SBS[k][1];const f=Math.min(1,dd/3);const col=new T.Color(BASEC[k]).lerp(icol(S.i,p),f*(S.i==="php"&&p<8.2?0:1));o.t.mat.color.copy(col);
+   const sel=k===S.s;o.t.g.position.y=.06+(sel?.08+Math.sin(t*3)*.01:0)}
+  const x=W.tubes[S.s].x;W.drop.position.lerp(new T.Vector3(x,1.25,0),Math.min(1,dt*5));
+  if(S.d>W.prev){for(let k=0;k<S.d-W.prev;k++)setTimeout(()=>W.drops.emit(x,1.25,0),k*180)}W.prev=S.d;W.drops.update(dt,.55);
+  const p=CH.SBS[S.s][1];W.mark.visible=S.i==="uni"&&S.d>0;W.mark.position.set(1.1-p/14*2.2,1.82,-1.58)},
+ challenges:[{t:"انقري أنبوبًا لاختياره",test:(s,h)=>h.s.size>=2},{t:"اختبري الأنابيب الثمانية بكاشف واحد",test:()=>Object.values(TST.map).filter(x=>x>0).length>=8},{t:"اكتشفي pH الصابون بالكاشف العامّ",test:s=>s.s==="soap"&&s.i==="uni"&&s.d>0},{t:"سجّلي 4 قراءات",test:(s,h,r)=>r.length>=4}],
+ notebook:{goal:"أصنّف بعض المواد المنزلية إلى حمضية وقاعدية ومتعادلة باستخدام الكواشف.",mats:"حامل أنابيب، 8 أنابيب اختبار، مواد منزلية، كواشف: الملفوف الأحمر وتبّاع الشمس والفينولفثالين والكاشف العامّ.",
+  steps:["اختاري الكاشف (تبدأ الأنابيب نظيفة عند تغييره).","انقري أنبوبًا لاختياره، ثمّ حرّكي مؤشّر القطرات وراقبي القطارة وتغيّر اللون.","اختبري الأنابيب الثمانية، وقارني ألوانها جنبًا إلى جنب في الحامل.","كرّري بكاشف آخر، واستخدمي الكاشف العامّ لتقدير pH من الشريط."],
+  questions:[{q:"ما لون الفينولفثالين في المحلول القاعدي؟ وفي الحمضي؟",a:"زهري في القاعدي، وعديم اللون في الحمضي والمتعادل."},{q:"رتّبي المواد من الأكثر حمضية إلى الأكثر قاعدية.",a:"عصير الليمون، الخلّ، المشروب الغازي، الحليب، الماء المقطّر، صودا الخبز، ماء الصابون، الأمونيا."},
+   {q:"لماذا الكاشف العامّ أدقّ من تبّاع الشمس؟",a:"لأنّه يعطي لونًا مختلفًا لكلّ مدى من قيم pH، أمّا تبّاع الشمس فيميّز الحمضي من القاعدي فقط."}],
+  concl:"الكاشف مادّة يتغيّر لونها بتغيّر حمضية الوسط؛ الحموض pH أقلّ من 7، والمتعادل 7، والقواعد أكبر من 7."}});
+
+/* ======================= 5) التوصيل الكهربائي ثلاثي الأبعاد ======================= */
+VLab.reg({id:"c10-conduct3d",three:1,icon:"💡",grade:"الصف العاشر",subject:"الكيمياء",unit:"الوحدة 3: الروابط الكيميائية",src:"كتاب الأنشطة ص18–20",
+ title:"التوصيل الكهربائي في مختبر ثلاثي الأبعاد",question:"أيّ المواد توصل التيار الكهربائي؟ ولماذا؟",view:{th:-.2,ph:1.2,r:3.8,min:2,max:6.5},target:[0,.65,0],dyn:1,
+ vars:[{k:"m",label:"المادّة",type:"seg",val:"nacl_aq",c:"#7A1F2E",opts:()=>Object.keys(CH.CND).map(k=>[k,CH.CND[k].n])},{k:"V",label:"جهد البطّارية",unit:"V",min:0,max:12,step:1,val:6,c:"#B8902A",ticks:[0,3,6,9,12]},
+  {k:"cn",label:"تركيز المحلول",unit:"%",min:5,max:100,step:5,val:50,c:"#2b7bd6",ticks:[5,50,100],hide:S=>!CH.CND[S.m].sol||!CH.CND[S.m].ion}],
+ read(s){const Mx=CH.CND[s.m],I=CH.cur(s);return[{label:"شدّة التيار",val:I.toFixed(0),unit:"mA"},{label:"المصباح",val:I>40?"يضيء ✔":I>5?"يضيء ضعيفًا":"لا يضيء ✘"},{label:"نوع المركّب",val:Mx.ty},{label:"التفسير",val:Mx.ion&&Mx.sol?"أيونات حرّة الحركة تنقل الشحنات":Mx.ion?"الأيونات مقيّدة في الشبكة البلّورية":"جزيئات متعادلة بلا أيونات"}]},
+ build(c,S){const{scene}=c;const W={};W.bk=V3.beaker({r:.42,h:.8,level:.7,color:"#cfe6ff"});scene.add(W.bk.g);
+  W.cry=new T.Group();scene.add(W.cry);for(let i=0;i<26;i++){const m=new T.Mesh(new T.BoxGeometry(.07,.07,.07),new T.MeshPhysicalMaterial({color:"#ffffff",roughness:.15,transmission:.6,thickness:.1}));m.position.set((Math.random()-.5)*.6,.06+Math.random()*.08,(Math.random()-.5)*.6);m.rotation.set(Math.random(),Math.random(),0);W.cry.add(m)}
+  [-.2,.2].forEach((x,i)=>{const r=new T.Mesh(new T.CylinderGeometry(.035,.035,1.05,16),M.std("#2a2a2e",{roughness:.7}));r.position.set(x,.55,0);scene.add(r);const cl=new T.Mesh(new T.BoxGeometry(.08,.05,.08),M.metal(i?"#3a6fd8":"#d84a3a"));cl.position.set(x,1.05,0);scene.add(cl)});
+  // البطارية
+  const bat=new T.Group();bat.position.set(-1.1,0,.2);scene.add(bat);const bb=new T.Mesh(new T.BoxGeometry(.45,.32,.3),M.std("#1f2228",{roughness:.4}));bb.position.y=.16;bat.add(bb);const bl=new T.Mesh(new T.BoxGeometry(.46,.1,.31),M.std("#d9a441",{roughness:.4}));bl.position.y=.27;bat.add(bl);
+  W.vl=V3.label("6 V",{size:40});W.vl.position.set(-1.1,.55,.2);scene.add(W.vl);
+  // المصباح
+  const lamp=new T.Group();lamp.position.set(1.05,0,.1);scene.add(lamp);const lb=new T.Mesh(new T.CylinderGeometry(.18,.2,.06,32),M.metal("#3a3d44"));lb.position.y=.03;lamp.add(lb);const st=new T.Mesh(new T.CylinderGeometry(.03,.03,.5,16),M.metal());st.position.y=.3;lamp.add(st);
+  const sock=new T.Mesh(new T.CylinderGeometry(.07,.07,.12,24),M.metal("#c9a24a"));sock.position.y=.6;lamp.add(sock);W.bulb=new T.Mesh(new T.SphereGeometry(.14,32,24),new T.MeshPhysicalMaterial({color:"#fffbe8",transmission:.7,roughness:.05,emissive:new T.Color("#ffd27a"),emissiveIntensity:0,transparent:true}));W.bulb.position.y=.78;lamp.add(W.bulb);
+  W.fil=new T.Mesh(new T.TorusGeometry(.035,.006,8,20),new T.MeshBasicMaterial({color:"#663"}));W.fil.position.y=.78;lamp.add(W.fil);W.pl=new T.PointLight("#ffd27a",0,5,1.5);W.pl.position.set(1.05,.85,.1);scene.add(W.pl);
+  const wire=(pts,col)=>{scene.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(...p))),60,.012,6),M.std(col,{roughness:.5})))};
+  wire([[-.2,1.07,0],[-.5,1.3,.05],[-1.0,.8,.2],[-1.2,.33,.2]],"#d84a3a");wire([[-1.0,.33,.2],[-.3,.05,.6],[.8,.05,.4],[1.05,.6,.1]],"#222");wire([[1.05,.6,.1],[.6,1.3,0],[.2,1.07,0]],"#3a6fd8");
+  // الأيونات
+  W.ions=new T.InstancedMesh(new T.SphereGeometry(.028,12,10),new T.MeshStandardMaterial({roughness:.3}),60);W.ions.renderOrder=6;W.bk.g.add(W.ions);W.P=[...Array(60)].map((_,i)=>({x:(Math.random()-.5)*.6,y:.08+Math.random()*.45,z:(Math.random()-.5)*.6,pos:i%2===0}));
+  W.am=V3.canvasTex(256,128,()=>{});const am=new T.Mesh(new T.BoxGeometry(.5,.3,.12),M.std("#e9ecef"));am.position.set(.05,.15,.8);scene.add(am);const sc=new T.Mesh(new T.PlaneGeometry(.42,.21),new T.MeshBasicMaterial({map:W.am,toneMapped:false}));sc.position.set(.05,.16,.861);scene.add(sc);W.lk="";return W},
+ update(c,W,s,t,dt,S){const Mx=CH.CND[S.m],I=CH.cur(s),gl=Math.min(1,I/120);
+  W.bk.liq.visible=W.bk.top.visible=!!Mx.sol;W.cry.visible=!Mx.sol;W.cry.children.forEach(m=>m.material.color.set(Mx.ion?"#ffffff":"#fffbe0"));
+  if(Mx.sol)W.bk.set(.7,S.m==="cuso4"?"#4a9ae8":"#d6eaff");
+  W.bulb.material.emissiveIntensity=gl*3.2;W.pl.intensity=gl*2.4;W.fil.material.color.set(gl>0?"#ffcf6a":"#665");W.vl.visible=true;
+  const dm=new T.Object3D(),n=Mx.sol?(Mx.ion?Math.round(16+s.cn/100*44):18):0;const F=Math.min(1,s.V/12);
+  W.P.forEach((p,i)=>{if(i>=n){dm.scale.set(0,0,0)}else{if(Mx.ion&&Mx.k){p.x+=(p.pos?1:-1)*F*dt*.18+(Math.random()-.5)*dt*.05;if(p.x>.3)p.x=-.3;if(p.x<-.3)p.x=.3}else{p.x+=(Math.random()-.5)*dt*.1;p.x=Math.max(-.3,Math.min(.3,p.x))}
+   dm.position.set(p.x,p.y+Math.sin(t*2+i)*.01,p.z);const sz=Mx.ion?(p.pos?.85:1.1):1.3;dm.scale.set(sz,sz,sz)}dm.updateMatrix();W.ions.setMatrixAt(i,dm.matrix);
+   W.ions.setColorAt(i,new T.Color(!Mx.ion?"#f2e6c9":p.pos?(S.m==="cuso4"?"#5aa0ff":"#a66bd6"):(S.m==="cuso4"?"#e8cf2e":"#36c46a")))});W.ions.instanceMatrix.needsUpdate=true;if(W.ions.instanceColor)W.ions.instanceColor.needsUpdate=true;
+  const key=Math.round(I)+"|"+S.V;if(key!==W.lk){W.lk=key;const x=W.am._x;x.fillStyle="#0e2a1c";x.fillRect(0,0,256,128);x.fillStyle="#7dffb5";x.font="700 24px Cairo";x.textAlign="left";x.fillText("mA",14,32);x.font="800 62px monospace";x.textAlign="right";x.fillText(Math.round(I),244,104);W.am.needsUpdate=true;
+}
+  if(W.vV!==S.V){W.vV=S.V;c.scene.remove(W.vl);W.vl=V3.label(S.V+" V",{size:40});W.vl.position.set(-1.1,.55,.2);c.scene.add(W.vl)}},
+ challenges:[{t:"اجعلي المصباح يضيء",test:s=>CH.cur(s)>40},{t:"قارني الملح الصلب بمحلوله",test:(s,h)=>h.m.has("nacl_s")&&h.m.has("nacl_aq")},{t:"اختبري المواد الستّ",test:(s,h)=>h.m.size>=6},{t:"سجّلي 4 قراءات",test:(s,h,r)=>r.length>=4}],
+ notebook:{goal:"أستقصي التوصيل الكهربائي للمركّبات الأيونية والتساهمية صلبةً وفي المحلول.",mats:"كأس، قطبا جرافيت، أسلاك، مصباح، بطّارية، أميتر، ملح الطعام، سكّر، كبريتات النحاس، ماء مقطّر.",
+  steps:["اختاري المادّة وراقبي المصباح وقراءة الأميتر.","غيّري الجهد والتركيز وراقبي حركة الأيونات نحو القطبين.","قارني الملح الصلب بمحلوله، والسكّر بمحلوله، والماء المقطّر."],
+  questions:[{q:"لماذا لا يوصل ملح الطعام الصلب التيار بينما يوصله محلوله؟",a:"لأنّ الأيونات في الصلب مقيّدة في الشبكة البلّورية، وفي المحلول تصبح حرّة الحركة."},{q:"إلى أيّ قطب تتّجه الأيونات الموجبة؟",a:"إلى القطب السالب، لأنّ الشحنات المختلفة تتجاذب."},{q:"لماذا لا يوصل محلول السكّر التيار؟",a:"لأنّه مركّب تساهمي يذوب على شكل جزيئات متعادلة لا أيونات."}],
+  concl:"المركّبات الأيونية توصل التيار في المحلول لوجود أيونات حرّة الحركة، ولا توصله صلبة، والمركّبات التساهمية لا توصله غالبًا."}});
+
+/* ======================= 6) الكثافة ثلاثية الأبعاد ======================= */
+VLab.reg({id:"s8-density3d",three:1,icon:"🧊",grade:"الصف الثامن",subject:"العلوم",unit:"الوحدة 3: الموائع",src:"كتاب الأنشطة ص33–35",
+ title:"حساب الكثافة في مختبر ثلاثي الأبعاد",question:"كيف نحسب كثافة جسم صلب؟ ولماذا تطفو بعض الأجسام وتغوص أخرى؟",view:{th:.15,ph:1.22,r:4.1,min:2,max:6.5},target:[0,.8,0],
+ vars:[{k:"o",label:"الجسم",type:"seg",val:"al",c:"#7A1F2E",opts:()=>Object.keys(PH.OBJ).map(k=>[k,PH.OBJ[k][0]])},{k:"V",label:"حجم الجسم",unit:"cm³",min:10,max:40,step:5,val:20,c:"#2b7bd6",ticks:[10,20,30,40]},
+  {k:"l",label:"السائل",type:"seg",val:"w",c:"#0e8f8f",opts:()=>Object.keys(PH.LQ).map(k=>[k,PH.LQ[k][0]])},{k:"d",label:"إنزال الجسم في المخبار",unit:"%",min:0,max:100,step:1,val:0,c:"#B8902A",ticks:[0,50,100]}],
+ read(s){const O=PH.OBJ[s.o],L=PH.LQ[s.l];const m=O[1]*s.V,fl=O[1]<L[1],sub=s.d<100?0:fl?s.V*O[1]/L[1]:s.V;return[{label:"الكتلة",val:m.toFixed(1),unit:"g"},{label:"حجم السائل بعد",val:(50+sub).toFixed(1),unit:"mL"},{label:"الحجم المزاح",val:sub.toFixed(1),unit:"cm³"},{label:"الكثافة",val:s.d<100?"—":fl?"يطفو: اغمريه كلّيًّا":(m/sub).toFixed(2),unit:s.d<100||fl?"":"g/cm³"},{label:"الحالة",val:s.d<100?"—":fl?"يطفو":"يغوص"}]},
+ build(c,S){const{scene}=c;const W={};
+  const bal=new T.Group();bal.position.set(-.9,0,.1);scene.add(bal);const bb=new T.Mesh(new T.BoxGeometry(.75,.14,.6),M.std("#2a2d35",{roughness:.4}));bb.position.y=.07;bal.add(bb);
+  const pan=new T.Mesh(new T.CylinderGeometry(.24,.24,.02,40),M.metal());pan.position.y=.16;bal.add(pan);W.sc=V3.canvasTex(256,96,()=>{});const sc=new T.Mesh(new T.PlaneGeometry(.36,.13),new T.MeshBasicMaterial({map:W.sc,toneMapped:false}));sc.position.set(0,.09,.301);bal.add(sc);
+  const cyl=new T.Group();cyl.position.set(.55,0,0);scene.add(cyl);W.cyl=cyl;const H=1.4,R=.2;const wall=new T.Mesh(new T.CylinderGeometry(R,R,H,40,1,true),M.glass());wall.position.y=H/2+.06;cyl.add(wall);
+  const base=new T.Mesh(new T.CylinderGeometry(.32,.34,.06,6),M.glass({thickness:.3}));base.position.y=.03;cyl.add(base);
+  for(let ml=0;ml<=120;ml+=10){const y=.06+ml/120*H;const m=new T.Mesh(new T.BoxGeometry(ml%50?.05:.09,.004,.004),M.std("#ffffff"));m.position.set(0,y,R+.002);cyl.add(m);if(ml%20===0){const l=V3.label(String(ml),{size:26,bg:"rgba(0,0,0,0)"});l.scale.multiplyScalar(.6);l.position.set(.13,y,R+.01);cyl.add(l)}}
+  W.liq=new T.Mesh(new T.CylinderGeometry(R*.92,R*.92,1,40),M.liquid("#9fd4ff",{opacity:.6}));W.liq.renderOrder=3;cyl.add(W.liq);W.H=H;
+  W.obj=new T.Mesh(new T.BoxGeometry(1,1,1),M.std("#c4cad4",{roughness:.35,metalness:.5}));W.obj.castShadow=true;scene.add(W.obj);
+  W.ml=V3.label("50 mL",{size:36});scene.add(W.ml);W.lk="";return W},
+ update(c,W,s,t,dt,S){const O=PH.OBJ[S.o],L=PH.LQ[S.l];const side=Math.cbrt(s.V)*.055;const fl=O[1]<L[1],frac=fl?O[1]/L[1]:1;
+  W.obj.scale.set(side,side,side);W.obj.material.color.set(O[2]);W.obj.material.metalness=["al","fe","cu"].includes(S.o)?.8:0;W.obj.material.roughness=S.o==="wood"?.8:.35;
+  const p=S.d>=100?1:s.d/100,H=W.H;const pxml=H/120;const lvl0=.06+50*pxml;const subF=s.V*frac,lvlF=.06+(50+subF)*pxml;
+  const bx=-.9,cx=.55,y0=.17+side/2,yTop=.06+H+side/2+.15;let x,y,sub=0;
+  if(p<.5){const f=p*2;x=bx+(cx-bx)*f;y=y0+(yTop-y0)*f+Math.sin(f*Math.PI)*.25}else{const f=(p-.5)*2;x=cx;const dest=fl?lvlF+side/2-side*frac:.06+.02+side/2;y=yTop+(dest-yTop)*f;const depth=Math.max(0,Math.min(side,lvl0-(y-side/2)));sub=Math.min(subF,depth/side*s.V);if(f>=1)sub=subF}
+  W.obj.position.set(x,y,0);W.obj.rotation.y=t*.2*(p<1?1:0);const lvl=.06+(50+sub)*pxml;W.liq.scale.y=lvl-.06;W.liq.position.y=(lvl+.06)/2;{const m=L[2].match(/\d+/g);W.liq.material.color.setRGB(m[0]/255,m[1]/255,m[2]/255,T.SRGBColorSpace)}
+  W.ml.position.set(cx-.42,lvl,0);const key=(p<.05?(O[1]*s.V).toFixed(1):"0.0")+"|"+(50+sub).toFixed(1);if(key!==W.lk){W.lk=key;const[g,v]=key.split("|");const x2=W.sc._x;x2.fillStyle="#bfe7c0";x2.fillRect(0,0,256,96);x2.fillStyle="#1d3b0a";x2.font="800 54px monospace";x2.textAlign="right";x2.fillText(g+" g",244,70);W.sc.needsUpdate=true;
+   c.scene.remove(W.ml);W.ml=V3.label(v+" mL",{size:36});W.ml.position.set(cx-.45,lvl,0);c.scene.add(W.ml)}},
+ challenges:[{t:"احسبي كثافة الألمنيوم",test:s=>s.o==="al"&&s.d>=100},{t:"اكتشفي جسمًا يطفو",test:s=>s.d>=100&&PH.OBJ[s.o][1]<PH.LQ[s.l][1]},{t:"اجعلي المطّاط يطفو بتغيير السائل",test:s=>s.o==="rub"&&s.d>=100&&s.l==="s"},{t:"سجّلي 4 قراءات",test:(s,h,r)=>r.length>=4}],
+ notebook:{goal:"أحسب كثافة أجسام صلبة بقياس كتلتها وحجمها بالإزاحة.",mats:"ميزان رقمي، مخبار مدرّج، ماء، أجسام صلبة.",steps:["اختاري الجسم وسجّلي كتلته من شاشة الميزان.","أنزلي الجسم في المخبار وسجّلي حجم السائل بعد.","احسبي الحجم المزاح والكثافة = الكتلة ÷ الحجم.","غيّري الحجم والسائل وقارني."],
+  questions:[{q:"هل تتغيّر كثافة الألمنيوم بمضاعفة حجمه؟",a:"لا؛ الكثافة خاصّية مميّزة للمادّة لا تعتمد على كمّيتها."},{q:"لماذا يطفو الخشب على الماء؟",a:"لأنّ كثافته أقلّ من كثافة الماء."},{q:"جسم كتلته 54 g أزاح 20 mL. ما كثافته؟",a:"2.7 g/cm³، فهو على الأغلب ألمنيوم."}],
+  concl:"الكثافة = الكتلة ÷ الحجم، ويطفو الجسم إذا كانت كثافته أقلّ من كثافة السائل."}});
+
 })();

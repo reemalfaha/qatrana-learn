@@ -329,7 +329,7 @@ VLab.reg({id:"b9-respiration3d",three:1,icon:"🫧",grade:"الصف التاسع
   W.bub=V3.bubbles(W.tb.g,30,.04,.42);W.bub.im.position.y=.08;W.th=V3.label("35 °C",{size:36});W.th.position.set(-.45,.95,.4);scene.add(W.th);
   const l1=V3.label("ماء الجير",{size:32});l1.position.set(.62,1.05,.15);scene.add(l1);W.lk="";return W},
  update(c,W,s,t,dt,S){const r=rate(S.T,S.y);const tur=Math.min(1,r*s.tm/12);W.tb.mat.color.copy(new T.Color("#eef5f8").lerp(new T.Color("#fbfbf6"),tur));W.tb.mat.opacity=.55+tur*.43;
-  W.bub.on=r>.05&&S.tm>0;W.bub.update(dt*(.3+r),.42);W.foam.visible=S.y&&r>.1;W.foam.scale.y=1+r*3*Math.min(1,S.tm/10);
+  W.bub.on=r>.05&&S.tm>0;W.bub.update(dt*(.3+r),.42);W.foam.visible=!!S.y&&r>.1;W.foam.scale.y=1+r*3*Math.min(1,S.tm/10);
   W.bw.material.color.copy(new T.Color("#9fd0ff").lerp(new T.Color("#ffb3a0"),(S.T-10)/60));if(W.lk!==S.T){W.lk=S.T;c.scene.remove(W.th);W.th=V3.label(S.T+" °C",{size:36});W.th.position.set(-.45,.95,.4);c.scene.add(W.th)}},
  challenges:[{t:"عكّري ماء الجير",test:s=>Math.min(1,rate(s.T,s.y)*s.tm/12)>.6},{t:"جرّبي الدورق الضابط",test:s=>!s.y&&s.tm>=10},{t:"جدي درجة الحرارة المثلى",test:s=>s.T>=35&&s.T<=40&&s.y},{t:"سجّلي 4 قراءات",test:(s,h,r)=>r.length>=4}],
  notebook:{goal:"أكشف عن غاز ثاني أكسيد الكربون الناتج من التنفّس الخلوي في الخميرة.",mats:"خميرة، سكّر، ماء دافئ، دورق، سدادة بأنبوب توصيل، أنبوب اختبار فيه ماء الجير، حمّام مائي.",

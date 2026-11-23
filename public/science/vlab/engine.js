@@ -67,7 +67,7 @@ VLab.run=function(def,root){
   (()=>{const b=el("button",{title:"الصوت",onclick:()=>{VLab.snd=!VLab.snd;LS.set("vlab.snd",VLab.snd);b.textContent=VLab.snd?"🔊":"🔇"}},VLab.snd?"🔊":"🔇");return b})(),
   el("span",{class:"ttl"},ttl));
  const chbar=el("div",{class:"ch"},starsEl,...chs);
- const stage=el("div",{class:"stage"},cv,toast);
+ const host3=el("div",{class:"host3"});const is3=!!def.three&&window.VLab3D&&VLab3D.ok();const stage=el("div",{class:"stage"+(is3?" s3":"")},is3?host3:cv,toast,is3?el("div",{class:"hint3"},"👆 اسحبي لتدوير المشهد · قرّبي بإصبعين · انقري على الأدوات"):null);
  const tabV=el("button",{class:"on"},"🎛️ المتغيّرات"),tabR=el("button",{},"📊 القراءات");
  const body=el("div");
  const panel=el("div",{class:"panel"},el("div",{class:"tabs"},tabV,tabR),body);
@@ -108,13 +108,14 @@ VLab.run=function(def,root){
   el("p",{style:{color:"var(--muted)",fontSize:"13px"}},"المصدر: "+def.src+" · "+def.grade+" · "+def.unit)));
  root.replaceChildren(el("div",{class:"labbox"},tb,chbar,stage,panel),nbx,el("p",{class:"foot"},"المختبر الافتراضي · منصّة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي",el("br"),"تصميمُ المنصّة وتنفيذُها: نوال بني عطية"));
  drawVars();drawTable();check();
+ let R3=null;if(is3){try{R3=VLab3D.init(host3,def,S)}catch(e){console.error(e)}}
  VLab.cur={S,def,set(k,v){const d=def.vars.find(x=>x.k===k);S[k]=v;hist[k]&&hist[k].add(v);if(d&&d.type==="seg"&&def.onSeg)def.onSeg(S,k);S[k]=v;drawVars();check()}};
  // الحلقة
  const Sm={};def.vars.forEach(v=>Sm[v.k]=S[v.k]);
  let last=performance.now(),t=0,rt=0;
  function loop(now){const dt=Math.max(0,Math.min(.05,(now-last)/1000));last=now;t+=dt;
   def.vars.forEach(v=>{if(typeof S[v.k]==="number"&&v.type!=="seg")Sm[v.k]+=(S[v.k]-Sm[v.k])*Math.min(1,dt*6);else Sm[v.k]=S[v.k]});
-  ctx.setTransform(1,0,0,1,0,0);bg(ctx);def.draw(ctx,Sm,t,dt,S);wm(ctx);frame(ctx);chip(ctx,def.title);
+  if(R3)R3.render(Sm,t,dt,S);else if(def.draw){ctx.setTransform(1,0,0,1,0,0);bg(ctx);def.draw(ctx,Sm,t,dt,S);wm(ctx);frame(ctx);chip(ctx,def.title)}
   if((rt+=dt)>.25){rt=0;if(tab==="r")fillReads()}
   requestAnimationFrame(loop)}
  requestAnimationFrame(loop);

@@ -56,6 +56,7 @@ VLab.run=function(def,root){
  const NBK="vlab.nb."+def.id;const nb=LS.get(NBK,{a:{},recs:[]});const recs=nb.recs;
  const done=new Set();
  const cv=el("canvas",{width:W,height:H});const ctx=cv.getContext("2d");
+ if(def.drag){let L=null;cv.style.touchAction="none";cv.style.cursor="grab";cv.addEventListener("pointerdown",e=>{L=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)});cv.addEventListener("pointermove",e=>{if(!L)return;const r=cv.getBoundingClientRect(),k=W/r.width;def.drag((e.clientX-L[0])*k,(e.clientY-L[1])*k,S);L=[e.clientX,e.clientY]});const up=()=>L=null;cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up)}
  const toast=el("div",{class:"toast"});
  const starsEl=el("span",{class:"stars"});const chs=def.challenges.map(c=>el("span",{class:"cq"},c.t));
  const ttl=def.title;
@@ -75,13 +76,14 @@ VLab.run=function(def,root){
  function pctOf(v){return ((S[v.k]-v.min)/(v.max-v.min)*100)+"%"}
  function drawVars(){if(tab!=="v")return;body.replaceChildren(el("p",{class:"hint"},"🎛️ حرّكي المؤشّر وراقبي ما يحدث في التجربة"));
   def.vars.forEach(v=>{if(v.hide&&v.hide(S))return;const vv=el("span",{class:"vv"},fmt(v));const box=el("div",{class:"var",style:{"--c":v.c||"#7A1F2E"}},el("div",{class:"hd"},el("span",{class:"lb",style:{color:v.c}},LB(v)+(v.unit?" ("+v.unit+")":"")),vv));
-   if(v.type==="seg"){const sg=el("div",{class:"seg"});v.opts.forEach(([val,t])=>{const b=el("button",{class:S[v.k]===val?"on":"",onclick:()=>{S[v.k]=val;hist[v.k].add(val);if(def.onSeg)def.onSeg(S,v.k);[...sg.children].forEach(x=>x.className="");b.className="on";vv.textContent=fmt(v);if(def.dyn)drawVars();check()}},t);sg.append(b)});box.append(sg)}
+   if(v.type==="seg"){const sg=el("div",{class:"seg"});OP(v).forEach(([val,t])=>{const b=el("button",{class:S[v.k]===val?"on":"",onclick:()=>{S[v.k]=val;hist[v.k].add(val);if(def.onSeg)def.onSeg(S,v.k);[...sg.children].forEach(x=>x.className="");b.className="on";vv.textContent=fmt(v);if(def.dyn)drawVars();check()}},t);sg.append(b)});box.append(sg)}
    else{const r=el("input",{type:"range",min:v.min,max:v.max,step:v.step||1,value:S[v.k]});r.style.setProperty("--p",pctOf(v));
     r.oninput=()=>{S[v.k]=+r.value;r.style.setProperty("--p",pctOf(v));vv.textContent=fmt(v)};r.onchange=()=>{hist[v.k].add(S[v.k]);check()};
     const tk=el("div",{class:"ticks"});(v.ticks||[v.min,(v.min+v.max)/2,v.max]).slice().sort((a,b)=>a-b).forEach(t=>tk.append(el("span",{},String(t))));box.append(r,tk)}
    body.append(box)})}
+ function OP(v){return typeof v.opts==="function"?v.opts(S):v.opts}
  function LB(v){return typeof v.label==="function"?v.label(S):v.label}
- function fmt(v){if(v.type==="seg")return(v.opts.find(o=>o[0]===S[v.k])||[0,""])[1];return String(S[v.k])}
+ function fmt(v){if(v.type==="seg")return(OP(v).find(o=>o[0]===S[v.k])||[0,""])[1];return String(S[v.k])}
  let rdBox=null;
  function drawReads(){if(tab!=="r")return;rdBox=el("div",{class:"rd"});body.replaceChildren(el("p",{class:"hint"},"📊 القراءات تتغيّر مباشرة مع المتغيّرات"),rdBox,el("button",{class:"rec",onclick:record},"✍️ سجّلي القراءة في الدفتر"));fillReads()}
  function fillReads(){if(!rdBox)return;rdBox.replaceChildren(...def.read(S).map(r=>el("div",{},el("small",{},r.label),el("b",{},r.val),r.unit?el("small",{},r.unit):null)))}

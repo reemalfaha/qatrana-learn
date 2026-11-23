@@ -284,4 +284,111 @@ VLab.reg({id:"s8-density3d",three:1,icon:"🧊",grade:"الصف الثامن",su
   questions:[{q:"هل تتغيّر كثافة الألمنيوم بمضاعفة حجمه؟",a:"لا؛ الكثافة خاصّية مميّزة للمادّة لا تعتمد على كمّيتها."},{q:"لماذا يطفو الخشب على الماء؟",a:"لأنّ كثافته أقلّ من كثافة الماء."},{q:"جسم كتلته 54 g أزاح 20 mL. ما كثافته؟",a:"2.7 g/cm³، فهو على الأغلب ألمنيوم."}],
   concl:"الكثافة = الكتلة ÷ الحجم، ويطفو الجسم إذا كانت كثافته أقلّ من كثافة السائل."}});
 
+
+/* ======================= 7) التحليل الكهربائي لمحلول كلوريد النحاس ======================= */
+const cuMass=(V,mn)=>{const I=V*.08;return I*mn*60*63.5/(2*96485)};
+VLab.reg({id:"c9-electrolysis3d",three:1,icon:"🔋",grade:"الصف التاسع",subject:"الكيمياء",unit:"الوحدة 1: الذرّة والعناصر",src:"كتاب الأنشطة",
+ title:"التحليل الكهربائي لمحلول كلوريد النحاس",question:"ماذا يحدث عند كلّ قطب عند تمرير تيار كهربائي في محلول كلوريد النحاس CuCl₂؟",view:{th:-.15,ph:1.22,r:3.7,min:2,max:6},target:[0,.7,0],
+ vars:[{k:"V",label:"جهد مصدر التيار",unit:"V",min:0,max:12,step:1,val:6,c:"#B8902A",ticks:[0,6,12]},{k:"tm",label:"زمن التحليل",unit:"دقيقة",min:0,max:30,step:1,val:0,c:"#2b7bd6",ticks:[0,10,20,30]}],
+ read(s){const I=s.V*.08,m=cuMass(s.V,s.tm);return[{label:"شدّة التيار",val:I.toFixed(2),unit:"A"},{label:"كتلة النحاس المترسّب على المهبط",val:m.toFixed(3),unit:"g"},{label:"عند المهبط (−)",val:m>.001?"ترسّب طبقة بنّية محمرّة من النحاس":"—"},{label:"عند المصعد (+)",val:s.V&&s.tm?"فقاعات غاز الكلور (أصفر مخضرّ، رائحة نفّاذة)":"—"},{label:"لون المحلول",val:s.tm>15&&s.V>6?"يبهت اللون الأزرق":"أزرق"}]},
+ build(c,S){const{scene}=c;const W={};W.bk=V3.beaker({r:.45,h:.85,level:.75,color:"#2f7fd6"});scene.add(W.bk.g);
+  W.el=[-.18,.18].map((x,i)=>{const g=new T.Group();g.position.set(x,0,0);scene.add(g);const r=new T.Mesh(new T.BoxGeometry(.08,1.1,.03),M.std("#2b2b30",{roughness:.8}));r.position.y=.6;g.add(r);
+   const cl=new T.Mesh(new T.BoxGeometry(.12,.06,.06),M.metal(i?"#d84a3a":"#3a6fd8"));cl.position.y=1.17;g.add(cl);return g});
+  W.cu=new T.Mesh(new T.BoxGeometry(.09,.55,.04),M.std("#d8783a",{roughness:.55,metalness:.25,emissive:"#5a2208",emissiveIntensity:.35}));W.cu.position.set(-.18,.36,0);scene.add(W.cu);
+  W.bub=V3.bubbles(W.bk.g,40,.03,.6,"#dfeea0");W.bub.im.position.set(.18,.05,0);
+  const ps=new T.Group();ps.position.set(-1.15,0,.15);scene.add(ps);const pb=new T.Mesh(new T.BoxGeometry(.6,.36,.4),M.std("#30343c",{roughness:.4}));pb.position.y=.18;ps.add(pb);
+  W.scr=V3.canvasTex(256,96,()=>{});const sc=new T.Mesh(new T.PlaneGeometry(.4,.15),new T.MeshBasicMaterial({map:W.scr,toneMapped:false}));sc.position.set(0,.24,.201);ps.add(sc);
+  [[-.15,"#3a6fd8"],[.15,"#d84a3a"]].forEach(([x,col])=>{const k=new T.Mesh(new T.CylinderGeometry(.03,.03,.04,16),M.metal(col));k.rotation.x=Math.PI/2;k.position.set(x,.07,.21);ps.add(k)});
+  const wire=(pts,col)=>scene.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(...p))),50,.012,6),M.std(col,{roughness:.5})));
+  wire([[-1.3,.07,.37],[-1,.5,.3],[-.5,1.4,.1],[-.18,1.2,0]],"#3a6fd8");wire([[-1.0,.07,.37],[-.6,.3,.5],[.5,1.5,.2],[.18,1.2,0]],"#d84a3a");
+  [["المهبط (−)",-.45],["المصعد (+)",.45]].forEach(([t,x])=>{const l=V3.label(t,{size:32});l.scale.multiplyScalar(.8);l.position.set(x,1.35,0);scene.add(l)});
+  W.lk="";return W},
+ update(c,W,s,t,dt,S){const m=cuMass(s.V,s.tm);const th=Math.min(.025,m*.08);W.cu.scale.set(1+th*30,1,1+th*40);W.cu.visible=m>.0005;
+  W.bub.on=S.V>0&&S.tm>0;W.bub.update(dt*(.4+S.V/10),.6);const fade=Math.min(.55,s.tm/30*s.V/12*.8);W.bk.set(.75,new T.Color("#2f7fd6").lerp(new T.Color("#bcd8f0"),fade));
+  const key=S.V+"";if(key!==W.lk){W.lk=key;const x=W.scr._x;x.fillStyle="#0e1a2a";x.fillRect(0,0,256,96);x.fillStyle="#7ad0ff";x.font="800 54px monospace";x.textAlign="right";x.fillText(S.V.toFixed(1)+" V",240,70);W.scr.needsUpdate=true}},
+ challenges:[{t:"مرّري التيار وراقبي القطبين",test:s=>s.V>0&&s.tm>=5},{t:"رسّبي أكثر من 0.05 g من النحاس",test:s=>cuMass(s.V,s.tm)>.05},{t:"قارني جهدين مختلفين",test:(s,h)=>h.V.size>=3},{t:"سجّلي 4 قراءات",test:(s,h,r)=>r.length>=4}],
+ notebook:{goal:"أستقصي نواتج التحليل الكهربائي لمحلول كلوريد النحاس.",mats:"محلول CuCl₂، كأس، قطبا جرافيت، مصدر تيار مستمرّ، أسلاك، ورق تبّاع الشمس مبلّل.",
+  steps:["اضبطي الجهد، ثمّ حرّكي زمن التحليل تدريجيًّا.","راقبي ما يتكوّن على كلّ قطب، ولون المحلول.","سجّلي كتلة النحاس المترسّب بعد 10 و20 و30 دقيقة.","كرّري بجهد أعلى وقارني."],
+  questions:[{q:"ما المادّة التي ترسّبت على المهبط؟ ولماذا؟",a:"النحاس؛ لأنّ أيونات Cu²⁺ الموجبة تنجذب إلى المهبط السالب وتكسب إلكترونين فتتحوّل إلى ذرّات نحاس."},{q:"ما الغاز المتصاعد عند المصعد؟",a:"غاز الكلور Cl₂، من أكسدة أيونات الكلوريد السالبة."},
+   {q:"لماذا يبهت اللون الأزرق للمحلول مع الزمن؟",a:"لأنّ تركيز أيونات Cu²⁺ المسؤولة عن اللون الأزرق يقلّ بترسّبها على المهبط."},{q:"ما أثر زيادة الجهد في كتلة النحاس المترسّب؟",a:"تزداد؛ لأنّ شدّة التيار تزداد فتنتقل كمّية أكبر من الشحنة في الزمن نفسه."}],
+  concl:"في التحليل الكهربائي لمحلول CuCl₂ يترسّب النحاس على المهبط ويتصاعد غاز الكلور عند المصعد: CuCl₂ → Cu + Cl₂."}});
+
+/* ======================= 8) الكشف عن ثاني أكسيد الكربون في التنفّس ======================= */
+const rate=(T2,y)=>y?Math.max(0,Math.exp(-((T2-37)**2)/220)*(T2>55?.1:1)):0;
+VLab.reg({id:"b9-respiration3d",three:1,icon:"🫧",grade:"الصف التاسع",subject:"العلوم الحياتية",unit:"الوحدة 2: الخلية",src:"كتاب الأنشطة ص35",
+ title:"الكشف عن CO₂ الناتج من التنفّس الخلوي",question:"هل تطلق الخميرة غاز ثاني أكسيد الكربون أثناء التنفّس؟ وكيف تؤثّر درجة الحرارة في ذلك؟",view:{th:.1,ph:1.22,r:3.7,min:2,max:6},target:[.1,.6,0],
+ vars:[{k:"y",label:"محتوى الدورق",type:"seg",val:1,c:"#7A1F2E",opts:[[1,"خميرة + سكّر"],[0,"سكّر فقط (ضابطة)"]]},{k:"T",label:"درجة حرارة الحمّام المائي",unit:"°C",min:10,max:70,step:5,val:35,c:"#e04848",ticks:[10,37,70]},{k:"tm",label:"الزمن",unit:"دقيقة",min:0,max:30,step:1,val:0,c:"#2b7bd6",ticks:[0,15,30]}],
+ read(s){const r=rate(s.T,s.y);const tur=Math.min(1,r*s.tm/12);return[{label:"معدّل الفقاعات",val:Math.round(r*40),unit:"فقاعة/دقيقة"},{label:"ماء الجير",val:tur>.6?"عكر حليبي ✔":tur>.15?"يبدأ بالتعكّر":"رائق"},{label:"التفسير",val:!s.y?"لا توجد خميرة فلا يحدث تنفّس":s.T>55?"الحرارة العالية أوقفت عمل إنزيمات الخميرة":"الخميرة تتنفّس وتطلق CO₂"}]},
+ build(c,S){const{scene}=c;const W={};
+  const bath=new T.Mesh(new T.BoxGeometry(1.2,.4,.9),M.glass({thickness:.2}));bath.position.set(-.45,.2,0);scene.add(bath);W.bw=new T.Mesh(new T.BoxGeometry(1.14,.32,.84),M.liquid("#bfe0ff",{opacity:.35}));W.bw.position.set(-.45,.17,0);scene.add(W.bw);
+  W.fl=V3.flask({s:.8,level:.35,color:"#f0e2b0"});W.fl.g.position.set(-.45,.02,0);scene.add(W.fl.g);W.foam=new T.Mesh(new T.CylinderGeometry(.24,.28,.04,32),M.std("#fff8e0",{roughness:.9}));W.foam.position.set(-.45,.2,0);scene.add(W.foam);
+  const stopper=new T.Mesh(new T.CylinderGeometry(.1,.085,.08,24),M.std("#8a5a36"));stopper.position.set(-.45,.77,0);scene.add(stopper);
+  scene.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(-.45,.8,0),new T.Vector3(-.45,1.15,0),new T.Vector3(.1,1.25,0),new T.Vector3(.6,1.1,0),new T.Vector3(.62,.5,0),new T.Vector3(.62,.15,0)]),60,.018,10),M.glass()));
+  W.tb=V3.tube({r:.1,h:.8,level:.6,color:"#f2f6f8"});W.tb.g.position.set(.62,.05,0);scene.add(W.tb.g);
+  const rk=new T.Mesh(new T.BoxGeometry(.4,.04,.3),M.std("#8a5a36"));rk.position.set(.62,.5,0);scene.add(rk);
+  W.bub=V3.bubbles(W.tb.g,30,.04,.42);W.bub.im.position.y=.08;W.th=V3.label("35 °C",{size:36});W.th.position.set(-.45,.95,.4);scene.add(W.th);
+  const l1=V3.label("ماء الجير",{size:32});l1.position.set(.62,1.05,.15);scene.add(l1);W.lk="";return W},
+ update(c,W,s,t,dt,S){const r=rate(S.T,S.y);const tur=Math.min(1,r*s.tm/12);W.tb.mat.color.copy(new T.Color("#eef5f8").lerp(new T.Color("#fbfbf6"),tur));W.tb.mat.opacity=.55+tur*.43;
+  W.bub.on=r>.05&&S.tm>0;W.bub.update(dt*(.3+r),.42);W.foam.visible=S.y&&r>.1;W.foam.scale.y=1+r*3*Math.min(1,S.tm/10);
+  W.bw.material.color.copy(new T.Color("#9fd0ff").lerp(new T.Color("#ffb3a0"),(S.T-10)/60));if(W.lk!==S.T){W.lk=S.T;c.scene.remove(W.th);W.th=V3.label(S.T+" °C",{size:36});W.th.position.set(-.45,.95,.4);c.scene.add(W.th)}},
+ challenges:[{t:"عكّري ماء الجير",test:s=>Math.min(1,rate(s.T,s.y)*s.tm/12)>.6},{t:"جرّبي الدورق الضابط",test:s=>!s.y&&s.tm>=10},{t:"جدي درجة الحرارة المثلى",test:s=>s.T>=35&&s.T<=40&&s.y},{t:"سجّلي 4 قراءات",test:(s,h,r)=>r.length>=4}],
+ notebook:{goal:"أكشف عن غاز ثاني أكسيد الكربون الناتج من التنفّس الخلوي في الخميرة.",mats:"خميرة، سكّر، ماء دافئ، دورق، سدادة بأنبوب توصيل، أنبوب اختبار فيه ماء الجير، حمّام مائي.",
+  steps:["اختاري «خميرة + سكّر» واضبطي الحرارة 35 °C، ثمّ حرّكي الزمن.","راقبي الفقاعات في ماء الجير وتعكّره.","كرّري بالدورق الضابط (سكّر فقط).","غيّري درجة الحرارة وقارني معدّل الفقاعات."],
+  questions:[{q:"لماذا تعكّر ماء الجير؟",a:"لأنّ غاز CO₂ يتفاعل مع ماء الجير (هيدروكسيد الكالسيوم) فيكوّن كربونات الكالسيوم غير الذائبة."},{q:"ما فائدة الدورق الضابط؟",a:"للتأكّد أنّ الغاز ناتج من تنفّس الخميرة لا من السكّر أو الهواء."},{q:"لماذا قلّت الفقاعات عند 65 °C؟",a:"لأنّ الحرارة العالية تُتلف إنزيمات الخميرة فيتوقّف التنفّس."}],
+  concl:"تطلق الخميرة غاز CO₂ أثناء التنفّس الخلوي، ويزداد المعدّل بارتفاع الحرارة حتى الدرجة المثلى ثمّ يقلّ."}});
+
+/* ======================= 9) أثر الضوء في اتّجاه نموّ النبات ======================= */
+VLab.reg({id:"b9-light3d",three:1,icon:"🌱",grade:"الصف التاسع",subject:"العلوم الحياتية",unit:"الوحدة 1",src:"كتاب الأنشطة ص7",
+ title:"أثر الضوء في اتّجاه نموّ النباتات",question:"كيف يؤثّر اتّجاه الضوء في اتّجاه نموّ الساق؟",view:{th:.3,ph:1.2,r:3.4,min:2,max:6},target:[0,.6,0],
+ vars:[{k:"L",label:"مصدر الضوء",type:"seg",val:"r",c:"#e8a33b",opts:[["r","☀️ من اليمين"],["t","☀️ من الأعلى"],["l","☀️ من اليسار"],["d","🌑 ظلام تامّ"]]},{k:"day",label:"عدد الأيام",unit:"يوم",min:0,max:7,step:1,val:0,c:"#2f8f5b",ticks:[0,2,4,7]}],
+ read(s){return[{label:"اتّجاه نموّ الساق",val:s.day<1?"لم تنبت بعد":s.L==="d"?"لأعلى، طويلة رفيعة شاحبة":s.L==="t"?"رأسيًّا لأعلى":"تنحني نحو الضوء"},{label:"لون الأوراق",val:s.day<1?"—":s.L==="d"?"صفراء شاحبة":"خضراء"},{label:"التفسير",val:s.L==="d"?"غياب الضوء: لا بناء ضوئي فتستطيل الساق بحثًا عنه":"الانتحاء الضوئي: نموّ الساق نحو مصدر الضوء"}]},
+ build(c,S){const{scene}=c;const W={plants:[]};
+  const box=new T.Group();scene.add(box);const card=M.std("#c8a77a",{roughness:.9,side:T.DoubleSide});
+  [[0,.55,-.5,1.6,1.1,.02],[0,1.1,0,1.6,.02,1],[-.8,.55,0,.02,1.1,1],[.8,.55,0,.02,1.1,1]].forEach(([x,y,z,w,h,d])=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),card);m.position.set(x,y,z);box.add(m)});W.box=box;
+  W.hole=new T.Mesh(new T.CircleGeometry(.12,24),new T.MeshBasicMaterial({color:"#fff7c0",toneMapped:false}));scene.add(W.hole);
+  W.lamp=new T.SpotLight("#fff1c8",4,5,.5,.4);scene.add(W.lamp);scene.add(W.lamp.target);
+  for(let p=0;p<3;p++){const pot=new T.Mesh(new T.CylinderGeometry(.13,.1,.18,24),M.std("#b45a30"));pot.position.set(-.45+p*.45,.09,0);scene.add(pot);const soil=new T.Mesh(new T.CylinderGeometry(.12,.12,.02,24),M.std("#4a3222"));soil.position.set(-.45+p*.45,.18,0);scene.add(soil);
+   for(let k=0;k<5;k++){const ang=k/5*6.28,x0=-.45+p*.45+Math.cos(ang)*.06,z0=Math.sin(ang)*.06;W.plants.push({x0,z0,mesh:null,leaves:null,j:Math.random()})}}
+  W.key="";return W},
+ update(c,W,s,t,dt,S){const key=S.L+"|"+s.day.toFixed(2);if(key===W.key)return;W.key=key;
+  const holes={r:[.81,.75,0],l:[-.81,.75,0],t:[0,1.11,0],d:null};const hp=holes[S.L];W.hole.visible=!!hp;W.lamp.intensity=hp?4:0;
+  if(hp){W.hole.position.set(...hp);W.hole.lookAt(hp[0]*3,hp[1]*(S.L==="t"?3:1),0);W.lamp.position.set(hp[0]*2,S.L==="t"?2.5:.9,0);W.lamp.target.position.set(0,.3,0)}
+  const g=Math.max(0,s.day-1)/6;const dark=S.L==="d";
+  W.plants.forEach(p=>{if(p.mesh){c.scene.remove(p.mesh);c.scene.remove(p.leaves)}if(g<=0)return;const h=(dark?.75:.5)*g*(.85+p.j*.3);const bend=S.L==="r"?1:S.L==="l"?-1:0;
+   const pts=[];for(let i=0;i<=10;i++){const f=i/10;pts.push(new T.Vector3(p.x0+bend*Math.pow(f,1.8)*h*.7,.19+f*h*(1-Math.abs(bend)*.25*f),p.z0))}
+   const col=dark?"#e6e2a0":"#5aa83a";p.mesh=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts),20,dark?.006:.009,6),M.std(col,{roughness:.6}));c.scene.add(p.mesh);
+   const lv=new T.Group();const tip=pts[10];[1,-1].forEach(sg=>{const l=new T.Mesh(new T.SphereGeometry(.035,12,8),M.std(dark?"#f0e6a0":"#4f9e30",{roughness:.5}));l.scale.set(1,.3,.6);l.position.set(tip.x+sg*.03,tip.y,tip.z);l.rotation.z=sg*.4;lv.add(l)});p.leaves=lv;c.scene.add(lv)})},
+ challenges:[{t:"اجعلي النبات ينحني نحو اليمين",test:s=>s.L==="r"&&s.day>=5},{t:"جرّبي الظلام التامّ",test:s=>s.L==="d"&&s.day>=5},{t:"قارني ثلاثة اتّجاهات للضوء",test:(s,h)=>h.L.size>=3},{t:"سجّلي 3 قراءات",test:(s,h,r)=>r.length>=3}],
+ notebook:{goal:"أستقصي أثر اتّجاه الضوء في اتّجاه نموّ ساق النبات.",mats:"صندوق كرتوني بفتحة جانبية، أصص فيها بادرات، ماء.",steps:["اختاري موقع الفتحة (مصدر الضوء)، ثمّ حرّكي عدد الأيام.","دوّري المشهد وانظري إلى الساق من الجانب.","كرّري مع اتّجاهات أخرى ومع الظلام التامّ."],
+  questions:[{q:"إلى أين انحنت السيقان؟ وماذا نسمّي ذلك؟",a:"نحو مصدر الضوء؛ ويسمّى الانتحاء الضوئي."},{q:"لماذا كانت النباتات في الظلام طويلة وشاحبة؟",a:"لعدم تكوّن الكلوروفيل في غياب الضوء، وتستطيل الساق بحثًا عن الضوء."},{q:"ما فائدة الانتحاء الضوئي للنبات؟",a:"يوجّه الأوراق نحو الضوء لزيادة البناء الضوئي."}],
+  concl:"تنمو ساق النبات نحو مصدر الضوء (انتحاء ضوئي موجب) لتحصل على أكبر كمّية من الضوء للبناء الضوئي."}});
+
+/* ======================= 10) استخلاص المادّة الوراثية من الفاكهة ======================= */
+const FR={st:["الفراولة","#e0344a"],ba:["الموز","#f3e3a0"],ki:["الكيوي","#9cc840"]};
+VLab.reg({id:"s8-dna3d",three:1,icon:"🍓",grade:"الصف الثامن",subject:"العلوم",unit:"الوحدة 1: الوراثة",src:"كتاب الأنشطة ص4",
+ title:"استخلاص المادّة الوراثية من الفاكهة",question:"كيف نستخلص DNA من خلايا الفاكهة ونراه بالعين المجرّدة؟",view:{th:.15,ph:1.25,r:3.2,min:1.8,max:5.5},target:[0,.55,0],
+ vars:[{k:"f",label:"الفاكهة",type:"seg",val:"st",c:"#7A1F2E",opts:Object.keys(FR).map(k=>[k,FR[k][0]])},{k:"step",label:"خطوات التجربة",unit:"",min:0,max:4,step:1,val:0,c:"#B8902A",ticks:[0,1,2,3,4]},{k:"cold",label:"الكحول",type:"seg",val:1,c:"#2b7bd6",opts:[[1,"🧊 مبرّد"],[0,"بدرجة الغرفة"]]}],
+ read(s){const st=["هرس الفاكهة في كيس مع محلول الاستخلاص (ماء + ملح + صابون)","ترشيح المزيج إلى أنبوب الاختبار","سكب الكحول المبرّد ببطء على الجدار","ظهور خيوط بيضاء من DNA بين الطبقتين","لفّ خيوط DNA على عود زجاجي"][s.step];
+  return[{label:"الخطوة",val:(s.step+1)+") "+st},{label:"كمّية DNA",val:s.step<3?"—":s.cold?"وفيرة":"قليلة"},{label:"دور الصابون",val:"يحلّل الأغشية الخلوية والنووية"},{label:"دور الملح",val:"يساعد على تجمّع جزيئات DNA"}]},
+ build(c,S){const{scene}=c;const W={};
+  W.bag=new T.Mesh(new T.SphereGeometry(.3,32,24),new T.MeshPhysicalMaterial({color:"#ffffff",transmission:.8,roughness:.2,transparent:true,opacity:.6,depthWrite:false}));W.bag.scale.set(1,.55,.8);W.bag.position.set(-.9,.18,0);scene.add(W.bag);
+  W.mash=new T.Mesh(new T.SphereGeometry(.25,24,16),M.std("#e0344a",{roughness:.8}));W.mash.scale.set(1,.45,.75);W.mash.position.set(-.9,.15,0);scene.add(W.mash);
+  W.fn=new T.Mesh(new T.ConeGeometry(.2,.3,32,1,true),M.glass());W.fn.rotation.x=Math.PI;W.fn.position.set(0,1.15,0);scene.add(W.fn);
+  W.tb=V3.tube({r:.12,h:.9,level:0,color:"#e0344a"});W.tb.g.position.set(0,.05,0);scene.add(W.tb.g);
+  W.alc=new T.Mesh(new T.CylinderGeometry(.1,.1,1,24),M.liquid("#f6fbff",{opacity:.35}));W.alc.renderOrder=4;scene.add(W.alc);
+  W.dna=new T.Group();scene.add(W.dna);for(let i=0;i<40;i++){const m=new T.Mesh(new T.CylinderGeometry(.004,.004,.12+Math.random()*.12,6),M.std("#fbfbf6",{roughness:.9,transparent:true,opacity:.9}));m.position.set((Math.random()-.5)*.14,Math.random()*.12,(Math.random()-.5)*.14);m.rotation.set(Math.random(),Math.random(),Math.random());W.dna.add(m)}
+  W.rod=new T.Mesh(new T.CylinderGeometry(.01,.01,1,12),M.glass({thickness:.1}));scene.add(W.rod);
+  const al=new T.Mesh(new T.CylinderGeometry(.12,.12,.4,24),M.glass());al.position.set(.85,.2,0);scene.add(al);const al2=new T.Mesh(new T.CylinderGeometry(.11,.11,.3,24),M.liquid("#f6fbff",{opacity:.4}));al2.position.set(.85,.16,0);scene.add(al2);
+  const ll=V3.label("كحول",{size:30});ll.position.set(.85,.55,0);scene.add(ll);return W},
+ update(c,W,s,t,dt,S){const F=FR[S.f];const st=s.step;W.mash.material.color.set(F[1]);W.mash.scale.y=.45-Math.min(1,st)*.15;W.mash.visible=st<1.5;W.bag.visible=st<1.5;
+  W.fn.visible=st>.5&&st<2.5;const fill=Math.min(1,Math.max(0,st-.5))*.35;W.tb.set(Math.max(.001,fill),F[1]);
+  const a=Math.max(0,Math.min(1,st-1.5));const base=.05+.9*.35;W.alc.visible=a>0;W.alc.scale.y=.25*a;W.alc.position.set(0,base+.125*a,0);
+  const d=Math.max(0,Math.min(1,st-2.4))*(S.cold?1:.35);W.dna.visible=d>0;W.dna.scale.setScalar(.4+d*.8);W.dna.position.set(0,base+.02+Math.sin(t)*.005+(st>3.4?(st-3.4)*.5:0),0);W.dna.children.forEach((m,i)=>m.visible=i<40*d);
+  W.rod.visible=st>3.2;W.rod.position.set(.02,base+.45+(st>3.4?(st-3.4)*.5:0),0);W.rod.rotation.y=t*2;W.dna.rotation.y=st>3.4?t*2:0},
+ challenges:[{t:"أكملي خطوات التجربة الخمس",test:s=>s.step>=4},{t:"قارني الكحول المبرّد بغير المبرّد",test:(s,h)=>h.cold.size>=2&&s.step>=3},{t:"استخلصي DNA من 3 فواكه",test:(s,h)=>h.f.size>=3},{t:"سجّلي 3 قراءات",test:(s,h,r)=>r.length>=3}],
+ notebook:{goal:"أستخلص المادّة الوراثية DNA من خلايا الفاكهة.",mats:"فراولة، كيس بلاستيكي، ماء، ملح، صابون سائل، مصفاة، أنبوب اختبار، كحول مبرّد، عود زجاجي.",
+  steps:["اختاري الفاكهة، وحرّكي مؤشّر الخطوات خطوة خطوة.","راقبي الهرس، ثمّ الترشيح، ثمّ سكب الكحول.","لاحظي الخيوط البيضاء بين الطبقتين، ولفّيها على العود الزجاجي.","كرّري بكحول غير مبرّد وقارني كمّية DNA."],
+  questions:[{q:"ما دور الصابون في التجربة؟",a:"يحلّل الأغشية البلازمية والنووية فتخرج المادّة الوراثية."},{q:"لماذا نستخدم كحولًا مبرّدًا؟",a:"لأنّ DNA لا يذوب في الكحول البارد فيترسّب بوضوح أكبر."},{q:"لماذا نرى DNA بالعين المجرّدة رغم صغر الخلايا؟",a:"لأنّ ملايين جزيئات DNA من خلايا كثيرة تتجمّع معًا في خيوط مرئية."}],
+  concl:"يمكن استخلاص DNA من الخلايا بتحليل أغشيتها بالصابون، وترسيبه بالكحول البارد على شكل خيوط بيضاء."}});
+
 })();

@@ -28,7 +28,7 @@ const MS={"p9-1-1":[S("measure","ruler","المسطرة وخطأ اختلاف ا
 /* التجارب التي لها محاكاة مطابقة سابقة نُبقيها */
 const KEEP={};
 /* التجارب المطوّرة في المختبر الافتراضي الجديد (ثنائي وثلاثي الأبعاد) */
-const VX={"s8-3-1-1":"s8-pressure","s8-4-3-2":"s8-salinity","s8-3-2-0":"s8-density3d","s8-3-2-1":"s8-density3d","s8-4-1-1":"s8-divergent","s8-1-2-1":"b9-microscope&g=mit&s=m1",
+const VX={"c9-1-1-1":"c9-electrolysis3d","b9-2-2-0":"b9-respiration3d","b9-1-2-0":"b9-light3d","s8-1-1-0":"s8-dna3d","s8-3-1-1":"s8-pressure","s8-4-3-2":"s8-salinity","s8-3-2-0":"s8-density3d","s8-3-2-1":"s8-density3d","s8-4-1-1":"s8-divergent","s8-1-2-1":"b9-microscope&g=mit&s=m1",
  "b9-2-1-0":"b9-microscope","b9-2-1-1":"b9-diffusion","b9-2-1-2":"b9-potato","b9-2-2-1":"b9-starch",
  "c9-2-1-0":"c9-indicator3d","c9-2-2-0":"c9-titration3d","c10-1-1-1":"c10-flame3d","c10-3-1-0":"c10-molecules3d","c10-3-2-0":"c10-conduct3d","c10-3-2-1":"c10-conduct3d&m=sug_aq",
  "e10-1-1-1":"e10-crystals","e10-2-1-1":"e10-stars","e9-2-2-1":"e9-porosity","p10-2-2-0":"p10-projectile","p10-3-2-0":"p10-newton2","p9-3-2-0":"p9-incline",

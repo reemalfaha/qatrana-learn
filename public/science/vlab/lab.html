@@ -5,6 +5,6 @@
 <script src="../../fx.js"></script><script src="engine.js"></script><script src="exps-g8.js"></script><script src="exps-chem.js"></script><script src="exps-phys.js"></script><script src="exps-life.js"></script>
 <script>const id=new URLSearchParams(location.search).get("e");
 function ld(src){return new Promise((r,j)=>{const x=document.createElement("script");x.src=src;x.onload=r;x.onerror=j;document.head.append(x)})}
-const go=()=>{const d=VLab.get(id);if(d){document.title=d.title+" · المختبر الافتراضي";(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>VLab.run(d,document.getElementById("app")))}else location.replace("./");};
+const go=()=>{const d=VLab.get(id);if(d){document.title=d.title+" · المختبر الافتراضي";(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{VLab.run(d,document.getElementById("app"));const q=new URLSearchParams(location.search);d.vars.forEach(v=>{if(q.has(v.k)){let x=q.get(v.k);if(v.type!=="seg"||typeof v.val==="number")x=isNaN(+x)?x:+x;VLab.cur.set(v.k,x)}})})}else location.replace("./");};
 const base=()=>ld("exps3d.js");if(/3d$/.test(id||""))ld("../js/three.min.js").then(()=>ld("engine3d.js")).then(base).then(go).catch(go);else base().then(go);</script>
 </body></html>

@@ -27,6 +27,12 @@ const MAP={
 const MS={"p9-1-1":[S("measure","ruler","المسطرة وخطأ اختلاف المنظر")],"p9-1-2":[S("measure","vernier","الورنية"),S("measure","micro","الميكروميتر")],"p9-1-3":[S("measure","micro","الميكروميتر وتكرار القياس"),S("measure","vernier","الورنية")]};
 /* التجارب التي لها محاكاة مطابقة سابقة نُبقيها */
 const KEEP={};
+/* التجارب المطوّرة في المختبر الافتراضي الجديد (ثنائي وثلاثي الأبعاد) */
+const VX={"s8-3-1-1":"s8-pressure","s8-4-3-2":"s8-salinity","s8-3-2-0":"s8-density","s8-3-2-1":"s8-density","s8-4-1-1":"s8-divergent","s8-1-2-1":"b9-microscope&g=mit&s=m1",
+ "b9-2-1-0":"b9-microscope","b9-2-1-1":"b9-diffusion","b9-2-1-2":"b9-potato","b9-2-2-1":"b9-starch",
+ "c9-2-1-0":"c9-indicator","c9-2-2-0":"c9-titration3d","c10-1-1-1":"c10-flame3d","c10-3-1-0":"c10-molecules3d","c10-3-2-0":"c10-conduct","c10-3-2-1":"c10-conduct&m=sug_aq",
+ "e10-1-1-1":"e10-crystals","e10-2-1-1":"e10-stars","e9-2-2-1":"e9-porosity","p10-2-2-0":"p10-projectile","p10-3-2-0":"p10-newton2","p9-3-2-0":"p9-incline",
+ "b10-3-2-0":"b9-microscope&g=mic&s=bacilli","b10-3-2-1":"b9-microscope&g=mic&s=lacto","b10-3-3-0":"b9-microscope&g=mic&s=param","b10-3-4-0":"b9-microscope&g=mic&s=mold","e10-1-1-0":"b9-microscope&g=rock&s=granite"};
 const BXDONE=/^(s8|b9|c9|p9|e9|b10|c10|p10|e10)-/;
 const XE={"s8-2-1":1,"s8-2-2":1,"c9-1-1":1,"c9-1-2":1,"c10-1-1":1,"c10-2-1":1},XP={"s8-2-2":1,"s8-2-1":1,"c9-1-2":1,"c10-2-1":1,"c10-2-2":1};
 const X3={"b9-2-1":["osmosis","الخاصية الأسموزية في البطاطا 🔬"],"c9-1-1":["flame","كشف اللهب 🔬"],"c10-1-1":["flame","كشف اللهب 🔬"],"c9-2-1":["indicator","الكواشف والحموض والقواعد 🔬"],"p9-2-1":["surface","أثر نوع السطح في الحركة 🔬"],"e10-1-1":["crystals","معدّل التبريد وحجم البلّورات 🔬"],"s8-3-2":["density","حساب الكثافة بالإزاحة 🔬"]};
@@ -36,6 +42,6 @@ for(const g in SCI.data)for(const k in SCI.data[g])SCI.data[g][k].units.forEach(
   /* محاكاة لكل تجربة كما في الكتاب (مختبر تجارب الكتاب) */
   /* نصوص التجربة من الكتاب نفسه (المواد، والخطوات، والأسئلة) لتطابق بطاقة الدرس وورقة العمل الكتاب */
   if(window.BOOKX)l.exps.forEach((x,i)=>{const b=BOOKX[l.id+"-"+i];if(!b)return;["kind","src","goal","mats","safety"].forEach(k=>{if(b[k])x[k]=b[k];});if(b.steps&&b.steps.length)x.steps=b.steps.slice();if(b.qs&&b.qs.length)x.qs=b.qs.slice();});
-  const bx=[];l.exps.forEach((x,i)=>{const key=l.id+"-"+i;if(KEEP[key]){x.sim=KEEP[key];return;}if(BXDONE.test(l.id)){x.sim=S("bx",key,"🧪 "+x.t);bx.push(x.sim);}});
+  const bx=[];l.exps.forEach((x,i)=>{const key=l.id+"-"+i;if(KEEP[key]){x.sim=KEEP[key];return;}if(VX[key]){x.sim=S("vlab",VX[key],"🔬 "+x.t);bx.push(x.sim);return;}if(BXDONE.test(l.id)){x.sim=S("bx",key,"🧪 "+x.t);bx.push(x.sim);}});
   if(bx.length)l.sims=bx.concat(l.sims.filter(s=>s.lab!=="bx"));}));
 })();

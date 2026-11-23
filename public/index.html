@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8"><script src="/gender.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>منصة القطرانة للتعلّم الرقمي</title>
 <meta name="description" content="منصة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي: اللغة العربية والرياضيات والعلوم واللغة الإنجليزية في مكان واحد.">
@@ -52,6 +52,7 @@ a.sbj:hover,a.sbj:focus-visible{transform:translateY(-3px);border-color:var(--wi
 .more a.star{background:linear-gradient(135deg,var(--wine),#9b2c3f);color:#fff;border-color:var(--gold);box-shadow:0 6px 16px rgba(122,31,46,.3)}
 header{--fx1:#F3DFA8;--fx2:rgba(243,223,168,.45);--fxc:#5C1622;--os:118px}
 header .fx-orbit .ctr{font-family:"El Messiri",serif;font-size:30px}
+.gchip{position:relative;z-index:2;margin-top:10px;border:1px solid rgba(243,223,168,.5);background:rgba(255,255,255,.1);color:#F3DFA8;border-radius:30px;padding:4px 14px;font:inherit;font-size:13px;cursor:pointer}
 footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;padding:18px 16px 22px}
 </style>
 </head>
@@ -63,6 +64,10 @@ footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;paddi
   <div class="sub">كل موادّك في مكان واحد</div>
 </header>
 <main>
+  <section id="st0" class="step" hidden>
+    <div class="ask"><span class="n">★</span> أهلًا بك! مَن أنت؟</div>
+    <div class="opts two" id="gsel"></div>
+  </section>
   <section id="st1" class="step">
     <div class="ask"><span class="n">1</span> اختاري صفّك</div>
     <div class="opts" id="grades"></div>
@@ -95,7 +100,7 @@ const SUBJ=[
 const $=id=>document.getElementById(id);
 let st={g:"",s:""};try{st=Object.assign(st,JSON.parse(localStorage.getItem("qatrana.learn")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("qatrana.learn",JSON.stringify(st))}catch(e){}};
-function show(n){[1,2,3].forEach(k=>$("st"+k).hidden=k!==n);window.scrollTo({top:0,behavior:"smooth"})}
+function show(n){[0,1,2,3].forEach(k=>$("st"+k).hidden=k!==n);window.scrollTo({top:0,behavior:"smooth"})}
 function btn(label,on,pressed){const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=label;if(pressed)b.setAttribute("aria-pressed","true");b.onclick=on;return b}
 function step1(){const box=$("grades");box.innerHTML="";GRADES.forEach(([g,l])=>box.append(btn(l,()=>{st.g=g;st.s="";const secs=SECTIONS(g);if(secs.length===1){st.s=secs[0];save();step3()}else{save();step2()}},st.g===g)));show(1)}
 function step2(){$("c2").textContent="الصف "+st.g;const box=$("sections");box.innerHTML="";SECTIONS(st.g).forEach(s=>box.append(btn("الشعبة "+s,()=>{st.s=s;save();step3()},st.s===s)));show(2)}
@@ -104,7 +109,10 @@ function step3(){$("c3").textContent="الصف "+st.g+(SECTIONS(st.g).length>1?"
   if(on)el.href=x.url+"/?g="+encodeURIComponent(st.g)+"&s="+encodeURIComponent(st.s);else el.setAttribute("aria-disabled","true");
   el.innerHTML='<div class="ic"><svg viewBox="0 0 24 24">'+IC[x.k]+'</svg></div><b>'+x.t+'</b><span>'+x.d+'</span>'+(on?'':'<em>قريبًا</em>');box.append(el)});show(3)}
 document.querySelectorAll(".back").forEach(b=>b.onclick=()=>step1());
-if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else step1();
+let GD=null;try{GD=localStorage.getItem("qatrana.gender")}catch(e){}
+function step0(){const box=$("gsel");box.innerHTML="";[["f","👧 أنا طالبة"],["m","👦 أنا طالب"]].forEach(([v,l])=>box.append(btn(l,()=>{QG.set(v)},GD===v)));show(0)}
+{const ch=document.createElement("button");ch.type="button";ch.className="gchip";ch.textContent=GD==="m"?"👦 طالب · تغيير":"👧 طالبة · تغيير";ch.onclick=step0;document.querySelector("header").append(ch)}
+if(!GD)step0();else if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else step1();
 </script>
 <script src="fx.js"></script>
 <script>{const c=document.createElement("span");c.textContent="ق";FX.orbit(document.getElementById("orb"),c,["📖","➗","🧪","🌍","🔬","✏️"])}</script>

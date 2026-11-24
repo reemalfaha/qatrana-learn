@@ -270,4 +270,98 @@ VLab.reg({id:"e10-rockwool",icon:"🧱",preview:{t:20},grade:"الصف العا�
   questions:[{q:"أيّ الكؤوس بردت أبطأ؟ ولماذا؟",a:"المغلّف بالصوف الصخري؛ لأنّ أليافه تحبس الهواء فتقلّل انتقال الحرارة."},{q:"من أيّ صخر يُصنع الصوف الصخري؟",a:"من صهر صخر البازلت (صخر ناري) ونفخه على شكل ألياف."},{q:"اذكري ميزتين للصوف الصخري.",a:"عازل جيّد للحرارة والصوت، ومقاوم للحريق."}],
   concl:"الصوف الصخري المصنوع من البازلت عازل حراري ممتاز، لذا يُستخدم في عزل المباني لتوفير الطاقة."}});
 
+
+/* ======================= 15) مختبر بناء الروابط (تجريب حرّ) ======================= */
+const BE={H:[1,0,2.20,"#eef2f7","الهيدروجين"],Li:[1,1,.98,"#c9a0ff","الليثيوم"],Na:[1,1,.93,"#b58cff","الصوديوم"],K:[1,1,.82,"#9a6ae0","البوتاسيوم"],Mg:[2,1,1.31,"#7fd0a8","المغنيسيوم"],Ca:[2,1,1.00,"#5fbf8f","الكالسيوم"],Al:[3,1,1.61,"#b8c2cc","الألمنيوم"],
+ C:[4,0,2.55,"#55555e","الكربون"],N:[5,0,3.04,"#3b6fe0","النيتروجين"],O:[6,0,3.44,"#e04848","الأكسجين"],F:[7,0,3.98,"#8fd14f","الفلور"],Cl:[7,0,3.16,"#3fbf5f","الكلور"],S:[6,0,2.58,"#e8c42a","الكبريت"]};
+const BMIS={NaCl:["Na","Cl"],MgO:["Mg","O"],MgCl2:["Mg","Cl"],CaF2:["Ca","F"],Al2O3:["Al","O"],H2:["H"],HCl:["H","Cl"],H2O:["H","O"],NH3:["N","H"],CH4:["C","H"],CO2:["C","O"],N2:["N"],O2:["O"],free:Object.keys(BE)};
+const BNAME={NaCl:"كلوريد الصوديوم",MgO:"أكسيد المغنيسيوم",MgCl2:"كلوريد المغنيسيوم",CaF2:"فلوريد الكالسيوم",Al2O3:"أكسيد الألمنيوم",H2:"جزيء الهيدروجين",HCl:"كلوريد الهيدروجين",H2O:"الماء",NH3:"الأمونيا",CH4:"الميثان",CO2:"ثاني أكسيد الكربون",N2:"جزيء النيتروجين",O2:"جزيء الأكسجين",F2:"جزيء الفلور",Cl2:"جزيء الكلور",LiF:"فلوريد الليثيوم",LiCl:"كلوريد الليثيوم",KCl:"كلوريد البوتاسيوم",KF:"فلوريد البوتاسيوم",NaF:"فلوريد الصوديوم",Na2O:"أكسيد الصوديوم",K2O:"أكسيد البوتاسيوم",Li2O:"أكسيد الليثيوم",CaO:"أكسيد الكالسيوم",CaCl2:"كلوريد الكالسيوم",MgF2:"فلوريد المغنيسيوم",Na2S:"كبريتيد الصوديوم",MgS:"كبريتيد المغنيسيوم",CaS:"كبريتيد الكالسيوم",AlCl3:"كلوريد الألمنيوم",AlF3:"فلوريد الألمنيوم",HF:"فلوريد الهيدروجين",H2S:"كبريتيد الهيدروجين",CCl4:"رباعي كلوريد الكربون",CF4:"رباعي فلوريد الكربون",NCl3:"ثلاثي كلوريد النيتروجين",OF2:"ثنائي فلوريد الأكسجين",CS2:"ثنائي كبريتيد الكربون",SCl2:"ثنائي كلوريد الكبريت",ClF:"فلوريد الكلور",NF3:"ثلاثي فلوريد النيتروجين",SO2:"—",HCN:"سيانيد الهيدروجين",C2H6:"الإيثان",C2H4:"الإيثين",C2H2:"الإيثاين",N2H4:"الهيدرازين",H2O2:"فوق أكسيد الهيدروجين"};
+const SUBD=s=>s.replace(/\d/g,d=>"₀₁₂₃₄₅₆₇₈₉"[d]);
+const BB={atoms:[],bonds:[],ion:[],msg:"اضغطي على عنصر من الصندوق في الأسفل لتضيفي ذرّة إلى طاولة العمل",mc:"#f3dfa8",res:null,made:new Set(),types:new Set(),wrong:0,orders:new Set(),drag:null,cnt:0};
+const BR=40,BTOP=190,BBOT=440;
+const bVal=s=>BE[s][0],bMet=s=>!!BE[s][1],bTgt=s=>s==="H"?2:8;
+const bOrd=(i)=>BB.bonds.reduce((a,b)=>a+((b.i===i||b.j===i)?b.o:0),0);
+const bNeed=i=>{const A=BB.atoms[i];return bMet(A.s)?A.e:bTgt(A.s)-(A.e+2*bOrd(i))};
+const bChg=i=>{const A=BB.atoms[i];return bVal(A.s)-A.e-bOrd(i)};
+const bStable=i=>{const A=BB.atoms[i];return bMet(A.s)?A.e===0:bNeed(i)===0};
+function bSay(m,c){BB.msg=m;BB.mc=c||"#f3dfa8";BB.cnt++;if(VLab.cur&&VLab.cur.def&&VLab.cur.def.id==="c10-bondlab")VLab.cur.set("n",BB.cnt%1000)}
+function bReset(){BB.atoms=[];BB.bonds=[];BB.ion=[];BB.res=null;bSay("طاولة العمل فارغة: أضيفي الذرّات من الصندوق في الأسفل")}
+function bAdd(s){if(BB.atoms.length>=8){bSay("الطاولة ممتلئة (8 ذرّات). اسحبي ذرّة غير مرتبطة إلى سلّة المهملات 🗑","#ffb3a0");return}
+ const slots=[];for(let r=0;r<2;r++)for(let k=0;k<5;k++)slots.push([170+k*155,BTOP+55+r*160]);const free=slots.find(([x,y])=>BB.atoms.every(a=>Math.hypot(a.x-x,a.y-y)>110))||[480,300];
+ BB.atoms.push({s,x:free[0],y:free[1],e:bVal(s)});bSay("أُضيفت ذرّة "+BE[s][4]+" ("+s+"): لها "+bVal(s)+" إلكترون تكافؤ. "+(bMet(s)?"فلزّ":"لافلزّ")+" · الكهرسلبية "+BE[s][2]);bEval()}
+function bPlace(i,j,d){const A=BB.atoms[i],B=BB.atoms[j];const a0=Math.atan2(B.y-A.y,B.x-A.x);for(const k of [0,1,-1,2,-2,3,-3,4]){const a=a0+k*Math.PI/4,x=A.x+Math.cos(a)*d,y=A.y+Math.sin(a)*d;if(x<70||x>890||y<BTOP+10||y>BBOT)continue;if(BB.atoms.every((o,q)=>q===i||q===j||Math.hypot(o.x-x,o.y-y)>160)){B.x=x;B.y=y;return}}bPull(i,j,d)}
+function bPull(i,j,d){const A=BB.atoms[i],B=BB.atoms[j];const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy)||1;B.x=A.x+dx/L*d;B.y=A.y+dy/L*d;B.x=Math.max(70,Math.min(890,B.x));B.y=Math.max(BTOP+20,Math.min(BBOT-10,B.y))}
+function bAct(tool,i,j){const A=BB.atoms[i],B=BB.atoms[j],dEN=Math.abs(BE[A.s][2]-BE[B.s][2]).toFixed(2);
+ if(tool==="tr"){if(!bMet(A.s)&&!bMet(B.s)){BB.wrong|=1;return bSay("❌ لم ينتقل الإلكترون! "+A.s+" و"+B.s+" لافلزّان، وفرق الكهرسلبية بينهما "+dEN+" فقط، فلا تفقد أيّ ذرّة إلكترونها للأخرى. جرّبي «🤝 المشاركة»","#ffb3a0")}
+  if(bMet(A.s)&&bMet(B.s)){BB.wrong|=1;return bSay("❌ "+A.s+" و"+B.s+" فلزّان، وكلاهما يميل إلى فقد الإلكترونات لا كسبها","#ffb3a0")}
+  if(!bMet(A.s)&&bMet(B.s)){BB.wrong|=1;return bSay("❌ الاتّجاه معكوس: الفلزّ ("+B.s+") هو الذي يفقد الإلكترونات لأنّ كهرسلبيته أقلّ. اسحبي من "+B.s+" إلى "+A.s,"#ffb3a0")}
+  if(A.e===0)return bSay("✋ "+A.s+" فقد جميع إلكترونات تكافئه وأصبح أيونًا موجبًا مستقرًّا "+A.s+bChgTxt(i)+". أضيفي ذرّة لافلزّ أخرى إن احتاج غيره","#ffd27a");
+  if(bNeed(j)<=0)return bSay("✋ "+B.s+" اكتمل مستواه الخارجي (8 إلكترونات) ولا يستقبل المزيد. أضيفي ذرّة "+B.s+" أخرى لتستقبل بقيّة إلكترونات "+A.s,"#ffd27a");
+  A.e--;B.e++;if(!BB.ion.some(p=>p[0]===i&&p[1]===j))BB.ion.push([i,j]);bPlace(i,j,185);bSay("✔ انتقل إلكترون من "+A.s+" إلى "+B.s+" (فرق الكهرسلبية "+dEN+" كبير). "+A.s+" → "+A.s+bChgTxt(i)+" ، "+B.s+" → "+B.s+bChgTxt(j),"#9dffb8")}
+ else{if(bMet(A.s)||bMet(B.s)){BB.wrong|=2;const m=bMet(A.s)?A.s:B.s;return bSay("❌ لم تتكوّن رابطة تساهمية! "+m+" فلزّ يميل إلى فقد إلكتروناته لا مشاركتها (فرق الكهرسلبية "+dEN+"). جرّبي «🔀 نقل إلكترون»","#ffb3a0")}
+  if(bNeed(i)<=0||bNeed(j)<=0){const f=bNeed(i)<=0?A.s:B.s;return bSay("✋ "+f+" مستواه الخارجي مكتمل، ولا يحتاج مشاركة إلكترونات أخرى","#ffd27a")}
+  let b=BB.bonds.find(b=>(b.i===i&&b.j===j)||(b.i===j&&b.j===i));if(b&&b.o>=3)return bSay("✋ الرابطة الثلاثية أقصى ما يمكن بين ذرّتين","#ffd27a");
+  if(!b){b={i,j,o:0};BB.bonds.push(b)}b.o++;A.e--;B.e--;bPlace(i,j,b.o>1?135:140);BB.orders.add(b.o);bSay("✔ تشاركت "+A.s+" و"+B.s+" في زوج إلكترونات: رابطة تساهمية "+["","أحادية","ثنائية","ثلاثية"][b.o]+" (فرق الكهرسلبية "+dEN+")","#9dffb8")}
+ bEval()}
+const bChgTxt=i=>{const q=bChg(i);return q===0?"":(Math.abs(q)>1?Math.abs(q):"")+(q>0?"⁺":"⁻")};
+function bEval(){BB.res=null;const n=BB.atoms.length;if(n<2)return;if(!BB.atoms.every((a,i)=>bStable(i)))return;
+ const tot=BB.atoms.reduce((s,a,i)=>s+bChg(i),0);if(tot!==0)return;
+ const par=[...Array(n).keys()];const f=x=>par[x]===x?x:(par[x]=f(par[x]));BB.bonds.forEach(b=>par[f(b.i)]=f(b.j));BB.ion.forEach(([a,b])=>par[f(a)]=f(b));if(new Set(BB.atoms.map((a,i)=>f(i))).size>1)return;
+ const cnt={};BB.atoms.forEach(a=>cnt[a.s]=(cnt[a.s]||0)+1);let els=Object.keys(cnt).sort((a,b)=>BE[a][2]-BE[b][2]);if(cnt.H&&(cnt.C||cnt.N)){els=els.filter(e=>e!=="H");els.splice(1,0,"H")}
+ const fm=els.map(e=>e+(cnt[e]>1?cnt[e]:"")).join("");const ionic=BB.ion.length>0;BB.res={fm,ionic,name:BNAME[fm]&&BNAME[fm]!=="—"?BNAME[fm]:"مركّب "+fm};
+ if(!BB.made.has(fm)){BB.made.add(fm);BB.types.add(ionic?"i":"c")}
+ bSay("🎉 أحسنتِ! كوّنتِ "+SUBD(fm)+" ("+BB.res.name+"): "+(ionic?"مركّب أيوني تربط أيوناته قوى تجاذب كهربائية":"مركّب تساهمي، وكلّ ذرّاته حقّقت قاعدة "+(fm==="H2"?"الثنائية":"الثمانية")),"#ffd34d")}
+function bHit(x,y){let best=-1,bd=1e9;BB.atoms.forEach((a,i)=>{const d=Math.hypot(a.x-x,a.y-y);if(d<bd){bd=d;best=i}});return[best,bd]}
+function bTray(S){const L=BMIS[S.m];const w=Math.min(96,860/L.length);return L.map((s,k)=>({s,x:480-(L.length*w)/2+k*w,y:470,w:w-8,h:80}))}
+function bInstall(cv,S){if(cv._bl||!VLab.cur||VLab.cur.def.id!=="c10-bondlab")return;cv._bl=1;cv.style.touchAction="none";const P=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
+ cv.addEventListener("pointerdown",e=>{const S2=VLab.cur?VLab.cur.S:S;const[x,y]=P(e);cv.setPointerCapture(e.pointerId);
+  const tb=bTray(S2).find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);if(tb){bAdd(tb.s);return}
+  if(x>40&&x<190&&y>96&&y<154){bReset();return}
+  const[i,d]=bHit(x,y);if(i<0)return;if(d<BR*.72)BB.drag={k:"m",i,x,y,ox:BB.atoms[i].x-x,oy:BB.atoms[i].y-y};else if(d<BR*1.9){if(BB.atoms[i].e<=0&&(S2.tool==="tr")){bSay("✋ لا توجد إلكترونات تكافؤ متاحة على "+BB.atoms[i].s,"#ffd27a");return}BB.drag={k:"e",i,x,y}}});
+ cv.addEventListener("pointermove",e=>{if(!BB.drag)return;const[x,y]=P(e);BB.drag.x=x;BB.drag.y=y;if(BB.drag.k==="m"){const A=BB.atoms[BB.drag.i];A.x=Math.max(60,Math.min(900,x+BB.drag.ox));A.y=Math.max(BTOP,Math.min(BBOT+40,y+BB.drag.oy))}});
+ const up=e=>{const D=BB.drag;BB.drag=null;if(!D)return;const S2=VLab.cur?VLab.cur.S:S;
+  if(D.k==="m"){const A=BB.atoms[D.i];if(D.x>820&&D.y<165){if(bOrd(D.i)||BB.ion.some(p=>p.includes(D.i))){A.y=BTOP+40;return bSay("✋ هذه الذرّة مرتبطة بغيرها. اضغطي «↺ من جديد» لتبدئي من البداية","#ffd27a")}
+    BB.atoms.splice(D.i,1);BB.bonds.forEach(b=>{b.i-=b.i>D.i;b.j-=b.j>D.i});BB.ion=BB.ion.map(p=>p.map(q=>q-(q>D.i)));bSay("🗑 حُذفت الذرّة");bEval()}return}
+  const[j,d]=bHit(D.x,D.y);if(j<0||j===D.i||d>BR*1.6){bSay("أفلتي الإلكترون فوق ذرّة أخرى لتجرّبي "+(S2.tool==="tr"?"نقله إليها":"المشاركة معها"));return}bAct(S2.tool,D.i,j)};
+ cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",()=>BB.drag=null)}
+function bDrawAtom(c,i,t){const A=BB.atoms[i],col=BE[A.s][3],q=bChg(i),st=bStable(i);
+ const g2=c.createRadialGradient(A.x-12,A.y-14,4,A.x,A.y,BR);g2.addColorStop(0,"#fff");g2.addColorStop(.25,col);g2.addColorStop(1,"rgba(0,0,0,.55)");c.fillStyle=g2;c.beginPath();c.arc(A.x,A.y,BR*(bMet(A.s)&&A.e===0&&q>0?.82:1),0,7);c.fill();
+ if(st){c.strokeStyle="rgba(157,255,184,.9)";c.lineWidth=3;c.beginPath();c.arc(A.x,A.y,BR+20,0,7);c.stroke()}
+ txt(c,A.x,A.y,A.s,A.s==="H"||A.s==="Al"||A.s==="S"||A.s==="F"?"#1a1a1a":"#fff",30);
+ if(q!==0){c.strokeStyle="#ffd34d";c.lineWidth=3;const r=BR+24;c.beginPath();c.moveTo(A.x-r+12,A.y-r);c.lineTo(A.x-r,A.y-r);c.lineTo(A.x-r,A.y+r);c.lineTo(A.x-r+12,A.y+r);c.moveTo(A.x+r-12,A.y-r);c.lineTo(A.x+r,A.y-r);c.lineTo(A.x+r,A.y+r);c.lineTo(A.x+r-12,A.y+r);c.stroke();ltr(c,()=>txt(c,A.x+r+16,A.y-r+4,(Math.abs(q)>1?Math.abs(q):"")+(q>0?"+":"−"),"#ffd34d",24))}
+ const dirs=[];BB.bonds.forEach(b=>{if(b.i===i||b.j===i){const O=BB.atoms[b.i===i?b.j:b.i];dirs.push(Math.atan2(O.y-A.y,O.x-A.x))}});
+ let slots=[-Math.PI/2,0,Math.PI/2,Math.PI].map(a=>({a,n:0}));dirs.forEach(d=>{let best=null,bd=9;slots.forEach(s=>{const dd=Math.abs(Math.atan2(Math.sin(s.a-d),Math.cos(s.a-d)));if(!s.u&&dd<bd){bd=dd;best=s}});if(best)best.u=1});
+ const free=slots.filter(s=>!s.u);let e=A.e;if(BB.drag&&BB.drag.k==="e"&&BB.drag.i===i&&e>0)e--;if(free.length){for(let k=0;k<e;k++)free[k%free.length].n++}
+ free.forEach(s=>{const R=BR+13;for(let k=0;k<s.n;k++){const off=s.n>1?(k?7:-7):0;const px=A.x+Math.cos(s.a)*R-Math.sin(s.a)*off,py=A.y+Math.sin(s.a)*R+Math.cos(s.a)*off;c.fillStyle=BB.ion.some(p=>p[1]===i)&&k===s.n-1&&s.a===free[0].a?"#ffd34d":"#ffe9a0";c.beginPath();c.arc(px,py,6.5,0,7);c.fill();c.strokeStyle="#5a3a00";c.lineWidth=1.5;c.stroke()}})}
+VLab.reg({id:"c10-bondlab",icon:"🧪",preview:{m:"NaCl"},grade:"الصف العاشر",subject:"الكيمياء",unit:"الوحدة 3: الروابط الكيميائية",src:"كتاب الطالب: الروابط الكيميائية",
+ title:"مختبر بناء الروابط: جرّبي بنفسك",question:"إذا توافرت لديكِ ذرّات عناصر معيّنة، كيف تبنين منها مركّبًا مستقرًّا؟ ومتى تنتقل الإلكترونات (رابطة أيونية) ومتى تُشارَك (رابطة تساهمية)؟",
+ vars:[{k:"m",label:"العناصر المتوافرة (المهمّة)",type:"seg",val:"NaCl",c:"#7A1F2E",opts:Object.keys(BMIS).map(k=>[k,k==="free"?"🧰 كلّ العناصر (حرّ)":BMIS[k].join(" + ")])},
+  {k:"tool",label:"طريقة التجريب: اسحبي من حافّة ذرّة إلى ذرّة أخرى",type:"seg",val:"tr",c:"#2b7bd6",opts:[["tr","🔀 نقل إلكترون"],["sh","🤝 مشاركة زوج إلكترونات"]]},
+  {k:"n",label:"",min:0,max:1000,step:1,val:0,hide:()=>true}],
+ onSeg(S,k){if(k==="m")bReset()},
+ read(s){const r=[{label:"آخر نتيجة",val:BB.msg.replace(/[🎉✔❌✋🗑]/g,"").trim()}];BB.atoms.forEach((a,i)=>{const nd=bNeed(i);r.push({label:a.s+bChgTxt(i)+" ("+(bMet(a.s)?"فلزّ":"لافلزّ")+")",val:bStable(i)?"مستقرّ ✔":bMet(a.s)?"يحتاج أن يفقد "+nd+" إلكترون":"يحتاج "+nd+" إلكترون"})});
+  if(BB.res)r.push({label:"المركّب",val:BB.res.fm+" · "+BB.res.name},{label:"نوع الرابطة",val:BB.res.ionic?"أيونية":"تساهمية"});r.push({label:"مركّبات كوّنتِها",val:BB.made.size?[...BB.made].join("، "):"لا يوجد بعد"});return r},
+ draw(c,s,t,dt,S){bInstall(c.canvas,S);
+  c.fillStyle="rgba(255,255,255,.05)";rr(c,30,BTOP-10,900,BBOT-BTOP+70,22);c.fill();c.strokeStyle="rgba(243,223,168,.2)";c.setLineDash([10,8]);c.lineWidth=2;c.stroke();c.setLineDash([]);
+  panel(c,40,100,150,50,"rgba(122,31,46,.85)");txt(c,115,125,"↺ من جديد","#fff",22);txt(c,875,125,"🗑","#fff",38);
+  c.fillStyle="rgba(10,8,20,.72)";rr(c,200,84,620,96,14);c.fill();{c.save();c.font="700 21px Cairo, sans-serif";const ws=BB.msg.split(" ");const L=[""];ws.forEach(w=>{const tt=(L[L.length-1]+" "+w).trim();if(c.measureText(tt).width>600&&L[L.length-1])L.push(w);else L[L.length-1]=tt});c.restore();const ls=L.slice(0,3);if(L.length>3)ls[2]+="…";ls.forEach((l,k)=>txt(c,510,132+(k-(ls.length-1)/2)*29,l,BB.mc,21,"center",604))}
+  BB.ion.forEach(([a,b])=>{const A=BB.atoms[a],B=BB.atoms[b];if(!A||!B||bChg(a)<=0)return;c.strokeStyle="rgba(255,211,77,.55)";c.lineWidth=3;c.setLineDash([6,8]);c.lineDashOffset=-t*20;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.stroke();c.setLineDash([]);txt(c,(A.x+B.x)/2,(A.y+B.y)/2+BR+22,"تجاذب","#ffd34d",16)});
+  BB.bonds.forEach(b=>{const A=BB.atoms[b.i],B=BB.atoms[b.j];const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),nx=-dy/L,ny=dx/L;for(let k=0;k<b.o;k++){const o=(k-(b.o-1)/2)*16;c.strokeStyle="rgba(255,255,255,.85)";c.lineWidth=5;c.beginPath();c.moveTo(A.x+nx*o,A.y+ny*o);c.lineTo(B.x+nx*o,B.y+ny*o);c.stroke();
+   const mx=(A.x+B.x)/2+nx*o,my=(A.y+B.y)/2+ny*o;[-1,1].forEach(sg=>{c.fillStyle="#ffe9a0";c.beginPath();c.arc(mx+dx/L*sg*8,my+dy/L*sg*8,6,0,7);c.fill();c.strokeStyle="#5a3a00";c.lineWidth=1.5;c.stroke()})}});
+  BB.atoms.forEach((a,i)=>bDrawAtom(c,i,t));
+  if(BB.drag&&BB.drag.k==="e"){const A=BB.atoms[BB.drag.i];c.strokeStyle=S.tool==="tr"?"#ffd34d":"#7fd0ff";c.lineWidth=3;c.setLineDash([8,6]);c.beginPath();c.moveTo(A.x,A.y);c.lineTo(BB.drag.x,BB.drag.y);c.stroke();c.setLineDash([]);c.fillStyle="#ffd34d";c.beginPath();c.arc(BB.drag.x,BB.drag.y,9,0,7);c.fill();
+   const[j,d]=bHit(BB.drag.x,BB.drag.y);if(j>=0&&j!==BB.drag.i&&d<BR*1.6){const B=BB.atoms[j];c.strokeStyle="#fff";c.lineWidth=3;c.beginPath();c.arc(B.x,B.y,BR+26,0,7);c.stroke()}}
+  if(!BB.atoms.length){txt(c,480,280,"👇 اضغطي على العناصر لإضافة ذرّات، ثمّ اسحبي من حافّة ذرّة (عند الإلكترونات) إلى ذرّة أخرى","#cfd6e4",19,"center",820);txt(c,480,320,"جرّبي النقل والمشاركة، ولاحظي متى ينجح كلّ منهما","#cfd6e4",17)}
+  if(BB.res){txt(c,480,BBOT+32,SUBD(BB.res.fm)+" · "+BB.res.name+" · "+(BB.res.ionic?"رابطة أيونية":"روابط تساهمية"),"#ffd34d",24)}
+  bTray(S).forEach(b=>{const met=bMet(b.s);c.fillStyle=met?"rgba(122,31,46,.9)":"rgba(43,123,214,.85)";rr(c,b.x,b.y+40,b.w,b.h-6,14);c.fill();c.strokeStyle="#B8902A";c.lineWidth=2;c.stroke();txt(c,b.x+b.w/2,b.y+70,b.s,"#fff",b.w>70?28:22);txt(c,b.x+b.w/2,b.y+100,met?"فلزّ":"لافلزّ","#f3dfa8",12)})},
+ challenges:[{t:"كوّني مركّبًا أيونيًّا",test:()=>BB.types.has("i")},{t:"كوّني مركّبًا تساهميًّا",test:()=>BB.types.has("c")},{t:"كوّني رابطة ثنائية أو ثلاثية",test:()=>BB.orders.has(2)||BB.orders.has(3)},{t:"اكتشفي متى يفشل نقل الإلكترون أو المشاركة",test:()=>BB.wrong>0},{t:"كوّني 5 مركّبات مختلفة",test:()=>BB.made.size>=5}],
+ notebook:{goal:"أبني روابط أيونية وتساهمية بالتجريب، وأستنتج متى تنتقل الإلكترونات ومتى تُشارَك.",mats:"نماذج ذرّات (كرات) وخرز يمثّل إلكترونات التكافؤ، بطاقات العناصر، جدول الكهرسلبية.",
+  steps:["اختاري العناصر المتوافرة (المهمّة)، ثمّ اضغطي على العناصر في الصندوق لإضافة ذرّاتها إلى الطاولة.","اختاري طريقة التجريب: «نقل إلكترون» أو «مشاركة زوج إلكترونات».","اسحبي من حافّة ذرّة (عند الإلكترونات) وأفلتي فوق ذرّة أخرى، واقرئي النتيجة في الشريط العلوي.","إذا لم تستقرّ كلّ الذرّات، فكّري: هل تحتاجين ذرّة إضافية؟ أضيفيها وكرّري.","عندما تستقرّ كلّ الذرّات يظهر اسم المركّب ونوع الرابطة. سجّلي القراءة ثمّ جرّبي مهمّة أخرى."],
+  questions:[{q:"متى نجح نقل الإلكترون؟ ومتى فشل؟",a:"نجح من ذرّة فلزّ (كهرسلبيتها منخفضة) إلى ذرّة لافلزّ (كهرسلبيتها مرتفعة)، وفشل بين لافلزّين أو فلزّين أو في الاتّجاه المعكوس."},
+   {q:"لماذا احتجتِ ذرّتي كلور لتكوين كلوريد المغنيسيوم؟",a:"لأنّ المغنيسيوم يفقد إلكترونين ليستقرّ، وكلّ ذرّة كلور تستقبل إلكترونًا واحدًا فقط لتكمل ثمانيّتها، فيلزم ذرّتا كلور: MgCl₂."},
+   {q:"كم رابطة كوّنت ذرّة الكربون في الميثان؟ ولماذا؟",a:"أربع روابط تساهمية أحادية؛ لأنّ للكربون 4 إلكترونات تكافؤ ويحتاج 4 إلكترونات أخرى ليكمل ثمانيّته."},
+   {q:"لماذا تكوّنت رابطة ثلاثية في جزيء النيتروجين N₂؟",a:"لأنّ كلّ ذرّة نيتروجين تحتاج 3 إلكترونات، فتشارك كلّ منهما بثلاثة إلكترونات فتتكوّن ثلاثة أزواج مشتركة."},
+   {q:"ما الذي يربط الأيونات في المركّب الأيوني؟",a:"قوى التجاذب الكهربائي بين الأيونات الموجبة والسالبة."}],
+  concl:"تتكوّن الرابطة الأيونية بانتقال الإلكترونات من الفلزّ إلى اللافلزّ عندما يكون فرق الكهرسلبية كبيرًا، وتتكوّن الرابطة التساهمية بمشاركة أزواج الإلكترونات بين اللافلزّات، وفي الحالتين تصل الذرّات إلى التركيب الإلكتروني المستقرّ (قاعدة الثمانية أو الثنائية للهيدروجين)."}});
+
 })();

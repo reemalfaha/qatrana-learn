@@ -87,7 +87,7 @@ VLab.run=function(def,root){
  let rdBox=null;
  function drawReads(){if(tab!=="r")return;rdBox=el("div",{class:"rd"});body.replaceChildren(el("p",{class:"hint"},"📊 القراءات تتغيّر مباشرة مع المتغيّرات"),rdBox,el("button",{class:"rec",onclick:record},"✍️ سجّلي القراءة في الدفتر"));fillReads()}
  function fillReads(){if(!rdBox)return;rdBox.replaceChildren(...def.read(S).map(r=>el("div",{},el("small",{},r.label),el("b",{},r.val),r.unit?el("small",{},r.unit):null)))}
- function record(){const row={};def.vars.forEach(v=>row[v.k]=fmt(v));def.read(S).forEach(r=>row["r:"+r.label]=r.val+(r.unit?" "+r.unit:""));recs.push(row);if(recs.length>30)recs.shift();LS.set(NBK,nb);drawTable();show("✔️ سُجّلت القراءة رقم "+recs.length);check()}
+ function record(){const row={};def.vars.forEach(v=>{if(!(v.hide&&v.hide(S)))row[v.k]=fmt(v)});def.read(S).forEach(r=>row["r:"+r.label]=r.val+(r.unit?" "+r.unit:""));recs.push(row);if(recs.length>30)recs.shift();LS.set(NBK,nb);drawTable();show("✔️ سُجّلت القراءة رقم "+recs.length);check()}
  function show(t){toast.textContent=t;toast.classList.add("show");clearTimeout(show.t);show.t=setTimeout(()=>toast.classList.remove("show"),2200)}
  function check(){def.challenges.forEach((c,i)=>{if(!done.has(i)&&c.test(S,hist,recs)){done.add(i);chs[i].classList.add("done");beep(880);show("🌟 أحسنتِ! "+c.t)}});
   const st=Math.round(done.size/def.challenges.length*3);if(st===3&&!check.c3&&check.ready&&window.FX){check.c3=1;FX.confetti();show("🏆 ثلاث نجوم! أنجزتِ كلّ التحدّيات")}check.ready=1;starsEl.innerHTML="<b>"+"★".repeat(st)+"</b>"+"★".repeat(3-st)}

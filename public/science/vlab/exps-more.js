@@ -364,4 +364,88 @@ VLab.reg({id:"c10-bondlab",icon:"🧪",preview:{m:"NaCl"},grade:"الصف الع
    {q:"ما الذي يربط الأيونات في المركّب الأيوني؟",a:"قوى التجاذب الكهربائي بين الأيونات الموجبة والسالبة."}],
   concl:"تتكوّن الرابطة الأيونية بانتقال الإلكترونات من الفلزّ إلى اللافلزّ عندما يكون فرق الكهرسلبية كبيرًا، وتتكوّن الرابطة التساهمية بمشاركة أزواج الإلكترونات بين اللافلزّات، وفي الحالتين تصل الذرّات إلى التركيب الإلكتروني المستقرّ (قاعدة الثمانية أو الثنائية للهيدروجين)."}});
 
+
+/* ======================= 16) مختبر بناء المعادلات وموازنتها (تجريب حرّ) ======================= */
+const EQR={
+ h2o:["الهيدروجين + الأكسجين ← الماء",["H2","O2"],["H2O"],[2,1,2],["H","O","H2O2","HO"]],
+ mgo:["المغنيسيوم + الأكسجين ← أكسيد المغنيسيوم",["Mg","O2"],["MgO"],[2,1,2],["O","MgO2","Mg2O"]],
+ nacl:["الصوديوم + الكلور ← كلوريد الصوديوم",["Na","Cl2"],["NaCl"],[2,1,2],["Cl","NaCl2","Na2"]],
+ nh3:["النيتروجين + الهيدروجين ← الأمونيا",["N2","H2"],["NH3"],[1,3,2],["N","H","NH4"]],
+ ch4:["الميثان + الأكسجين ← ثاني أكسيد الكربون + الماء",["CH4","O2"],["CO2","H2O"],[1,2,1,2],["CO","O","H2O2","C"]],
+ fe:["الحديد + الأكسجين ← أكسيد الحديد III",["Fe","O2"],["Fe2O3"],[4,3,2],["FeO","O","Fe3O2"]],
+ al:["الألمنيوم + الأكسجين ← أكسيد الألمنيوم",["Al","O2"],["Al2O3"],[4,3,2],["AlO","O","Al3O2"]],
+ zn:["الخارصين + حمض الهيدروكلوريك ← كلوريد الخارصين + الهيدروجين",["Zn","HCl"],["ZnCl2","H2"],[1,2,1,1],["ZnCl","H","HCl2"]],
+ caco3:["كربونات الكالسيوم ← أكسيد الكالسيوم + ثاني أكسيد الكربون",["CaCO3"],["CaO","CO2"],[1,1,1],["CaO2","CO","Ca"]],
+ neut:["هيدروكسيد الصوديوم + حمض الهيدروكلوريك ← كلوريد الصوديوم + الماء",["NaOH","HCl"],["NaCl","H2O"],[1,1,1,1],["NaCl2","H2O2","NaH"]],
+ c3h8:["البروبان + الأكسجين ← ثاني أكسيد الكربون + الماء",["C3H8","O2"],["CO2","H2O"],[1,5,3,4],["CO","O","C3H6"]],
+ kclo3:["كلورات البوتاسيوم ← كلوريد البوتاسيوم + الأكسجين",["KClO3"],["KCl","O2"],[2,2,3],["KClO","O","KCl2"]],
+ ag:["النحاس + نترات الفضّة ← نترات النحاس II + الفضّة",["Cu","AgNO3"],["Cu(NO3)2","Ag"],[1,2,1,2],["CuNO3","Ag2","Cu2NO3"]]};
+const DIS={H:"الهيدروجين لا يوجد ذرّات منفردة؛ إنّه غاز جزيئاته ثنائية الذرّة H₂",O:"الأكسجين غاز جزيئاته ثنائية الذرّة O₂ وليس ذرّات منفردة",N:"النيتروجين جزيئاته ثنائية الذرّة N₂",Cl:"الكلور جزيئاته ثنائية الذرّة Cl₂",C:"الكربون ليس من موادّ هذا التفاعل",
+ H2O2:"هذا فوق أكسيد الهيدروجين، مادّة مختلفة عن الماء! تغيير الرقم السفلي يغيّر المادّة نفسها، لذلك لا نوازن بتغيير الأرقام السفلية",HO:"لا توجد مادّة صيغتها HO؛ صيغة الماء H₂O",MgO2:"صيغة خاطئة: Mg²⁺ و O²⁻ يتّحدان بنسبة 1 : 1 فالصيغة MgO",Mg2O:"صيغة خاطئة: Mg²⁺ و O²⁻ بنسبة 1 : 1 فالصيغة MgO",
+ NaCl2:"صيغة خاطئة: Na⁺ و Cl⁻ يتّحدان بنسبة 1 : 1 فالصيغة NaCl",Na2:"الصوديوم فلزّ يُكتب برمزه فقط Na",NH4:"NH₄ ليست جزيئًا متعادلًا (أيون الأمونيوم NH₄⁺)؛ الأمونيا NH₃",CO:"أوّل أكسيد الكربون ينتج من الاحتراق غير الكامل، وهنا الاحتراق كامل فينتج CO₂",
+ FeO:"FeO أكسيد الحديد II؛ المطلوب أكسيد الحديد III: Fe³⁺ مع O²⁻ ← Fe₂O₃",Fe3O2:"صيغة خاطئة: Fe³⁺ و O²⁻ يتّحدان بنسبة 2 : 3 ← Fe₂O₃",AlO:"صيغة خاطئة: Al³⁺ و O²⁻ بنسبة 2 : 3 ← Al₂O₃",Al3O2:"صيغة خاطئة: Al³⁺ و O²⁻ بنسبة 2 : 3 ← Al₂O₃",
+ ZnCl:"صيغة خاطئة: Zn²⁺ يحتاج أيوني Cl⁻ ← ZnCl₂",HCl2:"لا توجد مادّة HCl₂؛ الحمض صيغته HCl",CaO2:"صيغة خاطئة: Ca²⁺ و O²⁻ بنسبة 1 : 1 ← CaO",Ca:"الكالسيوم الفلزّي ليس ناتجًا هنا؛ الناتج أكسيد الكالسيوم CaO",NaH:"هذا هيدريد الصوديوم، ليس من نواتج التعادل",
+ C3H6:"هذا البروبين، والمطلوب البروبان C₃H₈",KClO:"هذه هيبوكلوريت البوتاسيوم؛ المتفاعل كلورات البوتاسيوم KClO₃",KCl2:"صيغة خاطئة: K⁺ و Cl⁻ بنسبة 1 : 1 ← KCl",CuNO3:"صيغة خاطئة: Cu²⁺ يحتاج أيوني نترات ← Cu(NO₃)₂",Cu2NO3:"صيغة خاطئة: Cu²⁺ يحتاج أيوني نترات ← Cu(NO₃)₂",Ag2:"الفضّة فلزّ يُكتب برمزه فقط Ag"};
+const ECOL={H:"#eef2f7",O:"#e04848",C:"#4a4a52",N:"#3b6fe0",Cl:"#3fbf5f",Na:"#b58cff",Mg:"#7fd0a8",Fe:"#c0703a",Al:"#b8c2cc",Zn:"#8aa0b8",Ca:"#5fbf8f",K:"#9a6ae0",Ag:"#d8dce2",Cu:"#d0783a"};
+function fparse(f){const st=[{}];const re=/([A-Z][a-z]?|\(|\)|\d+)/g;let m,last=null;const add=(o,e,n)=>o[e]=(o[e]||0)+n;
+ const toks=f.match(re);for(let i=0;i<toks.length;i++){const t=toks[i];if(t==="("){st.push({})}else if(t===")"){const g=st.pop();let n=1;if(/^\d+$/.test(toks[i+1]||"")){n=+toks[++i]}for(const e in g)add(st[st.length-1],e,g[e]*n)}else if(/^[A-Z]/.test(t)){let n=1;if(/^\d+$/.test(toks[i+1]||"")){n=+toks[++i]}add(st[st.length-1],t,n)}}return st[0]}
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const EQ={r:null,slots:[],co:[],msg:"",mc:"#f3dfa8",done:new Set(),sub:0,comb:0,par:0,cnt:0,bal:false,tray:[]};window._EQ=EQ;
+function eqSay(m,c){EQ.msg=m;EQ.mc=c||"#f3dfa8";EQ.cnt++;if(VLab.cur&&VLab.cur.def&&VLab.cur.def.id==="c9-eqlab")VLab.cur.set("n",EQ.cnt%1000)}
+function eqLoad(k){const R=EQR[k];EQ.r=k;EQ.nr=R[1].length;const n=R[1].length+R[2].length;EQ.slots=Array(n).fill(null);EQ.co=Array(n).fill(1);EQ.bal=false;
+ const cards=[...R[1],...R[2],...R[4]];let sd=k.length*7+3;const rnd=()=>{sd=(sd*9301+49297)%233280;return sd/233280};EQ.tray=cards.map(c=>[rnd(),c]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+ eqSay("الخطوة 1: اكتبي المعادلة الرمزية. اضغطي على الصيغة الصحيحة لكلّ مادّة من البطاقات في الأسفل (المتفاعلات أوّلًا)")}
+function eqCount(side){const R=EQR[EQ.r];const o={};EQ.slots.forEach((f,i)=>{if(!f||(side==="L")!==(i<EQ.nr))return;const p=fparse(f);for(const e in p)o[e]=(o[e]||0)+p[e]*EQ.co[i]});return o}
+function eqEls(){const s=new Set();EQR[EQ.r][1].concat(EQR[EQ.r][2]).forEach(f=>Object.keys(fparse(f)).forEach(e=>s.add(e)));return[...s]}
+function eqCheck(){if(EQ.slots.some(x=>!x)){EQ.bal=false;return}const L=eqCount("L"),R=eqCount("R");const els=eqEls();const ok=els.every(e=>L[e]===R[e]);EQ.bal=false;
+ if(!ok){const bad=els.filter(e=>L[e]!==R[e]);return eqSay("غير موزونة بعد: "+bad.map(e=>e+" ("+(L[e]||0)+" يسار، "+(R[e]||0)+" يمين)").join(" · ")+". غيّري المعاملات (الأرقام الكبيرة) بالزرّين + و −","#ffd27a")}
+ const g=EQ.co.reduce((a,b)=>gcd(a,b));if(g>1)return eqSay("✋ المعادلة موزونة، لكنّ المعاملات ليست بأبسط نسبة صحيحة. اقسميها كلّها على "+g,"#ffd27a");
+ EQ.bal=true;if(!EQ.done.has(EQ.r)){EQ.done.add(EQ.r);if(["ch4","c3h8"].includes(EQ.r))EQ.comb=1;if(EQ.r==="ag")EQ.par=1}
+ eqSay("🎉 أحسنتِ! المعادلة موزونة: عدد ذرّات كلّ عنصر متساوٍ في الطرفين، وهذا يحقّق قانون حفظ الكتلة","#ffd34d")}
+function eqTap(f){const R=EQR[EQ.r];const i=EQ.slots.indexOf(null);if(i<0)return;const isL=i<EQ.nr;const inL=R[1].includes(f),inR=R[2].includes(f);
+ if(EQ.slots.includes(f))return eqSay("✋ وضعتِ "+SUBD(f)+" من قبل. لا نكرّر المادّة؛ لزيادة عددها نستخدم المعامل","#ffd27a");
+ if(!inL&&!inR){if(DIS[f]&&/أرقام السفلي|الرقم السفلي/.test(DIS[f]))EQ.sub=1;EQ.sub|=["H2O2","MgO2","NaCl2","Fe3O2","Al3O2","HCl2","CaO2","KCl2","Mg2O","Cu2NO3"].includes(f)?1:0;return eqSay("❌ "+(DIS[f]||SUBD(f)+" ليست من موادّ هذا التفاعل"),"#ffb3a0")}
+ if(isL&&inR)return eqSay("❌ "+SUBD(f)+" مادّة ناتجة، مكانها يمين السهم. ابدئي بالمتفاعلات","#ffb3a0");
+ if(!isL&&inL)return eqSay("❌ "+SUBD(f)+" مادّة متفاعلة، وقد انتقلنا إلى النواتج (يمين السهم)","#ffb3a0");
+ EQ.slots[i]=f;if(EQ.slots.every(x=>x)){eqSay("✔ اكتملت المعادلة الرمزية غير الموزونة. الخطوة 2: وازنيها بتغيير المعاملات فقط بالزرّين + و −","#9dffb8");eqCheck()}else eqSay("✔ صحيح: "+SUBD(f)+". اختاري صيغة المادّة التالية","#9dffb8")}
+function eqLayout(){const n=EQ.slots.length,w=150,gap=56;const tot=n*w+(n-1)*gap;const x0=480-tot/2;return EQ.slots.map((_,i)=>({x:x0+i*(w+gap),w}))}
+function eqTrayL(){const n=EQ.tray.length,w=Math.min(118,880/n);return EQ.tray.map((f,k)=>({f,x:480-n*w/2+k*w,y:488,w:w-10,h:64}))}
+function eqInstall(cv){if(cv._eq||!VLab.cur||VLab.cur.def.id!=="c9-eqlab")return;cv._eq=1;const P=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
+ cv.addEventListener("pointerdown",e=>{const[x,y]=P(e);
+  if(x>40&&x<190&&y>96&&y<154){eqLoad(EQ.r);return}
+  const L=eqLayout();for(let i=0;i<L.length;i++){const s=L[i];
+   if(y>238&&y<300&&x>s.x&&x<s.x+s.w&&EQ.slots[i]){EQ.slots[i]=null;EQ.co=EQ.co.map(()=>1);EQ.bal=false;return eqSay("أُعيدت البطاقة. اختاري الصيغة الصحيحة")}
+   if(EQ.slots.every(z=>z)&&y>306&&y<362){if(x>s.x&&x<s.x+50){EQ.co[i]=Math.max(1,EQ.co[i]-1);return eqCheck()}if(x>s.x+s.w-50&&x<s.x+s.w){EQ.co[i]=Math.min(12,EQ.co[i]+1);return eqCheck()}}}
+  if(EQ.slots.some(z=>!z)){const t=eqTrayL().find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);if(t)eqTap(t.f)}})}
+function eqMol(c,f,cx,cy,sc){const p=fparse(f);const at=[];for(const e in p)for(let k=0;k<p[e];k++)at.push(e);const n=at.length,cols=Math.min(n,n>6?4:3),r=(n>6?6:8)*sc;
+ at.forEach((e,k)=>{const col=k%cols,row=(k/cols)|0,rows=Math.ceil(n/cols);const x=cx+(col-(cols-1)/2)*r*1.55,y=cy+(row-(rows-1)/2)*r*1.55;c.fillStyle=ECOL[e]||"#ccc";c.beginPath();c.arc(x,y,r,0,7);c.fill();c.strokeStyle="rgba(0,0,0,.45)";c.lineWidth=1.2;c.stroke()})}
+VLab.reg({id:"c9-eqlab",icon:"⚖️",preview:{r:"h2o"},grade:"الصف التاسع",subject:"الكيمياء",unit:"التفاعلات والمعادلات الكيميائية",src:"كتاب الطالب: المعادلة الكيميائية الموزونة",
+ title:"مختبر بناء المعادلات وموازنتها",question:"كيف نحوّل المعادلة اللفظية إلى معادلة رمزية، ثمّ نوازنها بحيث يتساوى عدد ذرّات كلّ عنصر في الطرفين؟",
+ vars:[{k:"r",label:"التفاعل",type:"seg",val:"h2o",c:"#7A1F2E",opts:Object.keys(EQR).map(k=>[k,EQR[k][0].split(" ← ")[1]])},{k:"n",label:"",min:0,max:1000,step:1,val:0,hide:()=>true}],
+ onSeg(S,k){if(k==="r")eqLoad(S.r)},
+ read(s){if(EQ.r!==s.r)eqLoad(s.r);const r=[{label:"آخر نتيجة",val:EQ.msg.replace(/[🎉✔❌✋]/g,"").trim()}];
+  if(EQ.slots.every(x=>x)){const L=eqCount("L"),R=eqCount("R");eqEls().forEach(e=>r.push({label:"ذرّات "+e+" (يسار / يمين)",val:(L[e]||0)+" / "+(R[e]||0)+(L[e]===R[e]?" ✔":" ✘")}));
+   r.push({label:"المعادلة",val:EQ.slots.map((f,i)=>(EQ.co[i]>1?EQ.co[i]:"")+f).reduce((a,b,i)=>i===0?b:a+(i===EQ.nr?" → ":" + ")+b,"")})}
+  r.push({label:"معادلات وازنتِها",val:EQ.done.size?String(EQ.done.size):"لا يوجد بعد"});return r},
+ draw(c,s,t,dt,S){if(EQ.r!==S.r)eqLoad(S.r);eqInstall(c.canvas);const R=EQR[EQ.r];
+  panel(c,40,100,150,50,"rgba(122,31,46,.85)");txt(c,115,125,"↺ من جديد","#fff",22);
+  c.fillStyle="rgba(10,8,20,.72)";rr(c,200,84,720,96,14);c.fill();{c.save();c.font="700 21px Cairo, sans-serif";const ws=EQ.msg.split(" ");const L=[""];ws.forEach(w=>{const tt=(L[L.length-1]+" "+w).trim();if(c.measureText(tt).width>690&&L[L.length-1])L.push(w);else L[L.length-1]=tt});c.restore();const ls=L.slice(0,3);if(L.length>3)ls[2]+="…";ls.forEach((l,k)=>txt(c,560,132+(k-(ls.length-1)/2)*29,l,EQ.mc,21,"center",700))}
+  txt(c,480,210,R[0],"#f3dfa8",22,"center",900);
+  const LY=eqLayout();ltr(c,()=>{LY.forEach((sl,i)=>{const f=EQ.slots[i];if(i>0){const sx=sl.x-28;txt(c,sx,270,i===EQ.nr?"→":"+",i===EQ.nr?(EQ.bal?"#9dffb8":"#fff"):"#fff",i===EQ.nr?44:36)}
+    c.fillStyle=f?"rgba(184,144,42,.25)":"rgba(255,255,255,.06)";rr(c,sl.x,240,sl.w,60,14);c.fill();c.strokeStyle=f?"#B8902A":"rgba(255,255,255,.35)";c.setLineDash(f?[]:[8,6]);c.lineWidth=2.5;c.stroke();c.setLineDash([]);
+    if(f){const co=EQ.co[i];txt(c,sl.x+sl.w/2,271,(co>1?co+" ":"")+SUBD(f),"#fff",co>1?30:32,"center",sl.w-12)}else txt(c,sl.x+sl.w/2,271,"؟","rgba(255,255,255,.5)",30);
+    if(EQ.slots.every(z=>z)){[[sl.x,"−"],[sl.x+sl.w-50,"+"]].forEach(([bx,sg])=>{c.fillStyle=sg==="+"?"rgba(47,143,91,.9)":"rgba(122,31,46,.9)";rr(c,bx,310,50,48,12);c.fill();txt(c,bx+25,333,sg,"#fff",30)});txt(c,sl.x+sl.w/2,334,String(EQ.co[i]),"#ffd34d",28)}
+    if(f){const co=EQ.co[i];const nshow=Math.min(co,6);for(let k=0;k<nshow;k++){const cols=Math.min(nshow,3);const col=k%cols,row=(k/cols)|0;eqMol(c,f,sl.x+sl.w/2+(col-(cols-1)/2)*52,398+row*50,1.25)}if(co>6)txt(c,sl.x+sl.w/2,470,"× "+co,"#ffd34d",18)}})});
+  if(EQ.slots.some(z=>!z)){eqTrayL().forEach(b=>{c.fillStyle="rgba(43,123,214,.85)";rr(c,b.x,b.y+20,b.w,b.h,14);c.fill();c.strokeStyle="#B8902A";c.lineWidth=2;c.stroke();ltr(c,()=>txt(c,b.x+b.w/2,b.y+20+b.h/2,SUBD(b.f),"#fff",b.w>100?28:22))})}
+  else{const els=eqEls(),Lc=eqCount("L"),Rc=eqCount("R");const w=Math.min(130,860/els.length);els.forEach((e,k)=>{const x=480-els.length*w/2+k*w,ok=Lc[e]===Rc[e];c.fillStyle=ok?"rgba(47,143,91,.35)":"rgba(224,72,72,.3)";rr(c,x+4,500,w-8,76,12);c.fill();
+   c.fillStyle=ECOL[e];c.beginPath();c.arc(x+w/2,518,9,0,7);c.fill();ltr(c,()=>{txt(c,x+w/2,544,e+": "+(Lc[e]||0)+" | "+(Rc[e]||0),"#fff",19);txt(c,x+w/2,566,ok?"✔":"✘",ok?"#9dffb8":"#ffb3a0",16)})})}},
+ challenges:[{t:"وازني معادلة واحدة",test:()=>EQ.done.size>=1},{t:"اكتشفي لماذا لا نغيّر الأرقام السفلية",test:()=>EQ.sub>0},{t:"وازني معادلة احتراق (الميثان أو البروبان)",test:()=>EQ.comb>0},{t:"وازني معادلة فيها مجموعة أيونية بين أقواس",test:()=>EQ.par>0},{t:"وازني 5 معادلات",test:()=>EQ.done.size>=5}],
+ notebook:{goal:"أكتب المعادلة الكيميائية الرمزية من المعادلة اللفظية، وأوازنها بتغيير المعاملات وفق قانون حفظ الكتلة.",mats:"بطاقات صيغ كيميائية، نماذج ذرّات (كرات ملوّنة)، ورقة وقلم.",
+  steps:["اختاري التفاعل، واقرئي المعادلة اللفظية.","اضغطي على البطاقة التي تمثّل الصيغة الصحيحة لكلّ مادّة بالترتيب: المتفاعلات ثمّ النواتج. اقرئي سبب رفض أيّ بطاقة خاطئة.","غيّري المعاملات بالزرّين + و − تحت كلّ مادّة، وراقبي نماذج الذرّات وجدول العدّ.","استمرّي حتى تتساوى أعداد الذرّات بأبسط نسبة صحيحة، ثمّ سجّلي القراءة وجرّبي تفاعلًا آخر."],
+  questions:[{q:"لماذا لا نوازن المعادلة بتغيير الأرقام السفلية؟",a:"لأنّ تغييرها يغيّر صيغة المادّة فتصبح مادّة أخرى (مثل H₂O إلى H₂O₂)، أمّا المعامل فيغيّر عدد الجزيئات فقط."},
+   {q:"ما القانون الذي تحقّقه المعادلة الموزونة؟",a:"قانون حفظ الكتلة: الذرّات لا تفنى ولا تُستحدث في التفاعل، فعدد ذرّات كلّ عنصر متساوٍ في الطرفين."},
+   {q:"لماذا نكتب الأكسجين O₂ وليس O؟",a:"لأنّ الأكسجين يوجد في الطبيعة جزيئات ثنائية الذرّة."},{q:"وازني: Al + O₂ → Al₂O₃",a:"4Al + 3O₂ → 2Al₂O₃"},
+   {q:"عند موازنة Cu + AgNO₃ لماذا يُفضّل عدّ مجموعة النترات NO₃ كوحدة واحدة؟",a:"لأنّها تنتقل كاملة من طرف إلى آخر دون أن تتغيّر، فعدّها كوحدة يسهّل الموازنة."}],
+  concl:"المعادلة الكيميائية الموزونة يتساوى فيها عدد ذرّات كلّ عنصر في الطرفين، ونوازنها بتغيير المعاملات فقط دون تغيير الصيغ، تحقيقًا لقانون حفظ الكتلة."}});
+
 })();

@@ -4,7 +4,7 @@
 <meta charset="utf-8"><script src="/gender.js"></script><script src="/ql.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>منصة القطرانة للتعلّم الرقمي</title>
-<meta name="description" content="منصة مدرسة القطرانة الثانوية للبنات للتعلّم الرقمي: اللغة العربية والرياضيات والعلوم واللغة الإنجليزية في مكان واحد.">
+<meta name="description" content="منصة القطرانة للتعلّم الرقمي لكل المدارس: اللغة العربية والرياضيات والعلوم واللغة الإنجليزية في مكان واحد.">
 <meta name="theme-color" content="#7A1F2E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=El+Messiri:wght@600;700&display=swap" rel="stylesheet">
@@ -62,7 +62,7 @@ footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;paddi
 <body>
 <header data-fx="meteors" data-n="14">
   <div id="orb"></div>
-  <div class="sch">مدرسة القطرانة الثانوية للبنات</div>
+  <div class="sch" id="sch">للصفوف من الثامن إلى الثاني عشر</div>
   <h1>منصة القطرانة<br>للتعلّم الرقمي</h1>
   <div class="sub">كل موادّك في مكان واحد</div>
 </header>
@@ -90,7 +90,7 @@ footer{margin-top:auto;text-align:center;color:var(--muted);font-size:13px;paddi
 </main>
 <script>
 const GRADES=[["الثامن","الصف الثامن"],["التاسع","الصف التاسع"],["العاشر","الصف العاشر"],["الحادي عشر","الصف الحادي عشر"],["الثاني عشر","الصف الثاني عشر"]];
-const SECTIONS=g=>g==="التاسع"?["أ","ب"]:["أ"];
+const SECTIONS=g=>["أ","ب","ج","د","هـ","و"];
 const IC={ar:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 22H20v-4"/><path d="M9 8h7M9 11.5h5"/>',
  math:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7.5h8M8.5 12h1M12 12h1M15.5 12h1M8.5 16h1M12 16h1M15.5 16h1"/>',
  sci:'<path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21.5h11.6a2 2 0 0 0 1.7-3L14 9V3"/><path d="M7.5 15h9"/>',
@@ -116,7 +116,7 @@ document.querySelectorAll(".back").forEach(b=>b.onclick=()=>step1());
 let GD=null;try{GD=localStorage.getItem("qatrana.gender")}catch(e){}
 function step0(){const box=$("gsel");box.innerHTML="";[["f","👧 أنا طالبة"],["m","👦 أنا طالب"]].forEach(([v,l])=>box.append(btn(l,()=>{QG.set(v)},GD===v)));show(0)}
 {const ch=document.createElement("button");ch.type="button";ch.className="gchip";ch.textContent=GD==="m"?"👦 طالب · تغيير":"👧 طالبة · تغيير";ch.onclick=step0;document.querySelector("header").append(ch)}
-function qlDraw(){const box=$("qlbox");box.innerHTML="";const o=QL.info();
+function qlDraw(){const box=$("qlbox");box.innerHTML="";const o=QL.info();$("sch").textContent=o&&o.school?o.school:"للصفوف من الثامن إلى الثاني عشر";
  if(o){box.append(Object.assign(document.createElement("div"),{className:"qlok",textContent:"🔗 تمّ الربط: "+o.school+" · الصف "+o.grade+" "+o.sec}));const x=btn("إلغاء الربط",()=>{QL.unlink();qlDraw()});x.className="qlx";box.append(x);return}
  const b=btn("🔑 عندي رمز من معلّمي",()=>{box.innerHTML="";const i=document.createElement("input");i.inputMode="numeric";i.placeholder="اكتبي رمزك هنا";i.className="qlin";const m=document.createElement("div");m.className="qlm";
   const ok=btn("ربط",async()=>{m.textContent="⏳";try{const r=await QL.link(i.value);qlDraw()}catch(e){m.textContent="⚠️ "+e.message}});ok.className="opt";box.append(i,ok,m);i.focus()});b.className="qlb";box.append(b)}
@@ -125,6 +125,6 @@ if(!GD)step0();else if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else st
 </script>
 <script src="fx.js"></script>
 <script>{const c=document.createElement("span");c.textContent="ق";FX.orbit(document.getElementById("orb"),c,["📖","➗","🧪","🌍","🔬","✏️"])}</script>
-<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية<br><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a> · <a href="schools/" style="color:inherit;opacity:.75">🏫 سجّل مدرستك (للمعلّمين والمعلّمات)</a></footer>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات<br><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a> · <a href="schools/" style="color:inherit;opacity:.75">🏫 سجّل مدرستك (للمعلّمين والمعلّمات)</a></footer>
 </body>
 </html>

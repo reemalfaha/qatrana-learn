@@ -1,9 +1,9 @@
 /* منصّة العلوم — النواة: البيانات، الحالة، التوجيه، الأدوات العامة. تصميم وتنفيذ: نوال بني عطية */
 const CONFIG={
-  SCHOOL:"مدرسة القطرانة الثانوية للبنات", DIR:"مديرية التربية والتعليم للواء القطرانة", DESIGNER:"نوال بني عطية",
+  SCHOOL:(()=>{try{const o=JSON.parse(localStorage.getItem("qatrana.code")||"null");if(o&&o.school)return o.school}catch(e){}return "منصة القطرانة للتعلّم الرقمي"})(), DIR:"مديرية التربية والتعليم للواء القطرانة", DESIGNER:"نوال بني عطية",
   SCRIPT_URL:"https://script.google.com/macros/s/AKfycby_MosnfxzYeiveIWwN61c_Rx5HYc-lTMRPeRueHiAyFnRdeafhSIWuUxPnPEI1imSK/exec",
   T_HASH:"1pfqq3z1hhzlsl", SUBJ:"علوم", PASS:70, YEAR:"2026/2027",
-  GRADES:["الثامن","التاسع","العاشر","الحادي عشر"], SECTIONS:g=>g==="التاسع"?["أ","ب"]:["أ"]
+  GRADES:["الثامن","التاسع","العاشر","الحادي عشر"], SECTIONS:g=>["أ","ب","ج","د","هـ","و"]
 };
 const SUBJ_ORDER=["sci","bio","chem","phys","earth"];
 const SCI={data:{},add(g,k,d){(this.data[g]=this.data[g]||{})[k]=Object.assign({key:k,grade:g},d);

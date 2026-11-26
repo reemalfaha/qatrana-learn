@@ -125,6 +125,7 @@ if(!GD)step0();else if(st.g&&st.s&&SECTIONS(st.g).includes(st.s))step3();else st
 </script>
 <script src="fx.js"></script>
 <script>{const c=document.createElement("span");c.textContent="ق";FX.orbit(document.getElementById("orb"),c,["📖","➗","🧪","🌍","🔬","✏️"])}</script>
-<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات<br><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a> · <a href="schools/" style="color:inherit;opacity:.75">🏫 سجّل مدرستك (للمعلّمين والمعلّمات)</a></footer>
+<footer>تصميمُ المنصّة وتنفيذُها: نوال بني عطية · مدرسة القطرانة الثانوية للبنات<br><span id="staff"><a href="teachers/" style="color:inherit;opacity:.75">👩‍🏫 بوابة المعلّمات</a> · <a href="schools/" style="color:inherit;opacity:.75">🏫 سجّل مدرستك (للمعلّمين والمعلّمات)</a></span></footer>
+<script>/* رابط الطلاب فقط: /?student يخفي روابط المعلّمين ويبقى محفوظًا على الجهاز */{let o=false;try{const q=new URLSearchParams(location.search);if(q.has("student"))localStorage.setItem("qatrana.studentOnly","1");if(q.has("staff"))localStorage.removeItem("qatrana.studentOnly");o=localStorage.getItem("qatrana.studentOnly")==="1"}catch(e){}if(o)document.getElementById("staff").remove()}</script>
 </body>
 </html>

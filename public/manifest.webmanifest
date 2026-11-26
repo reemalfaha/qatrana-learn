@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "منصة القطرانة للتعلّم الرقمي",
+  "short_name": "منصة القطرانة",
+  "description": "منصة مدرسة القطرانة الثانوية للتعلّم الرقمي: اللغة العربية والرياضيات والعلوم والمختبرات الافتراضية والامتحانات في مكان واحد.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#7A1F2E",
+  "background_color": "#FBF7F3",
+  "categories": ["education"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "المختبر الافتراضي", "url": "/science/vlab/", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "الاستعداد للامتحانات النهائية", "url": "/finals/", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "بوابة المعلّمات", "url": "/teachers/", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "امتحاني", "url": "/imtihani/", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
